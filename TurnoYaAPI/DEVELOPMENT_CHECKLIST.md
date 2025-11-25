@@ -30,19 +30,19 @@
 - [x] Crear HealthController
 
 ### 1.2 DTOs de Autenticación
-- [ ] Crear carpeta `Application/DTOs/Auth`
-- [ ] Crear `RegisterUserDto`
-  - [ ] Email, Password, ConfirmPassword, FirstName, LastName, Phone
-  - [ ] Validaciones con FluentValidation
-- [ ] Crear `LoginDto`
-  - [ ] Email, Password
-  - [ ] Validaciones
-- [ ] Crear `AuthResponseDto`
-  - [ ] Token, RefreshToken, ExpiresIn, User info
-- [ ] Crear `RefreshTokenDto`
-  - [ ] Token, RefreshToken
-- [ ] Crear `UserDto`
-  - [ ] Id, Email, FirstName, LastName, Role, ProfilePictureUrl
+- [x] Crear carpeta `Application/DTOs/Auth`
+- [x] Crear `RegisterUserDto`
+  - [x] Email, Password, ConfirmPassword, FirstName, LastName, Phone
+  - [x] Validaciones con FluentValidation
+- [x] Crear `LoginDto`
+  - [x] Email, Password
+  - [x] Validaciones
+- [x] Crear `AuthResponseDto`
+  - [x] Token, RefreshToken, ExpiresIn, User info
+- [x] Crear `RefreshTokenDto`
+  - [x] Token, RefreshToken
+- [x] Crear `UserDto`
+  - [x] Id, Email, FirstName, LastName, Role, ProfilePictureUrl
 
 ### 1.3 Servicios de Autenticación
 - [ ] Crear interfaz `Application/Interfaces/IAuthService.cs`
@@ -107,13 +107,13 @@
 - [ ] Registrar AutoMapper en Program.cs
 
 ### 1.8 Validadores
-- [ ] Crear `Application/Validators/RegisterUserDtoValidator.cs`
-  - [ ] Email válido y único
-  - [ ] Password mínimo 8 caracteres, mayúscula, número
-  - [ ] ConfirmPassword coincide
-  - [ ] FirstName y LastName requeridos
-- [ ] Crear `Application/Validators/LoginDtoValidator.cs`
-  - [ ] Email y Password requeridos
+- [x] Crear `Application/Validators/RegisterUserDtoValidator.cs`
+  - [x] Email válido y único
+  - [x] Password mínimo 8 caracteres, mayúscula, número
+  - [x] ConfirmPassword coincide
+  - [x] FirstName y LastName requeridos
+- [x] Crear `Application/Validators/LoginDtoValidator.cs`
+  - [x] Email y Password requeridos
 - [ ] Registrar validadores en Program.cs
 
 ### 1.9 Pruebas de Autenticación
@@ -724,10 +724,10 @@
 ### Estado General
 ```
 Total de tareas: ~250+
-Completadas: 8
+Completadas: 20
 En progreso: 0
-Pendientes: 242+
-Progreso: ~3%
+Pendientes: 230+
+Progreso: ~8%
 ```
 
 ### Próximos Pasos Inmediatos
