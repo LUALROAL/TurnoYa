@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BusinessSettings> BusinessSettings => Set<BusinessSettings>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<WompiTransaction> WompiTransactions => Set<WompiTransaction>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +85,12 @@ public class ApplicationDbContext : DbContext
             e.HasIndex(t => t.Reference).IsUnique();
             e.HasOne(t => t.Appointment).WithOne(a => a.WompiTransaction).HasForeignKey<WompiTransaction>(t => t.AppointmentId).OnDelete(DeleteBehavior.Cascade);
             e.Property(p => p.Amount).HasPrecision(10,2);
+        });
+
+        modelBuilder.Entity<RefreshToken>(e =>
+        {
+            e.HasIndex(rt => rt.Token).IsUnique();
+            e.HasOne(rt => rt.User).WithMany().HasForeignKey(rt => rt.UserId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

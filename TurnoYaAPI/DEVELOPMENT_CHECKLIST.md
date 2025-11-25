@@ -45,31 +45,32 @@
   - [x] Id, Email, FirstName, LastName, Role, ProfilePictureUrl
 
 ### 1.3 Servicios de Autenticación
-- [ ] Crear interfaz `Application/Interfaces/IAuthService.cs`
-  - [ ] RegisterAsync(RegisterUserDto)
-  - [ ] LoginAsync(LoginDto)
-  - [ ] RefreshTokenAsync(RefreshTokenDto)
-  - [ ] RevokeTokenAsync(string userId)
-- [ ] Crear interfaz `Application/Interfaces/ITokenService.cs`
-  - [ ] GenerateAccessToken(User user)
-  - [ ] GenerateRefreshToken()
-  - [ ] ValidateToken(string token)
-  - [ ] GetPrincipalFromExpiredToken(string token)
-- [ ] Implementar `Infrastructure/Services/TokenService.cs`
-  - [ ] Lógica de generación JWT
-  - [ ] Validación de tokens
-- [ ] Implementar `Application/Services/AuthService.cs`
-  - [ ] Registro con hash de contraseña
-  - [ ] Login con verificación
-  - [ ] Refresh token logic
+- [x] Crear interfaz `Application/Interfaces/IAuthService.cs`
+  - [x] RegisterAsync(RegisterUserDto)
+  - [x] LoginAsync(LoginDto)
+  - [x] RefreshTokenAsync(RefreshTokenDto)
+  - [x] RevokeTokenAsync(string userId)
+- [x] Crear interfaz `Application/Interfaces/ITokenService.cs`
+  - [x] GenerateAccessToken(User user)
+  - [x] GenerateRefreshToken()
+  - [x] ValidateToken(string token)
+  - [x] GetPrincipalFromExpiredToken(string token)
+- [x] Implementar `Infrastructure/Services/TokenService.cs`
+  - [x] Lógica de generación JWT
+  - [x] Validación de tokens
+- [x] Implementar `Infrastructure/Services/AuthService.cs`
+  - [x] Registro con hash de contraseña
+  - [x] Login con verificación
+  - [x] Refresh token logic
 
 ### 1.4 Entidad RefreshToken
-- [ ] Crear `Core/Entities/RefreshToken.cs`
-  - [ ] Id, UserId, Token, ExpiresAt, CreatedAt, RevokedAt
-- [ ] Agregar DbSet en ApplicationDbContext
-- [ ] Configurar relación User-RefreshTokens en OnModelCreating
-- [ ] Crear migración `dotnet ef migrations add AddRefreshTokens`
-- [ ] Aplicar migración
+- [x] Crear `Core/Entities/RefreshToken.cs`
+  - [x] Id, UserId, Token, ExpiresAt, CreatedAt, RevokedAt
+- [x] Agregar DbSet en ApplicationDbContext
+- [x] Configurar relación User-RefreshTokens en OnModelCreating
+- [x] Crear migración `dotnet ef migrations add AddAuthenticationFields`
+- [x] Aplicar migración
+- [x] Actualizar entidad User con campos de autenticación
 
 ### 1.5 Repositorios
 - [ ] Crear `Core/Interfaces/IGenericRepository.cs`
@@ -81,30 +82,30 @@
 - [ ] Registrar repositorios en DI (Program.cs)
 
 ### 1.6 AuthController
-- [ ] Crear `API/Controllers/AuthController.cs`
-- [ ] Endpoint `POST /api/auth/register`
-  - [ ] Validar DTO
-  - [ ] Llamar AuthService.RegisterAsync
-  - [ ] Retornar 201 Created con token
-- [ ] Endpoint `POST /api/auth/login`
-  - [ ] Validar DTO
-  - [ ] Llamar AuthService.LoginAsync
-  - [ ] Retornar 200 OK con token
-- [ ] Endpoint `POST /api/auth/refresh`
-  - [ ] Validar refresh token
-  - [ ] Generar nuevo access token
-  - [ ] Retornar nuevo token
-- [ ] Endpoint `POST /api/auth/revoke`
-  - [ ] Marcar refresh token como revocado
-  - [ ] Retornar 204 No Content
-- [ ] Agregar `[Authorize]` donde sea necesario
+- [x] Crear `API/Controllers/AuthController.cs`
+- [x] Endpoint `POST /api/auth/register`
+  - [x] Validar DTO
+  - [x] Llamar AuthService.RegisterAsync
+  - [x] Retornar 201 Created con token
+- [x] Endpoint `POST /api/auth/login`
+  - [x] Validar DTO
+  - [x] Llamar AuthService.LoginAsync
+  - [x] Retornar 200 OK con token
+- [x] Endpoint `POST /api/auth/refresh`
+  - [x] Validar refresh token
+  - [x] Generar nuevo access token
+  - [x] Retornar nuevo token
+- [x] Endpoint `POST /api/auth/revoke/{userId}`
+  - [x] Marcar refresh token como revocado
+  - [x] Retornar 204 No Content
+- [x] Manejo de excepciones con try-catch
 
 ### 1.7 Perfiles de AutoMapper
-- [ ] Crear `Application/Mappings/AuthProfile.cs`
-  - [ ] RegisterUserDto → User
-  - [ ] User → UserDto
-  - [ ] User → AuthResponseDto
-- [ ] Registrar AutoMapper en Program.cs
+- [x] Crear `Application/Mappings/AuthProfile.cs`
+  - [x] RegisterUserDto → User
+  - [x] User → UserDto
+  - [x] User → AuthResponseDto (construido manualmente)
+- [x] Registrar AutoMapper en Program.cs
 
 ### 1.8 Validadores
 - [x] Crear `Application/Validators/RegisterUserDtoValidator.cs`
@@ -114,7 +115,7 @@
   - [x] FirstName y LastName requeridos
 - [x] Crear `Application/Validators/LoginDtoValidator.cs`
   - [x] Email y Password requeridos
-- [ ] Registrar validadores en Program.cs
+- [x] Registrar validadores en Program.cs con FluentValidation
 
 ### 1.9 Pruebas de Autenticación
 - [ ] Probar registro de usuario en Swagger
@@ -724,10 +725,10 @@
 ### Estado General
 ```
 Total de tareas: ~250+
-Completadas: 20
+Completadas: 32
 En progreso: 0
-Pendientes: 230+
-Progreso: ~8%
+Pendientes: 218+
+Progreso: ~13%
 ```
 
 ### Próximos Pasos Inmediatos

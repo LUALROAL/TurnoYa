@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TurnoYa.Core\TurnoYa.Core.csproj" />
+    <ProjectReference Include="..\TurnoYa.Application\TurnoYa.Application.csproj" />
   </ItemGroup>
 
 </Project>
