@@ -248,20 +248,20 @@
 - [x] Endpoint `DELETE /api/employees/{id}` [Authorize]
 
 ### 3.4 Disponibilidad de Citas
-- [ ] Crear `Application/DTOs/Appointment/AvailabilityQueryDto`
-  - [ ] BusinessId, ServiceId, EmployeeId (opcional), Date
-- [ ] Crear `Application/DTOs/Appointment/TimeSlotDto`
-  - [ ] StartTime, EndTime, IsAvailable
-- [ ] Crear `Application/Interfaces/IAvailabilityService.cs`
-  - [ ] GetAvailableSlotsAsync(AvailabilityQueryDto)
-- [ ] Crear `Application/Services/AvailabilityService.cs`
-  - [ ] Calcular slots basado en:
-    - [ ] Horarios de trabajo del negocio
-    - [ ] Duración del servicio
-    - [ ] Citas existentes
-    - [ ] Días de antelación permitidos
-- [ ] Endpoint `GET /api/appointments/availability`
-  - [ ] Query params: ?businessId=xxx&serviceId=xxx&date=2025-11-26
+- [x] Crear `Application/DTOs/Appointment/AvailabilityQueryDto`
+  - [x] BusinessId, ServiceId, EmployeeId (opcional), Date
+- [x] Crear `Application/DTOs/Appointment/TimeSlotDto`
+  - [x] StartTime, EndTime, IsAvailable
+- [x] Crear `Application/Interfaces/IAvailabilityService.cs`
+  - [x] GetAvailableSlotsAsync(AvailabilityQueryDto)
+- [x] Crear `Application/Services/AvailabilityService.cs`
+  - [x] Calcular slots basado en:
+    - [x] Horarios de trabajo del negocio
+    - [x] Duración del servicio
+    - [x] Citas existentes
+    - [x] Días de antelación permitidos
+- [x] Endpoint `GET /api/appointments/availability`
+  - [x] Query params: ?businessId=xxx&serviceId=xxx&date=2025-11-26
 
 ### 3.5 DTOs de Citas
 - [ ] Crear `Application/DTOs/Appointment/CreateAppointmentDto`
