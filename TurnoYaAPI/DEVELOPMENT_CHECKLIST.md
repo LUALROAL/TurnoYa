@@ -266,58 +266,54 @@
 ### 3.5 DTOs de Citas
 - [ ] Crear `Application/DTOs/Appointment/CreateAppointmentDto`
   - [ ] BusinessId, ServiceId, EmployeeId (opcional)
-  - [ ] ScheduledDate, Notes
-- [ ] Crear `AppointmentDto`
-  - [ ] Incluir User, Business, Service, Employee info
-  - [ ] Status, ReferenceNumber, TotalAmount
-- [ ] Crear `UpdateAppointmentStatusDto`
-  - [ ] Status, Reason (para cancelaciones)
 
-### 3.6 Servicios de Citas
+### Fase 3.6: Servicios de Citas
+
+- [x] Crear `Core/Interfaces/IAppointmentRepository.cs`
+- [x] Crear `Infrastructure/Repositories/AppointmentRepository.cs`
+- [x] Crear `Application/Interfaces/IAppointmentService.cs`
+- [x] Crear `Application/Services/AppointmentService.cs`
+- [x] Validar slot disponible antes de crear
+- [x] Generar ReferenceNumber único
+- [x] Calcular TotalAmount basado en Service
+- [x] Registrar cambio de estado en AppointmentStatusHistory
 - [ ] Crear `Core/Interfaces/IAppointmentRepository.cs`
   - [ ] GetByUserIdAsync, GetByBusinessIdAsync
-  - [ ] GetByDateRangeAsync
-  - [ ] CheckConflictAsync
-- [ ] Crear `Infrastructure/Repositories/AppointmentRepository.cs`
-- [ ] Crear `Application/Interfaces/IAppointmentService.cs`
-  - [ ] CreateAsync, CancelAsync, ConfirmAsync, CompleteAsync
-  - [ ] GetByIdAsync, GetMyAppointmentsAsync
-  - [ ] GetBusinessAppointmentsAsync
-- [ ] Crear `Application/Services/AppointmentService.cs`
-  - [ ] Validar slot disponible antes de crear
-  - [ ] Generar ReferenceNumber único
-  - [ ] Calcular TotalAmount basado en Service
-  - [ ] Registrar cambio de estado en AppointmentStatusHistory
 
-### 3.7 AppointmentsController
-- [ ] Crear `API/Controllers/AppointmentsController.cs`
-- [ ] Endpoint `POST /api/appointments` [Authorize]
-  - [ ] Crear cita
-  - [ ] Validar disponibilidad
-  - [ ] Retornar 201 con ReferenceNumber
-- [ ] Endpoint `GET /api/appointments/{id}` [Authorize]
-  - [ ] Solo usuario o business owner puede ver
-- [ ] Endpoint `GET /api/appointments/my` [Authorize]
-  - [ ] Listar citas del usuario autenticado
-  - [ ] Filtros: ?status=Pending&from=2025-11-01&to=2025-11-30
-- [ ] Endpoint `GET /api/businesses/{businessId}/appointments` [Authorize]
-  - [ ] Solo business owner
-  - [ ] Filtros por fecha, servicio, empleado
-- [ ] Endpoint `PATCH /api/appointments/{id}/confirm` [Authorize]
-  - [ ] Solo business owner
-  - [ ] Cambiar status a Confirmed
-- [ ] Endpoint `PATCH /api/appointments/{id}/cancel` [Authorize]
-  - [ ] Usuario o business owner
-  - [ ] Validar política de cancelación
-  - [ ] Registrar razón
-- [ ] Endpoint `PATCH /api/appointments/{id}/complete` [Authorize]
-  - [ ] Solo business owner
-  - [ ] Cambiar status a Completed
-- [ ] Endpoint `PATCH /api/appointments/{id}/noshow` [Authorize]
-  - [ ] Solo business owner
-  - [ ] Incrementar TotalNoShows del usuario
+### Fase 3.7: AppointmentsController
+
+- [x] Crear `API/Controllers/AppointmentsController.cs`
+- [x] Endpoint `POST /api/appointments` [Authorize]
+- [x] Crear cita
+- [x] Validar disponibilidad
+- [x] Retornar 201 con ReferenceNumber
+- [x] Endpoint `GET /api/appointments/{id}` [Authorize]
+- [x] Solo usuario o business owner puede ver
+- [x] Endpoint `GET /api/appointments/my` [Authorize]
+- [x] Listar citas del usuario autenticado
+- [x] Filtros: ?status=Pending&from=2025-11-01&to=2025-11-30
+- [x] Endpoint `GET /api/businesses/{businessId}/appointments` [Authorize]
+- [x] Solo business owner
+- [x] Filtros por fecha, servicio, empleado
+- [x] Endpoint `PATCH /api/appointments/{id}/confirm` [Authorize]
+- [x] Solo business owner
+- [x] Cambiar status a Confirmed
+- [x] Endpoint `PATCH /api/appointments/{id}/cancel` [Authorize]
+- [x] Usuario o business owner
+- [x] Validar política de cancelación
+- [x] Registrar razón
+- [x] Endpoint `PATCH /api/appointments/{id}/complete` [Authorize]
+- [x] Solo business owner
+- [x] Cambiar status a Completed
+- [x] Endpoint `PATCH /api/appointments/{id}/noshow` [Authorize]
+- [x] Solo business owner
+- [x] Incrementar TotalNoShows del usuario
+
+### 3.8 Validadores de Citas (Continuación)
+
 
 ### 3.8 Validadores de Citas
+ 
 - [ ] Crear `CreateAppointmentDtoValidator`
   - [ ] ScheduledDate debe ser futura
   - [ ] ScheduledDate dentro de días permitidos
@@ -327,7 +323,9 @@
   - [ ] Usuario no esté bloqueado por no-shows
   - [ ] Slot realmente disponible (double-check)
 
+
 ### 3.9 Pruebas de Citas
+
 - [ ] Consultar disponibilidad de un servicio
 - [ ] Crear cita en slot disponible
 - [ ] Intentar crear cita en slot ocupado (409 Conflict)
@@ -341,10 +339,13 @@
 
 ## Fase 4: Pagos con Wompi
 
+
 ### 4.1 Configuración de Wompi
+
 - [ ] Crear cuenta en Wompi (Sandbox)
 - [ ] Obtener credenciales (Public Key, Private Key)
 - [ ] Agregar configuración en appsettings.json
+ 
   ```json
   "Wompi": {
     "PublicKey": "pub_test_xxx",
@@ -354,7 +355,9 @@
   }
   ```
 
+
 ### 4.2 DTOs de Pagos
+
 - [ ] Crear `Application/DTOs/Payment/CreatePaymentIntentDto`
   - [ ] AppointmentId, Amount, Currency, PaymentMethod
 - [ ] Crear `PaymentDto`
@@ -362,7 +365,9 @@
 - [ ] Crear `WompiWebhookDto`
   - [ ] Event, Data, Signature
 
+
 ### 4.3 Servicio de Wompi
+
 - [ ] Crear `Application/Interfaces/IWompiService.cs`
   - [ ] CreateTransactionAsync
   - [ ] GetTransactionStatusAsync
@@ -373,7 +378,9 @@
   - [ ] GET /v1/transactions/{id}
   - [ ] Validar firma de webhooks
 
+
 ### 4.4 Servicio de Pagos
+ 
 - [ ] Crear `Application/Interfaces/IPaymentService.cs`
   - [ ] CreatePaymentIntentAsync
   - [ ] ProcessPaymentAsync
@@ -384,6 +391,7 @@
   - [ ] Manejar estados: APPROVED, DECLINED, PENDING, ERROR
 
 ### 4.5 PaymentsController
+ 
 - [ ] Crear `API/Controllers/PaymentsController.cs`
 - [ ] Endpoint `POST /api/payments/intent` [Authorize]
   - [ ] Crear intención de pago para cita
@@ -399,6 +407,7 @@
   - [ ] Retornar 200 OK siempre (idempotencia)
 
 ### 4.6 Lógica de Depósitos
+ 
 - [ ] Modificar CreateAppointment para verificar RequiresDeposit
 - [ ] Si requiere depósito:
   - [ ] Status inicial = Pending (esperando pago)
@@ -409,6 +418,7 @@
   - [ ] Actualizar DepositAmount en Appointment
 
 ### 4.7 Pruebas de Pagos
+ 
 - [ ] Crear cita que requiere depósito
 - [ ] Verificar generación de payment intent
 - [ ] Simular pago aprobado en Wompi Sandbox
@@ -422,7 +432,8 @@
 ## Fase 5: Reseñas y Reputación
 
 ### 5.1 DTOs de Reseñas
-- [ ] Crear `Application/DTOs/Review/CreateReviewDto`
+ 
+ - [ ] Crear `Application/DTOs/Review/CreateReviewDto`
   - [ ] AppointmentId, Rating (1-5), Comment
 - [ ] Crear `ReviewDto`
   - [ ] Incluir User info, Business info, Appointment reference
@@ -431,7 +442,8 @@
   - [ ] Response (solo business owner)
 
 ### 5.2 Servicios de Reseñas
-- [ ] Crear `Core/Interfaces/IReviewRepository.cs`
+ 
+ - [ ] Crear `Core/Interfaces/IReviewRepository.cs`
   - [ ] GetByBusinessIdAsync
   - [ ] GetByUserIdAsync
   - [ ] GetAverageRatingAsync
@@ -447,6 +459,7 @@
   - [ ] Actualizar AverageRating del User (como negocio)
 
 ### 5.3 ReviewsController
+ 
 - [ ] Crear `API/Controllers/ReviewsController.cs`
 - [ ] Endpoint `POST /api/reviews` [Authorize]
   - [ ] Crear reseña para cita completada

@@ -30,7 +30,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(TurnoYa.Application.Mappings.AuthProfile), typeof(TurnoYa.Application.Mappings.BusinessProfile));
+builder.Services.AddAutoMapper(
+    typeof(TurnoYa.Application.Mappings.AuthProfile),
+    typeof(TurnoYa.Application.Mappings.BusinessProfile),
+    typeof(TurnoYa.Application.Mappings.ServiceProfile),
+    typeof(TurnoYa.Application.Mappings.EmployeeProfile),
+    typeof(TurnoYa.Application.Mappings.AppointmentProfile)
+);
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
@@ -44,6 +50,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 // Authentication & JWT
 builder.Services.AddAuthentication(options =>
@@ -71,6 +78,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "TurnoYa API", Version = "v1" });
+    // Include XML comments for better Swagger docs
+    var xmlFile = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".xml";
+    var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (System.IO.File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+    }
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
