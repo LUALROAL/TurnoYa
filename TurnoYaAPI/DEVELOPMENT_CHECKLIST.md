@@ -72,7 +72,7 @@
 - [x] Aplicar migración
 - [x] Actualizar entidad User con campos de autenticación
 
-### 1.5 Repositorios
+### 1.5 Repositorios (OPCIONAL - No implementado, se usa DbContext directamente)
 - [ ] Crear `Core/Interfaces/IGenericRepository.cs`
   - [ ] GetByIdAsync, GetAllAsync, AddAsync, UpdateAsync, DeleteAsync
 - [ ] Crear `Infrastructure/Repositories/GenericRepository.cs`
@@ -80,6 +80,7 @@
   - [ ] GetByEmailAsync, ExistsAsync
 - [ ] Crear `Infrastructure/Repositories/UserRepository.cs`
 - [ ] Registrar repositorios en DI (Program.cs)
+- **Nota**: AuthService usa ApplicationDbContext directamente. Los repositorios son opcionales para este módulo.
 
 ### 1.6 AuthController
 - [x] Crear `API/Controllers/AuthController.cs`
@@ -117,82 +118,92 @@
   - [x] Email y Password requeridos
 - [x] Registrar validadores en Program.cs con FluentValidation
 
-### 1.9 Pruebas de Autenticación
-- [ ] Probar registro de usuario en Swagger
-- [ ] Probar login con credenciales correctas
-- [ ] Probar login con credenciales incorrectas
+### 1.9 Pruebas de Autenticación (Pendiente - Realizar manualmente)
+- [X] Probar registro de usuario en Swagger
+- [X] Probar login con credenciales correctas
+- [] Probar login con credenciales incorrectas
 - [ ] Probar refresh token
 - [ ] Verificar tokens en JWT.io
 - [ ] Probar endpoints protegidos sin token (401)
 - [ ] Probar endpoints protegidos con token válido (200)
+
+**Nota**: La aplicación está corriendo en http://localhost:5185/swagger. Todos los endpoints están implementados y listos para probar.
 
 ---
 
 ## Fase 2: Gestión de Negocios
 
 ### 2.1 DTOs de Negocios
-- [ ] Crear carpeta `Application/DTOs/Business`
-- [ ] Crear `CreateBusinessDto`
-  - [ ] Name, Description, Category, Address, City, Department
-  - [ ] Phone, Email, Website, Latitude, Longitude
-- [ ] Crear `UpdateBusinessDto`
-- [ ] Crear `BusinessDto`
-  - [ ] Incluir Owner info, AverageRating, TotalReviews
-- [ ] Crear `BusinessListDto` (para listados)
-- [ ] Crear `BusinessDetailDto` (con Services, Employees)
+- [x] Crear carpeta `Application/DTOs/Business`
+- [x] Crear `CreateBusinessDto`
+  - [x] Name, Description, Category, Address, City, Department
+  - [x] Phone, Email, Website, Latitude, Longitude
+- [x] Crear `UpdateBusinessDto`
+- [x] Crear `BusinessDto`
+  - [x] Incluir Owner info, AverageRating, TotalReviews
+- [x] Crear `BusinessListDto` (para listados)
+- [x] Crear `BusinessDetailDto` (con Services, Employees)
 
 ### 2.2 Servicios de Negocios
-- [ ] Crear `Core/Interfaces/IBusinessRepository.cs`
-  - [ ] GetByOwnerIdAsync
-  - [ ] GetByCategoryAsync
-  - [ ] GetNearbyAsync(latitude, longitude, radiusKm)
-  - [ ] SearchAsync(query, city, category)
-- [ ] Crear `Infrastructure/Repositories/BusinessRepository.cs`
-  - [ ] Implementar búsqueda geolocalizada (Haversine formula)
-- [ ] Crear `Application/Interfaces/IBusinessService.cs`
+- [x] Crear `Core/Interfaces/IBusinessRepository.cs`
+  - [x] GetByOwnerIdAsync
+  - [x] GetByCategoryAsync
+  - [x] GetNearbyAsync(latitude, longitude, radiusKm)
+  - [x] SearchAsync(query, city, category)
+- [x] Crear `Infrastructure/Repositories/BusinessRepository.cs`
+  - [x] Implementar búsqueda geolocalizada (Haversine formula)
+- [ ] Crear `Application/Interfaces/IBusinessService.cs` (opcional)
   - [ ] CreateAsync, UpdateAsync, DeleteAsync
   - [ ] GetByIdAsync, GetMyBusinessesAsync
   - [ ] SearchNearbyAsync, SearchAsync
-- [ ] Crear `Application/Services/BusinessService.cs`
+- [ ] Crear `Application/Services/BusinessService.cs` (opcional)
 
 ### 2.3 BusinessController
-- [ ] Crear `API/Controllers/BusinessController.cs`
-- [ ] Endpoint `POST /api/businesses` [Authorize]
-  - [ ] Crear negocio para usuario autenticado
-  - [ ] Validar un negocio por usuario (o permitir múltiples según plan)
-- [ ] Endpoint `GET /api/businesses/{id}`
-  - [ ] Retornar detalle completo del negocio
-- [ ] Endpoint `PUT /api/businesses/{id}` [Authorize]
-  - [ ] Actualizar solo si es owner
-- [ ] Endpoint `DELETE /api/businesses/{id}` [Authorize]
-  - [ ] Soft delete (IsActive = false)
-- [ ] Endpoint `GET /api/businesses/my` [Authorize]
-  - [ ] Listar negocios del usuario autenticado
-- [ ] Endpoint `GET /api/businesses/search`
-  - [ ] Query params: ?city=Bogota&category=Barber&radiusKm=5
-  - [ ] Paginación: ?page=1&pageSize=20
-- [ ] Endpoint `GET /api/businesses/nearby`
-  - [ ] Query params: ?latitude=4.6097&longitude=-74.0817&radiusKm=10
+- [x] Crear `API/Controllers/BusinessController.cs`
+- [x] Endpoint `POST /api/business` [Authorize]
+  - [x] Crear negocio para usuario autenticado
+  - [x] Obtener OwnerId del JWT
+- [x] Endpoint `GET /api/business/{id}`
+  - [x] Retornar detalle completo del negocio
+- [x] Endpoint `PUT /api/business/{id}` [Authorize]
+  - [x] Actualizar solo si es owner
+- [x] Endpoint `DELETE /api/business/{id}` [Authorize]
+  - [x] Delete (hard delete implementado)
+- [x] Endpoint `GET /api/business/owner/{ownerId}`
+  - [x] Listar negocios por OwnerId
+- [x] Endpoint `GET /api/business/search`
+  - [x] Query params: ?query=&city=&category=
+- [x] Endpoint `GET /api/business/nearby`
+  - [x] Query params: ?latitude=&longitude=&radiusKm=
+- [x] Endpoint `GET /api/business/category/{category}`
+  - [x] Listar por categoría
+- [x] Endpoint `GET /api/business`
+  - [x] Listar todos los negocios activos
 
 ### 2.4 Validadores de Negocios
-- [ ] Crear `CreateBusinessDtoValidator`
-  - [ ] Name requerido (3-100 caracteres)
-  - [ ] Category requerido
-  - [ ] Address, City, Department requeridos
-  - [ ] Email válido (si se proporciona)
-  - [ ] Latitude/Longitude en rangos válidos
-- [ ] Crear `UpdateBusinessDtoValidator`
+- [x] Crear `CreateBusinessDtoValidator`
+  - [x] Name requerido (3-100 caracteres)
+  - [x] Category requerido
+  - [x] Address, City, Department requeridos
+  - [x] Email válido (si se proporciona)
+  - [x] Latitude/Longitude en rangos válidos
+  - [x] Phone con formato válido
+  - [x] Website con formato válido
+- [x] Crear `UpdateBusinessDtoValidator`
+  - [x] Validaciones condicionales para campos opcionales
 
 ### 2.5 Perfiles de AutoMapper
-- [ ] Crear `Application/Mappings/BusinessProfile.cs`
-  - [ ] CreateBusinessDto → Business
-  - [ ] UpdateBusinessDto → Business
-  - [ ] Business → BusinessDto
-  - [ ] Business → BusinessDetailDto
+- [x] Crear `Application/Mappings/BusinessProfile.cs`
+  - [x] CreateBusinessDto → Business
+  - [x] UpdateBusinessDto → Business
+  - [x] Business → BusinessDto
+  - [x] Business → BusinessListDto
+  - [x] Business → BusinessDetailDto
+- [x] Registrar BusinessProfile en Program.cs
 
 ### 2.6 Pruebas de Negocios
-- [ ] Crear negocio como usuario autenticado
-- [ ] Listar mis negocios
+- [X] Crear negocio como usuario autenticado
+- [X] Listar mis negocios
 - [ ] Buscar negocios por ciudad y categoría
 - [ ] Buscar negocios cercanos con geolocalización
 - [ ] Actualizar negocio propio

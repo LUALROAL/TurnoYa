@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using FluentValidation;
@@ -9,8 +10,10 @@ using FluentValidation.AspNetCore;
 using TurnoYa.Application.Interfaces;
 using TurnoYa.Application.Validators;
 using TurnoYa.Core.Entities;
+using TurnoYa.Core.Interfaces;
 using TurnoYa.Infrastructure.Data;
 using TurnoYa.Infrastructure.Services;
+using TurnoYa.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +30,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(TurnoYa.Application.Mappings.AuthProfile));
+builder.Services.AddAutoMapper(typeof(TurnoYa.Application.Mappings.AuthProfile), typeof(TurnoYa.Application.Mappings.BusinessProfile));
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
+
+// Repositories
+builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 
 // Application Services
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -61,7 +67,32 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "TurnoYa API", Version = "v1" });
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "JWT Authorization header usando esquema Bearer. Ejemplo: Bearer {token}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+    c.AddSecurityDefinition("Bearer", securityScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            securityScheme,
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 
