@@ -215,26 +215,26 @@
 ## Fase 3: Sistema de Citas
 
 ### 3.1 Configuración de Negocio (BusinessSettings)
-- [ ] Crear `Application/DTOs/Business/BusinessSettingsDto`
-  - [ ] WorkingHours (JSON o tabla separada)
-  - [ ] BookingAdvanceDays, CancellationHours
-  - [ ] RequiresDeposit, NoShowPolicy
-- [ ] Endpoint `PUT /api/businesses/{id}/settings` [Authorize]
-- [ ] Endpoint `GET /api/businesses/{id}/settings`
+- [x] Crear `Application/DTOs/Business/BusinessSettingsDto`
+  - [x] WorkingHours (JSON o tabla separada)
+  - [x] BookingAdvanceDays, CancellationHours
+  - [x] RequiresDeposit, NoShowPolicy
+- [x] Endpoint `PUT /api/businesses/{id}/settings` [Authorize]
+- [x] Endpoint `GET /api/businesses/{id}/settings`
 
 ### 3.2 Servicios del Negocio (Services)
-- [ ] Crear `Application/DTOs/Service/CreateServiceDto`
-  - [ ] BusinessId, Name, Description, Price, Duration
-  - [ ] RequiresDeposit, DepositAmount
-- [ ] Crear `ServiceDto`
+- [x] Crear `Application/DTOs/Service/CreateServiceDto`
+  - [x] BusinessId, Name, Description, Price, Duration
+  - [x] RequiresDeposit, DepositAmount
+- [x] Crear `ServiceDto`
 - [ ] Crear `Application/Interfaces/IServiceService.cs`
 - [ ] Crear `Application/Services/ServiceService.cs`
-- [ ] Crear `API/Controllers/ServicesController.cs`
-- [ ] Endpoint `POST /api/businesses/{businessId}/services` [Authorize]
-- [ ] Endpoint `GET /api/businesses/{businessId}/services`
-- [ ] Endpoint `PUT /api/services/{id}` [Authorize]
-- [ ] Endpoint `DELETE /api/services/{id}` [Authorize]
-- [ ] Validar que solo owner del negocio puede CRUD services
+- [x] Crear `API/Controllers/ServicesController.cs`
+- [x] Endpoint `POST /api/businesses/{businessId}/services` [Authorize]
+- [x] Endpoint `GET /api/businesses/{businessId}/services`
+- [x] Endpoint `PUT /api/services/{id}` [Authorize]
+- [x] Endpoint `DELETE /api/services/{id}` [Authorize]
+- [x] Validar que solo owner del negocio puede CRUD services
 
 ### 3.3 Empleados
 - [ ] Crear `Application/DTOs/Employee/CreateEmployeeDto`

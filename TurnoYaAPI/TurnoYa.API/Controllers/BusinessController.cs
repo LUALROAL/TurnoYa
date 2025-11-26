@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using TurnoYa.Application.DTOs.Business;
 using TurnoYa.Core.Entities;
 using TurnoYa.Core.Interfaces;
+using TurnoYa.Infrastructure.Data;
 
 namespace TurnoYa.API.Controllers;
 
@@ -19,15 +20,18 @@ public class BusinessController : ControllerBase
     private readonly IBusinessRepository _businessRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<BusinessController> _logger;
+    private readonly ApplicationDbContext _context;
 
     public BusinessController(
         IBusinessRepository businessRepository,
         IMapper mapper,
-        ILogger<BusinessController> logger)
+        ILogger<BusinessController> logger,
+        ApplicationDbContext context)
     {
         _businessRepository = businessRepository;
         _mapper = mapper;
         _logger = logger;
+        _context = context;
     }
 
     /// <summary>
@@ -240,6 +244,100 @@ public class BusinessController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al eliminar negocio {BusinessId}", id);
+            return StatusCode(500, new { message = "Error interno del servidor" });
+        }
+    }
+
+    /// <summary>
+    /// Obtiene la configuración de un negocio
+    /// </summary>
+    [HttpGet("{id}/settings")]
+    [ProducesResponseType(typeof(BusinessSettingsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BusinessSettingsDto>> GetSettings(Guid id)
+    {
+        try
+        {
+            var business = await _context.Businesses
+                .Include(b => b.Settings)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (business == null)
+                return NotFound(new { message = "Negocio no encontrado" });
+
+            if (business.Settings == null)
+            {
+                // Crear configuración por defecto
+                business.Settings = new BusinessSettings
+                {
+                    BusinessId = business.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+            }
+
+            var settingsDto = _mapper.Map<BusinessSettingsDto>(business.Settings);
+            return Ok(settingsDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener configuración del negocio {BusinessId}", id);
+            return StatusCode(500, new { message = "Error interno del servidor" });
+        }
+    }
+
+    /// <summary>
+    /// Actualiza la configuración de un negocio
+    /// </summary>
+    [HttpPut("{id}/settings")]
+    [Authorize]
+    [ProducesResponseType(typeof(BusinessSettingsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<BusinessSettingsDto>> UpdateSettings(Guid id, BusinessSettingsDto dto)
+    {
+        try
+        {
+            var business = await _context.Businesses
+                .Include(b => b.Settings)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (business == null)
+                return NotFound(new { message = "Negocio no encontrado" });
+
+            // Verificar que el usuario sea el dueño del negocio
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                           ?? User.FindFirst("sub")?.Value;
+            
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
+            }
+            
+            if (business.OwnerId != userId)
+                return Forbid();
+
+            if (business.Settings == null)
+            {
+                business.Settings = new BusinessSettings
+                {
+                    BusinessId = business.Id,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.BusinessSettings.Add(business.Settings);
+            }
+
+            _mapper.Map(dto, business.Settings);
+            business.Settings.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            var settingsDto = _mapper.Map<BusinessSettingsDto>(business.Settings);
+            return Ok(settingsDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar configuración del negocio {BusinessId}", id);
             return StatusCode(500, new { message = "Error interno del servidor" });
         }
     }

@@ -52,5 +52,40 @@ public class BusinessProfile : Profile
             .ForMember(dest => dest.Owner, opt => opt.MapFrom(src => src.Owner))
             .ForMember(dest => dest.Services, opt => opt.Ignore()) // Pendiente cuando se creen DTOs de servicios
             .ForMember(dest => dest.Employees, opt => opt.Ignore()); // Pendiente cuando se creen DTOs de empleados
+
+        // BusinessSettings → BusinessSettingsDto
+        CreateMap<BusinessSettings, BusinessSettingsDto>()
+            .ForMember(dest => dest.BookingAdvanceDays, opt => opt.MapFrom(src => src.MaxAdvanceBookingDays))
+            .ForMember(dest => dest.CancellationHours, opt => opt.MapFrom(src => src.FreeCancellationHours))
+            .ForMember(dest => dest.RequiresDeposit, opt => opt.MapFrom(src => src.NoShowPolicyType == "Deposit"))
+            .ForMember(dest => dest.NoShowPolicy, opt => opt.MapFrom(src => src.NoShowPolicyType))
+            .ForMember(dest => dest.DefaultSlotDuration, opt => opt.MapFrom(src => src.SlotDuration))
+            .ForMember(dest => dest.BufferTimeBetweenAppointments, opt => opt.MapFrom(src => src.BufferTime));
+
+        // BusinessSettingsDto → BusinessSettings
+        CreateMap<BusinessSettingsDto, BusinessSettings>()
+            .ForMember(dest => dest.MaxAdvanceBookingDays, opt => opt.MapFrom(src => src.BookingAdvanceDays))
+            .ForMember(dest => dest.FreeCancellationHours, opt => opt.MapFrom(src => src.CancellationHours))
+            .ForMember(dest => dest.NoShowPolicyType, opt => opt.MapFrom(src => src.NoShowPolicy ?? "None"))
+            .ForMember(dest => dest.SlotDuration, opt => opt.MapFrom(src => src.DefaultSlotDuration))
+            .ForMember(dest => dest.BufferTime, opt => opt.MapFrom(src => src.BufferTimeBetweenAppointments))
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.BusinessId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Business, opt => opt.Ignore())
+            .ForMember(dest => dest.NoShowDepositAmount, opt => opt.Ignore())
+            .ForMember(dest => dest.MaxNoShows, opt => opt.Ignore())
+            .ForMember(dest => dest.BlockDurationDays, opt => opt.Ignore())
+            .ForMember(dest => dest.AllowCancellation, opt => opt.Ignore())
+            .ForMember(dest => dest.LateCancellationFee, opt => opt.Ignore())
+            .ForMember(dest => dest.MinAdvanceBookingMinutes, opt => opt.Ignore())
+            .ForMember(dest => dest.SimultaneousBookings, opt => opt.Ignore())
+            .ForMember(dest => dest.AcceptWompi, opt => opt.Ignore())
+            .ForMember(dest => dest.AcceptCash, opt => opt.Ignore())
+            .ForMember(dest => dest.AcceptCards, opt => opt.Ignore())
+            .ForMember(dest => dest.AcceptNequi, opt => opt.Ignore())
+            .ForMember(dest => dest.AcceptDaviplata, opt => opt.Ignore())
+            .ForMember(dest => dest.AcceptPSE, opt => opt.Ignore());
     }
 }

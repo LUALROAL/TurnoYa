@@ -21,6 +21,11 @@ public class BusinessSettings : BaseEntity
     public bool AcceptNequi { get; set; } = true;
     public bool AcceptDaviplata { get; set; } = true;
     public bool AcceptPSE { get; set; } = true;
+    
+    /// <summary>
+    /// Horarios de trabajo del negocio en formato JSON
+    /// </summary>
+    public string? WorkingHours { get; set; }
 
     public Business? Business { get; set; }
 }
