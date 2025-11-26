@@ -237,15 +237,15 @@
 - [x] Validar que solo owner del negocio puede CRUD services
 
 ### 3.3 Empleados
-- [ ] Crear `Application/DTOs/Employee/CreateEmployeeDto`
-- [ ] Crear `EmployeeDto`
+- [x] Crear `Application/DTOs/Employee/CreateEmployeeDto`
+- [x] Crear `EmployeeDto`
 - [ ] Crear `Application/Interfaces/IEmployeeService.cs`
 - [ ] Crear `Application/Services/EmployeeService.cs`
-- [ ] Crear `API/Controllers/EmployeesController.cs`
-- [ ] Endpoint `POST /api/businesses/{businessId}/employees` [Authorize]
-- [ ] Endpoint `GET /api/businesses/{businessId}/employees`
-- [ ] Endpoint `PUT /api/employees/{id}` [Authorize]
-- [ ] Endpoint `DELETE /api/employees/{id}` [Authorize]
+- [x] Crear `API/Controllers/EmployeesController.cs`
+- [x] Endpoint `POST /api/businesses/{businessId}/employees` [Authorize]
+- [x] Endpoint `GET /api/businesses/{businessId}/employees`
+- [x] Endpoint `PUT /api/employees/{id}` [Authorize]
+- [x] Endpoint `DELETE /api/employees/{id}` [Authorize]
 
 ### 3.4 Disponibilidad de Citas
 - [ ] Crear `Application/DTOs/Appointment/AvailabilityQueryDto`
