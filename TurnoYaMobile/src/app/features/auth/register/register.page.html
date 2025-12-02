@@ -1,0 +1,140 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Crear Cuenta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="register-container">
+    <div class="logo-section">
+      <h1>TurnoYa</h1>
+      <p>Únete a nuestra comunidad</p>
+    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Registro</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+          <!-- Nombre -->
+          <ion-item>
+            <ion-label position="floating">Nombre</ion-label>
+            <ion-input
+              type="text"
+              formControlName="firstName"
+              autocomplete="given-name"
+              placeholder="Juan">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="firstName?.invalid && firstName?.touched">
+            <p class="error-message" *ngIf="firstName?.errors?.['required']">El nombre es requerido</p>
+            <p class="error-message" *ngIf="firstName?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</p>
+          </ion-text>
+
+          <!-- Apellido -->
+          <ion-item>
+            <ion-label position="floating">Apellido</ion-label>
+            <ion-input
+              type="text"
+              formControlName="lastName"
+              autocomplete="family-name"
+              placeholder="Pérez">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="lastName?.invalid && lastName?.touched">
+            <p class="error-message" *ngIf="lastName?.errors?.['required']">El apellido es requerido</p>
+            <p class="error-message" *ngIf="lastName?.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</p>
+          </ion-text>
+
+          <!-- Email -->
+          <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="tu@email.com">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="email?.invalid && email?.touched">
+            <p class="error-message" *ngIf="email?.errors?.['required']">El email es requerido</p>
+            <p class="error-message" *ngIf="email?.errors?.['email']">Ingresa un email válido</p>
+          </ion-text>
+
+          <!-- Teléfono -->
+          <ion-item>
+            <ion-label position="floating">Teléfono</ion-label>
+            <ion-input
+              type="tel"
+              formControlName="phone"
+              autocomplete="tel"
+              placeholder="1234567890">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="phone?.invalid && phone?.touched">
+            <p class="error-message" *ngIf="phone?.errors?.['required']">El teléfono es requerido</p>
+            <p class="error-message" *ngIf="phone?.errors?.['pattern']">Ingresa un teléfono válido (10-15 dígitos)</p>
+          </ion-text>
+
+          <!-- Contraseña -->
+          <ion-item>
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input
+              type="password"
+              formControlName="password"
+              autocomplete="new-password"
+              placeholder="••••••">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="password?.invalid && password?.touched">
+            <p class="error-message" *ngIf="password?.errors?.['required']">La contraseña es requerida</p>
+            <p class="error-message" *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</p>
+          </ion-text>
+
+          <!-- Confirmar Contraseña -->
+          <ion-item>
+            <ion-label position="floating">Confirmar Contraseña</ion-label>
+            <ion-input
+              type="password"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+              placeholder="••••••">
+            </ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="confirmPassword?.invalid && confirmPassword?.touched">
+            <p class="error-message" *ngIf="confirmPassword?.errors?.['required']">Confirma tu contraseña</p>
+          </ion-text>
+          <ion-text color="danger" *ngIf="!passwordsMatch && confirmPassword?.touched">
+            <p class="error-message">Las contraseñas no coinciden</p>
+          </ion-text>
+
+          <!-- Rol -->
+          <ion-item>
+            <ion-label position="floating">Tipo de Usuario</ion-label>
+            <ion-select formControlName="role" placeholder="Selecciona tu rol">
+              <ion-select-option *ngFor="let role of userRoles" [value]="role.value">
+                {{ role.label }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            [disabled]="registerForm.invalid"
+            class="ion-margin-top">
+            Crear Cuenta
+          </ion-button>
+        </form>
+
+        <div class="login-link ion-text-center ion-margin-top">
+          <ion-text>
+            <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+          </ion-text>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

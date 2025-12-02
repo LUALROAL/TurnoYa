@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5000/api',  // Backend API local
+  apiUrl: 'https://localhost:7187/api',  // Backend API local (HTTPS)
   tokenKey: 'turnoYa_token',
   refreshTokenKey: 'turnoYa_refresh_token'
 };

@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Inicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="home-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>¡Bienvenido a TurnoYa!</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div *ngIf="currentUser">
+          <p><strong>Usuario:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+          <p><strong>Email:</strong> {{ currentUser.email }}</p>
+          <p><strong>Rol:</strong> {{ currentUser.role }}</p>
+        </div>
+
+        <ion-button expand="block" color="danger" (click)="logout()" class="ion-margin-top">
+          Cerrar Sesión
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="info-section ion-margin-top">
+      <p class="ion-text-center">
+        Esta es la página de inicio de TurnoYa. Aquí podrás gestionar tus citas y turnos.
+      </p>
+    </div>
+  </div>
+</ion-content>

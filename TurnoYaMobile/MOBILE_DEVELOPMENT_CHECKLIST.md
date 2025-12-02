@@ -77,46 +77,35 @@
   ```
 - [ ] Configurar environment files
   - [ ] `src/environments/environment.ts` (desarrollo)
-  - [ ] `src/environments/environment.prod.ts` (producción)
 
 ---
 
 ## Fase 2: Arquitectura y Estructura Base
-
 ### 2.1 Estructura de Carpetas
 - [ ] Crear estructura modular
   ```
   src/
-  ├── app/
   │   ├── core/              # Servicios singleton, guards, interceptors
   │   │   ├── guards/
   │   │   ├── interceptors/
   │   │   ├── services/
-  │   │   └── models/
-  │   ├── shared/            # Componentes, pipes, directives compartidos
   │   │   ├── components/
   │   │   ├── pipes/
   │   │   └── directives/
-  │   ├── features/          # Módulos funcionales
-  │   │   ├── auth/
   │   │   ├── business/
   │   │   ├── appointments/
   │   │   ├── payments/
-  │   │   └── profile/
   │   └── app.component.ts
   ```
 
-### 2.2 Modelos Base (TypeScript Interfaces)
 - [ ] Crear `core/models/user.model.ts`
   ```typescript
   export interface User {
-    id: string;
     email: string;
     firstName: string;
     lastName: string;
     phone?: string;
     role: UserRole;
-    profilePictureUrl?: string;
   }
   export enum UserRole {
     Customer = 'Customer',
@@ -139,7 +128,6 @@
     lastName: string;
     phone?: string;
   }
-  export interface AuthResponse {
     token: string;
     refreshToken: string;
     expiresIn: number;
@@ -157,7 +145,6 @@
     message?: string;
     errors?: string[];
   }
-  ```
 
 ### 2.3 Configurar Environments
 - [ ] Configurar `environment.ts`
@@ -179,10 +166,6 @@
   };
   ```
 
----
-
-## Fase 3: Autenticación y Guards
-
 ### 3.1 Storage Service
 - [ ] Crear `core/services/storage.service.ts`
   ```bash
@@ -192,99 +175,98 @@
   - [ ] `init()` - Inicializar storage
   - [ ] `set(key, value)` - Guardar dato
   - [ ] `get(key)` - Obtener dato
-  - [ ] `remove(key)` - Eliminar dato
   - [ ] `clear()` - Limpiar todo
 - [ ] Inicializar en `app.component.ts` (constructor)
 
 ### 3.2 Auth Service
-- [ ] Crear `core/services/auth.service.ts`
+- [x] Crear `core/services/auth.service.ts` ✅
   ```bash
   ionic generate service core/services/auth
   ```
-- [ ] Implementar métodos:
-  - [ ] `register(data: RegisterRequest): Observable<AuthResponse>`
-  - [ ] `login(data: LoginRequest): Observable<AuthResponse>`
-  - [ ] `logout(): Promise<void>`
-  - [ ] `refreshToken(): Observable<AuthResponse>`
-  - [ ] `isAuthenticated(): Promise<boolean>`
-  - [ ] `getCurrentUser(): Observable<User | null>`
-  - [ ] `getToken(): Promise<string | null>`
-  - [ ] `saveToken(token: string): Promise<void>`
-  - [ ] `saveRefreshToken(token: string): Promise<void>`
-- [ ] Implementar BehaviorSubject para estado de autenticación
+  - [x] `register(data: RegisterRequest): Observable<AuthResponse>` ✅
+  - [x] `login(data: LoginRequest): Observable<AuthResponse>` ✅
+  - [x] `logout(): Promise<void>` ✅
+  - [x] `refreshToken(): Observable<AuthResponse>` ✅
+  - [x] `isAuthenticated(): Promise<boolean>` ✅
+  - [x] `getCurrentUser(): Observable<User | null>` ✅
+  - [x] `getToken(): Promise<string | null>` ✅
+  - [x] `saveToken(token: string): Promise<void>` ✅
+  - [x] `saveRefreshToken(token: string): Promise<void>` ✅
+- [x] Implementar BehaviorSubject para estado de autenticación ✅
   ```typescript
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   ```
 
 ### 3.3 HTTP Interceptor (JWT)
-- [ ] Crear `core/interceptors/auth.interceptor.ts`
+- [x] Crear `core/interceptors/auth.interceptor.ts` ✅
   ```bash
   ionic generate interceptor core/interceptors/auth
   ```
-- [ ] Implementar lógica:
-  - [ ] Agregar token a headers (`Authorization: Bearer ${token}`)
-  - [ ] Excluir rutas públicas (login, register)
-  - [ ] Manejar refresh token automático en caso de 401
-- [ ] Registrar interceptor en `app.config.ts` o `app.module.ts`
+- [x] Implementar lógica: ✅
+  - [x] Agregar token a headers (`Authorization: Bearer ${token}`) ✅
+  - [x] Excluir rutas públicas (login, register) ✅
+  - [x] Manejar refresh token automático en caso de 401 ✅
+- [x] Registrar interceptor en `main.ts` ✅
 
 ### 3.4 Error Interceptor
-- [ ] Crear `core/interceptors/error.interceptor.ts`
-- [ ] Implementar manejo de errores HTTP:
-  - [ ] 400 - Validación
-  - [ ] 401 - No autorizado (logout)
-  - [ ] 403 - Forbidden
-  - [ ] 404 - No encontrado
-  - [ ] 500 - Error de servidor
-- [ ] Mostrar alertas/toasts con mensajes de error
+- [x] Crear `core/interceptors/error.interceptor.ts` ✅
+- [x] Implementar manejo de errores HTTP: ✅
+  - [x] 400 - Validación ✅
+  - [x] 401 - No autorizado (logout) ✅
+  - [x] 403 - Forbidden ✅
+  - [x] 404 - No encontrado ✅
+  - [x] 500 - Error de servidor ✅
+- [x] Mostrar alertas/toasts con mensajes de error ✅
 
 ### 3.5 Auth Guard
-- [ ] Crear `core/guards/auth.guard.ts`
+- [x] Crear `core/guards/auth.guard.ts` ✅
   ```bash
   ionic generate guard core/guards/auth
   ```
-- [ ] Implementar `CanActivate`:
-  - [ ] Verificar si usuario está autenticado
-  - [ ] Redirigir a `/login` si no lo está
-- [ ] Crear `core/guards/role.guard.ts` (opcional)
-  - [ ] Verificar roles específicos (BusinessOwner, Customer)
+- [x] Implementar `CanActivate`: ✅
+  - [x] Verificar si usuario está autenticado ✅
+  - [x] Redirigir a `/login` si no lo está ✅
+- [x] Crear `core/guards/role.guard.ts` ✅
+  - [x] Verificar roles específicos (BusinessOwner, Customer) ✅
 
 ### 3.6 Páginas de Autenticación
-- [ ] Crear módulo auth
+- [x] Crear módulo auth ✅
   ```bash
   ionic generate module features/auth
   ionic generate page features/auth/login
   ionic generate page features/auth/register
   ```
-- [ ] **Login Page**
-  - [ ] Formulario con email y password
-  - [ ] Validaciones (ReactiveFormsModule)
-  - [ ] Botón "Iniciar Sesión"
-  - [ ] Link a "Registrarse"
+- [x] **Login Page** ✅
+  - [x] Formulario con email y password ✅
+  - [x] Validaciones (ReactiveFormsModule) ✅
+  - [x] Botón "Iniciar Sesión" ✅
+  - [x] Link a "Registrarse" ✅
   - [ ] Link "¿Olvidaste tu contraseña?" (opcional)
-  - [ ] Loading spinner durante login
-  - [ ] Navegar a `/tabs` después de login exitoso
-- [ ] **Register Page**
-  - [ ] Formulario completo (email, password, confirmPassword, firstName, lastName, phone)
-  - [ ] Validaciones
-  - [ ] Botón "Registrarse"
-  - [ ] Link a "Ya tengo cuenta"
-  - [ ] Navegar a `/tabs` después de registro exitoso
+  - [x] Loading spinner durante login ✅
+  - [x] Navegar a `/home` después de login exitoso ✅
+- [x] **Register Page** ✅
+  - [x] Formulario completo (email, password, confirmPassword, firstName, lastName, phone, role) ✅
+  - [x] Validaciones (incluyendo password matching) ✅
+  - [x] Botón "Registrarse" ✅
+  - [x] Link a "Ya tengo cuenta" ✅
+  - [x] Navegar a `/home` después de registro exitoso ✅
 
 ### 3.7 Configurar Rutas
-- [ ] Configurar rutas en `app-routing.module.ts`
+- [x] Configurar rutas en `app.routes.ts` ✅
   ```typescript
   const routes: Routes = [
-    { path: '', redirectTo: 'tabs', pathMatch: 'full' },
-    { path: 'login', loadChildren: () => import('./features/auth/login/login.module').then(m => m.LoginPageModule) },
-    { path: 'register', loadChildren: () => import('./features/auth/register/register.module').then(m => m.RegisterPageModule) },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', loadComponent: () => import('./features/auth/login/login.page').then(m => m.LoginPage) },
+    { path: 'register', loadComponent: () => import('./features/auth/register/register.page').then(m => m.RegisterPage) },
     { 
-      path: 'tabs', 
-      canActivate: [AuthGuard],
-      loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule) 
+      path: 'home', 
+      canActivate: [authGuard],
+      loadComponent: () => import('./features/home/home.page').then(m => m.HomePage) 
     }
   ];
   ```
+- [x] Implementar guards en rutas protegidas ✅
 
 ---
 
