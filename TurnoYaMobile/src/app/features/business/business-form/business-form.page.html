@@ -1,0 +1,134 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/business/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Editar Negocio' : 'Crear Negocio' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
+    <!-- Nombre del negocio -->
+    <ion-item>
+      <ion-label position="floating">Nombre del Negocio *</ion-label>
+      <ion-input
+        type="text"
+        formControlName="name"
+        placeholder="Mi Negocio">
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="name?.invalid && name?.touched">
+      <p *ngIf="name?.errors?.['required']">El nombre es requerido</p>
+      <p *ngIf="name?.errors?.['minlength']">El nombre debe tener al menos 3 caracteres</p>
+    </div>
+
+    <!-- Descripción -->
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea
+        formControlName="description"
+        rows="3"
+        placeholder="Describe tu negocio...">
+      </ion-textarea>
+    </ion-item>
+
+    <!-- Categoría -->
+    <ion-item>
+      <ion-label position="floating">Categoría *</ion-label>
+      <ion-select formControlName="category" placeholder="Selecciona una categoría">
+        <ion-select-option *ngFor="let category of categories" [value]="category.name">
+          {{ category.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div class="error-message" *ngIf="category?.invalid && category?.touched">
+      <p *ngIf="category?.errors?.['required']">La categoría es requerida</p>
+    </div>
+
+    <!-- Dirección -->
+    <ion-item>
+      <ion-label position="floating">Dirección *</ion-label>
+      <ion-input
+        type="text"
+        formControlName="address"
+        placeholder="Calle 123">
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="address?.invalid && address?.touched">
+      <p *ngIf="address?.errors?.['required']">La dirección es requerida</p>
+    </div>
+
+    <!-- Ciudad -->
+    <ion-item>
+      <ion-label position="floating">Ciudad *</ion-label>
+      <ion-input
+        type="text"
+        formControlName="city"
+        placeholder="Bogotá">
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="city?.invalid && city?.touched">
+      <p *ngIf="city?.errors?.['required']">La ciudad es requerida</p>
+    </div>
+
+    <!-- Departamento -->
+    <ion-item>
+      <ion-label position="floating">Departamento *</ion-label>
+      <ion-input
+        type="text"
+        formControlName="department"
+        placeholder="Cundinamarca">
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="department?.invalid && department?.touched">
+      <p *ngIf="department?.errors?.['required']">El departamento es requerido</p>
+    </div>
+
+    <!-- Teléfono -->
+    <ion-item>
+      <ion-label position="floating">Teléfono *</ion-label>
+      <ion-input
+        type="tel"
+        formControlName="phone"
+        placeholder="1234567890">
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="phone?.invalid && phone?.touched">
+      <p *ngIf="phone?.errors?.['required']">El teléfono es requerido</p>
+      <p *ngIf="phone?.errors?.['pattern']">Ingresa un teléfono válido (10-15 dígitos)</p>
+    </div>
+
+    <!-- Email -->
+    <ion-item>
+      <ion-label position="floating">Email *</ion-label>
+      <ion-input
+        type="email"
+        formControlName="email"
+        placeholder="negocio@email.com">
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="email?.invalid && email?.touched">
+      <p *ngIf="email?.errors?.['required']">El email es requerido</p>
+      <p *ngIf="email?.errors?.['email']">Ingresa un email válido</p>
+    </div>
+
+    <!-- Botones -->
+    <div class="form-actions ion-margin-top">
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="businessForm.invalid">
+        {{ isEditMode ? 'Actualizar Negocio' : 'Crear Negocio' }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="medium"
+        routerLink="/business/list">
+        Cancelar
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

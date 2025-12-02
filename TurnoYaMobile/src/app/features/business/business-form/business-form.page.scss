@@ -1,0 +1,22 @@
+ion-item {
+  --padding-start: 0;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0.5rem 0.5rem;
+
+  p {
+    margin: 0.25rem 0;
+  }
+}
+
+.form-actions {
+  margin-top: 2rem;
+
+  ion-button {
+    margin-bottom: 0.5rem;
+  }
+}

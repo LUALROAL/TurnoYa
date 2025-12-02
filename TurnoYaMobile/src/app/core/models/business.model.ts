@@ -2,20 +2,32 @@ export interface Business {
   id: string;
   name: string;
   description?: string;
-  address?: string;
+  category: string;  // String simple, no objeto
+  address: string;
+  city: string;
+  department: string;
   phone?: string;
   email?: string;
-  logoUrl?: string;
-  coverImageUrl?: string;
-  rating?: number;
-  totalReviews?: number;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
+  averageRating: number;
+  totalReviews: number;
+  isActive: boolean;
+  createdAt: string;
   ownerId: string;
-  categoryId: string;
-  category?: Category;
-  workingHours?: WorkingHours;
-  services?: Service[];
-  createdAt?: string;
-  updatedAt?: string;
+  ownerName: string;
+}
+
+export interface BusinessDetail extends Business {
+  owner: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  services: Service[];
+  employees: Employee[];
 }
 
 export interface Category {
@@ -36,38 +48,46 @@ export interface Service {
   isActive: boolean;
 }
 
-export interface WorkingHours {
-  monday?: DaySchedule;
-  tuesday?: DaySchedule;
-  wednesday?: DaySchedule;
-  thursday?: DaySchedule;
-  friday?: DaySchedule;
-  saturday?: DaySchedule;
-  sunday?: DaySchedule;
+export interface Employee {
+  id: string;
+  businessId: string;
+  userId: string;
+  role: string;
+  isActive: boolean;
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
-export interface DaySchedule {
-  isOpen: boolean;
-  openTime: string;  // "09:00"
-  closeTime: string; // "18:00"
-}
-
+// DTOs para crear/actualizar
 export interface CreateBusinessDto {
   name: string;
   description?: string;
-  address?: string;
+  category: string;
+  address: string;
+  city: string;
+  department: string;
   phone?: string;
   email?: string;
-  categoryId: string;
-  workingHours?: WorkingHours;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface UpdateBusinessDto {
   name?: string;
   description?: string;
+  category?: string;
   address?: string;
+  city?: string;
+  department?: string;
   phone?: string;
   email?: string;
-  categoryId?: string;
-  workingHours?: WorkingHours;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
+  isActive?: boolean;
 }

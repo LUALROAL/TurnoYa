@@ -270,10 +270,10 @@
 
 ---
 
-## Fase 4: Módulo de Negocios
+## Fase 4: Módulo de Negocios ✅
 
 ### 4.1 Modelos de Negocio
-- [ ] Crear `core/models/business.model.ts`
+- [x] Crear `core/models/business.model.ts` ✅
   ```typescript
   export interface Business {
     id: string;
@@ -321,50 +321,54 @@
   ```
 
 ### 4.2 Business Service
-- [ ] Crear `core/services/business.service.ts`
+- [x] Crear `core/services/business.service.ts` ✅
   ```bash
   ionic generate service core/services/business
   ```
-- [ ] Implementar métodos:
-  - [ ] `getAll(filters?): Observable<Business[]>`
-  - [ ] `getById(id: string): Observable<Business>`
-  - [ ] `getMyBusinesses(): Observable<Business[]>` (para owners)
-  - [ ] `create(data: CreateBusinessDto): Observable<Business>`
-  - [ ] `update(id: string, data: UpdateBusinessDto): Observable<Business>`
-  - [ ] `delete(id: string): Observable<void>`
-  - [ ] `getServices(businessId: string): Observable<Service[]>`
+- [x] Implementar métodos: ✅
+  - [x] `getBusinesses(pageNumber, pageSize, search?, categoryId?): Observable<PaginatedResponse<Business>>` ✅
+  - [x] `getBusinessById(id: string): Observable<ApiResponse<Business>>` ✅
+  - [x] `getMyBusinesses(): Observable<ApiResponse<Business[]>>` ✅
+  - [x] `createBusiness(data: CreateBusinessDto): Observable<ApiResponse<Business>>` ✅
+  - [x] `updateBusiness(id: string, data: UpdateBusinessDto): Observable<ApiResponse<Business>>` ✅
+  - [x] `deleteBusiness(id: string): Observable<ApiResponse<void>>` ✅
+  - [x] `getCategories(): Observable<ApiResponse<Category[]>>` ✅
+  - [x] `searchByLocation(lat, lng, radiusKm): Observable<ApiResponse<Business[]>>` ✅
 
 ### 4.3 Páginas de Negocios
-- [ ] Crear páginas
+- [x] Crear páginas ✅
   ```bash
-  ionic generate page features/business/list
-  ionic generate page features/business/detail
-  ionic generate page features/business/create
+  ionic generate page features/business/business-list --standalone
+  ionic generate page features/business/business-detail --standalone
+  ionic generate page features/business/business-form --standalone
   ```
-- [ ] **Business List Page**
-  - [ ] Lista de negocios (ion-list + ion-item)
-  - [ ] Búsqueda por nombre
-  - [ ] Filtros por categoría
-  - [ ] Card con imagen, nombre, rating, dirección
-  - [ ] Click → navegar a detalle
-  - [ ] Pull-to-refresh
-  - [ ] Infinite scroll (paginación)
-- [ ] **Business Detail Page**
-  - [ ] Header con imagen de portada
-  - [ ] Información del negocio
-  - [ ] Lista de servicios con precios
-  - [ ] Botón "Agendar Cita"
-  - [ ] Horarios de atención
-  - [ ] Mapa de ubicación (opcional)
-  - [ ] Reseñas (después)
-- [ ] **Business Create/Edit Page** (solo para BusinessOwner)
-  - [ ] Formulario completo
-  - [ ] Upload de logo y portada (Capacitor Camera)
-  - [ ] Configurar horarios
-  - [ ] Agregar servicios
+- [x] **Business List Page** ✅
+  - [x] Lista de negocios (ion-card) ✅
+  - [x] Búsqueda por nombre con debounce ✅
+  - [x] Card con nombre, categoría, dirección, teléfono ✅
+  - [x] Click → navegar a detalle ✅
+  - [x] Pull-to-refresh ✅
+  - [x] Infinite scroll (paginación) ✅
+  - [x] FAB para crear negocio ✅
+- [x] **Business Detail Page** ✅
+  - [x] Información completa del negocio ✅
+  - [x] Información de contacto (dirección, teléfono, email) ✅
+  - [x] Lista de servicios con precios y duración ✅
+  - [x] Botón "Agendar Cita" ✅
+  - [x] Horarios de atención por día ✅
+  - [x] Acciones de propietario (editar, eliminar) con guards ✅
+- [x] **Business Form Page** ✅
+  - [x] Formulario completo (nombre, descripción, categoría, dirección, teléfono, email) ✅
+  - [x] Validaciones ReactiveFormsModule ✅
+  - [x] Modo crear y editar (según ruta) ✅
+  - [x] Carga de categorías desde backend ✅
+  - [x] Integración con BusinessService ✅
+  - [ ] Upload de logo y portada (Capacitor Camera) - futuro
+  - [ ] Configurar horarios avanzados - futuro
+  - [ ] Agregar servicios inline - futuro
 
 ### 4.4 Componentes Compartidos de Negocio
-- [ ] Crear `shared/components/business-card/business-card.component.ts`
+- [ ] Crear `shared/components/business-card/business-card.component.ts` - opcional/futuro
   - [ ] Input: Business
   - [ ] Output: Click event
   - [ ] Mostrar thumbnail, nombre, rating, ubicación

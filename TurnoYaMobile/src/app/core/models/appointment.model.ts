@@ -1,4 +1,4 @@
-import { Business, Service } from './business.model';
+import { Business, Service, Employee } from './business.model';
 import { User } from './user.model';
 
 export interface Appointment {
@@ -34,15 +34,6 @@ export enum PaymentStatus {
   Paid = 'Paid',
   Failed = 'Failed',
   Refunded = 'Refunded'
-}
-
-export interface Employee {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  businessId: string;
 }
 
 export interface CreateAppointmentDto {

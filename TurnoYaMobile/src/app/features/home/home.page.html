@@ -6,28 +6,86 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="home-container">
+    <!-- Información del Usuario -->
     <ion-card>
       <ion-card-header>
         <ion-card-title>¡Bienvenido a TurnoYa!</ion-card-title>
       </ion-card-header>
 
       <ion-card-content>
-        <div *ngIf="currentUser">
-          <p><strong>Usuario:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
-          <p><strong>Email:</strong> {{ currentUser.email }}</p>
-          <p><strong>Rol:</strong> {{ currentUser.role }}</p>
-        </div>
-
-        <ion-button expand="block" color="danger" (click)="logout()" class="ion-margin-top">
-          Cerrar Sesión
-        </ion-button>
+        @if (currentUser) {
+          <div>
+            <p><strong>Usuario:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+            <p><strong>Email:</strong> {{ currentUser.email }}</p>
+            <p><strong>Rol:</strong> {{ currentUser.role }}</p>
+          </div>
+        }
       </ion-card-content>
     </ion-card>
 
-    <div class="info-section ion-margin-top">
-      <p class="ion-text-center">
-        Esta es la página de inicio de TurnoYa. Aquí podrás gestionar tus citas y turnos.
-      </p>
+    <!-- Navegación a Módulos -->
+    <div class="modules-section ion-margin-top">
+      <h2>Módulos Disponibles</h2>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-card button (click)="navigateTo('/business/list')">
+              <ion-card-header>
+                <ion-icon name="business-outline" size="large" color="primary"></ion-icon>
+                <ion-card-title>Negocios</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Busca y explora negocios disponibles para agendar citas
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-card button disabled>
+              <ion-card-header>
+                <ion-icon name="calendar-outline" size="large" color="medium"></ion-icon>
+                <ion-card-title>Mis Citas</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Gestiona tus citas agendadas (Próximamente)
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-card button disabled>
+              <ion-card-header>
+                <ion-icon name="person-outline" size="large" color="medium"></ion-icon>
+                <ion-card-title>Mi Perfil</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Actualiza tu información personal (Próximamente)
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-card button disabled>
+              <ion-card-header>
+                <ion-icon name="card-outline" size="large" color="medium"></ion-icon>
+                <ion-card-title>Pagos</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Administra tus métodos de pago (Próximamente)
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </div>
+
+    <!-- Botón de Cerrar Sesión -->
+    <ion-button expand="block" color="danger" (click)="logout()" class="ion-margin-top">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Cerrar Sesión
+    </ion-button>
   </div>
 </ion-content>

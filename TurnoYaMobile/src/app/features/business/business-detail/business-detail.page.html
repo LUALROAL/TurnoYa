@@ -1,0 +1,105 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/business/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle del Negocio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Detalle del negocio -->
+  <div *ngIf="!isLoading && business" class="business-detail ion-padding">
+    <!-- Información principal -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ business.name }}</ion-card-title>
+        <p *ngIf="business.category" class="category">{{ business.category }}</p>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p *ngIf="business.description" class="description">{{ business.description }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información de contacto -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Información de Contacto</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list [inset]="true">
+          <ion-item *ngIf="business.address">
+            <ion-icon name="location-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Dirección</h3>
+              <p>{{ business.address }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="business.phone">
+            <ion-icon name="call-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Teléfono</h3>
+              <p>{{ business.phone }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="business.email">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Email</h3>
+              <p>{{ business.email }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Servicios -->
+    <ion-card *ngIf="business.services && business.services.length > 0">
+      <ion-card-header>
+        <ion-card-title>Servicios</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list [inset]="true">
+          <ion-item *ngFor="let service of business.services">
+            <ion-label>
+              <h3>{{ service.name }}</h3>
+              <p *ngIf="service.description">{{ service.description }}</p>
+              <p class="price">${{ service.price }} - {{ service.duration }} min</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Acciones -->
+    <div class="actions ion-padding">
+      <ion-button expand="block" (click)="bookAppointment()">
+        Agendar Cita
+      </ion-button>
+
+      <!-- Acciones de propietario -->
+      <div *ngIf="isOwner" class="owner-actions">
+        <ion-button expand="block" fill="outline" (click)="editBusiness()">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Editar Negocio
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" color="danger" (click)="deleteBusiness()">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Eliminar Negocio
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

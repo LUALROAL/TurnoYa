@@ -10,8 +10,20 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
-  IonButton
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  businessOutline,
+  calendarOutline,
+  personOutline,
+  cardOutline,
+  logOutOutline
+} from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../core/models';
 
@@ -30,7 +42,11 @@ import { User } from '../../core/models';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    IonButton
+    IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon
   ]
 })
 export class HomePage implements OnInit {
@@ -39,12 +55,24 @@ export class HomePage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {
+    addIcons({
+      businessOutline,
+      calendarOutline,
+      personOutline,
+      cardOutline,
+      logOutOutline
+    });
+  }
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
+  }
+
+  navigateTo(route: string) {
+    this.router.navigate([route]);
   }
 
   async logout() {
