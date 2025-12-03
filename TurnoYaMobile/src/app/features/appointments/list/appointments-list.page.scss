@@ -1,20 +1,122 @@
+.appointments-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 50vh;
+  gap: 16px;
 
   ion-spinner {
-    margin-bottom: 1rem;
+    width: 48px;
+    height: 48px;
   }
 
   p {
     color: var(--ion-color-medium);
+    font-size: 16px;
   }
 }
 
 .empty-state {
-  margin-top: 3rem;
-  color: var(--ion-color-medium);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  min-height: 300px;
+  
+  ion-icon {
+    font-size: 80px;
+    color: var(--ion-color-medium);
+    opacity: 0.5;
+    margin-bottom: 24px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+  }
+}
+
+ion-segment {
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  border-radius: 12px;
+  padding: 4px;
+  
+  ion-segment-button {
+    --indicator-color: var(--ion-color-primary);
+    --color-checked: white;
+    --border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    min-height: 36px;
+  }
+}
+
+ion-list {
+  ion-item {
+    --background: var(--ion-card-background);
+    --border-radius: 12px;
+    --padding-start: 16px;
+    --inner-padding-end: 16px;
+    --min-height: 80px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60%;
+      background: var(--ion-color-primary);
+      border-radius: 0 4px 4px 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    &:hover::before {
+      opacity: 1;
+    }
+    
+    ion-label {
+      h2 {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--ion-text-color);
+        margin-bottom: 6px;
+      }
+      
+      p {
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        margin: 3px 0;
+        
+        &:first-of-type {
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  ion-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    
+    ion-item {
+      margin: 0;
+    }
+  }
 }

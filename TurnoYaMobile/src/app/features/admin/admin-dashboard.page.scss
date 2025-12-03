@@ -1,3 +1,129 @@
+.admin-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  
+  ion-card {
+    margin: 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+    }
+    
+    ion-card-header {
+      ion-icon {
+        font-size: 48px;
+        color: var(--ion-color-primary);
+        margin-bottom: 8px;
+      }
+      
+      ion-card-title {
+        font-size: 32px;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      ion-card-subtitle {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+    }
+  }
+}
+
 .role-card {
   margin-bottom: 16px;
+  
+  ion-card-header {
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      ion-icon {
+        font-size: 24px;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+  
+  ion-list {
+    ion-item {
+      --padding-start: 16px;
+      --inner-padding-end: 16px;
+      --min-height: 60px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      
+      ion-label {
+        h3 {
+          font-weight: 600;
+          font-size: 15px;
+        }
+        
+        p {
+          font-size: 13px;
+          color: var(--ion-color-medium);
+        }
+      }
+      
+      ion-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        height: 32px;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+.search-container {
+  margin-bottom: 24px;
+  
+  ion-searchbar {
+    --border-radius: 16px;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  gap: 16px;
+  
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+  }
 }

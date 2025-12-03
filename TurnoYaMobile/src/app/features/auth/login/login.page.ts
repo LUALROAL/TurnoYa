@@ -16,6 +16,7 @@ import {
   IonInput,
   IonButton,
   IonText,
+  IonIcon,
   LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
@@ -32,18 +33,7 @@ import { LoginRequest } from '../../../core/models';
     ReactiveFormsModule,
     RouterLink,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonButton,
-    IonText
+    IonIcon
   ]
 })
 export class LoginPage implements OnInit {

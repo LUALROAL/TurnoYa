@@ -1,20 +1,325 @@
 .business-container {
-  min-height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 80px;
 }
 
+// Header
+ion-header {
+  ion-toolbar {
+    &:first-child {
+      --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+      --color: white;
+
+      ion-title {
+        font-weight: 700;
+        font-size: 20px;
+      }
+
+      ion-back-button {
+        --color: white;
+      }
+    }
+  }
+}
+
+// Searchbar
+ion-searchbar {
+  --background: rgba(255, 255, 255, 0.9);
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --placeholder-color: var(--ion-color-medium);
+  --icon-color: var(--ion-color-primary);
+  padding: 8px 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-searchbar {
+    --background: rgba(51, 65, 85, 0.8);
+    --color: #F1F5F9;
+    --placeholder-color: rgba(156, 163, 175, 0.8);
+  }
+}
+
+// Filtro de categorías
 .filter-container {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--ion-background-color);
 
   ion-chip {
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-weight: 600;
+    height: 36px;
+    animation: fadeIn 0.3s ease-out;
     cursor: pointer;
+
+    ion-icon {
+      color: white;
+      opacity: 0.9;
+      margin-left: 4px;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
   }
 
   ion-select {
     flex: 1;
-    max-width: 300px;
+    min-width: 0;
+    max-width: 100%;
+    --placeholder-color: #6B7280;
+    --placeholder-opacity: 1;
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ion-text-color);
+    border: none;
+
+    &::part(container) {
+      border: none;
+    }
+
+    &::part(text) {
+      color: var(--ion-text-color);
+      font-weight: 500;
+    }
+
+    &::part(icon) {
+      color: var(--ion-color-primary);
+      opacity: 1;
+      font-size: 18px;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .filter-container {
+    background: rgba(15, 23, 42, 0.5);
+
+    ion-select {
+      background: rgba(96, 165, 250, 0.15);
+      color: #F1F5F9;
+      --placeholder-color: rgba(156, 163, 175, 0.9);
+
+      &::part(text) {
+        color: #F1F5F9;
+      }
+    }
+  }
+}
+
+// Estilos del popover del select
+ion-popover {
+  --background: white;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --border-radius: 12px;
+  --width: auto;
+  --min-width: 240px;
+  --max-width: 320px;
+
+  &::part(content) {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  ion-list {
+    padding: 4px;
+    background: transparent;
+    margin: 0;
+  }
+
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 44px;
+    --background: transparent;
+    --border-color: transparent;
+    --inner-border-width: 0;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      --background: rgba(59, 130, 246, 0.06);
+    }
+
+    &.item-radio-checked {
+      --background: transparent;
+      --color: var(--ion-color-primary);
+      font-weight: 500;
+
+      ion-label {
+        color: var(--ion-color-primary);
+        font-weight: 500;
+      }
+
+      ion-radio {
+        --color-checked: var(--ion-color-primary);
+      }
+    }
+
+    ion-label {
+      margin: 0;
+      font-size: 15px;
+      color: var(--ion-text-color);
+      font-weight: 400;
+    }
+
+    ion-radio {
+      margin-inline-end: 12px;
+      --color: transparent;
+      --color-checked: var(--ion-color-primary);
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-popover {
+    --background: #1E293B;
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+    ion-item {
+      ion-label {
+        color: #F1F5F9;
+      }
+
+      &:hover {
+        --background: rgba(96, 165, 250, 0.1);
+      }
+
+      &.item-radio-checked {
+        --background: transparent;
+
+        ion-label {
+          color: var(--ion-color-primary);
+        }
+      }
+    }
+  }
+}
+
+// Cards de negocios
+ion-card {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  margin: 16px 0;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+
+  ion-card-header {
+    padding-bottom: 8px;
+
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ion-text-color);
+      letter-spacing: -0.3px;
+    }
+
+    ion-card-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ion-color-medium);
+      font-size: 14px;
+      font-weight: 600;
+
+      ion-icon {
+        font-size: 16px;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+
+  ion-card-content {
+    p {
+      color: var(--ion-color-medium);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(30, 41, 59, 0.8);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.business-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ion-text-color);
+
+    ion-icon {
+      font-size: 18px;
+      color: var(--ion-color-primary);
+      flex-shrink: 0;
+    }
+
+    span {
+      line-height: 1.4;
+    }
   }
 }
 
@@ -23,45 +328,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vh;
+  min-height: 300px;
+  gap: 16px;
 
   ion-spinner {
-    margin-bottom: 1rem;
+    width: 48px;
+    height: 48px;
+    --color: var(--ion-color-primary);
   }
 
   p {
     color: var(--ion-color-medium);
-  }
-}
-
-ion-list {
-  background: transparent;
-}
-
-ion-card {
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.business-info {
-  margin-top: 0.5rem;
-
-  .info-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-    font-size: 0.875rem;
-    color: var(--ion-color-medium);
-
-    ion-icon {
-      font-size: 1rem;
-    }
+    font-size: 16px;
+    font-weight: 500;
   }
 }
 
@@ -70,20 +349,60 @@ ion-card {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vh;
-  padding: 2rem;
+  padding: 60px 24px;
+  min-height: 300px;
 
   ion-icon {
+    font-size: 80px;
     color: var(--ion-color-medium);
-    margin-bottom: 1rem;
+    opacity: 0.5;
+    margin-bottom: 24px;
   }
 
   h3 {
-    color: var(--ion-color-dark);
-    margin-bottom: 0.5rem;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ion-text-color);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
   }
 
   p {
+    font-size: 16px;
     color: var(--ion-color-medium);
+    max-width: 300px;
+    text-align: center;
+    line-height: 1.5;
+  }
+}
+
+// Responsive grid
+@media (min-width: 768px) {
+  ion-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+
+    ion-card {
+      margin: 0;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  ion-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

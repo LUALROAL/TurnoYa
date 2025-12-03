@@ -1,53 +1,300 @@
+.login-content {
+  --background: var(--ion-background-color);
+}
+
 .login-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100%;
-  padding: 1rem;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .logo-section {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 48px;
+  animation: fadeIn 0.8s ease-out;
+  width: 100%;
+
+  .logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3B82F6 0%, #22D3EE 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+    animation: scaleIn 0.6s ease-out 0.2s both;
+
+    ion-icon {
+      font-size: 40px;
+      color: white;
+    }
+  }
 
   h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: var(--ion-color-primary);
-    margin-bottom: 0.5rem;
+    font-size: 52px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -2px;
   }
 
-  p {
+  .subtitle {
     color: var(--ion-color-medium);
-    font-size: 1rem;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.9;
   }
 }
 
-ion-card {
-  margin: 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+@media (prefers-color-scheme: dark) {
+  .logo-section .logo-circle {
+    box-shadow: 0 8px 40px rgba(96, 165, 250, 0.6);
+  }
 }
 
-ion-item {
-  --padding-start: 0;
-  margin-bottom: 1rem;
+.login-card {
+  width: 100%;
+  background: var(--ion-card-background);
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+  animation: slideUp 0.6s ease-out 0.3s both;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 32px;
+
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ion-text-color);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+    }
+
+    p {
+      color: var(--ion-color-medium);
+      font-size: 15px;
+      margin: 0;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(96, 165, 250, 0.2);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+  }
+}
+
+.login-form {
+  .input-group {
+    margin-bottom: 24px;
+
+    .input-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        font-size: 20px;
+        color: var(--ion-color-primary);
+        z-index: 1;
+        pointer-events: none;
+        display: none; // Ocultamos los iconos
+      }
+
+      .custom-input {
+        width: 100%;
+        height: 52px;
+        padding: 0 16px;
+        border: 2px solid var(--ion-border-color);
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--ion-text-color);
+        background: var(--ion-color-light);
+        transition: all 0.3s ease;
+
+        &::placeholder {
+          color: var(--ion-color-medium);
+          opacity: 0.6;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--ion-color-primary);
+          background: var(--ion-card-background);
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-form {
+    .input-group .input-wrapper .custom-input {
+      background: rgba(51, 65, 85, 0.5);
+      border-color: rgba(96, 165, 250, 0.3);
+      color: var(--ion-text-color);
+
+      &:focus {
+        background: rgba(51, 65, 85, 0.8);
+        border-color: var(--ion-color-primary);
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+      }
+    }
+  }
 }
 
 .error-message {
-  font-size: 0.875rem;
-  margin: 0.25rem 0 0 0.5rem;
+  margin-top: 8px;
+  padding-left: 4px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ion-color-danger);
+    font-size: 13px;
+    font-weight: 600;
+
+    &::before {
+      content: '⚠';
+      font-size: 14px;
+    }
+  }
+}
+
+.login-button {
+  width: 100%;
+  height: 56px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  ion-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(59, 130, 246, 0.5);
+
+    ion-icon {
+      transform: translateX(4px);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-button {
+    background: linear-gradient(135deg, #60A5FA 0%, #22D3EE 100%);
+    box-shadow: 0 4px 24px rgba(96, 165, 250, 0.5);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 32px rgba(96, 165, 250, 0.6);
+    }
+  }
 }
 
 .register-link {
-  margin-top: 1.5rem;
+  margin-top: 32px;
+  text-align: center;
 
-  a {
+  p {
+    color: var(--ion-color-medium);
+    font-size: 15px;
+    margin: 0;
+  }
+
+  .link-text {
     color: var(--ion-color-primary);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 700;
+    transition: all 0.3s ease;
 
     &:hover {
+      color: var(--ion-color-secondary);
       text-decoration: underline;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

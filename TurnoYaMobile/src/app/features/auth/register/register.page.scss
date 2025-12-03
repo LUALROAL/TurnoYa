@@ -1,52 +1,169 @@
 .register-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 100%;
-  padding: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-top: 24px;
 }
 
 .logo-section {
   text-align: center;
-  margin-bottom: 2rem;
-
+  margin-bottom: 32px;
+  
   h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: var(--ion-color-primary);
-    margin-bottom: 0.5rem;
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
   }
-
+  
   p {
     color: var(--ion-color-medium);
-    font-size: 1rem;
+    font-size: 15px;
+    margin: 0;
+    font-weight: 500;
   }
 }
 
 ion-card {
-  margin: 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  
+  ion-card-header {
+    padding: 24px 24px 16px;
+    
+    ion-card-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+  }
+  
+  ion-card-content {
+    padding: 0 24px 24px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
 }
 
 ion-item {
   --padding-start: 0;
-  margin-bottom: 1rem;
+  --inner-padding-end: 0;
+  --background: transparent;
+  --border-color: transparent;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  
+  ion-label {
+    position: relative !important;
+    transform: none !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: var(--ion-text-color) !important;
+    opacity: 1 !important;
+    letter-spacing: 0.3px;
+  }
+  
+  ion-input {
+    --background: var(--ion-color-light);
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --color: var(--ion-text-color) !important;
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 0.6;
+    border: 2px solid var(--ion-border-color);
+    border-radius: 12px;
+    font-size: 15px;
+    min-height: 52px;
+    transition: all 0.3s ease;
+    
+    &.ion-focused,
+    &:focus-within {
+      border-color: var(--ion-color-primary) !important;
+      --background: var(--ion-card-background);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-item {
+    ion-label {
+      color: #F1F5F9 !important;
+    }
+    
+    ion-input {
+      --background: rgba(51, 65, 85, 0.5);
+      border-color: rgba(96, 165, 250, 0.3);
+      --color: #F1F5F9 !important;
+      --placeholder-color: rgba(156, 163, 175, 0.8);
+      
+      &.ion-focused,
+      &:focus-within {
+        --background: rgba(51, 65, 85, 0.8);
+        border-color: var(--ion-color-primary) !important;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+      }
+    }
+  }
 }
 
 .error-message {
-  font-size: 0.875rem;
-  margin: 0.25rem 0 0 0.5rem;
+  margin-top: -16px;
+  margin-bottom: 8px;
+  padding-left: 4px;
+  color: var(--ion-color-danger);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    content: '⚠';
+    font-size: 14px;
+  }
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+ion-button {
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 16px;
+  font-size: 16px;
 }
 
 .login-link {
-  margin-top: 1.5rem;
-
+  text-align: center;
+  margin-top: 24px;
+  color: var(--ion-color-medium);
+  font-size: 14px;
+  
   a {
     color: var(--ion-color-primary);
     text-decoration: none;
-    font-weight: 500;
-
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
     &:hover {
+      color: var(--ion-color-primary-shade);
       text-decoration: underline;
     }
   }
