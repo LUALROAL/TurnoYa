@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/business/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Agendar Cita</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+    <!-- Servicio -->
+    <ion-item>
+      <ion-label position="floating">Servicio *</ion-label>
+      <ion-select formControlName="serviceId" placeholder="Selecciona un servicio">
+        @for (service of services; track service.id) {
+          <ion-select-option [value]="service.id">
+            {{ service.name }} - ${{ service.price }}
+          </ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <!-- Fecha y Hora -->
+    <ion-item>
+      <ion-label position="floating">Fecha y Hora *</ion-label>
+      <ion-datetime
+        formControlName="startDate"
+        presentation="date-time"
+        min="{{ today }}"
+      ></ion-datetime>
+    </ion-item>
+
+    <!-- Notas opcionales -->
+    <ion-item>
+      <ion-label position="floating">Notas (opcional)</ion-label>
+      <ion-textarea
+        formControlName="notes"
+        rows="3"
+        placeholder="Agrega cualquier información adicional...">
+      </ion-textarea>
+    </ion-item>
+
+    <!-- Botón Crear -->
+    <ion-button
+      expand="block"
+      type="submit"
+      [disabled]="appointmentForm.invalid"
+      class="ion-margin-top">
+      Confirmar Cita
+    </ion-button>
+  </form>
+</ion-content>

@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Mis Citas</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="status" (ionChange)="onStatusChange($event)" value="Upcoming">
+      <ion-segment-button value="Upcoming">
+        <ion-label>Próximas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Completed">
+        <ion-label>Completadas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Cancelled">
+        <ion-label>Canceladas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando citas...</p>
+    </div>
+  }
+
+  @if (!isLoading && appointments.length > 0) {
+    <ion-list>
+      @for (appointment of appointments; track appointment.id) {
+        <ion-item button (click)="viewDetail(appointment.id)">
+          <ion-label>
+            <h2>{{ appointment.service?.name || 'Servicio' }}</h2>
+            <p>{{ appointment.business?.name || 'Negocio' }}</p>
+            <p>{{ appointment.startDate | date:'short' }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  @if (!isLoading && appointments.length === 0) {
+    <div class="empty-state ion-text-center">
+      <p>No hay citas {{ status === 'Upcoming' ? 'próximas' : status === 'Completed' ? 'completadas' : 'canceladas' }}</p>
+    </div>
+  }
+</ion-content>

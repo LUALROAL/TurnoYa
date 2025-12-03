@@ -40,4 +40,19 @@ export const routes: Routes = [
     loadComponent: () => import('./features/business/business-form/business-form.page').then(m => m.BusinessFormPage),
     canActivate: [authGuard]
   },
+  {
+    path: 'appointments/list',
+    loadComponent: () => import('./features/appointments/list/appointments-list.page').then(m => m.AppointmentsListPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'appointments/detail/:id',
+    loadComponent: () => import('./features/appointments/detail/appointment-detail.page').then(m => m.AppointmentDetailPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'appointments/create',
+    loadComponent: () => import('./features/appointments/create/appointment-create.page').then(m => m.AppointmentCreatePage),
+    canActivate: [authGuard]
+  },
 ];

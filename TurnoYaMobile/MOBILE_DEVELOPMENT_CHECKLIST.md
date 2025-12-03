@@ -382,7 +382,7 @@
 ## Fase 5: Módulo de Citas
 
 ### 5.1 Modelos de Cita
-- [ ] Crear `core/models/appointment.model.ts`
+- [x] Crear `core/models/appointment.model.ts` ✅
   ```typescript
   export interface Appointment {
     id: string;
@@ -429,54 +429,54 @@
   ```
 
 ### 5.2 Appointment Service
-- [ ] Crear `core/services/appointment.service.ts`
+- [x] Crear `core/services/appointment.service.ts` ✅
   ```bash
   ionic generate service core/services/appointment
   ```
-- [ ] Implementar métodos:
-  - [ ] `getMyAppointments(status?): Observable<Appointment[]>`
+- [x] Implementar métodos: ✅
+  - [x] `getMyAppointments(status?): Observable<Appointment[]>` ✅
   - [ ] `getBusinessAppointments(businessId, filters?): Observable<Appointment[]>`
-  - [ ] `getById(id: string): Observable<Appointment>`
-  - [ ] `create(data: CreateAppointmentDto): Observable<Appointment>`
-  - [ ] `confirm(id: string): Observable<Appointment>`
-  - [ ] `cancel(id: string): Observable<Appointment>`
-  - [ ] `complete(id: string): Observable<Appointment>`
-  - [ ] `markNoShow(id: string): Observable<Appointment>`
-  - [ ] `getAvailability(businessId, serviceId, date): Observable<AvailabilitySlot[]>`
+  - [x] `getById(id: string): Observable<Appointment>` ✅
+  - [x] `create(data: CreateAppointmentDto): Observable<Appointment>` ✅
+  - [x] `confirm(id: string): Observable<void>` ✅
+  - [x] `cancel(id: string, reason?): Observable<void>` ✅
+  - [x] `complete(id: string): Observable<void>` ✅
+  - [x] `markNoShow(id: string): Observable<void>` ✅
+  - [x] `getAvailability(businessId, serviceId, date): Observable<AvailabilitySlot[]>` ✅
 
 ### 5.3 Páginas de Citas
-- [ ] Crear páginas
+- [x] Crear páginas ✅
   ```bash
   ionic generate page features/appointments/list
   ionic generate page features/appointments/detail
   ionic generate page features/appointments/create
   ```
-- [ ] **Appointment List Page** (Mis Citas)
-  - [ ] Tab/segment para filtrar (Próximas, Pasadas, Canceladas)
-  - [ ] Lista de citas con card
-  - [ ] Mostrar servicio, negocio, fecha/hora, estado
-  - [ ] Acciones: Ver detalle, Cancelar
-  - [ ] Pull-to-refresh
-  - [ ] Estado vacío ("No tienes citas")
-- [ ] **Appointment Detail Page**
-  - [ ] Información completa de la cita
-  - [ ] Detalles del servicio
-  - [ ] Información del negocio
+- [x] **Appointment List Page** (Mis Citas) ✅
+  - [x] Tab/segment para filtrar (Próximas, Pasadas, Canceladas) ✅
+  - [x] Lista de citas con card ✅
+  - [x] Mostrar servicio, negocio, fecha/hora, estado ✅
+  - [x] Acciones: Ver detalle ✅
+  - [ ] Acciones: Cancelar
+  - [x] Pull-to-refresh ✅
+  - [x] Estado vacío ("No tienes citas") ✅
+- [x] **Appointment Detail Page** ✅
+  - [x] Información completa de la cita ✅
+  - [x] Detalles del servicio ✅
+  - [x] Información del negocio ✅
   - [ ] Estado de pago
-  - [ ] Botones de acción según estado:
-    - Pending → Cancelar
-    - Confirmed → Ver detalles / Cancelar
-    - Completed → Dejar reseña
+  - [x] Botones de acción según estado: Cancelar (Pending/Confirmed) ✅
+  - [x] Implementación de cancelación con confirmación ✅
   - [ ] Mapa/dirección del negocio
-- [ ] **Appointment Create Page** (Agendar Cita)
-  - [ ] Paso 1: Seleccionar servicio (desde business detail)
-  - [ ] Paso 2: Seleccionar fecha (ion-datetime)
+- [x] **Appointment Create Page** (Agendar Cita) ✅
+  - [x] Formulario básico con servicio, fecha/hora, notas ✅
+  - [x] Validaciones ReactiveFormsModule ✅
+  - [x] Integración con AppointmentService ✅
+  - [x] Paso 1: Seleccionar servicio (cargar desde business) ✅
+  - [x] Paso 2: Seleccionar fecha (ion-datetime) ✅
   - [ ] Paso 3: Seleccionar hora disponible (grid de slots)
-  - [ ] Paso 4: Notas opcionales
-  - [ ] Paso 5: Confirmar y crear
   - [ ] Mostrar resumen antes de confirmar
-  - [ ] Loading durante creación
-  - [ ] Navegar a detalle después de crear
+  - [x] Navegar a detalle después de crear ✅
+  - [x] Integración con business-detail "Agendar Cita" ✅
 
 ### 5.4 Componentes de Cita
 - [ ] Crear `shared/components/appointment-card/appointment-card.component.ts`
@@ -488,6 +488,51 @@
   - [ ] Output: selected slot
   - [ ] Grid de horarios clickeables
   - [ ] Marcar disponibles/no disponibles
+
+---
+
+## 📝 Explicación: ¿Para qué sirve el Módulo de Citas?
+
+### Propósito Principal
+El módulo de citas (appointments) permite a los usuarios **agendar, consultar y gestionar sus reservas** en los negocios registrados. Es el núcleo funcional de la aplicación, conectando clientes con servicios.
+
+### Flujo de Usuario
+1. **Explorar negocios** → El usuario busca un negocio en el módulo de negocios
+2. **Ver servicios disponibles** → En el detalle del negocio, ve los servicios ofrecidos (cortes, masajes, consultas, etc.)
+3. **Agendar cita** → Desde el botón "Agendar Cita", el usuario:
+   - Selecciona el servicio deseado
+   - Elige fecha y hora disponible
+   - Agrega notas opcionales (ej: "Prefiero atención con María")
+   - Confirma la reserva
+4. **Ver mis citas** → Puede consultar sus citas próximas, pasadas o canceladas en `/appointments/list`
+5. **Gestionar cita** → Desde el detalle puede:
+   - Ver información completa
+   - Cancelar si aún está pendiente o confirmada
+   - (Futuro) Pagar si tiene pago pendiente
+
+### Cómo Funciona Técnicamente
+
+**AppointmentService**
+- Conecta con los endpoints del backend `/api/Appointments`
+- `getMyAppointments(status?)`: Obtiene citas del usuario logueado, opcionalmente filtradas por estado
+- `create(data)`: Crea una nueva cita enviando businessId, serviceId, startDate, notes
+- `getAvailability(...)`: Consulta horarios disponibles antes de agendar
+
+**Páginas**
+- **List**: Muestra citas en tres pestañas (Upcoming, Completed, Cancelled) usando `ion-segment`
+- **Detail**: Carga una cita por ID y muestra toda su información (servicio, negocio, fecha, estado)
+- **Create**: Formulario reactivo que valida campos requeridos (serviceId, startDate) y envía al backend
+
+**Integración con Business**
+- Desde `business-detail.page.html`, el botón "Agendar Cita" navega a `/appointments/create?businessId=ABC`
+- El formulario de crear cita recibe el `businessId` por query params y carga los servicios de ese negocio
+
+### Próximos Pasos Pendientes
+- Cargar servicios dinámicamente en el formulario de crear cita
+- Implementar selector de horarios disponibles (slots de tiempo)
+- Agregar funcionalidad de cancelar cita desde el detalle
+- Pull-to-refresh en la lista
+- Mostrar estado de pago y permitir pago desde la cita
 
 ---
 

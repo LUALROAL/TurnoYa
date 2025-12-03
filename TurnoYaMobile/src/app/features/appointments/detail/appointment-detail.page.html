@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/appointments/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de Cita</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando información...</p>
+    </div>
+  }
+
+  @if (!isLoading && appointment) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ appointment.service?.name || 'Servicio' }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Negocio:</strong> {{ appointment.business?.name }}</p>
+        <p><strong>Fecha:</strong> {{ appointment.startDate | date:'full' }}</p>
+        <p><strong>Hora:</strong> {{ appointment.startDate | date:'shortTime' }}</p>
+        <p><strong>Estado:</strong> {{ appointment.status }}</p>
+        @if (appointment.notes) {
+          <p><strong>Notas:</strong> {{ appointment.notes }}</p>
+        }
+      </ion-card-content>
+    </ion-card>
+
+    @if (appointment.status === 'Pending' || appointment.status === 'Confirmed') {
+      <ion-button expand="block" color="danger" class="ion-margin-top" (click)="cancelAppointment()">
+        Cancelar Cita
+      </ion-button>
+    }
+  }
+</ion-content>

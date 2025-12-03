@@ -2,3 +2,4 @@
 export * from './storage.service';
 export * from './auth.service';
 export * from './business.service';
+export * from './appointment.service';
