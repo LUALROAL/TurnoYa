@@ -76,8 +76,23 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'business/:businessId/employees/form',
+    loadComponent: () => import('./features/business/employees/employee-form.page').then(m => m.EmployeeFormPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'business/:businessId/employees/form/:id',
+    loadComponent: () => import('./features/business/employees/employee-form.page').then(m => m.EmployeeFormPage),
+    canActivate: [authGuard]
+  },
+  {
     path: 'appointments/business/:businessId',
     loadComponent: () => import('./features/appointments/business/business-appointments.page').then(m => m.BusinessAppointmentsPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./features/profile/profile.page').then(m => m.ProfilePage),
     canActivate: [authGuard]
   },
 ];

@@ -1,0 +1,67 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  @if (user) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Información Personal</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              <h3>Nombre</h3>
+              <p>{{ user.firstName }} {{ user.lastName }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Email</h3>
+              <p>{{ user.email }}</p>
+            </ion-label>
+          </ion-item>
+          @if (user.phone) {
+            <ion-item>
+              <ion-label>
+                <h3>Teléfono</h3>
+                <p>{{ user.phone }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Cambiar Rol</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="ion-margin-bottom">Selecciona tu rol principal. Puedes cambiarlo cuando desees.</p>
+
+        <ion-item>
+          <ion-label position="floating">Tipo de Usuario</ion-label>
+          <ion-select [(ngModel)]="selectedRole" (ionChange)="onRoleChange()">
+            @for (option of roleOptions; track option.value) {
+              <ion-select-option [value]="option.value">
+                {{ option.label }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <div class="info-box ion-margin-top">
+          <p><strong>Cliente:</strong> Busca negocios y agenda citas.</p>
+          <p><strong>Dueño de Negocio:</strong> Registra tu negocio, gestiona servicios y empleados.</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

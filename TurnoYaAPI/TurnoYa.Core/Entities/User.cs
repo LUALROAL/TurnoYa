@@ -19,7 +19,7 @@ public class User : BaseEntity
     public decimal AverageRating { get; set; }
     public int CompletedAppointments { get; set; }
     public DateTime? LastLogin { get; set; }
-    public string Role { get; set; } = "Client";
+    public string Role { get; set; } = "Customer";
     public bool IsEmailVerified { get; set; }
     public bool IsActive { get; set; } = true;
 

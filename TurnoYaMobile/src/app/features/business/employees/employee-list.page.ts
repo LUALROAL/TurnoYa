@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonContent,
   IonHeader,
@@ -8,13 +8,19 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
+  IonButton,
   IonList,
   IonItem,
   IonLabel,
   IonRefresher,
   IonRefresherContent,
-  IonSpinner
+  IonSpinner,
+  IonIcon,
+  AlertController,
+  ToastController
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { createOutline, trashOutline, addCircleOutline } from 'ionicons/icons';
 import { BusinessService } from '../../../core/services/business.service';
 
 @Component({
@@ -30,12 +36,14 @@ import { BusinessService } from '../../../core/services/business.service';
     IonToolbar,
     IonButtons,
     IonBackButton,
+    IonButton,
     IonList,
     IonItem,
     IonLabel,
     IonRefresher,
     IonRefresherContent,
-    IonSpinner
+    IonSpinner,
+    IonIcon
   ]
 })
 export class EmployeeListPage implements OnInit {
@@ -43,7 +51,15 @@ export class EmployeeListPage implements OnInit {
   businessId = '';
   employees: any[] = [];
 
-  constructor(private route: ActivatedRoute, private businessService: BusinessService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private businessService: BusinessService,
+    private alertController: AlertController,
+    private toastController: ToastController
+  ) {
+    addIcons({ createOutline, trashOutline, addCircleOutline });
+  }
 
   ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('businessId') || '';
@@ -69,5 +85,52 @@ export class EmployeeListPage implements OnInit {
       },
       error: () => ev.target.complete()
     });
+  }
+
+  addEmployee() {
+    this.router.navigate(['/business', this.businessId, 'employees', 'form']);
+  }
+
+  editEmployee(employeeId: string) {
+    this.router.navigate(['/business', this.businessId, 'employees', 'form', employeeId]);
+  }
+
+  async deleteEmployee(employeeId: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar',
+      message: '¿Estás seguro de eliminar este empleado?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.businessService.deleteEmployee(employeeId).subscribe({
+              next: async () => {
+                const toast = await this.toastController.create({
+                  message: 'Empleado eliminado',
+                  duration: 2000,
+                  color: 'success'
+                });
+                await toast.present();
+                this.load();
+              },
+              error: async () => {
+                const toast = await this.toastController.create({
+                  message: 'Error al eliminar empleado',
+                  duration: 3000,
+                  color: 'danger'
+                });
+                await toast.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }

@@ -16,7 +16,7 @@ public class AuthProfile : Profile
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.ToLower()))
             .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
             .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "Client"))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.Role) ? "Customer" : src.Role))
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
             .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => false))
             .ForMember(dest => dest.TotalNoShows, opt => opt.MapFrom(src => 0))

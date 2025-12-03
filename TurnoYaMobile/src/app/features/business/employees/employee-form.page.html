@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/business/' + businessId + '/employees'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-item>
+      <ion-label position="floating">ID de Usuario *</ion-label>
+      <ion-input
+        formControlName="userId"
+        type="text"
+        placeholder="Ingrese el ID del usuario"
+      ></ion-input>
+    </ion-item>
+    @if (form.get('userId')?.disabled) {
+      <p class="ion-padding-start ion-text-wrap" style="font-size: 0.85rem; color: var(--ion-color-medium);">
+        El ID de usuario no se puede modificar en empleados existentes
+      </p>
+    }
+
+    <ion-item>
+      <ion-label position="floating">Rol *</ion-label>
+      <ion-select formControlName="role" placeholder="Seleccione un rol">
+        @for (option of roleOptions; track option.value) {
+          <ion-select-option [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Activo</ion-label>
+      <ion-toggle formControlName="isActive" slot="end"></ion-toggle>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      class="ion-margin-top"
+      [disabled]="form.invalid"
+    >
+      {{ employeeId ? 'Actualizar' : 'Crear' }} Empleado
+    </ion-button>
+  </form>
+</ion-content>

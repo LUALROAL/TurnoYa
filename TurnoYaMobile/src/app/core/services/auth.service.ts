@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, from } from 'rxjs';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { StorageService } from './storage.service';
+import { UserRole } from '../models';
 import {
   User,
   LoginRequest,
@@ -160,5 +161,60 @@ export class AuthService {
    */
   revokeToken(userId: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/Auth/revoke/${userId}`, {});
+  }
+
+  /**
+   * Helpers de roles
+   */
+  isCustomer(): boolean {
+    const user = this.currentUserSubject.value;
+    return user?.role === UserRole.Customer;
+  }
+
+  isBusinessOwner(): boolean {
+    const user = this.currentUserSubject.value;
+    return user?.role === UserRole.BusinessOwner;
+  }
+
+  isEmployee(): boolean {
+    const user = this.currentUserSubject.value;
+    return user?.role === UserRole.Employee;
+  }
+
+  isAdmin(): boolean {
+    const user = this.currentUserSubject.value;
+    return user?.role === UserRole.Admin;
+  }
+
+  getCurrentUserRole(): UserRole | null {
+    return this.currentUserSubject.value?.role || null;
+  }
+
+  /**
+   * Cambiar rol del usuario (solo Customer <-> BusinessOwner permitido)
+   */
+  async switchRole(newRole: UserRole): Promise<void> {
+    const user = this.currentUserSubject.value;
+    if (!user) {
+      throw new Error('No hay usuario autenticado');
+    }
+
+    // Solo permitir cambio entre Customer y BusinessOwner
+    if (!((user.role === UserRole.Customer && newRole === UserRole.BusinessOwner) ||
+        (user.role === UserRole.BusinessOwner && newRole === UserRole.Customer))) {
+      throw new Error('Solo se permite cambiar entre Cliente y Dueño de Negocio');
+    }
+
+    try {
+      // Llamar al backend para persistir el cambio
+      await this.http.patch(`${this.apiUrl}/users/${user.id}/role`, { role: newRole }).toPromise();
+
+      // Actualizar localmente
+      user.role = newRole;
+      await this.storageService.set('current_user', user);
+      this.currentUserSubject.next(user);
+    } catch (error) {
+      throw new Error('Error al cambiar el rol en el servidor');
+    }
   }
 }

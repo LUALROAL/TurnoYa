@@ -42,13 +42,14 @@ public class AuthService : IAuthService
         }
 
         // Crear nuevo usuario
+        var initialRole = string.IsNullOrWhiteSpace(registerDto.Role) ? "Customer" : registerDto.Role;
         var user = new User
         {
             Email = registerDto.Email.ToLower(),
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             Phone = registerDto.Phone,
-            Role = "User",
+            Role = initialRole,
             IsEmailVerified = false,
             IsActive = true,
             AverageRating = 0,
@@ -230,5 +231,41 @@ public class AuthService : IAuthService
         }
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<UserDto> UpdateUserRoleAsync(string userId, string newRole)
+    {
+        if (!Guid.TryParse(userId, out var userGuid))
+        {
+            throw new ArgumentException("ID de usuario inválido");
+        }
+
+        // Validar que el rol sea válido
+        var validRoles = new[] { "Customer", "BusinessOwner", "Employee", "Admin" };
+        if (!validRoles.Contains(newRole))
+        {
+            throw new ArgumentException("Rol inválido. Debe ser: Customer, BusinessOwner, Employee o Admin");
+        }
+
+        // Buscar usuario
+        var user = await _context.Users.FindAsync(userGuid);
+        if (user == null)
+        {
+            throw new InvalidOperationException("Usuario no encontrado");
+        }
+
+        // Solo permitir cambio entre Customer y BusinessOwner para usuarios normales
+        // Admin puede cambiar cualquier rol
+        if ((user.Role == "Customer" || user.Role == "BusinessOwner") &&
+            (newRole == "Customer" || newRole == "BusinessOwner"))
+        {
+            user.Role = newRole;
+            await _context.SaveChangesAsync();
+            return _mapper.Map<UserDto>(user);
+        }
+        else
+        {
+            throw new UnauthorizedAccessException("Solo se permite cambiar entre Cliente y Dueño de Negocio");
+        }
     }
 }

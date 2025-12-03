@@ -40,5 +40,10 @@ public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
         RuleFor(x => x.Phone)
             .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("El teléfono no es válido")
             .When(x => !string.IsNullOrEmpty(x.Phone));
+
+        RuleFor(x => x.Role)
+            .NotEmpty().WithMessage("El rol es requerido")
+            .Must(r => r == "Customer" || r == "BusinessOwner")
+            .WithMessage("El rol debe ser Customer o BusinessOwner");
     }
 }

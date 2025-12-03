@@ -72,6 +72,18 @@ export class BusinessService {
     return this.http.get<any[]>(`${environment.apiUrl}/Employees/business/${businessId}`);
   }
 
+  createEmployee(businessId: string, data: Partial<{ userId: string; role: string; isActive?: boolean; }>): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/Employees/business/${businessId}`, data);
+  }
+
+  updateEmployee(employeeId: string, data: Partial<{ role: string; isActive?: boolean; }>): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/Employees/${employeeId}`, data);
+  }
+
+  deleteEmployee(employeeId: string): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/Employees/${employeeId}`);
+  }
+
   /**
    * Crear nuevo negocio
    */

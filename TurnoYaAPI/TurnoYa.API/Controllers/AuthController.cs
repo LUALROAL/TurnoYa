@@ -124,4 +124,44 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Error interno del servidor" });
         }
     }
+
+    /// <summary>
+    /// Actualiza el rol de un usuario
+    /// </summary>
+    /// <param name="userId">ID del usuario</param>
+    /// <param name="dto">Nuevo rol del usuario</param>
+    /// <returns>Usuario actualizado</returns>
+    [HttpPatch("users/{userId}/role")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserDto>> UpdateUserRole(string userId, [FromBody] UpdateUserRoleDto dto)
+    {
+        try
+        {
+            var updatedUser = await _authService.UpdateUserRoleAsync(userId, dto.Role);
+            return Ok(updatedUser);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Argumento inválido al actualizar rol: {UserId}", userId);
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Usuario no encontrado: {UserId}", userId);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Operación no autorizada: {UserId}", userId);
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error inesperado al actualizar rol: {UserId}", userId);
+            return StatusCode(500, new { message = "Error interno del servidor" });
+        }
+    }
 }

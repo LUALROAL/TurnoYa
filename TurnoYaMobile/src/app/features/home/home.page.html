@@ -28,15 +28,16 @@
       <h2>Módulos Disponibles</h2>
 
       <ion-grid>
+        <!-- SIEMPRE: Buscar Negocios y Mis Citas (todos los roles) -->
         <ion-row>
           <ion-col size="12" size-md="6">
             <ion-card button (click)="navigateTo('/business/list')">
               <ion-card-header>
                 <ion-icon name="business-outline" size="large" color="primary"></ion-icon>
-                <ion-card-title>Negocios</ion-card-title>
+                <ion-card-title>Buscar Negocios</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                Busca y explora negocios disponibles para agendar citas
+                Explora negocios disponibles para agendar citas
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -54,15 +55,33 @@
           </ion-col>
         </ion-row>
 
+        <!-- SOLO BusinessOwner: Mis Negocios -->
+        @if (isBusinessOwner) {
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <ion-card button (click)="navigateTo('/business/form')">
+                <ion-card-header>
+                  <ion-icon name="business-outline" size="large" color="success"></ion-icon>
+                  <ion-card-title>Crear Negocio</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  Registra un nuevo negocio y sus servicios
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        }
+
+        <!-- Perfil y Pagos (próximamente) -->
         <ion-row>
           <ion-col size="12" size-md="6">
-            <ion-card button disabled>
+            <ion-card button (click)="navigateTo('/profile')">
               <ion-card-header>
-                <ion-icon name="person-outline" size="large" color="medium"></ion-icon>
+                <ion-icon name="person-outline" size="large" color="primary"></ion-icon>
                 <ion-card-title>Mi Perfil</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                Actualiza tu información personal (Próximamente)
+                Actualiza tu información y cambia de rol
               </ion-card-content>
             </ion-card>
           </ion-col>

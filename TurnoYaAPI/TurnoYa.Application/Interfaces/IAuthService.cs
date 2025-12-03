@@ -34,4 +34,12 @@ public interface IAuthService
     /// </summary>
     /// <param name="userId">ID del usuario</param>
     Task RevokeTokenAsync(string userId);
+
+    /// <summary>
+    /// Actualiza el rol de un usuario
+    /// </summary>
+    /// <param name="userId">ID del usuario</param>
+    /// <param name="newRole">Nuevo rol del usuario</param>
+    /// <returns>Usuario actualizado</returns>
+    Task<UserDto> UpdateUserRoleAsync(string userId, string newRole);
 }

@@ -25,7 +25,7 @@ import {
   logOutOutline
 } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
-import { User } from '../../core/models';
+import { User, UserRole } from '../../core/models';
 
 @Component({
   selector: 'app-home',
@@ -73,6 +73,18 @@ export class HomePage implements OnInit {
 
   navigateTo(route: string) {
     this.router.navigate([route]);
+  }
+
+  get isCustomer(): boolean {
+    return this.authService.isCustomer();
+  }
+
+  get isBusinessOwner(): boolean {
+    return this.authService.isBusinessOwner();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   async logout() {

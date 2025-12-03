@@ -53,8 +53,8 @@ import { RegisterRequest, UserRole } from '../../../core/models';
 export class RegisterPage implements OnInit {
   registerForm!: FormGroup;
   userRoles = [
-    { value: UserRole.Customer, label: 'Cliente' },
-    { value: UserRole.BusinessOwner, label: 'Propietario de Negocio' }
+    { value: UserRole.Customer, label: 'Cliente - Busco servicios para agendar citas' },
+    { value: UserRole.BusinessOwner, label: 'Dueño de Negocio - Ofrezco servicios' }
   ];
 
   constructor(
@@ -72,7 +72,12 @@ export class RegisterPage implements OnInit {
   private initializeForm() {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        // Debe incluir minúscula, mayúscula, número y caracter especial
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
+      ]],
       confirmPassword: ['', [Validators.required]],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -105,8 +110,8 @@ export class RegisterPage implements OnInit {
     });
     await loading.present();
 
-    const { confirmPassword, ...registerData } = this.registerForm.value;
-    const request: RegisterRequest = registerData;
+    // Enviar confirmPassword al backend (requerido por el validador)
+    const request: RegisterRequest = this.registerForm.value;
 
     this.authService.register(request).subscribe({
       next: async (response) => {

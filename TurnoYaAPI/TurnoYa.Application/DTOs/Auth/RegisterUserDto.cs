@@ -11,4 +11,8 @@ public class RegisterUserDto
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string? Phone { get; set; }
+    /// <summary>
+    /// Rol inicial del usuario (Customer | BusinessOwner)
+    /// </summary>
+    public string Role { get; set; } = "Customer";
 }

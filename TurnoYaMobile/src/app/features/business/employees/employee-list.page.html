@@ -4,6 +4,11 @@
       <ion-back-button defaultHref="/business/list"></ion-back-button>
     </ion-buttons>
     <ion-title>Empleados del Negocio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addEmployee()">
+        <ion-icon name="add-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -27,9 +32,15 @@
             <h2>{{ emp.user?.firstName }} {{ emp.user?.lastName }}</h2>
             <p>{{ emp.role }}</p>
             @if (!emp.isActive) {
-              <p>Inactivo</p>
+              <p style="color: var(--ion-color-danger);">Inactivo</p>
             }
           </ion-label>
+          <ion-button fill="clear" (click)="editEmployee(emp.id)">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteEmployee(emp.id)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-item>
       }
     </ion-list>
@@ -38,6 +49,10 @@
   @if (!isLoading && employees.length === 0) {
     <div class="empty-state ion-text-center">
       <p>No hay empleados registrados.</p>
+      <ion-button (click)="addEmployee()" fill="outline">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Agregar Empleado
+      </ion-button>
     </div>
   }
 </ion-content>

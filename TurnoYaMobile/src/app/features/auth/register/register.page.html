@@ -90,7 +90,8 @@
           </ion-item>
           <ion-text color="danger" *ngIf="password?.invalid && password?.touched">
             <p class="error-message" *ngIf="password?.errors?.['required']">La contraseña es requerida</p>
-            <p class="error-message" *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</p>
+            <p class="error-message" *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres</p>
+            <p class="error-message" *ngIf="password?.errors?.['pattern']">La contraseña debe incluir mayúscula, minúscula, número y símbolo</p>
           </ion-text>
 
           <!-- Confirmar Contraseña -->
