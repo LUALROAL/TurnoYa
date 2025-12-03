@@ -7,6 +7,8 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
+  IonButtons,
+  IonBackButton,
   IonSearchbar,
   IonList,
   IonCard,
@@ -57,6 +59,8 @@ import { Business } from '../../../core/models';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonButtons,
+    IonBackButton,
     IonSearchbar,
     IonList,
     IonCard,
@@ -111,6 +115,20 @@ export class BusinessListPage implements OnInit {
 
   ngOnInit() {
     this.loadBusinesses();
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.businessService.getCategories().subscribe({
+      next: (response) => {
+        const data = (response as any)?.data ?? response;
+        this.availableCategories = Array.isArray(data) ? data : [];
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        this.availableCategories = [];
+      }
+    });
   }
 
   async loadBusinesses(reset: boolean = false) {
@@ -152,10 +170,8 @@ export class BusinessListPage implements OnInit {
         // Mantener una copia completa para filtros locales
         if (reset) {
           this.allBusinesses = businessData;
-          // Extraer categorías únicas
-          this.availableCategories = [...new Set(
-            businessData.map(b => b.category).filter(c => c)
-          )];
+          // Recargar categorías cuando se refrescan los negocios
+          this.loadCategories();
         } else {
           this.allBusinesses = [...this.allBusinesses, ...businessData];
         }
