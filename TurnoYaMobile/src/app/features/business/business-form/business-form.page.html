@@ -8,6 +8,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
     <!-- Nombre del negocio -->
     <ion-item>
@@ -36,14 +40,24 @@
     <!-- Categoría -->
     <ion-item>
       <ion-label position="floating">Categoría *</ion-label>
-      <ion-select formControlName="category" placeholder="Selecciona una categoría">
-        <ion-select-option *ngFor="let category of categories" [value]="category.name">
-          {{ category.name }}
+      <ion-select formControlName="category" placeholder="Selecciona una categoría" (ionChange)="showCustomCategory = $event.detail.value === '__other__'">
+        <ion-select-option *ngFor="let cat of categories" [value]="cat">
+          {{ cat }}
         </ion-select-option>
+        <ion-select-option value="__other__">Otro...</ion-select-option>
       </ion-select>
     </ion-item>
     <div class="error-message" *ngIf="category?.invalid && category?.touched">
       <p *ngIf="category?.errors?.['required']">La categoría es requerida</p>
+    </div>
+
+    <!-- Categoría personalizada -->
+    <ion-item *ngIf="showCustomCategory">
+      <ion-label position="floating">Nueva Categoría *</ion-label>
+      <ion-input [(ngModel)]="customCategory" [ngModelOptions]="{standalone: true}" placeholder="Ej. Barbería"></ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="showCustomCategory && !customCategory">
+      <p>Ingresa un nombre de categoría</p>
     </div>
 
     <!-- Dirección -->

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   IonContent,
@@ -16,6 +17,8 @@ import {
   IonSelect,
   IonSelectOption,
   IonButton,
+  IonRefresher,
+  IonRefresherContent,
   LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
@@ -30,6 +33,7 @@ import { Category, CreateBusinessDto, UpdateBusinessDto } from '../../../core/mo
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterLink,
     IonContent,
     IonHeader,
@@ -43,14 +47,18 @@ import { Category, CreateBusinessDto, UpdateBusinessDto } from '../../../core/mo
     IonTextarea,
     IonSelect,
     IonSelectOption,
-    IonButton
+    IonButton,
+    IonRefresher,
+    IonRefresherContent
   ]
 })
 export class BusinessFormPage implements OnInit {
   businessForm!: FormGroup;
   businessId: string | null = null;
   isEditMode = false;
-  categories: Category[] = [];
+  categories: string[] = [];
+  showCustomCategory = false;
+  customCategory = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -89,10 +97,25 @@ export class BusinessFormPage implements OnInit {
   loadCategories() {
     this.businessService.getCategories().subscribe({
       next: (response) => {
-        this.categories = response.data || [];
+        const data = (response as any)?.data ?? response;
+        this.categories = Array.isArray(data) ? data : [];
       },
       error: (error) => {
-        console.error('Error loading categories:', error);
+        this.categories = [];
+      }
+    });
+  }
+
+  async handleRefresh(event: any) {
+    this.businessService.getCategories().subscribe({
+      next: (response) => {
+        const data = (response as any)?.data ?? response;
+        this.categories = Array.isArray(data) ? data : [];
+        event.target.complete();
+      },
+      error: (error) => {
+        this.categories = [];
+        event.target.complete();
       }
     });
   }
@@ -129,12 +152,21 @@ export class BusinessFormPage implements OnInit {
       return;
     }
 
+    // Validar categoría personalizada ANTES de mostrar loading
+    const formData = this.businessForm.value;
+    // Si seleccionó 'Otro', usa la categoría personalizada
+    if (formData.category === '__other__') {
+      formData.category = (this.customCategory || '').trim();
+    }
+    if (!formData.category || formData.category.length < 3) {
+      await this.showToast('Ingresa una categoría válida (mínimo 3 caracteres)', 'warning');
+      return;
+    }
+
     const loading = await this.loadingController.create({
       message: this.isEditMode ? 'Actualizando negocio...' : 'Creando negocio...'
     });
     await loading.present();
-
-    const formData = this.businessForm.value;
 
     if (this.isEditMode && this.businessId) {
       const updateData: UpdateBusinessDto = formData;

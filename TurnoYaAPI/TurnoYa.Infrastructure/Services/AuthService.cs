@@ -233,7 +233,7 @@ public class AuthService : IAuthService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<UserDto> UpdateUserRoleAsync(string userId, string newRole)
+    public async Task<UserDto> UpdateUserRoleAsync(string userId, string newRole, string requestorRole)
     {
         if (!Guid.TryParse(userId, out var userGuid))
         {
@@ -254,8 +254,15 @@ public class AuthService : IAuthService
             throw new InvalidOperationException("Usuario no encontrado");
         }
 
-        // Solo permitir cambio entre Customer y BusinessOwner para usuarios normales
-        // Admin puede cambiar cualquier rol
+        // Si el solicitante es Admin, puede cambiar cualquier rol
+        if (requestorRole == "Admin")
+        {
+            user.Role = newRole;
+            await _context.SaveChangesAsync();
+            return _mapper.Map<UserDto>(user);
+        }
+
+        // Para usuarios normales, solo permitir cambio entre Customer y BusinessOwner
         if ((user.Role == "Customer" || user.Role == "BusinessOwner") &&
             (newRole == "Customer" || newRole == "BusinessOwner"))
         {

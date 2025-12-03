@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Dashboard Admin</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Gestión de Usuarios y Roles</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-searchbar
+        [(ngModel)]="searchTerm"
+        (ionInput)="onSearchChange($event)"
+        placeholder="Buscar por email o nombre"
+        debounce="500"
+      ></ion-searchbar>
+
+      <ion-spinner *ngIf="loading" name="crescent" class="ion-margin"></ion-spinner>
+
+      <ion-list *ngIf="!loading && users.length > 0">
+        <ion-item *ngFor="let user of users">
+          <ion-label>
+            <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+            <p>{{ user.email }}</p>
+            <ion-badge [color]="getRoleBadgeColor(user.role)">{{ user.role }}</ion-badge>
+          </ion-label>
+          <ion-select
+            slot="end"
+            placeholder="Cambiar rol"
+            (ionChange)="changeUserRole(user, $event.detail.value)"
+            [value]="user.role"
+          >
+            <ion-select-option *ngFor="let r of roleOptions" [value]="r.value">
+              {{ r.label }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+
+      <p *ngIf="!loading && users.length === 0" class="ion-text-center ion-padding">
+        No se encontraron usuarios
+      </p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

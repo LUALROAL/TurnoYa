@@ -40,6 +40,7 @@ public interface IAuthService
     /// </summary>
     /// <param name="userId">ID del usuario</param>
     /// <param name="newRole">Nuevo rol del usuario</param>
+    /// <param name="requestorRole">Rol del usuario que solicita el cambio</param>
     /// <returns>Usuario actualizado</returns>
-    Task<UserDto> UpdateUserRoleAsync(string userId, string newRole);
+    Task<UserDto> UpdateUserRoleAsync(string userId, string newRole, string requestorRole);
 }

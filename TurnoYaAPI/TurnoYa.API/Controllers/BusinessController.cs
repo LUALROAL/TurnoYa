@@ -117,6 +117,22 @@ public class BusinessController : ControllerBase
     }
 
     /// <summary>
+    /// Obtiene el listado de categorías disponibles (distintas en la tabla de negocios)
+    /// </summary>
+    [HttpGet("categories")]
+    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<string>>> GetCategories()
+    {
+        var categories = await _context.Businesses
+            .Where(b => !string.IsNullOrEmpty(b.Category))
+            .Select(b => b.Category)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToListAsync();
+        return Ok(categories);
+    }
+
+    /// <summary>
     /// Crea un nuevo negocio
     /// </summary>
     [HttpPost]

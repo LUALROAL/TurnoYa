@@ -140,7 +140,10 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var updatedUser = await _authService.UpdateUserRoleAsync(userId, dto.Role);
+            // Obtener el rol del usuario autenticado desde los claims del token JWT
+            var requestorRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value ?? "Customer";
+            
+            var updatedUser = await _authService.UpdateUserRoleAsync(userId, dto.Role, requestorRole);
             return Ok(updatedUser);
         }
         catch (ArgumentException ex)
