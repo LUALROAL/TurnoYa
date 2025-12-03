@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/business/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Empleados del Negocio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando empleados...</p>
+    </div>
+  }
+
+  @if (!isLoading && employees.length > 0) {
+    <ion-list>
+      @for (emp of employees; track emp.id) {
+        <ion-item>
+          <ion-label>
+            <h2>{{ emp.user?.firstName }} {{ emp.user?.lastName }}</h2>
+            <p>{{ emp.role }}</p>
+            @if (!emp.isActive) {
+              <p>Inactivo</p>
+            }
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  @if (!isLoading && employees.length === 0) {
+    <div class="empty-state ion-text-center">
+      <p>No hay empleados registrados.</p>
+    </div>
+  }
+</ion-content>

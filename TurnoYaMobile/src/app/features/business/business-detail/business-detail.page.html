@@ -81,6 +81,14 @@
         </ion-list>
       </ion-card-content>
     </ion-card>
+    <ion-card *ngIf="!business.services || business.services.length === 0">
+      <ion-card-header>
+        <ion-card-title>Servicios</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="ion-text-center">Este negocio aún no tiene servicios publicados.</p>
+      </ion-card-content>
+    </ion-card>
 
     <!-- Acciones -->
     <div class="actions ion-padding">
@@ -93,6 +101,18 @@
         <ion-button expand="block" fill="outline" (click)="editBusiness()">
           <ion-icon name="create-outline" slot="start"></ion-icon>
           Editar Negocio
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" (click)="viewBusinessAppointments()">
+          Ver Citas del Negocio
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" (click)="navigateToServices()">
+          Gestionar Servicios
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" (click)="navigateToEmployees()">
+          Gestionar Empleados
         </ion-button>
 
         <ion-button expand="block" fill="outline" color="danger" (click)="deleteBusiness()">

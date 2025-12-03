@@ -45,8 +45,31 @@ export class BusinessService {
   /**
    * Obtener un negocio por ID
    */
-  getBusinessById(id: string): Observable<ApiResponse<Business>> {
-    return this.http.get<ApiResponse<Business>>(`${this.apiUrl}/${id}`);
+  getBusinessById(id: string): Observable<any> {
+    // El backend puede devolver el negocio directamente o envuelto en ApiResponse
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  // Servicios del negocio
+  getBusinessServices(businessId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/Services/business/${businessId}`);
+  }
+
+  createService(businessId: string, data: Partial<{ name: string; description?: string; duration: number; price: number; currency: string; isActive?: boolean; }>): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/Services/business/${businessId}`, data);
+  }
+
+  updateService(serviceId: string, data: Partial<{ name: string; description?: string; duration: number; price: number; currency: string; isActive?: boolean; }>): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/Services/${serviceId}`, data);
+  }
+
+  deleteService(serviceId: string): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/Services/${serviceId}`);
+  }
+
+  // Empleados del negocio
+  getBusinessEmployees(businessId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/Employees/business/${businessId}`);
   }
 
   /**

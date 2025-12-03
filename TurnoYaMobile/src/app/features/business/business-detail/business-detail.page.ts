@@ -97,10 +97,11 @@ export class BusinessDetailPage implements OnInit {
     this.isLoading = true;
     this.businessService.getBusinessById(this.businessId).subscribe({
       next: (response) => {
-        if (response.data) {
-          this.business = response.data as BusinessDetail;
-        }
+        const payload = (response && (response as any).data) ? (response as any).data : response;
+        this.business = payload as BusinessDetail;
         this.isLoading = false;
+        // Recalcular propiedad de dueño una vez cargado el negocio
+        this.checkOwnership();
       },
       error: async (error) => {
         this.isLoading = false;
@@ -163,6 +164,18 @@ export class BusinessDetailPage implements OnInit {
     this.router.navigate(['/appointments/create'], {
       queryParams: { businessId: this.businessId }
     });
+  }
+
+  viewBusinessAppointments() {
+    this.router.navigate(['/appointments/business', this.businessId]);
+  }
+
+  navigateToServices() {
+    this.router.navigate(['/business', this.businessId, 'services']);
+  }
+
+  navigateToEmployees() {
+    this.router.navigate(['/business', this.businessId, 'employees']);
   }
 
   getDayName(dayOfWeek: number): string {

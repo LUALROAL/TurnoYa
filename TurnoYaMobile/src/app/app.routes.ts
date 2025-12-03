@@ -41,6 +41,21 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'business/:businessId/services',
+    loadComponent: () => import('./features/business/services/service-list.page').then(m => m.ServiceListPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'business/:businessId/services/form',
+    loadComponent: () => import('./features/business/services/service-form.page').then(m => m.ServiceFormPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'business/:businessId/services/form/:id',
+    loadComponent: () => import('./features/business/services/service-form.page').then(m => m.ServiceFormPage),
+    canActivate: [authGuard]
+  },
+  {
     path: 'appointments/list',
     loadComponent: () => import('./features/appointments/list/appointments-list.page').then(m => m.AppointmentsListPage),
     canActivate: [authGuard]
@@ -53,6 +68,16 @@ export const routes: Routes = [
   {
     path: 'appointments/create',
     loadComponent: () => import('./features/appointments/create/appointment-create.page').then(m => m.AppointmentCreatePage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'business/:businessId/employees',
+    loadComponent: () => import('./features/business/employees/employee-list.page').then(m => m.EmployeeListPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'appointments/business/:businessId',
+    loadComponent: () => import('./features/appointments/business/business-appointments.page').then(m => m.BusinessAppointmentsPage),
     canActivate: [authGuard]
   },
 ];

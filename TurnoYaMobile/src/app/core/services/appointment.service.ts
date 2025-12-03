@@ -40,6 +40,14 @@ export class AppointmentService {
     return this.http.patch<void>(`${this.apiUrl}/${id}/noshow`, {});
   }
 
+  getBusinessAppointments(businessId: string, status?: string, from?: string, to?: string): Observable<Appointment[]> {
+    let params = new HttpParams();
+    if (status) params = params.set('status', status);
+    if (from) params = params.set('from', from);
+    if (to) params = params.set('to', to);
+    return this.http.get<Appointment[]>(`${this.apiUrl}/business/${businessId}`, { params });
+  }
+
   getAvailability(businessId: string, serviceId: string, date: string): Observable<AvailabilitySlot[]> {
     const params = new HttpParams()
       .set('businessId', businessId)
