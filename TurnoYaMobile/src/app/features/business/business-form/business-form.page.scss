@@ -27,34 +27,52 @@ ion-item {
   ion-input,
   ion-textarea,
   ion-select {
-    --background: var(--ion-color-light);
+    --background: #F3F4F6 !important;
+    background: #F3F4F6 !important;
     --padding-start: 16px;
     --padding-end: 16px;
-    --color: var(--ion-text-color) !important;
-    --placeholder-color: var(--ion-color-medium);
-    --placeholder-opacity: 0.6;
-    border: 2px solid var(--ion-border-color);
+    --color: #000000 !important;
+    --placeholder-color: #6B7280;
+    --placeholder-opacity: 0.8;
+    border: 2px solid #E5E7EB;
     border-radius: 12px;
     font-size: 15px;
     min-height: 52px;
     transition: all 0.3s ease;
 
+    &::part(native) {
+      background: #F3F4F6 !important;
+    }
+
+    &::part(text) {
+      background: transparent !important;
+    }
+
     &.ion-focused,
     &:focus-within {
       border-color: var(--ion-color-primary) !important;
-      --background: var(--ion-card-background);
+      --background: #FFFFFF !important;
+      background: #FFFFFF !important;
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     }
   }
 
   ion-textarea {
+    --background: #F3F4F6 !important;
+    background: #F3F4F6 !important;
     min-height: 100px;
     padding-top: 12px;
     padding-bottom: 12px;
   }
 
   ion-select {
+    --background: #F3F4F6 !important;
+    background-color: #F3F4F6 !important;
     padding: 0 16px;
+
+    &::part(container) {
+      background: #F3F4F6 !important;
+    }
 
     &::part(icon) {
       color: var(--ion-color-primary);
@@ -72,17 +90,41 @@ ion-item {
     ion-input,
     ion-textarea,
     ion-select {
-      --background: rgba(51, 65, 85, 0.5);
+      --background: #1a212b !important;
+      background: #1a212b !important;
       border-color: rgba(96, 165, 250, 0.3);
       --color: #F1F5F9 !important;
       --placeholder-color: rgba(156, 163, 175, 0.8);
 
+      &::part(native) {
+        background: #1a212b !important;
+      }
+
+      &::part(text) {
+        background: transparent !important;
+      }
+
       &.ion-focused,
       &:focus-within {
-        --background: rgba(51, 65, 85, 0.8);
+        --background: #1a212b !important;
+        background: #1a212b !important;
         border-color: var(--ion-color-primary) !important;
         box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
       }
+    }
+
+    ion-select {
+      --background: #1a212b !important;
+      background-color: #1a212b !important;
+
+      &::part(container) {
+        background: #1a212b !important;
+      }
+    }
+
+    ion-textarea {
+      --background: #1a212b !important;
+      background: #1a212b !important;
     }
   }
 }
