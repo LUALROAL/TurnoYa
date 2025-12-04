@@ -57,6 +57,7 @@ ion-card {
       font-size: 12px;
       font-weight: 600;
       margin: 0 0 12px 0;
+      max-width: fit-content;
       --background: rgba(59, 130, 246, 0.15);
       --color: var(--ion-color-primary);
 
