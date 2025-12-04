@@ -17,26 +17,23 @@
   <!-- Filtro de categorías -->
   <ion-toolbar>
     <div class="filter-container">
-      @if (selectedCategory) {
-        <ion-chip color="primary" (click)="clearCategory()">
-          <ion-label>{{ selectedCategory }}</ion-label>
-          <ion-icon name="close-circle"></ion-icon>
+      <!-- Chip para "Todas las categorías" -->
+      <ion-chip
+        [color]="!selectedCategory ? 'primary' : 'medium'"
+        (click)="clearCategory()">
+        <ion-icon name="pricetag"></ion-icon>
+        <ion-label>Todas las categorías</ion-label>
+      </ion-chip>
+
+      <!-- Chips para cada categoría -->
+      @for (category of availableCategories; track category) {
+        <ion-chip
+          [color]="selectedCategory === category ? 'primary' : 'medium'"
+          (click)="onCategorySelect(category)">
+          <ion-icon name="pricetag"></ion-icon>
+          <ion-label>{{ category }}</ion-label>
         </ion-chip>
       }
-      <div class="select-wrapper">
-        <ion-select
-          mode="ios"
-          [(ngModel)]="selectedCategory"
-          (ionChange)="onCategoryChange($event)"
-          placeholder="Filtrar por categoría"
-          interface="popover">
-          <ion-icon slot="start" name="pricetag" class="select-icon"></ion-icon>
-          <ion-select-option value="">Todas las categorías</ion-select-option>
-          @for (category of availableCategories; track category) {
-            <ion-select-option [value]="category">{{ category }}</ion-select-option>
-          }
-        </ion-select>
-      </div>
     </div>
   </ion-toolbar>
 </ion-header>

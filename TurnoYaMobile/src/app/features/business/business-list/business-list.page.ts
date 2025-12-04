@@ -40,6 +40,7 @@ import {
   starOutline,
   callOutline,
   pricetagOutline,
+  pricetag,
   businessOutline,
   closeCircle,
   funnelOutline
@@ -107,6 +108,7 @@ export class BusinessListPage implements OnInit {
       starOutline,
       callOutline,
       pricetagOutline,
+      pricetag,
       businessOutline,
       closeCircle,
       funnelOutline
@@ -234,6 +236,11 @@ export class BusinessListPage implements OnInit {
 
   onCategoryChange(event: any) {
     this.selectedCategory = event?.detail?.value ?? '';
+    this.applyFilters();
+  }
+
+  onCategorySelect(category: string) {
+    this.selectedCategory = category;
     this.applyFilters();
   }
 
