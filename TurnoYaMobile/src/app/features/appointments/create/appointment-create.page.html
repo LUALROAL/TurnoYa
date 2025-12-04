@@ -11,7 +11,7 @@
   <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
     <!-- Servicio -->
     <ion-item>
-      <ion-label position="floating">Servicio *</ion-label>
+      <ion-label position="stacked">Servicio *</ion-label>
       <ion-select formControlName="serviceId" placeholder="Selecciona un servicio">
         @for (service of services; track service.id) {
           <ion-select-option [value]="service.id">
@@ -23,7 +23,7 @@
 
     <!-- Fecha y Hora -->
     <ion-item>
-      <ion-label position="floating">Fecha y Hora *</ion-label>
+      <ion-label position="stacked">Fecha y Hora *</ion-label>
       <ion-datetime
         formControlName="startDate"
         presentation="date-time"
@@ -33,7 +33,7 @@
 
     <!-- Notas opcionales -->
     <ion-item>
-      <ion-label position="floating">Notas (opcional)</ion-label>
+      <ion-label position="stacked">Notas (opcional)</ion-label>
       <ion-textarea
         formControlName="notes"
         rows="3"

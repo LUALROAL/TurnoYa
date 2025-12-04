@@ -1,3 +1,56 @@
+// Header
+ion-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+    --color: white;
+
+    ion-title {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    ion-back-button {
+      --color: white;
+    }
+  }
+}
+
+// Form items
 ion-item {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+
+  ion-label {
+    margin-bottom: 8px !important;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ion-text-color);
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    position: relative !important;
+    transform: none !important;
+  }
+
+  ion-select, ion-datetime, ion-textarea {
+    margin-top: 8px;
+  }
+}
+
+// Buttons
+ion-button {
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 24px;
+  font-size: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-item {
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
 }
