@@ -46,7 +46,7 @@ ion-searchbar {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 8px 16px;
   background: var(--ion-background-color);
 
   ion-chip {
@@ -68,48 +68,76 @@ ion-searchbar {
     }
   }
 
-  ion-select {
+  .select-wrapper {
     flex: 1;
-    min-width: 0;
-    max-width: 100%;
-    --placeholder-color: #6B7280;
-    --placeholder-opacity: 1;
-    background: rgba(59, 130, 246, 0.08);
-    border-radius: 24px;
-    padding: 10px 20px;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ion-text-color);
-    border: none;
+    position: relative;
+    display: flex;
+    align-items: center;
 
-    &::part(container) {
-      border: none;
-    }
-
-    &::part(text) {
-      color: var(--ion-text-color);
+    ion-select {
+      flex: 1;
+      min-width: 0;
+      --placeholder-color: var(--ion-color-medium);
+      --placeholder-opacity: 1;
+      --padding-start: 16px;
+      --padding-end: 40px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 0;
+      height: 48px;
+      font-size: 15px;
       font-weight: 500;
-    }
+      color: var(--ion-text-color);
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    &::part(icon) {
-      color: var(--ion-color-primary);
-      opacity: 1;
-      font-size: 18px;
+      ion-icon {
+        color: var(--ion-color-primary) !important;
+        font-size: 20px !important;
+        margin-right: 8px !important;
+      }
+
+      &::part(container) {
+        border: none;
+      }
+
+      &::part(text) {
+        color: var(--ion-text-color);
+        font-weight: 500;
+      }
+
+      &::part(icon) {
+        color: var(--ion-color-primary);
+        opacity: 1;
+        font-size: 20px;
+      }
+
+      &::part(placeholder) {
+        color: var(--ion-color-medium);
+        opacity: 0.7;
+      }
     }
   }
 }
 
 @media (prefers-color-scheme: dark) {
   .filter-container {
-    background: rgba(15, 23, 42, 0.5);
+    background: transparent;
 
-    ion-select {
-      background: rgba(96, 165, 250, 0.15);
-      color: #F1F5F9;
-      --placeholder-color: rgba(156, 163, 175, 0.9);
-
-      &::part(text) {
+    .select-wrapper {
+      ion-select {
+        background: rgba(51, 65, 85, 0.8);
         color: #F1F5F9;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --placeholder-color: rgba(156, 163, 175, 0.8);
+
+        &::part(text) {
+          color: #F1F5F9;
+        }
+
+        &::part(placeholder) {
+          color: rgba(156, 163, 175, 0.8);
+        }
       }
     }
   }

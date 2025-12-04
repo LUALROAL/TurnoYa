@@ -23,17 +23,20 @@
           <ion-icon name="close-circle"></ion-icon>
         </ion-chip>
       }
-      <ion-select
-        mode="ios"
-        [(ngModel)]="selectedCategory"
-        (ionChange)="onCategoryChange($event)"
-        placeholder="Filtrar por categoría"
-        interface="popover">
-        <ion-select-option value="">Todas las categorías</ion-select-option>
-        @for (category of availableCategories; track category) {
-          <ion-select-option [value]="category">{{ category }}</ion-select-option>
-        }
-      </ion-select>
+      <div class="select-wrapper">
+        <ion-select
+          mode="ios"
+          [(ngModel)]="selectedCategory"
+          (ionChange)="onCategoryChange($event)"
+          placeholder="Filtrar por categoría"
+          interface="popover">
+          <ion-icon slot="start" name="pricetag" class="select-icon"></ion-icon>
+          <ion-select-option value="">Todas las categorías</ion-select-option>
+          @for (category of availableCategories; track category) {
+            <ion-select-option [value]="category">{{ category }}</ion-select-option>
+          }
+        </ion-select>
+      </div>
     </div>
   </ion-toolbar>
 </ion-header>
