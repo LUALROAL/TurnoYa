@@ -18,6 +18,7 @@ import {
   IonIcon,
   IonButton,
   IonSpinner,
+  IonChip,
   LoadingController,
   ToastController,
   AlertController
@@ -29,7 +30,8 @@ import {
   mailOutline,
   timeOutline,
   createOutline,
-  trashOutline
+  trashOutline,
+  pricetag
 } from 'ionicons/icons';
 import { BusinessService } from '../../../core/services/business.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -57,7 +59,8 @@ import { Business, BusinessDetail } from '../../../core/models';
     IonLabel,
     IonIcon,
     IonButton,
-    IonSpinner
+    IonSpinner,
+    IonChip
   ]
 })
 export class BusinessDetailPage implements OnInit {
@@ -81,7 +84,8 @@ export class BusinessDetailPage implements OnInit {
       mailOutline,
       timeOutline,
       createOutline,
-      trashOutline
+      trashOutline,
+      pricetag
     });
   }
 

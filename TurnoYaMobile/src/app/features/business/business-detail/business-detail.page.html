@@ -19,8 +19,11 @@
     <!-- Información principal -->
     <ion-card>
       <ion-card-header>
+        <ion-chip *ngIf="business.category" class="category-chip">
+          <ion-icon name="pricetag"></ion-icon>
+          <ion-label>{{ business.category }}</ion-label>
+        </ion-chip>
         <ion-card-title>{{ business.name }}</ion-card-title>
-        <p *ngIf="business.category" class="category">{{ business.category }}</p>
       </ion-card-header>
 
       <ion-card-content>
@@ -35,7 +38,7 @@
       </ion-card-header>
 
       <ion-card-content>
-        <ion-list [inset]="true">
+        <ion-list>
           <ion-item *ngIf="business.address">
             <ion-icon name="location-outline" slot="start"></ion-icon>
             <ion-label>
