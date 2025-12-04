@@ -14,11 +14,21 @@ import {
   IonCardContent,
   IonButton,
   IonSpinner,
+  IonIcon,
   AlertController,
   ToastController,
   LoadingController
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  createOutline,
+  checkmarkCircleOutline,
+  checkmarkDoneOutline,
+  trashOutline
+} from 'ionicons/icons';
 import { AppointmentService } from '../../../core/services/appointment.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { BusinessService } from '../../../core/services/business.service';
 import { Appointment } from '../../../core/models';
 
 @Component({
@@ -39,22 +49,33 @@ import { Appointment } from '../../../core/models';
     IonCardTitle,
     IonCardContent,
     IonButton,
-    IonSpinner
+    IonSpinner,
+    IonIcon
   ]
 })
 export class AppointmentDetailPage implements OnInit {
   isLoading = false;
   appointment: Appointment | null = null;
   appointmentId = '';
+  isOwner = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private appointmentService: AppointmentService,
+    private authService: AuthService,
+    private businessService: BusinessService,
     private alertController: AlertController,
     private toastController: ToastController,
     private loadingController: LoadingController
-  ) {}
+  ) {
+    addIcons({
+      createOutline,
+      checkmarkCircleOutline,
+      checkmarkDoneOutline,
+      trashOutline
+    });
+  }
 
   ngOnInit() {
     this.appointmentId = this.route.snapshot.paramMap.get('id') || '';
@@ -69,11 +90,30 @@ export class AppointmentDetailPage implements OnInit {
       next: (data) => {
         this.appointment = data;
         this.isLoading = false;
+        this.checkOwnership();
       },
       error: () => {
         this.isLoading = false;
         this.router.navigate(['/appointments/list']);
       }
+    });
+  }
+
+  checkOwnership() {
+    if (!this.appointment?.businessId) return;
+
+    this.authService.currentUser$.subscribe(user => {
+      if (!user) return;
+
+      this.businessService.getBusinessById(this.appointment!.businessId).subscribe({
+        next: (response) => {
+          const business = (response && (response as any).data) ? (response as any).data : response;
+          this.isOwner = user.id === business.ownerId || user.role === 'Admin';
+        },
+        error: () => {
+          this.isOwner = false;
+        }
+      });
     });
   }
 
@@ -111,6 +151,119 @@ export class AppointmentDetailPage implements OnInit {
               error: async (error) => {
                 await loading.dismiss();
                 await this.showToast('Error al cancelar la cita', 'danger');
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  editAppointment() {
+    this.router.navigate(['/appointments/edit', this.appointmentId]);
+  }
+
+  async confirmAppointment() {
+    const alert = await this.alertController.create({
+      header: 'Confirmar Cita',
+      message: '¿Deseas confirmar esta cita?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Confirmando cita...'
+            });
+            await loading.present();
+
+            this.appointmentService.updateStatus(this.appointmentId, 'Confirmed').subscribe({
+              next: async () => {
+                await loading.dismiss();
+                await this.showToast('Cita confirmada exitosamente', 'success');
+                this.loadAppointment();
+              },
+              error: async () => {
+                await loading.dismiss();
+                await this.showToast('Error al confirmar la cita', 'danger');
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async completeAppointment() {
+    const alert = await this.alertController.create({
+      header: 'Completar Cita',
+      message: '¿Marcar esta cita como completada?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Completar',
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Actualizando cita...'
+            });
+            await loading.present();
+
+            this.appointmentService.updateStatus(this.appointmentId, 'Completed').subscribe({
+              next: async () => {
+                await loading.dismiss();
+                await this.showToast('Cita completada exitosamente', 'success');
+                this.loadAppointment();
+              },
+              error: async () => {
+                await loading.dismiss();
+                await this.showToast('Error al completar la cita', 'danger');
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async deleteAppointment() {
+    const alert = await this.alertController.create({
+      header: 'Eliminar Cita',
+      message: '¿Estás seguro de que deseas eliminar permanentemente esta cita? Esta acción no se puede deshacer.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Eliminando cita...'
+            });
+            await loading.present();
+
+            this.appointmentService.delete(this.appointmentId).subscribe({
+              next: async () => {
+                await loading.dismiss();
+                await this.showToast('Cita eliminada exitosamente', 'success');
+                this.router.navigate(['/appointments/list']);
+              },
+              error: async () => {
+                await loading.dismiss();
+                await this.showToast('Error al eliminar la cita', 'danger');
               }
             });
           }

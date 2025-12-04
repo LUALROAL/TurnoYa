@@ -31,10 +31,42 @@
       </ion-card-content>
     </ion-card>
 
-    @if (appointment.status === 'Pending' || appointment.status === 'Confirmed') {
-      <ion-button expand="block" color="danger" class="ion-margin-top" (click)="cancelAppointment()">
-        Cancelar Cita
-      </ion-button>
-    }
+    <!-- Acciones para el cliente -->
+    <div class="actions">
+      @if (appointment.status === 'Pending' || appointment.status === 'Confirmed') {
+        <ion-button expand="block" color="danger" (click)="cancelAppointment()">
+          Cancelar Cita
+        </ion-button>
+      }
+
+      <!-- Acciones para dueño/admin -->
+      @if (isOwner) {
+        <div class="owner-actions">
+          <ion-button expand="block" fill="outline" color="primary" (click)="editAppointment()">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar Cita
+          </ion-button>
+
+          @if (appointment.status === 'Pending') {
+            <ion-button expand="block" fill="outline" color="success" (click)="confirmAppointment()">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              Confirmar Cita
+            </ion-button>
+          }
+
+          @if (appointment.status === 'Confirmed') {
+            <ion-button expand="block" fill="outline" color="tertiary" (click)="completeAppointment()">
+              <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+              Marcar como Completada
+            </ion-button>
+          }
+
+          <ion-button expand="block" color="danger" (click)="deleteAppointment()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Eliminar Permanentemente
+          </ion-button>
+        </div>
+      }
+    </div>
   }
 </ion-content>

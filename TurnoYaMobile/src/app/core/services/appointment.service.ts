@@ -28,6 +28,18 @@ export class AppointmentService {
     return this.http.patch<void>(`${this.apiUrl}/${id}/cancel`, { reason });
   }
 
+  updateStatus(id: string, status: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/status`, { status });
+  }
+
+  update(id: string, data: Partial<CreateAppointmentDto>): Observable<Appointment> {
+    return this.http.put<Appointment>(`${this.apiUrl}/${id}`, data);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
   confirm(id: string): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/confirm`, {});
   }
