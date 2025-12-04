@@ -115,99 +115,120 @@ ion-searchbar {
   }
 }
 
-// Estilos del popover del select
+// Estilos para el popover de categorías (iOS style)
 ion-popover {
-  --background: white;
-  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --border-radius: 12px;
-  --width: auto;
-  --min-width: 240px;
-  --max-width: 320px;
-
-  &::part(content) {
-    border-radius: 12px;
-    overflow: hidden;
-  }
+  --background: rgba(255, 255, 255, 0.95);
+  --backdrop-opacity: 0.4;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --border-radius: 14px;
+  --width: 280px;
+  --max-height: 400px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
   ion-list {
-    padding: 4px;
     background: transparent;
-    margin: 0;
+    padding: 0;
   }
 
   ion-item {
-    --padding-start: 16px;
-    --padding-end: 16px;
-    --min-height: 44px;
+    --padding-start: 20px;
+    --padding-end: 48px;
+    --inner-padding-end: 0;
     --background: transparent;
-    --border-color: transparent;
-    --inner-border-width: 0;
-    border-radius: 6px;
-    margin-bottom: 2px;
-    font-size: 15px;
+    --background-hover: rgba(0, 0, 0, 0.05);
+    --background-activated: rgba(0, 0, 0, 0.1);
+    --min-height: 48px;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --inner-border-width: 0 0 0.5px 0;
+    margin: 0;
+    border-radius: 0;
+    text-align: center;
+    position: relative;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.2s ease;
 
-    &:last-child {
-      margin-bottom: 0;
+    &:first-child {
+      border-radius: 14px 14px 0 0;
+      --inner-border-width: 0 0 0.5px 0;
     }
 
-    &:hover {
-      --background: rgba(59, 130, 246, 0.06);
+    &:last-child {
+      border-radius: 0 0 14px 14px;
+      --inner-border-width: 0;
+    }
+
+    &:only-child {
+      border-radius: 14px;
+      --inner-border-width: 0;
     }
 
     &.item-radio-checked {
-      --background: transparent;
-      --color: var(--ion-color-primary);
-      font-weight: 500;
+      --background: rgba(59, 130, 246, 0.08);
+
+      &::after {
+        content: '✓';
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ion-color-primary);
+        font-size: 20px;
+        font-weight: 600;
+      }
 
       ion-label {
         color: var(--ion-color-primary);
-        font-weight: 500;
+        font-weight: 600;
       }
+    }
 
-      ion-radio {
-        --color-checked: var(--ion-color-primary);
-      }
+    &:hover {
+      --background: rgba(0, 0, 0, 0.05);
     }
 
     ion-label {
+      text-align: center;
+      width: 100%;
       margin: 0;
-      font-size: 15px;
-      color: var(--ion-text-color);
+      padding: 0;
+      font-size: 16px;
       font-weight: 400;
+      color: var(--ion-text-color);
+      white-space: normal;
+      line-height: 1.4;
     }
 
     ion-radio {
-      margin-inline-end: 12px;
-      --color: transparent;
-      --color-checked: var(--ion-color-primary);
-      width: 20px;
-      height: 20px;
+      display: none;
     }
   }
 }
 
 @media (prefers-color-scheme: dark) {
   ion-popover {
-    --background: #1E293B;
-    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --background: rgba(30, 41, 59, 0.95);
+    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 
     ion-item {
-      ion-label {
-        color: #F1F5F9;
-      }
-
-      &:hover {
-        --background: rgba(96, 165, 250, 0.1);
-      }
+      --border-color: rgba(255, 255, 255, 0.1);
+      --background-hover: rgba(255, 255, 255, 0.05);
+      --background-activated: rgba(255, 255, 255, 0.1);
 
       &.item-radio-checked {
-        --background: transparent;
+        --background: rgba(96, 165, 250, 0.15);
 
         ion-label {
           color: var(--ion-color-primary);
         }
+      }
+
+      &:hover {
+        --background: rgba(255, 255, 255, 0.05);
+      }
+
+      ion-label {
+        color: #F1F5F9;
       }
     }
   }

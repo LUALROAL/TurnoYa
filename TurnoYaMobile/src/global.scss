@@ -42,7 +42,7 @@ ion-card {
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   /* Light mode */
   background: #FFFFFF !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06) !important;
@@ -54,14 +54,14 @@ ion-card {
 
   ion-card-header {
     padding: 20px;
-    
+
     ion-card-title {
       font-weight: 700;
       font-size: 20px;
       letter-spacing: -0.5px;
       color: var(--ion-text-color);
     }
-    
+
     ion-card-subtitle {
       font-weight: 600;
       margin-top: 6px;
@@ -78,8 +78,8 @@ ion-card {
 /* Dark mode cards con efecto glassmorphism */
 @media (prefers-color-scheme: dark) {
   ion-card {
-    background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.95) 0%, 
+    background: linear-gradient(135deg,
+      rgba(30, 41, 59, 0.95) 0%,
       rgba(51, 65, 85, 0.8) 100%) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
@@ -102,11 +102,11 @@ ion-button {
   letter-spacing: 0.3px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   height: 48px;
-  
+
   &[fill="solid"] {
     --background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
     --box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-    
+
     &:hover {
       --box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
       transform: translateY(-2px);
@@ -122,7 +122,7 @@ ion-button {
   ion-button[fill="solid"] {
     --background: linear-gradient(135deg, #60A5FA 0%, #22D3EE 100%);
     --box-shadow: 0 4px 20px rgba(96, 165, 250, 0.4);
-    
+
     &:hover {
       --box-shadow: 0 6px 28px rgba(96, 165, 250, 0.5);
     }
@@ -153,8 +153,8 @@ ion-header {
 
 @media (prefers-color-scheme: dark) {
   ion-header ion-toolbar {
-    --background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.98) 0%, 
+    --background: linear-gradient(135deg,
+      rgba(30, 41, 59, 0.98) 0%,
       rgba(51, 65, 85, 0.95) 100%);
     backdrop-filter: blur(20px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),
@@ -188,13 +188,13 @@ ion-item {
     font-size: 14px !important;
     color: var(--ion-text-color) !important;
     letter-spacing: 0.3px;
-    
+
     &[position="floating"] {
       transform: none !important;
       font-size: 14px !important;
     }
   }
-  
+
   ion-input,
   ion-textarea,
   ion-select {
@@ -209,7 +209,7 @@ ion-item {
     margin-top: 4px;
     font-size: 15px;
     min-height: 52px;
-    
+
     &.has-focus {
       border-color: var(--ion-color-primary) !important;
       --background: var(--ion-card-background);
@@ -223,7 +223,7 @@ ion-item {
       color: var(--ion-text-color) !important;
       opacity: 1 !important;
     }
-    
+
     ion-input,
     ion-textarea,
     ion-select {
@@ -231,7 +231,7 @@ ion-item {
       border-color: rgba(96, 165, 250, 0.3);
       --color: var(--ion-text-color);
       --placeholder-color: rgba(156, 163, 175, 0.8);
-      
+
       &.has-focus {
         --background: rgba(51, 65, 85, 0.8);
         border-color: var(--ion-color-primary) !important;
@@ -250,7 +250,7 @@ ion-searchbar {
   --icon-color: var(--ion-color-primary);
   --clear-button-color: var(--ion-color-primary);
   padding: 12px 0;
-  
+
   .searchbar-input-container {
     height: 48px;
   }
@@ -275,7 +275,7 @@ ion-chip {
   height: 36px;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
@@ -325,7 +325,7 @@ ion-segment {
   --background: rgba(59, 130, 246, 0.1);
   border-radius: 14px;
   padding: 4px;
-  
+
   ion-segment-button {
     --indicator-color: var(--ion-color-primary);
     --color: var(--ion-color-medium);
@@ -343,7 +343,7 @@ ion-segment {
 @media (prefers-color-scheme: dark) {
   ion-segment {
     --background: rgba(30, 41, 59, 0.8);
-    
+
     ion-segment-button {
       --indicator-color: linear-gradient(135deg, #60A5FA 0%, #22D3EE 100%);
       --color-checked: #0F172A;
@@ -392,7 +392,7 @@ ion-refresher {
   .gradient-bg {
     background: linear-gradient(135deg, #60A5FA 0%, #22D3EE 100%);
   }
-  
+
   .glass-effect {
     background: rgba(30, 41, 59, 0.8);
     border: 1px solid rgba(96, 165, 250, 0.3);
@@ -451,7 +451,7 @@ ion-refresher {
     --padding-start: 24px;
     --padding-end: 24px;
   }
-  
+
   ion-card {
     margin: 20px 0 !important;
   }
@@ -461,5 +461,117 @@ ion-refresher {
   ion-content {
     --padding-start: 32px;
     --padding-end: 32px;
+  }
+}
+
+/* ========================================
+   iOS Popover Styles (Global para todos los selects)
+   ======================================== */
+ion-popover {
+  --background: rgba(255, 255, 255, 0.98);
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --border-radius: 14px;
+  --width: 280px;
+  --max-height: 400px;
+
+  &::part(content) {
+    border-radius: 14px;
+    overflow: visible;
+  }
+
+  ion-list {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --inner-padding-end: 16px;
+    --background: transparent;
+    --min-height: 48px;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --inner-border-width: 0 0 0.5px 0;
+    --color: #000000;
+    margin: 0 !important;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:first-child {
+      border-radius: 14px 14px 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 14px 14px;
+      --inner-border-width: 0;
+    }
+
+    &:only-child {
+      border-radius: 14px;
+      --inner-border-width: 0;
+    }
+
+    &.item-radio-checked {
+      --background: rgba(59, 130, 246, 0.1);
+      font-weight: 600;
+
+      ion-label {
+        color: #3B82F6 !important;
+        font-weight: 600;
+      }
+    }
+
+    &:hover {
+      --background: rgba(0, 0, 0, 0.05);
+    }
+
+    ion-label {
+      margin: 0 !important;
+      padding: 12px 0 !important;
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      color: #000000 !important;
+      opacity: 1 !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }
+
+    ion-radio {
+      margin-inline-end: 12px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// Dark mode popover
+@media (prefers-color-scheme: dark) {
+  ion-popover {
+    --background: rgba(30, 41, 59, 0.98);
+    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    ion-item {
+      --border-color: rgba(255, 255, 255, 0.1);
+      --color: #F1F5F9;
+
+      &.item-radio-checked {
+        --background: rgba(96, 165, 250, 0.2);
+
+        ion-label {
+          color: #60A5FA !important;
+        }
+      }
+
+      &:hover {
+        --background: rgba(255, 255, 255, 0.05);
+      }
+
+      ion-label {
+        color: #F1F5F9 !important;
+      }
+    }
   }
 }
