@@ -19,11 +19,11 @@
     <!-- Información principal -->
     <ion-card>
       <ion-card-header>
+        <ion-card-title>{{ business.name }}</ion-card-title>
         <ion-chip *ngIf="business.category" class="category-chip">
           <ion-icon name="pricetag"></ion-icon>
           <ion-label>{{ business.category }}</ion-label>
         </ion-chip>
-        <ion-card-title>{{ business.name }}</ion-card-title>
       </ion-card-header>
 
       <ion-card-content>

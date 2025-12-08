@@ -50,8 +50,8 @@ public class BusinessProfile : Profile
         // Business → BusinessDetailDto
         CreateMap<Business, BusinessDetailDto>()
             .ForMember(dest => dest.Owner, opt => opt.MapFrom(src => src.Owner))
-            .ForMember(dest => dest.Services, opt => opt.Ignore()) // Pendiente cuando se creen DTOs de servicios
-            .ForMember(dest => dest.Employees, opt => opt.Ignore()); // Pendiente cuando se creen DTOs de empleados
+            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services))
+            .ForMember(dest => dest.Employees, opt => opt.MapFrom(src => src.Employees));
 
         // BusinessSettings → BusinessSettingsDto
         CreateMap<BusinessSettings, BusinessSettingsDto>()

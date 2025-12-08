@@ -1,2 +1,213 @@
-.loading-container{display:flex;flex-direction:column;align-items:center;justify-content:center;height:40vh}
-.empty-state{margin-top:24px;color:var(--ion-color-medium)}
+// Header
+ion-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+    --color: white;
+
+    ion-title {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    ion-back-button,
+    ion-button {
+      --color: white;
+    }
+  }
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+    --color: var(--ion-color-primary);
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+// Services Grid
+.services-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Service Card
+.service-card {
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  ion-card-header {
+    padding: 16px;
+
+    .service-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+
+      ion-card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ion-text-color);
+        margin: 0;
+        flex: 1;
+      }
+
+      .service-actions {
+        display: flex;
+        gap: 4px;
+
+        ion-button {
+          --padding-start: 8px;
+          --padding-end: 8px;
+          height: 32px;
+
+          ion-icon {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+  }
+
+  ion-card-content {
+    padding: 0 16px 16px;
+
+    .description {
+      color: var(--ion-color-medium);
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0 0 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .service-info {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: var(--ion-text-color);
+
+        ion-icon {
+          font-size: 18px;
+          color: var(--ion-color-primary);
+        }
+
+        &.price {
+          font-weight: 700;
+          color: var(--ion-color-primary);
+
+          span {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+
+    .service-footer {
+      display: flex;
+      justify-content: flex-end;
+
+      .status-chip {
+        height: 24px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .service-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    &:hover {
+      background: rgba(30, 41, 59, 0.8);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  min-height: 400px;
+
+  ion-icon {
+    font-size: 80px;
+    color: var(--ion-color-medium);
+    opacity: 0.5;
+    margin-bottom: 24px;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ion-text-color);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  p {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+    max-width: 300px;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  ion-button {
+    --border-radius: 12px;
+    height: 48px;
+    font-weight: 700;
+  }
+}

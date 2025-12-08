@@ -25,33 +25,59 @@
   }
 
   @if (!isLoading && services.length > 0) {
-    <ion-list>
+    <div class="services-grid">
       @for (svc of services; track svc.id) {
-        <ion-item>
-          <ion-label>
-            <h2>{{ svc.name }}</h2>
+        <ion-card class="service-card">
+          <ion-card-header>
+            <div class="service-header">
+              <ion-card-title>{{ svc.name }}</ion-card-title>
+              <div class="service-actions">
+                <ion-button fill="clear" size="small" (click)="editService(svc.id)">
+                  <ion-icon name="pencil-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="deleteService(svc.id)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-card-header>
+
+          <ion-card-content>
             @if (svc.description) {
-              <p>{{ svc.description }}</p>
+              <p class="description">{{ svc.description }}</p>
             }
-            <p>${{ svc.price }} • {{ svc.duration }} min</p>
-          </ion-label>
-          <ion-buttons slot="end">
-            <ion-button fill="clear" (click)="editService(svc.id)">
-              <ion-icon name="pencil-outline"></ion-icon>
-            </ion-button>
-            <ion-button fill="clear" color="danger" (click)="deleteService(svc.id)">
-              <ion-icon name="trash-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-item>
+
+            <div class="service-info">
+              <div class="info-item">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>{{ svc.duration }} min</span>
+              </div>
+              <div class="info-item price">
+                <ion-icon name="cash-outline"></ion-icon>
+                <span>${{ svc.price }}</span>
+              </div>
+            </div>
+
+            <div class="service-footer">
+              <ion-chip [color]="svc.isActive ? 'success' : 'medium'" class="status-chip">
+                <ion-label>{{ svc.isActive ? 'Activo' : 'Inactivo' }}</ion-label>
+              </ion-chip>
+            </div>
+          </ion-card-content>
+        </ion-card>
       }
-    </ion-list>
+    </div>
   }
 
   @if (!isLoading && services.length === 0) {
-    <div class="empty-state ion-text-center">
-      <p>No hay servicios. Crea el primero con el botón +</p>
-      <ion-button class="ion-margin-top" (click)="addService()">Agregar Servicio</ion-button>
+    <div class="empty-state">
+      <ion-icon name="cube-outline"></ion-icon>
+      <h3>No hay servicios</h3>
+      <p>Crea el primer servicio para tu negocio</p>
+      <ion-button (click)="addService()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Agregar Servicio
+      </ion-button>
     </div>
   }
 </ion-content>

@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/business/list"></ion-back-button>
+      <ion-back-button [defaultHref]="'/business/' + businessId + '/services'"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
@@ -9,36 +9,113 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <form [formGroup]="form" (ngSubmit)="submit()">
+    <!-- Nombre -->
     <ion-item>
-      <ion-label position="floating">Nombre *</ion-label>
-      <ion-input formControlName="name" required></ion-input>
+      <ion-label position="stacked">Nombre del Servicio *</ion-label>
+      <ion-input
+        formControlName="name"
+        placeholder="Ej. Corte de cabello"
+        required>
+      </ion-input>
+    </ion-item>
+    <div class="error-message" *ngIf="name?.invalid && name?.touched">
+      <p *ngIf="name?.errors?.['required']">El nombre es requerido</p>
+    </div>
+
+    <!-- Descripción -->
+    <ion-item>
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea
+        formControlName="description"
+        rows="3"
+        placeholder="Describe el servicio...">
+      </ion-textarea>
     </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Descripción</ion-label>
-      <ion-textarea formControlName="description" rows="3"></ion-textarea>
-    </ion-item>
+    <!-- Duración y Precio -->
+    <div class="form-row">
+      <ion-item class="half">
+        <ion-label position="stacked">Duración (min) *</ion-label>
+        <ion-input
+          type="number"
+          formControlName="duration"
+          placeholder="30"
+          min="1">
+        </ion-input>
+      </ion-item>
+      <div class="error-message" *ngIf="duration?.invalid && duration?.touched">
+        <p *ngIf="duration?.errors?.['required']">Requerido</p>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Duración (min)</ion-label>
-      <ion-input type="number" formControlName="duration"></ion-input>
-    </ion-item>
+      <ion-item class="half">
+        <ion-label position="stacked">Precio *</ion-label>
+        <ion-input
+          type="number"
+          formControlName="price"
+          placeholder="0"
+          min="0">
+        </ion-input>
+      </ion-item>
+      <div class="error-message" *ngIf="price?.invalid && price?.touched">
+        <p *ngIf="price?.errors?.['required']">Requerido</p>
+      </div>
+    </div>
 
-    <ion-item>
-      <ion-label position="floating">Precio</ion-label>
-      <ion-input type="number" formControlName="price"></ion-input>
-    </ion-item>
+    <!-- Moneda y Estado -->
+    <div class="form-row">
+      <ion-item class="half">
+        <ion-label position="stacked">Moneda</ion-label>
+        <ion-input
+          formControlName="currency"
+          placeholder="COP">
+        </ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Moneda</ion-label>
-      <ion-input formControlName="currency"></ion-input>
-    </ion-item>
+      <ion-item class="half toggle-item">
+        <ion-label>Activo</ion-label>
+        <ion-toggle formControlName="isActive" slot="end"></ion-toggle>
+      </ion-item>
+    </div>
 
-    <ion-item>
-      <ion-label>Activo</ion-label>
-      <ion-toggle formControlName="isActive"></ion-toggle>
-    </ion-item>
+    <!-- Sección de Empleados -->
+    @if (isEditMode && employees.length > 0) {
+      <div class="section-header">
+        <h3>Empleados Asignados</h3>
+        <p>Selecciona los empleados que pueden ofrecer este servicio</p>
+      </div>
 
-    <ion-button class="ion-margin-top" expand="block" type="submit" [disabled]="form.invalid">Guardar</ion-button>
+      <div class="employees-list">
+        @for (emp of employees; track emp.id) {
+          <ion-item>
+            <ion-checkbox
+              [checked]="isEmployeeAssigned(emp.id)"
+              (ionChange)="toggleEmployee(emp.id, $event)">
+            </ion-checkbox>
+            <ion-label>
+              <h3>{{ emp.user?.firstName }} {{ emp.user?.lastName }}</h3>
+              <p>{{ emp.user?.email }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </div>
+    }
+
+    <!-- Botones -->
+    <div class="form-actions">
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="form.invalid">
+        {{ isEditMode ? 'Actualizar' : 'Crear' }} Servicio
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="medium"
+        [routerLink]="['/business', businessId, 'services']">
+        Cancelar
+      </ion-button>
+    </div>
   </form>
 </ion-content>

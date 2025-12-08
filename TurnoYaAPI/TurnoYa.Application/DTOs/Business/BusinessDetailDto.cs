@@ -1,4 +1,6 @@
 using TurnoYa.Application.DTOs.Auth;
+using TurnoYa.Application.DTOs.Service;
+using TurnoYa.Application.DTOs.Employee;
 
 namespace TurnoYa.Application.DTOs.Business;
 
@@ -27,7 +29,7 @@ public class BusinessDetailDto
     // Owner
     public UserDto Owner { get; set; } = null!;
     
-    // Services and Employees (se agregarán sus DTOs más adelante)
-    public List<object> Services { get; set; } = new();
-    public List<object> Employees { get; set; } = new();
+    // Services and Employees
+    public List<ServiceDto> Services { get; set; } = new();
+    public List<EmployeeDto> Employees { get; set; } = new();
 }

@@ -16,11 +16,24 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonSpinner,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonChip,
   AlertController,
   ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { createOutline, pencilOutline, trashOutline, addOutline } from 'ionicons/icons';
+import {
+  createOutline,
+  pencilOutline,
+  trashOutline,
+  addOutline,
+  timeOutline,
+  cashOutline,
+  cubeOutline
+} from 'ionicons/icons';
 import { BusinessService } from '../../../core/services/business.service';
 import { Service } from '../../../core/models';
 
@@ -37,14 +50,17 @@ import { Service } from '../../../core/models';
     IonToolbar,
     IonButtons,
     IonBackButton,
-    IonList,
-    IonItem,
-    IonLabel,
     IonButton,
     IonIcon,
     IonRefresher,
     IonRefresherContent,
-    IonSpinner
+    IonSpinner,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonChip,
+    IonLabel
   ]
 })
 export class ServiceListPage implements OnInit {
@@ -59,7 +75,15 @@ export class ServiceListPage implements OnInit {
     private alertController: AlertController,
     private toastController: ToastController
   ) {
-    addIcons({ createOutline, pencilOutline, trashOutline, addOutline });
+    addIcons({
+      createOutline,
+      pencilOutline,
+      trashOutline,
+      addOutline,
+      timeOutline,
+      cashOutline,
+      cubeOutline
+    });
   }
 
   ngOnInit() {

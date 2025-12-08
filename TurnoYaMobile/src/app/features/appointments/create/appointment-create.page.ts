@@ -84,16 +84,21 @@ export class AppointmentCreatePage implements OnInit {
     this.isLoading = true;
     this.businessService.getBusinessById(this.businessId).subscribe({
       next: (response) => {
-        if (response.data) {
-          const businessDetail = response.data as BusinessDetail;
-          if (businessDetail.services) {
-            this.services = businessDetail.services;
-          }
+        // Manejar respuesta que puede venir con o sin .data
+        const payload = (response && (response as any).data) ? (response as any).data : response;
+        const businessDetail = payload as BusinessDetail;
+
+        if (businessDetail.services) {
+          this.services = businessDetail.services;
+          console.log('✅ Servicios cargados:', this.services);
+        } else {
+          console.log('⚠️ No hay servicios en el negocio');
         }
         this.isLoading = false;
       },
       error: async (error) => {
         this.isLoading = false;
+        console.error('❌ Error al cargar servicios:', error);
         await this.showToast('Error al cargar servicios', 'danger');
       }
     });

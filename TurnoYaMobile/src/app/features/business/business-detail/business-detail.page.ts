@@ -97,18 +97,28 @@ export class BusinessDetailPage implements OnInit {
     }
   }
 
+  ionViewWillEnter() {
+    // Recargar datos cada vez que se vuelve a la página
+    if (this.businessId) {
+      this.loadBusiness();
+    }
+  }
+
   loadBusiness() {
     this.isLoading = true;
     this.businessService.getBusinessById(this.businessId).subscribe({
       next: (response) => {
         const payload = (response && (response as any).data) ? (response as any).data : response;
         this.business = payload as BusinessDetail;
+        console.log('🏢 Negocio cargado:', this.business);
+        console.log('📋 Servicios:', this.business?.services);
         this.isLoading = false;
         // Recalcular propiedad de dueño una vez cargado el negocio
         this.checkOwnership();
       },
       error: async (error) => {
         this.isLoading = false;
+        console.error('❌ Error al cargar negocio:', error);
         await this.showToast('Error al cargar el negocio', 'danger');
         this.router.navigate(['/business/list']);
       }
@@ -118,7 +128,14 @@ export class BusinessDetailPage implements OnInit {
   checkOwnership() {
     this.authService.currentUser$.subscribe(user => {
       if (user && this.business) {
-        this.isOwner = user.id === this.business.ownerId;
+        // El backend envía owner.id en lugar de ownerId
+        const ownerId = this.business.owner?.id || this.business.ownerId;
+        this.isOwner = user.id === ownerId;
+        console.log('✅ Verificación de propiedad:', {
+          userId: user.id,
+          ownerId: ownerId,
+          isOwner: this.isOwner
+        });
       }
     });
   }

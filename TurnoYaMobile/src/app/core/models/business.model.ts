@@ -91,3 +91,13 @@ export interface UpdateBusinessDto {
   longitude?: number;
   isActive?: boolean;
 }
+
+export interface CreateServiceDto {
+  businessId: string;
+  name: string;
+  description?: string;
+  duration: number;
+  price: number;
+  currency?: string;
+  isActive?: boolean;
+}
