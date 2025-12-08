@@ -1,20 +1,20 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login"></ion-back-button>
+      <ion-back-button defaultHref="/login" text="Volver"></ion-back-button>
     </ion-buttons>
     <ion-title>Crear Cuenta</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="register-content">
   <div class="register-container">
     <div class="logo-section">
-      <h1>TurnoYa</h1>
+      <h1 class="gradient-text">TurnoYa</h1>
       <p>Únete a nuestra comunidad</p>
     </div>
 
-    <ion-card>
+    <ion-card class="register-card">
       <ion-card-header>
         <ion-card-title>Registro</ion-card-title>
       </ion-card-header>
@@ -22,121 +22,181 @@
       <ion-card-content>
         <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
           <!-- Nombre -->
-          <ion-item>
-            <ion-label position="floating">Nombre</ion-label>
-            <ion-input
-              type="text"
-              formControlName="firstName"
-              autocomplete="given-name"
-              placeholder="Juan">
-            </ion-input>
-          </ion-item>
-          <ion-text color="danger" *ngIf="firstName?.invalid && firstName?.touched">
-            <p class="error-message" *ngIf="firstName?.errors?.['required']">El nombre es requerido</p>
-            <p class="error-message" *ngIf="firstName?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</p>
-          </ion-text>
+          <div class="input-group"
+               [class.has-error]="firstName?.invalid && firstName?.touched"
+               [class.is-valid]="firstName?.valid && firstName?.touched">
+            <label class="input-label">Nombre</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="input-icon"></ion-icon>
+              <input
+                type="text"
+                formControlName="firstName"
+                autocomplete="given-name"
+                placeholder="Juan"
+                class="custom-input"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="words">
+            </div>
+            <div class="error-message" *ngIf="firstName?.invalid && firstName?.touched">
+              <span *ngIf="firstName?.errors?.['required']">El nombre es requerido</span>
+              <span *ngIf="firstName?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</span>
+            </div>
+          </div>
 
           <!-- Apellido -->
-          <ion-item>
-            <ion-label position="floating">Apellido</ion-label>
-            <ion-input
-              type="text"
-              formControlName="lastName"
-              autocomplete="family-name"
-              placeholder="Pérez">
-            </ion-input>
-          </ion-item>
-          <ion-text color="danger" *ngIf="lastName?.invalid && lastName?.touched">
-            <p class="error-message" *ngIf="lastName?.errors?.['required']">El apellido es requerido</p>
-            <p class="error-message" *ngIf="lastName?.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</p>
-          </ion-text>
+          <div class="input-group"
+               [class.has-error]="lastName?.invalid && lastName?.touched"
+               [class.is-valid]="lastName?.valid && lastName?.touched">
+            <label class="input-label">Apellido</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-circle-outline" class="input-icon"></ion-icon>
+              <input
+                type="text"
+                formControlName="lastName"
+                autocomplete="family-name"
+                placeholder="Pérez"
+                class="custom-input"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="words">
+            </div>
+            <div class="error-message" *ngIf="lastName?.invalid && lastName?.touched">
+              <span *ngIf="lastName?.errors?.['required']">El apellido es requerido</span>
+              <span *ngIf="lastName?.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</span>
+            </div>
+          </div>
 
           <!-- Email -->
-          <ion-item>
-            <ion-label position="floating">Email</ion-label>
-            <ion-input
-              type="email"
-              formControlName="email"
-              autocomplete="email"
-              placeholder="tu@email.com">
-            </ion-input>
-          </ion-item>
-          <ion-text color="danger" *ngIf="email?.invalid && email?.touched">
-            <p class="error-message" *ngIf="email?.errors?.['required']">El email es requerido</p>
-            <p class="error-message" *ngIf="email?.errors?.['email']">Ingresa un email válido</p>
-          </ion-text>
+          <div class="input-group"
+               [class.has-error]="email?.invalid && email?.touched"
+               [class.is-valid]="email?.valid && email?.touched">
+            <label class="input-label">Email</label>
+            <div class="input-wrapper">
+              <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+              <input
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="tu@email.com"
+                class="custom-input"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="off"
+                inputmode="email">
+            </div>
+            <div class="error-message" *ngIf="email?.invalid && email?.touched">
+              <span *ngIf="email?.errors?.['required']">El email es requerido</span>
+              <span *ngIf="email?.errors?.['email']">Ingresa un email válido</span>
+            </div>
+          </div>
 
           <!-- Teléfono -->
-          <ion-item>
-            <ion-label position="floating">Teléfono</ion-label>
-            <ion-input
-              type="tel"
-              formControlName="phone"
-              autocomplete="tel"
-              placeholder="1234567890">
-            </ion-input>
-          </ion-item>
-          <ion-text color="danger" *ngIf="phone?.invalid && phone?.touched">
-            <p class="error-message" *ngIf="phone?.errors?.['required']">El teléfono es requerido</p>
-            <p class="error-message" *ngIf="phone?.errors?.['pattern']">Ingresa un teléfono válido (10-15 dígitos)</p>
-          </ion-text>
+          <div class="input-group"
+               [class.has-error]="phone?.invalid && phone?.touched"
+               [class.is-valid]="phone?.valid && phone?.touched">
+            <label class="input-label">Teléfono</label>
+            <div class="input-wrapper">
+              <ion-icon name="call-outline" class="input-icon"></ion-icon>
+              <input
+                type="tel"
+                formControlName="phone"
+                autocomplete="tel"
+                placeholder="1234567890"
+                class="custom-input"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="off"
+                inputmode="tel">
+            </div>
+            <div class="error-message" *ngIf="phone?.invalid && phone?.touched">
+              <span *ngIf="phone?.errors?.['required']">El teléfono es requerido</span>
+              <span *ngIf="phone?.errors?.['pattern']">Ingresa un teléfono válido (10-15 dígitos)</span>
+            </div>
+          </div>
 
           <!-- Contraseña -->
-          <ion-item>
-            <ion-label position="floating">Contraseña</ion-label>
-            <ion-input
-              type="password"
-              formControlName="password"
-              autocomplete="new-password"
-              placeholder="••••••">
-            </ion-input>
-          </ion-item>
-          <ion-text color="danger" *ngIf="password?.invalid && password?.touched">
-            <p class="error-message" *ngIf="password?.errors?.['required']">La contraseña es requerida</p>
-            <p class="error-message" *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres</p>
-            <p class="error-message" *ngIf="password?.errors?.['pattern']">La contraseña debe incluir mayúscula, minúscula, número y símbolo</p>
-          </ion-text>
+          <div class="input-group"
+               [class.has-error]="password?.invalid && password?.touched"
+               [class.is-valid]="password?.valid && password?.touched">
+            <label class="input-label">Contraseña</label>
+            <div class="input-wrapper">
+              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+              <input
+                type="password"
+                formControlName="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                class="custom-input"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="off"
+                inputmode="text">
+            </div>
+            <div class="error-message" *ngIf="password?.invalid && password?.touched">
+              <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
+              <span *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres</span>
+              <span *ngIf="password?.errors?.['pattern']">Debe incluir mayúscula, minúscula, número y símbolo</span>
+            </div>
+          </div>
 
           <!-- Confirmar Contraseña -->
-          <ion-item>
-            <ion-label position="floating">Confirmar Contraseña</ion-label>
-            <ion-input
-              type="password"
-              formControlName="confirmPassword"
-              autocomplete="new-password"
-              placeholder="••••••">
-            </ion-input>
-          </ion-item>
-          <ion-text color="danger" *ngIf="confirmPassword?.invalid && confirmPassword?.touched">
-            <p class="error-message" *ngIf="confirmPassword?.errors?.['required']">Confirma tu contraseña</p>
-          </ion-text>
-          <ion-text color="danger" *ngIf="!passwordsMatch && confirmPassword?.touched">
-            <p class="error-message">Las contraseñas no coinciden</p>
-          </ion-text>
+          <div class="input-group"
+               [class.has-error]="confirmPassword?.invalid && confirmPassword?.touched"
+               [class.is-valid]="confirmPassword?.valid && confirmPassword?.touched">
+            <label class="input-label">Confirmar Contraseña</label>
+            <div class="input-wrapper">
+              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+              <input
+                type="password"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                class="custom-input"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="off"
+                inputmode="text">
+            </div>
+            <div class="error-message" *ngIf="confirmPassword?.invalid && confirmPassword?.touched">
+              <span *ngIf="confirmPassword?.errors?.['required']">Confirma tu contraseña</span>
+            </div>
+            <div class="error-message" *ngIf="!passwordsMatch && confirmPassword?.touched">
+              <span>Las contraseñas no coinciden</span>
+            </div>
+          </div>
 
           <!-- Rol -->
-          <ion-item>
-            <ion-label position="floating">Tipo de Usuario</ion-label>
-            <ion-select formControlName="role" placeholder="Selecciona tu rol">
-              <ion-select-option *ngFor="let role of userRoles" [value]="role.value">
-                {{ role.label }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
+          <div class="input-group custom-select"
+               [class.has-error]="role?.invalid && role?.touched"
+               [class.is-valid]="role?.valid && role?.touched">
+            <label class="input-label">Tipo de Usuario</label>
+            <div class="select-wrapper">
+              <ion-select
+                formControlName="role"
+                placeholder="Selecciona tu rol"
+                interface="action-sheet">
+                <ion-select-option *ngFor="let role of userRoles" [value]="role.value">
+                  {{ role.label }}
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
 
-          <ion-button
-            expand="block"
+          <!-- Botón de registro -->
+          <button
             type="submit"
-            [disabled]="registerForm.invalid"
-            class="ion-margin-top">
-            Crear Cuenta
-          </ion-button>
+            [disabled]="registerForm.invalid || isLoading"
+            class="register-button"
+            [class.loading]="isLoading">
+            <span *ngIf="!isLoading">Crear Cuenta</span>
+            <span *ngIf="isLoading">Creando cuenta...</span>
+            <ion-icon name="person-add-outline" *ngIf="!isLoading"></ion-icon>
+          </button>
         </form>
 
-        <div class="login-link ion-text-center ion-margin-top">
-          <ion-text>
-            <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
-          </ion-text>
+        <div class="login-link">
+          <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
         </div>
       </ion-card-content>
     </ion-card>

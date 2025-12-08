@@ -9,13 +9,17 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { errorInterceptor } from './app/core/interceptors/error.interceptor';
-import { lockClosedOutline, mailOutline } from 'ionicons/icons';
+import { callOutline, lockClosedOutline, mailOutline, personAddOutline, personCircleOutline, personOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
 
 addIcons({
   'mail-outline': mailOutline,
-  'lock-closed-outline': lockClosedOutline
+  'lock-closed-outline': lockClosedOutline,
+  'person-outline': personOutline,
+  'person-circle-outline': personCircleOutline,
+  'call-outline': callOutline,
+  'person-add-outline': personAddOutline
 });
 
 bootstrapApplication(AppComponent, {

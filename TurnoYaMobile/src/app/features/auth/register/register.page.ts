@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -20,6 +20,7 @@ import {
   IonText,
   IonSelect,
   IonSelectOption,
+  IonIcon,
   LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
@@ -45,17 +46,15 @@ import { RegisterRequest, UserRole } from '../../../core/models';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonButton,
-    IonText,
+    IonIcon,
     IonSelect,
     IonSelectOption
   ]
 })
-export class RegisterPage implements OnInit {
+export class RegisterPage implements OnInit, AfterViewInit {
   registerForm!: FormGroup;
+  isLoading = false;
+
   userRoles = [
     { value: UserRole.Customer, label: 'Cliente - Busco servicios para agendar citas' },
     { value: UserRole.BusinessOwner, label: 'Dueño de Negocio - Ofrezco servicios' }
@@ -71,6 +70,10 @@ export class RegisterPage implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
+  }
+
+  ngAfterViewInit() {
+    this.setupInputStyles();
   }
 
   private initializeForm() {
@@ -104,13 +107,16 @@ export class RegisterPage implements OnInit {
   }
 
   async onRegister() {
-    if (this.registerForm.invalid) {
+    if (this.registerForm.invalid || this.isLoading) {
       this.markFormGroupTouched(this.registerForm);
       return;
     }
 
+    this.isLoading = true;
     const loading = await this.loadingController.create({
       message: 'Creando cuenta...',
+      cssClass: 'custom-loading',
+      spinner: 'crescent'
     });
     await loading.present();
 
@@ -119,13 +125,18 @@ export class RegisterPage implements OnInit {
 
     this.authService.register(request).subscribe({
       next: async (response) => {
+        this.isLoading = false;
         await loading.dismiss();
         await this.showToast('¡Cuenta creada exitosamente! Bienvenido a TurnoYa', 'success');
         this.router.navigate(['/home']);
       },
       error: async (error) => {
+        this.isLoading = false;
         await loading.dismiss();
         await this.showToast(error.message || 'Error al crear la cuenta', 'danger');
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }
@@ -142,9 +153,44 @@ export class RegisterPage implements OnInit {
       message,
       duration: 3000,
       color,
-      position: 'bottom'
+      position: 'bottom',
+      cssClass: 'custom-toast',
+      buttons: [
+        {
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
     });
     await toast.present();
+  }
+
+  private setupInputStyles() {
+    // Forzar estilos en inputs para prevenir problemas de autofill
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('.custom-input');
+      inputs.forEach(input => {
+        // Asegurar que los inputs mantengan los estilos correctos
+        const styleInput = (e: Event) => {
+          const target = e.target as HTMLInputElement;
+          if (target.value) {
+            target.style.color = '#ffffff';
+            target.style.backgroundColor = 'transparent';
+          }
+        };
+
+        input.addEventListener('input', styleInput);
+        input.addEventListener('change', styleInput);
+        input.addEventListener('blur', styleInput);
+
+        // Verificar y aplicar estilos inmediatamente
+        const htmlInput = input as HTMLInputElement;
+        if (htmlInput.value) {
+          htmlInput.style.color = '#ffffff';
+          htmlInput.style.backgroundColor = 'transparent';
+        }
+      });
+    }, 100);
   }
 
   get email() {
