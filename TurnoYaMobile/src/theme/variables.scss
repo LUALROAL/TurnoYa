@@ -1,140 +1,125 @@
-// TurnoYa - Modern Theme inspired by Bike Shop App
+// ============================================
+// VARIABLES PARA TURNOYA - TEMA OSCURO AZUL
+// ============================================
 
+// Paleta de colores principal - Azules modernos
 :root {
-  /** Primary - Azul moderno (más vibrante) **/
-  --ion-color-primary: #3B82F6;
-  --ion-color-primary-rgb: 59, 130, 246;
+  // Colores primarios
+  --ion-color-primary: #2d8cff;
+  --ion-color-primary-rgb: 45, 140, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #3474d8;
-  --ion-color-primary-tint: #4f8ff7;
+  --ion-color-primary-shade: #287be0;
+  --ion-color-primary-tint: #4298ff;
 
-  /** Secondary - Azul cyan brillante **/
-  --ion-color-secondary: #3DD9EB;
-  --ion-color-secondary-rgb: 61, 217, 235;
+  // Colores secundarios
+  --ion-color-secondary: #00d4ff;
+  --ion-color-secondary-rgb: 0, 212, 255;
   --ion-color-secondary-contrast: #000000;
   --ion-color-secondary-contrast-rgb: 0, 0, 0;
-  --ion-color-secondary-shade: #36bfcf;
-  --ion-color-secondary-tint: #51ddee;
+  --ion-color-secondary-shade: #00bbe0;
+  --ion-color-secondary-tint: #1ad8ff;
 
-  /** Success **/
-  --ion-color-success: #10B981;
-  --ion-color-success-rgb: 16, 185, 129;
-  --ion-color-success-contrast: #ffffff;
-  --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #0ea372;
-  --ion-color-success-tint: #28c08e;
+  // Colores terciarios
+  --ion-color-tertiary: #6b5bff;
+  --ion-color-tertiary-rgb: 107, 91, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #5e50e0;
+  --ion-color-tertiary-tint: #7a6bff;
 
-  /** Warning **/
-  --ion-color-warning: #F59E0B;
-  --ion-color-warning-rgb: 245, 158, 11;
+  // Colores de éxito
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #000000;
+  --ion-color-success-contrast-rgb: 0, 0, 0;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  // Colores de advertencia
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
   --ion-color-warning-contrast: #000000;
   --ion-color-warning-contrast-rgb: 0, 0, 0;
-  --ion-color-warning-shade: #d88b0a;
-  --ion-color-warning-tint: #f6a823;
+  --ion-color-warning-shade: #e0ac08;
+  --ion-color-warning-tint: #ffca22;
 
-  /** Danger **/
-  --ion-color-danger: #EF4444;
-  --ion-color-danger-rgb: 239, 68, 68;
+  // Colores de peligro
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #d23c3c;
-  --ion-color-danger-tint: #f15757;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
 
-  /** Dark **/
-  --ion-color-dark: #1F2937;
-  --ion-color-dark-rgb: 31, 41, 55;
-  --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255, 255, 255;
-  --ion-color-dark-shade: #1b2330;
-  --ion-color-dark-tint: #353e4b;
+  // Fondos y superficies - Tema oscuro
+  --ion-background-color: #0a0e17;
+  --ion-background-color-rgb: 10, 14, 23;
 
-  /** Medium **/
-  --ion-color-medium: #9CA3AF;
-  --ion-color-medium-rgb: 156, 163, 175;
-  --ion-color-medium-contrast: #000000;
-  --ion-color-medium-contrast-rgb: 0, 0, 0;
-  --ion-color-medium-shade: #898f9a;
-  --ion-color-medium-tint: #a6acb7;
+  --ion-card-background: #1a1f2e;
+  --ion-item-background: #1a1f2e;
+  --ion-toolbar-background: #0f131f;
 
-  /** Light **/
-  --ion-color-light: #F3F4F6;
-  --ion-color-light-rgb: 243, 244, 246;
-  --ion-color-light-contrast: #000000;
-  --ion-color-light-contrast-rgb: 0, 0, 0;
-  --ion-color-light-shade: #d5d7d8;
-  --ion-color-light-tint: #f4f5f7;
+  // Textos
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
 
-  /** Backgrounds - Light Mode **/
-  --ion-background-color: #FFFFFF;
-  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color-step-50: #f2f2f2;
+  --ion-text-color-step-100: #e6e6e6;
+  --ion-text-color-step-150: #d9d9d9;
+  --ion-text-color-step-200: #cccccc;
+  --ion-text-color-step-250: #bfbfbf;
+  --ion-text-color-step-300: #b3b3b3;
+  --ion-text-color-step-350: #a6a6a6;
+  --ion-text-color-step-400: #999999;
+  --ion-text-color-step-450: #8c8c8c;
+  --ion-text-color-step-500: #808080;
+  --ion-text-color-step-550: #737373;
+  --ion-text-color-step-600: #666666;
+  --ion-text-color-step-650: #595959;
+  --ion-text-color-step-700: #4d4d4d;
+  --ion-text-color-step-750: #404040;
+  --ion-text-color-step-800: #333333;
+  --ion-text-color-step-850: #262626;
+  --ion-text-color-step-900: #191919;
+  --ion-text-color-step-950: #0d0d0d;
 
-  --ion-text-color: #111827;
-  --ion-text-color-rgb: 17, 24, 39;
+  // Bordes y sombras
+  --ion-border-color: #2a3042;
+  --ion-border-radius: 12px;
+  --ion-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --ion-box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.2);
 
-  --ion-card-background: #FFFFFF;
-  
-  --ion-toolbar-background: #FFFFFF;
-  --ion-item-background: #FFFFFF;
-  
-  /** Borders **/
-  --ion-border-color: #E5E7EB;
+  // Gradientes personalizados
+  --gradient-primary: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-tertiary) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--ion-color-secondary) 0%, var(--ion-color-primary) 100%);
+  --gradient-dark: linear-gradient(135deg, #1a1f2e 0%, #0f131f 100%);
+
+  // Espaciados
+  --ion-padding: 16px;
+  --ion-margin: 16px;
+  --ion-spacing-xs: 4px;
+  --ion-spacing-sm: 8px;
+  --ion-spacing-md: 16px;
+  --ion-spacing-lg: 24px;
+  --ion-spacing-xl: 32px;
+
+  // Fuentes
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Dark mode - Inspirado en la app de bicicletas */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /** Primary más brillante en dark **/
-    --ion-color-primary: #60A5FA;
-    --ion-color-primary-rgb: 96, 165, 250;
-    --ion-color-primary-contrast: #000000;
-    --ion-color-primary-contrast-rgb: 0, 0, 0;
-    --ion-color-primary-shade: #5593dc;
-    --ion-color-primary-tint: #70aefb;
+// Variables personalizadas adicionales
+:root {
+  --surface-color: #1a1f2e;
+  --surface-color-light: #242a3d;
+  --surface-color-dark: #0f131f;
 
-    /** Secondary cyan brillante **/
-    --ion-color-secondary: #22D3EE;
-    --ion-color-secondary-rgb: 34, 211, 238;
-    --ion-color-secondary-contrast: #000000;
-    --ion-color-secondary-contrast-rgb: 0, 0, 0;
-    --ion-color-secondary-shade: #1ebad1;
-    --ion-color-secondary-tint: #38d7f0;
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
 
-    /** Success **/
-    --ion-color-success: #34D399;
-    --ion-color-success-rgb: 52, 211, 153;
-    
-    /** Warning **/
-    --ion-color-warning: #FBBF24;
-    --ion-color-warning-rgb: 251, 191, 36;
-    
-    /** Danger **/
-    --ion-color-danger: #F87171;
-    --ion-color-danger-rgb: 248, 113, 113;
-
-    /** Medium - más visible en dark **/
-    --ion-color-medium: #9CA3AF;
-    --ion-color-medium-rgb: 156, 163, 175;
-    --ion-color-medium-contrast: #ffffff;
-    --ion-color-medium-contrast-rgb: 255, 255, 255;
-
-    /** Backgrounds - Dark Mode como la app de bici **/
-    --ion-background-color: #0F172A;
-    --ion-background-color-rgb: 15, 23, 42;
-
-    --ion-text-color: #F1F5F9;
-    --ion-text-color-rgb: 241, 245, 249;
-
-    /** Cards con efecto glassmorphism **/
-    --ion-card-background: #1E293B;
-    
-    --ion-toolbar-background: #1E293B;
-    --ion-toolbar-border-color: #334155;
-
-    --ion-item-background: #1E293B;
-    --ion-item-border-color: #334155;
-    
-    /** Borders **/
-    --ion-border-color: #334155;
-  }
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }

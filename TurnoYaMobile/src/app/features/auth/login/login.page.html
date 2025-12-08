@@ -18,7 +18,9 @@
 
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
         <!-- Email -->
-        <div class="input-group">
+        <div class="input-group"
+             [class.has-error]="email?.invalid && email?.touched"
+             [class.is-valid]="email?.valid && email?.touched">
           <label class="input-label">Email</label>
           <div class="input-wrapper">
             <ion-icon name="mail-outline" class="input-icon"></ion-icon>
@@ -27,7 +29,11 @@
               formControlName="email"
               autocomplete="email"
               placeholder="tu@email.com"
-              class="custom-input">
+              class="custom-input"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              inputmode="email">
           </div>
           <div class="error-message" *ngIf="email?.invalid && email?.touched">
             <span *ngIf="email?.errors?.['required']">El email es requerido</span>
@@ -36,7 +42,9 @@
         </div>
 
         <!-- Contraseña -->
-        <div class="input-group">
+        <div class="input-group"
+             [class.has-error]="password?.invalid && password?.touched"
+             [class.is-valid]="password?.valid && password?.touched">
           <label class="input-label">Contraseña</label>
           <div class="input-wrapper">
             <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
@@ -45,7 +53,11 @@
               formControlName="password"
               autocomplete="current-password"
               placeholder="••••••••"
-              class="custom-input">
+              class="custom-input"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              inputmode="text">
           </div>
           <div class="error-message" *ngIf="password?.invalid && password?.touched">
             <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
@@ -56,10 +68,12 @@
         <!-- Botón de login -->
         <button
           type="submit"
-          [disabled]="loginForm.invalid"
-          class="login-button">
-          <span>Iniciar Sesión</span>
-          <ion-icon name="arrow-forward-outline"></ion-icon>
+          [disabled]="loginForm.invalid || isLoading"
+          class="login-button"
+          [class.loading]="isLoading">
+          <span *ngIf="!isLoading">Iniciar Sesión</span>
+          <span *ngIf="isLoading">Iniciando sesión...</span>
+          <ion-icon name="arrow-forward-outline" *ngIf="!isLoading"></ion-icon>
         </button>
       </form>
 

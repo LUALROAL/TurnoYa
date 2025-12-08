@@ -9,6 +9,14 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { errorInterceptor } from './app/core/interceptors/error.interceptor';
+import { lockClosedOutline, mailOutline } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
+
+
+addIcons({
+  'mail-outline': mailOutline,
+  'lock-closed-outline': lockClosedOutline
+});
 
 bootstrapApplication(AppComponent, {
   providers: [

@@ -4,24 +4,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonButton,
-  IonText,
   IonIcon,
   LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from '../../../core/models';
+import { addIcons } from 'ionicons/dist/types/components/icon/utils';
+import { mailOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
@@ -46,7 +36,8 @@ export class LoginPage implements OnInit {
     private router: Router,
     private loadingController: LoadingController,
     private toastController: ToastController
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.initializeForm();
