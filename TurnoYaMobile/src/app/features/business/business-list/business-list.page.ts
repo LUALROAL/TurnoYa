@@ -116,6 +116,8 @@ export class BusinessListPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log('🚀 BusinessListPage inicializada');
+    console.log('📍 Current URL:', this.router.url);
     this.loadBusinesses();
     this.loadCategories();
   }
@@ -134,6 +136,12 @@ export class BusinessListPage implements OnInit {
   }
 
   async loadBusinesses(reset: boolean = false) {
+    console.log('📊 loadBusinesses() ejecutándose...');
+    console.log('🔄 Reset:', reset);
+    console.log('📄 Current page:', this.currentPage);
+    console.log('📦 Page size:', this.pageSize);
+    console.log('🔍 Search term:', this.searchTerm);
+
     if (reset) {
       this.currentPage = 1;
       this.businesses = [];
@@ -141,7 +149,10 @@ export class BusinessListPage implements OnInit {
       this.hasMore = true;
     }
 
-    if (!this.hasMore) return;
+    if (!this.hasMore) {
+      console.log('⛔ No hay más páginas, retornando');
+      return;
+    }
 
     this.isLoading = true;
 
@@ -151,23 +162,28 @@ export class BusinessListPage implements OnInit {
       this.searchTerm
     ).subscribe({
       next: (response) => {
-        console.log('Response from backend:', response);
-        console.log('Type of response:', typeof response);
-        console.log('Is array?', Array.isArray(response));
+        console.log('✅ Response from backend:', response);
+        console.log('📦 Type of response:', typeof response);
+        console.log('📋 Is array?', Array.isArray(response));
 
-        // El backend puede devolver directamente un array o un ApiResponse
+        // Extraer datos dependiendo del formato
         let businessData: any[] = [];
 
         if (Array.isArray(response)) {
-          // Respuesta directa como array
+          // Formato: [{...}, {...}]
           businessData = response;
-        } else if (response && response.data) {
-          // Respuesta como ApiResponse con propiedad data
-          businessData = Array.isArray(response.data) ? response.data : [response.data];
+          console.log('✅ Formato: Array directo');
+        } else if (response && typeof response === 'object') {
+          // Formato: { data: [...], items: [...], o directamente el objeto }
+          businessData = response.data || response.items || [response];
+          console.log('✅ Formato: Object con data/items');
+        } else {
+          console.error('❌ Formato de respuesta inesperado:', response);
+          businessData = [];
         }
 
-        console.log('Business data to display:', businessData);
-        console.log('Number of businesses:', businessData.length);
+        console.log('✅ Datos extraídos:', businessData);
+        console.log('✅ Cantidad de negocios:', businessData.length);
 
         // Mantener una copia completa para filtros locales
         if (reset) {
@@ -194,14 +210,31 @@ export class BusinessListPage implements OnInit {
         this.isLoading = false;
       },
       error: async (error) => {
-        console.error('Error loading businesses:', error);
+        console.error('❌ Error al cargar negocios:', error);
+        console.error('❌ Status:', error.status);
+        console.error('❌ Message:', error.message);
+        console.error('❌ Full error:', JSON.stringify(error, null, 2));
+
         this.isLoading = false;
-        await this.showToast('Error al cargar negocios', 'danger');
+
+        if (error.status === 401) {
+          await this.showToast('Sesión expirada. Por favor inicia sesión nuevamente.', 'danger');
+          this.router.navigate(['/login']);
+        } else if (error.status === 0) {
+          await this.showToast('No se puede conectar con el servidor. Verifica que esté corriendo.', 'danger');
+        } else {
+          await this.showToast(`Error al cargar negocios: ${error.message || 'Error desconocido'}`, 'danger');
+        }
       }
     });
   }
 
   applyFilters() {
+    console.log('🔍 applyFilters() ejecutándose...');
+    console.log('📦 allBusinesses length:', this.allBusinesses.length);
+    console.log('🔍 searchTerm:', this.searchTerm);
+    console.log('🏷️ selectedCategory:', this.selectedCategory);
+
     let filtered = [...this.allBusinesses];
 
     // Filtro por búsqueda de texto
@@ -213,14 +246,18 @@ export class BusinessListPage implements OnInit {
         (b.city?.toLowerCase().includes(term)) ||
         (b.address?.toLowerCase().includes(term))
       ));
+      console.log('✅ Después del filtro de búsqueda:', filtered.length);
     }
 
     // Filtro por categoría
     if (this.selectedCategory) {
       filtered = filtered.filter(b => b.category === this.selectedCategory);
+      console.log('✅ Después del filtro de categoría:', filtered.length);
     }
 
     this.businesses = filtered;
+    console.log('✅ businesses final length:', this.businesses.length);
+    console.log('✅ businesses array:', this.businesses);
   }
 
   onSearch(event: any) {
