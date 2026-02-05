@@ -104,7 +104,10 @@
 
       <div class="footer-link t-mt-6 t-text-center">
         <p class="t-caption t-text-secondary">
-          ¿Ya tienes cuenta? <a routerLink="/login" class="link-primary">Inicia Sesión</a>
+          ¿Ya tienes cuenta?
+          <ion-button fill="clear" size="small" class="link-primary" (click)="goToLogin()">
+            Inicia Sesión
+          </ion-button>
         </p>
       </div>
     </main>

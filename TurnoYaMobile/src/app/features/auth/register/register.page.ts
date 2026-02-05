@@ -98,4 +98,8 @@ export class RegisterPage implements OnInit {
     });
     await toast.present();
   }
+
+  goToLogin() {
+    this.navController.navigateRoot('/login');
+  }
 }

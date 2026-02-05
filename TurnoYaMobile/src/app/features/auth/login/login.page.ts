@@ -92,4 +92,8 @@ export class LoginPage implements OnInit {
   // Helper getters for template
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
+
+  goToRegister() {
+    this.navController.navigateRoot('/register');
+  }
 }
