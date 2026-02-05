@@ -1,269 +1,268 @@
-/* ============================================
-   ESTILOS GLOBALES - TURNOYA TEMA OSCURO
-   ============================================ */
+/* ==========================================================================
+   TURNOYA 2.0 - GLOBAL LAYOUT & UTILITIES
+   ========================================================================== */
 
-/* Importar variables primero */
-@import './theme/variables.scss';
+/* ==========================================================================
+   TURNOYA 2.0 - GLOBAL LAYOUT & UTILITIES
+   ========================================================================== */
 
-/* Reset completo */
+/* --------------------------------------------------------------------------
+
+/* --------------------------------------------------------------------------
+   1. MODERN RESET
+   -------------------------------------------------------------------------- */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-family: var(--ion-font-family);
-  background-color: var(--ion-background-color);
-  color: var(--ion-text-color);
-  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
 body {
-  background-color: var(--ion-background-color);
-  line-height: 1.5;
-  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  background-color: var(--t-surface-0);
+  color: var(--t-text-primary);
+  font-family: var(--t-font-sans);
+  font-size: 16px;
+  /* Base size */
 }
 
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--surface-color-dark);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--ion-color-primary);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--ion-color-primary-shade);
-}
-
-/* Tipografía */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.2;
-  margin-bottom: var(--ion-spacing-sm);
-}
-
+/* --------------------------------------------------------------------------
+   2. TYPOGRAPHY HELPERS
+   -------------------------------------------------------------------------- */
+.t-h1,
 h1 {
-  font-size: 2rem;
+  font-size: var(--t-text-3xl);
+  font-weight: var(--t-font-bold);
+  color: var(--t-text-primary);
+  line-height: 1.2;
+  margin-bottom: var(--t-space-4);
 }
 
+.t-h2,
 h2 {
-  font-size: 1.5rem;
+  font-size: var(--t-text-2xl);
+  font-weight: var(--t-font-bold);
+  color: var(--t-text-primary);
+  line-height: 1.3;
+  margin-bottom: var(--t-space-3);
 }
 
+.t-h3,
 h3 {
-  font-size: 1.25rem;
+  font-size: var(--t-text-lg);
+  font-weight: var(--t-font-medium);
+  color: var(--t-text-primary);
+  margin-bottom: var(--t-space-2);
 }
 
-p {
-  margin-bottom: var(--ion-spacing-md);
-  color: var(--ion-text-color-step-300);
+.t-body {
+  font-size: var(--t-text-base);
+  color: var(--t-text-secondary);
+  line-height: 1.5;
 }
 
-/* Utilidades */
-.text-center {
-  text-align: center;
+.t-caption {
+  font-size: var(--t-text-sm);
+  color: var(--t-text-tertiary);
 }
 
-.text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* --------------------------------------------------------------------------
+   3. LAYOUT CONTAINERS (The "Skeleton" of the UI)
+   -------------------------------------------------------------------------- */
 
-.shadow-elevated {
-  box-shadow: var(--ion-box-shadow);
-}
+/* .t-page: Use this as the wrapper for every page content */
+.t-page {
+  width: 100%;
+  min-height: 100%;
+  padding: var(--t-space-4);
+  background-color: var(--t-surface-0);
 
-.shadow-subtle {
-  box-shadow: var(--ion-box-shadow-light);
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  @media (min-width: 768px) {
+    padding: var(--t-space-6);
+    max-width: 600px;
+    /* Constrain max width for readability on tablet */
+    margin: 0 auto;
+    /* Center on large screens */
   }
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* .t-card: The fundamental unit of content */
+.t-card {
+  background-color: var(--t-surface-1);
+  border-radius: var(--t-radius-lg);
+  padding: var(--t-space-5);
+  box-shadow: var(--t-shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  margin-bottom: var(--t-space-4);
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
+/* .t-grid: Responsive list layout */
+.t-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--t-space-4);
 
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-out;
+/* Flex Utilities */
+.t-flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--t-space-3);
 }
 
-.slide-in-up {
-  animation: slideInUp 0.6s ease-out;
+.t-flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
 }
 
-.pulse {
-  animation: pulse 2s infinite;
+.t-justify-between {
+  justify-content: space-between;
 }
 
-/* Override de estilos de Ionic para tema oscuro */
-ion-content {
-  --background: var(--ion-background-color);
-  --color: var(--ion-text-color);
-  --keyboard-offset: 0px;
-  --offset-bottom: 0px;
-  --offset-top: 0px;
-  --padding-bottom: 0px;
-  --padding-end: 0px;
-  --padding-start: 0px;
-  --padding-top: 0px;
-}
+/* --------------------------------------------------------------------------
+   4. COMPONENT OVERRIDES (Ionic Adjustments)
+   -------------------------------------------------------------------------- */
 
+/* Buttons */
 ion-button {
-  --border-radius: var(--border-radius-md);
-  font-weight: 600;
+  --border-radius: var(--t-radius-md);
+  font-weight: var(--t-font-medium);
   text-transform: none;
-  letter-spacing: 0.5px;
+  /* No ugly ALL CAPS */
+  --box-shadow: none;
 }
 
-ion-card {
-  --background: var(--ion-card-background);
-  border-radius: var(--border-radius-lg);
-  margin: var(--ion-spacing-md);
-  box-shadow: var(--ion-box-shadow-light);
-  border: 1px solid var(--ion-border-color);
-}
-
-ion-item {
-  --background: var(--ion-item-background);
-  --border-color: var(--ion-border-color);
-  --color: var(--ion-text-color);
-  --inner-border-width: 0;
-  --min-height: 56px;
-}
-
-ion-input, ion-textarea {
-  --background: var(--surface-color-light) !important;
-  --color: var(--ion-text-color) !important;
-  --padding-start: 16px !important;
-  --padding-end: 16px !important;
-  --placeholder-color: var(--ion-text-color-step-500) !important;
-  --placeholder-opacity: 1 !important;
-  border-radius: var(--border-radius-sm) !important;
+ion-content {
+  --background: var(--t-surface-0);
 }
 
 ion-toolbar {
-  --background: var(--ion-toolbar-background);
-  --color: var(--ion-text-color);
-  --border-color: var(--ion-border-color);
+  --border-width: 0;
+  --padding-start: var(--t-space-2);
+  --padding-end: var(--t-space-2);
 }
 
-/* Estilos para toasts personalizados */
-.custom-toast {
-  --background: var(--surface-color-light);
-  --color: var(--ion-text-color);
-  --border-radius: var(--border-radius-md);
-  --box-shadow: var(--ion-box-shadow);
-}
+/* Inputs */
+.t-input-wrapper {
+  background: var(--t-surface-1);
+  border-radius: var(--t-radius-md);
+  padding: var(--t-space-2) var(--t-space-4);
+  border: 1px solid transparent;
+  transition: all var(--t-duration-fast);
 
-/* Estilos para loadings personalizados */
-.custom-loading {
-  --background: rgba(10, 14, 23, 0.9);
-  --spinner-color: var(--ion-color-primary);
-  --color: var(--ion-text-color);
-}
+  &:focus-within {
+    border-color: var(--t-color-primary-500);
+    background: var(--t-surface-2);
+  }
 
-/* Media queries para responsividad */
-@media (min-width: 768px) {
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
+  ion-input,
+  ion-textarea,
+  ion-select {
+    --padding-start: 0;
+    --padding-end: 0;
   }
 }
 
-@media (min-width: 992px) {
-  .container {
-    max-width: 960px;
+/* --------------------------------------------------------------------------
+   5. OVERLAYS & FEEDBACK (The Premium Feel)
+   -------------------------------------------------------------------------- */
+
+/* Toast: Floating & Glassy */
+ion-toast {
+  --background: rgba(30, 41, 59, 0.9);
+  /* Surface-1 with opacity */
+  --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --color: var(--t-text-primary);
+  --border-radius: var(--t-radius-md);
+
+  &::part(message) {
+    font-weight: 500;
   }
 }
 
-@media (min-width: 1200px) {
-  .container {
-    max-width: 1140px;
+/* Alert: Dark & Clean */
+ion-alert {
+  --backdrop-opacity: 0.8;
+  --background: var(--t-surface-1);
+  --color: var(--t-text-primary);
+
+  .alert-wrapper {
+    border: 1px solid var(--t-glass-border);
+    border-radius: var(--t-radius-lg);
+    box-shadow: var(--t-shadow-lg);
+  }
+
+  .alert-head {
+    h2 {
+      color: var(--t-text-primary);
+      font-weight: 700;
+    }
+  }
+
+  .alert-message {
+    color: var(--t-text-secondary);
+  }
+
+  button {
+    color: var(--t-color-primary-400) !important;
+    font-weight: 600;
+
+    &.alert-button-role-cancel {
+      color: var(--t-text-tertiary) !important;
+    }
+
+    &.alert-button-role-destructive {
+      color: var(--t-color-danger) !important;
+    }
   }
 }
 
-/* Estados de focus para accesibilidad */
-:focus-visible {
-  outline: 2px solid var(--ion-color-primary);
-  outline-offset: 2px;
-}
+/* Action Sheet: Card Style */
+ion-action-sheet {
+  --background: var(--t-surface-1);
+  --color: var(--t-text-primary);
+  --button-color: var(--t-text-primary);
 
-/* Estilos para inputs personalizados */
-input, textarea, select {
-  font-family: var(--ion-font-family) !important;
-  background-color: var(--surface-color-light) !important;
-  color: var(--ion-text-color) !important;
-  border: 2px solid transparent !important;
-  border-radius: var(--border-radius-sm) !important;
-  padding: 12px 16px !important;
-  font-size: 1rem !important;
-  transition: all var(--transition-fast) !important;
-
-  &:focus {
-    border-color: var(--ion-color-primary) !important;
-    outline: none !important;
-    box-shadow: 0 0 0 3px rgba(45, 140, 255, 0.1) !important;
+  .action-sheet-group {
+    border-radius: var(--t-radius-lg) var(--t-radius-lg) 0 0;
+    margin-bottom: 0;
+    /* Attach to bottom */
   }
 
-  &::placeholder {
-    color: var(--ion-text-color-step-500) !important;
+  .action-sheet-button {
+    background: transparent;
+    color: var(--t-text-primary);
+    border-bottom: 1px solid var(--t-surface-2);
+
+    &.action-sheet-cancel {
+      font-weight: 700;
+      color: var(--t-color-primary-400);
+    }
+
+    &.sc-ion-action-sheet-md {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
   }
 }
 
-/* Override para autofill */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: white !important;
-  -webkit-box-shadow: 0 0 0px 1000px var(--surface-color-light) inset !important;
-  transition: background-color 5000s ease-in-out 0s !important;
-  border-color: var(--ion-color-primary) !important;
+/* Modal: Card Style by default */
+ion-modal {
+  --background: var(--t-surface-0);
+  --border-radius: var(--t-radius-lg);
+
+  ion-toolbar {
+    --background: var(--t-surface-1);
+    --color: var(--t-text-primary);
+  }
 }

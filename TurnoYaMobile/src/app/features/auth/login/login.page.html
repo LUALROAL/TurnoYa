@@ -1,86 +1,69 @@
-<ion-content [fullscreen]="true" class="login-content">
-  <div class="login-container">
-    <!-- Logo y título -->
-    <div class="logo-section">
-      <div class="logo-circle">
-        <ion-icon name="calendar-outline"></ion-icon>
-      </div>
-      <h1 class="gradient-text">TurnoYa</h1>
-      <p class="subtitle">Gestiona tus turnos fácilmente</p>
-    </div>
+<ion-content [fullscreen]="true">
+  <div class="t-page t-flex-col t-justify-center" style="min-height: 100vh;">
 
-    <!-- Card de login -->
-    <div class="login-card">
-      <div class="card-header">
-        <h2>Bienvenido</h2>
-        <p>Inicia sesión para continuar</p>
+    <!-- BRAND HEADER -->
+    <header class="login-header t-flex-col">
+      <div class="logo-container">
+        <ion-icon name="calendar" class="brand-icon"></ion-icon>
+      </div>
+      <h1 class="t-h1 text-center">TurnoYa</h1>
+      <p class="t-body text-center">Gestiona tu tiempo, sin complicaciones.</p>
+    </header>
+
+    <!-- LOGIN CARD -->
+    <main class="t-card login-card">
+      <div class="t-mb-6">
+        <h2 class="t-h2 text-center">Bienvenido</h2>
+        <p class="t-caption text-center">Ingresa tus credenciales para continuar</p>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
-        <!-- Email -->
-        <div class="input-group"
-             [class.has-error]="email?.invalid && email?.touched"
-             [class.is-valid]="email?.valid && email?.touched">
-          <label class="input-label">Email</label>
-          <div class="input-wrapper">
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="t-flex-col">
+
+        <!-- Email Input -->
+        <div class="t-input-group">
+          <label class="t-caption">Correo Electrónico</label>
+          <div class="t-input-wrapper t-flex-row">
             <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-            <input
-              type="email"
-              formControlName="email"
-              autocomplete="email"
-              placeholder="tu@email.com"
-              class="custom-input"
-              spellcheck="false"
-              autocorrect="off"
-              autocapitalize="off"
-              inputmode="email">
+            <input type="email" formControlName="email" class="native-input" placeholder="ejemplo@correo.com"
+              autocomplete="email">
           </div>
-          <div class="error-message" *ngIf="email?.invalid && email?.touched">
-            <span *ngIf="email?.errors?.['required']">El email es requerido</span>
-            <span *ngIf="email?.errors?.['email']">Ingresa un email válido</span>
+          <!-- Error Message -->
+          <div class="error-feedback" *ngIf="email?.invalid && email?.touched">
+            <span *ngIf="email?.errors?.['required']">El correo es obligatorio</span>
+            <span *ngIf="email?.errors?.['email']">Formato inválido</span>
           </div>
         </div>
 
-        <!-- Contraseña -->
-        <div class="input-group"
-             [class.has-error]="password?.invalid && password?.touched"
-             [class.is-valid]="password?.valid && password?.touched">
-          <label class="input-label">Contraseña</label>
-          <div class="input-wrapper">
+        <!-- Password Input -->
+        <div class="t-input-group">
+          <label class="t-caption">Contraseña</label>
+          <div class="t-input-wrapper t-flex-row">
             <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-            <input
-              type="password"
-              formControlName="password"
-              autocomplete="current-password"
-              placeholder="••••••••"
-              class="custom-input"
-              spellcheck="false"
-              autocorrect="off"
-              autocapitalize="off"
-              inputmode="text">
+            <input type="password" formControlName="password" class="native-input" placeholder="••••••••"
+              autocomplete="current-password">
           </div>
-          <div class="error-message" *ngIf="password?.invalid && password?.touched">
-            <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
+          <div class="error-feedback" *ngIf="password?.invalid && password?.touched">
+            <span *ngIf="password?.errors?.['required']">La contraseña es obligatoria</span>
             <span *ngIf="password?.errors?.['minlength']">Mínimo 6 caracteres</span>
           </div>
         </div>
 
-        <!-- Botón de login -->
-        <button
-          type="submit"
-          [disabled]="loginForm.invalid || isLoading"
-          class="login-button"
-          [class.loading]="isLoading">
+        <!-- Submit Button -->
+        <ion-button expand="block" type="submit" class="t-mt-4" [disabled]="loginForm.invalid || isLoading">
           <span *ngIf="!isLoading">Iniciar Sesión</span>
-          <span *ngIf="isLoading">Iniciando sesión...</span>
-          <ion-icon name="arrow-forward-outline" *ngIf="!isLoading"></ion-icon>
-        </button>
-      </form>
+          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        </ion-button>
 
-      <!-- Link de registro -->
-      <div class="register-link">
-        <p>¿No tienes cuenta? <a routerLink="/register" class="link-text">Regístrate aquí</a></p>
-      </div>
-    </div>
+      </form>
+    </main>
+
+    <!-- FOOTER / LINKS -->
+    <footer class="login-footer text-center t-mt-4">
+      <p class="t-caption">
+        ¿No tienes cuenta?
+        <a routerLink="/register" class="link-primary">Regístrate aquí</a>
+      </p>
+    </footer>
+
   </div>
 </ion-content>

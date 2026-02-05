@@ -4,26 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonSelect,
-  IonSelectOption,
   IonButton,
+  IonIcon,
+  IonBackButton,
   AlertController,
   ToastController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../core/services/auth.service';
 import { User, UserRole } from '../../core/models';
+// Icons handled globally via main.ts
 
 @Component({
   selector: 'app-profile',
@@ -34,20 +23,9 @@ import { User, UserRole } from '../../core/models';
     CommonModule,
     FormsModule,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonSelect,
-    IonSelectOption
+    IonButton,
+    IonIcon,
+    IonBackButton
   ]
 })
 export class ProfilePage implements OnInit {
@@ -55,8 +33,8 @@ export class ProfilePage implements OnInit {
   selectedRole: UserRole | null = null;
 
   roleOptions = [
-    { value: UserRole.Customer, label: 'Cliente - Busco servicios' },
-    { value: UserRole.BusinessOwner, label: 'Dueño de Negocio - Ofrezco servicios' }
+    { value: UserRole.Customer, label: 'Cliente', description: 'Busca negocios y agenda tus citas.' },
+    { value: UserRole.BusinessOwner, label: 'Dueño de Negocio', description: 'Gestiona tu negocio y servicios.' }
   ];
 
   constructor(
@@ -64,7 +42,7 @@ export class ProfilePage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.authService.currentUser$.subscribe((user: User | null) => {
@@ -73,34 +51,67 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  async onRoleChange() {
-    if (!this.selectedRole || this.selectedRole === this.user?.role) return;
+  getInitials(first?: string, last?: string): string {
+    return ((first?.charAt(0) || '') + (last?.charAt(0) || '')).toUpperCase();
+  }
+
+  getRoleLabel(role?: UserRole): string {
+    return role === UserRole.BusinessOwner ? 'Propietario' : 'Cliente';
+  }
+
+  async confirmRoleChange(role: UserRole) {
+    if (role === this.user?.role) return;
+
+    this.selectedRole = role; // Optimistic update UI selection
 
     const alert = await this.alertController.create({
       header: 'Cambiar Rol',
-      message: `¿Deseas cambiar tu rol a ${this.selectedRole === UserRole.Customer ? 'Cliente' : 'Dueño de Negocio'}? Esto actualizará los módulos disponibles.`,
+      message: `¿Cambiar a modo ${role === UserRole.Customer ? 'Cliente' : 'Negocio'}?`,
       buttons: [
-        { text: 'Cancelar', role: 'cancel', handler: () => {
-          this.selectedRole = this.user?.role || null;
-        }},
-        { text: 'Confirmar', handler: async () => {
-          try {
-            await this.authService.switchRole(this.selectedRole!);
-            await this.showToast('Rol actualizado correctamente', 'success');
-            this.router.navigate(['/home']);
-          } catch (error: any) {
-            await this.showToast(error.message || 'Error al cambiar el rol', 'danger');
-            this.selectedRole = this.user?.role || null;
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            this.selectedRole = this.user?.role || null; // Revert
           }
-        }}
-      ]
+        },
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            await this.executeRoleChange(role);
+          }
+        }
+      ],
+      cssClass: 't-alert' // Custom class if we need overrides
     });
 
     await alert.present();
   }
 
+  async executeRoleChange(role: UserRole) {
+    try {
+      await this.authService.switchRole(role);
+      await this.showToast('Rol actualizado correctamente', 'success');
+      this.router.navigate(['/home']);
+    } catch (error: any) {
+      await this.showToast(error.message || 'Error al cambiar el rol', 'danger');
+      this.selectedRole = this.user?.role || null; // Revert
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   private async showToast(message: string, color: string = 'dark') {
-    const toast = await this.toastController.create({ message, duration: 2500, color, position: 'bottom' });
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      color,
+      position: 'bottom',
+      cssClass: 't-toast'
+    });
     await toast.present();
   }
 }

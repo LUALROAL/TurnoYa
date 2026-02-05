@@ -4,38 +4,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonContent,
   IonHeader,
-  IonTitle,
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonIcon,
-  IonButton,
   IonSpinner,
-  IonChip,
-  LoadingController,
-  ToastController,
-  AlertController
+  IonButton,
+  IonIcon,
+  AlertController,
+  ActionSheetController,
+  ToastController
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import {
-  locationOutline,
-  callOutline,
-  mailOutline,
-  timeOutline,
-  createOutline,
-  trashOutline,
-  pricetag
-} from 'ionicons/icons';
+// addIcons removed, handled globally
+
 import { BusinessService } from '../../../core/services/business.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Business, BusinessDetail } from '../../../core/models';
+import { BusinessDetail } from '../../../core/models';
 
 @Component({
   selector: 'app-business-detail',
@@ -46,21 +29,12 @@ import { Business, BusinessDetail } from '../../../core/models';
     CommonModule,
     IonContent,
     IonHeader,
-    IonTitle,
     IonToolbar,
     IonButtons,
     IonBackButton,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonIcon,
-    IonButton,
     IonSpinner,
-    IonChip
+    IonButton,
+    IonIcon
   ]
 })
 export class BusinessDetailPage implements OnInit {
@@ -74,31 +48,19 @@ export class BusinessDetailPage implements OnInit {
     private router: Router,
     private businessService: BusinessService,
     private authService: AuthService,
-    private loadingController: LoadingController,
-    private toastController: ToastController,
-    private alertController: AlertController
-  ) {
-    addIcons({
-      locationOutline,
-      callOutline,
-      mailOutline,
-      timeOutline,
-      createOutline,
-      trashOutline,
-      pricetag
-    });
-  }
+    private alertController: AlertController,
+    private actionSheetController: ActionSheetController,
+    private toastController: ToastController
+  ) { }
 
   ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('id') || '';
     if (this.businessId) {
       this.loadBusiness();
-      this.checkOwnership();
     }
   }
 
   ionViewWillEnter() {
-    // Recargar datos cada vez que se vuelve a la página
     if (this.businessId) {
       this.loadBusiness();
     }
@@ -110,81 +72,71 @@ export class BusinessDetailPage implements OnInit {
       next: (response) => {
         const payload = (response && (response as any).data) ? (response as any).data : response;
         this.business = payload as BusinessDetail;
-        console.log('🏢 Negocio cargado:', this.business);
-        console.log('📋 Servicios:', this.business?.services);
         this.isLoading = false;
-        // Recalcular propiedad de dueño una vez cargado el negocio
         this.checkOwnership();
       },
       error: async (error) => {
         this.isLoading = false;
-        console.error('❌ Error al cargar negocio:', error);
-        await this.showToast('Error al cargar el negocio', 'danger');
+        // console.error('Error al cargar negocio:', error);
         this.router.navigate(['/business/list']);
       }
     });
   }
 
   checkOwnership() {
+    if (!this.business) return;
+
     this.authService.currentUser$.subscribe(user => {
-      if (user && this.business) {
-        // El backend envía owner.id en lugar de ownerId
-        const ownerId = this.business.owner?.id || this.business.ownerId;
+      if (user) {
+        const ownerId = this.business?.owner?.id || this.business?.ownerId;
         this.isOwner = user.id === ownerId;
-        console.log('✅ Verificación de propiedad:', {
-          userId: user.id,
-          ownerId: ownerId,
-          isOwner: this.isOwner
-        });
       }
     });
   }
 
-  editBusiness() {
-    this.router.navigate(['/business/form', this.businessId]);
-  }
-
-  async deleteBusiness() {
-    const alert = await this.alertController.create({
-      header: 'Confirmar eliminación',
-      message: '¿Estás seguro de que deseas eliminar este negocio?',
+  // New Action Sheet for Owner Actions (Neo-Turno pattern: simplify UI clutter)
+  async presentOwnerActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Administrar Negocio',
       buttons: [
         {
-          text: 'Cancelar',
-          role: 'cancel'
+          text: 'Editar Información',
+          icon: 'create',
+          handler: () => { this.editBusiness(); }
         },
         {
-          text: 'Eliminar',
+          text: 'Ver Citas',
+          icon: 'calendar',
+          handler: () => { this.viewBusinessAppointments(); }
+        },
+        {
+          text: 'Gestionar Servicios',
+          icon: 'albums',
+          handler: () => { this.navigateToServices(); }
+        },
+        {
+          text: 'Gestionar Empleados',
+          icon: 'people',
+          handler: () => { this.navigateToEmployees(); }
+        },
+        {
+          text: 'Eliminar Negocio',
           role: 'destructive',
-          handler: async () => {
-            const loading = await this.loadingController.create({
-              message: 'Eliminando negocio...'
-            });
-            await loading.present();
-
-            this.businessService.deleteBusiness(this.businessId).subscribe({
-              next: async () => {
-                await loading.dismiss();
-                await this.showToast('Negocio eliminado exitosamente', 'success');
-                this.router.navigate(['/business/list']);
-              },
-              error: async (error) => {
-                await loading.dismiss();
-                await this.showToast('Error al eliminar el negocio', 'danger');
-              }
-            });
-          }
+          icon: 'trash',
+          handler: () => { this.deleteBusiness(); }
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          icon: 'close',
         }
       ]
     });
-
-    await alert.present();
+    await actionSheet.present();
   }
 
-  bookAppointment() {
-    this.router.navigate(['/appointments/create'], {
-      queryParams: { businessId: this.businessId }
-    });
+  editBusiness() {
+    this.router.navigate(['/business/form', this.businessId]);
   }
 
   viewBusinessAppointments() {
@@ -199,18 +151,29 @@ export class BusinessDetailPage implements OnInit {
     this.router.navigate(['/business', this.businessId, 'employees']);
   }
 
-  getDayName(dayOfWeek: number): string {
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    return days[dayOfWeek] || '';
+  async deleteBusiness() {
+    const alert = await this.alertController.create({
+      header: '¿Estás seguro?',
+      message: 'Esta acción no se puede deshacer.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.businessService.deleteBusiness(this.businessId).subscribe(() => {
+              this.router.navigate(['/business/list']);
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
-  private async showToast(message: string, color: string = 'dark') {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom'
+  bookAppointment() {
+    this.router.navigate(['/appointments/create'], {
+      queryParams: { businessId: this.businessId }
     });
-    await toast.present();
   }
 }

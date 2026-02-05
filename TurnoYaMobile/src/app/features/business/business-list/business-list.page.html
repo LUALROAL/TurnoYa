@@ -1,121 +1,121 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title>Negocios</ion-title>
-  </ion-toolbar>
-  <ion-toolbar>
-    <ion-searchbar
-      [(ngModel)]="searchTerm"
-      (ionInput)="onSearch($event)"
-      placeholder="Buscar negocios..."
-      debounce="500">
-    </ion-searchbar>
+    <ion-title class="t-h3">Descubrir</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
-  <!-- Filtro de categorías -->
-  <ion-toolbar>
-    <div class="filter-container">
-      <!-- Chip para "Todas las categorías" -->
-      <ion-chip
-        [color]="!selectedCategory ? 'primary' : 'medium'"
-        (click)="clearCategory()">
-        <ion-icon name="pricetag"></ion-icon>
-        <ion-label>Todas las categorías</ion-label>
-      </ion-chip>
-
-      <!-- Chips para cada categoría -->
-      @for (category of availableCategories; track category) {
-        <ion-chip
-          [color]="selectedCategory === category ? 'primary' : 'medium'"
-          (click)="onCategorySelect(category)">
-          <ion-icon name="pricetag"></ion-icon>
-          <ion-label>{{ category }}</ion-label>
-        </ion-chip>
-      }
+  <ion-toolbar class="search-toolbar">
+    <div class="search-container">
+      <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onSearch($event)" placeholder="Buscar..."
+        class="custom-searchbar" inputmode="search">
+      </ion-searchbar>
     </div>
   </ion-toolbar>
+
+  <!-- Category Filter (Horizontal Scroll) -->
+  <div class="category-scroll t-flex-row">
+    <button class="chip-button" [class.active]="!selectedCategory" (click)="clearCategory()">
+      Todo
+    </button>
+
+    @for (category of availableCategories; track category) {
+    <button class="chip-button" [class.active]="selectedCategory === category" (click)="onCategorySelect(category)">
+      {{ category }}
+    </button>
+    }
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
+  <div class="t-page">
 
-  <div class="business-container ion-padding">
-    <!-- Loading inicial -->
+    <!-- Loading State -->
     @if (isLoading && businesses.length === 0) {
-      <div class="loading-container">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Cargando negocios...</p>
+    <div class="t-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+      <div class="t-card skeleton-card">
+        <ion-skeleton-text animated
+          style="width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 60%; height: 20px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 40%; height: 16px; margin-top: 8px;"></ion-skeleton-text>
       </div>
+      }
+    </div>
     }
 
-    <!-- Lista de negocios -->
+    <!-- Content Grid -->
     @if (!isLoading || businesses.length > 0) {
-      <ion-list [inset]="true">
-        @for (business of businesses; track business.id) {
-          <ion-card (click)="viewBusinessDetail(business.id)">
-            <ion-card-header>
-              <ion-card-title>{{ business.name }}</ion-card-title>
-              @if (business.category) {
-                <ion-card-subtitle>
-                  <ion-icon name="pricetag-outline"></ion-icon>
-                  {{ business.category }}
-                </ion-card-subtitle>
-              }
-            </ion-card-header>
+    <div class="t-grid">
+      @for (business of businesses; track business.id) {
+      <div class="t-card business-card" (click)="viewBusinessDetail(business.id)">
 
-            <ion-card-content>
-              @if (business.description) {
-                <p>{{ business.description }}</p>
-              }
+        <!-- Card Header / Image Placeholder -->
+        <div class="card-hero">
+          <div class="category-tag">{{ business.category }}</div>
+          @if (business.averageRating > 0) {
+          <div class="rating-tag">
+            <ion-icon name="star"></ion-icon>
+            {{ business.averageRating | number:'1.1-1' }}
+          </div>
+          }
+        </div>
 
-              <div class="business-info">
-                @if (business.address) {
-                  <div class="info-item">
-                    <ion-icon name="location-outline"></ion-icon>
-                    <span>{{ business.address }}, {{ business.city }}</span>
-                  </div>
-                }
-                @if (business.phone) {
-                  <div class="info-item">
-                    <ion-icon name="call-outline"></ion-icon>
-                    <span>{{ business.phone }}</span>
-                  </div>
-                }
-              </div>
+        <!-- Card Content -->
+        <div class="card-body">
+          <h3 class="t-h3 text-truncate">{{ business.name }}</h3>
+          <div class="t-flex-row t-mb-2 location-row">
+            <ion-icon name="location-outline" class="icon-sm"></ion-icon>
+            <span class="t-caption text-truncate">{{ business.city || 'Ubicación' }}</span>
+          </div>
 
-              <ion-button expand="block" fill="outline" size="small" class="ion-margin-top">
-                Ver detalles
-              </ion-button>
-            </ion-card-content>
-          </ion-card>
-        }
-      </ion-list>
-    }
+          <div class="t-flex-row t-justify-between t-mt-2">
+            <span class="status-badge" [class.open]="business.isActive">
+              {{ business.isActive ? 'Abierto' : 'Cerrado' }}
+            </span>
+            <button class="action-link">
+              Ver
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </div>
+        </div>
 
-    <!-- Mensaje sin resultados -->
-    @if (!isLoading && businesses.length === 0) {
-      <div class="empty-state ion-text-center">
-        <ion-icon name="business-outline" size="large"></ion-icon>
-        <h3>No se encontraron negocios</h3>
-        <p>Intenta con otros términos de búsqueda</p>
       </div>
+      }
+    </div>
     }
 
-    <!-- Infinite scroll -->
+    <!-- Empty State -->
+    @if (!isLoading && businesses.length === 0) {
+    <div class="empty-state-container t-flex-col t-justify-center t-items-center">
+      <div class="icon-circle">
+        <ion-icon name="search-outline"></ion-icon>
+      </div>
+      <h3 class="t-h2 text-center">Sin resultados</h3>
+      <p class="t-body text-center">No encontramos negocios con esos criterios.</p>
+      <ion-button (click)="loadBusinesses(true)" fill="outline" class="t-mt-4">
+        Recargar
+      </ion-button>
+    </div>
+    }
+
     <ion-infinite-scroll (ionInfinite)="onLoadMore($event)" [disabled]="!hasMore">
-      <ion-infinite-scroll-content loadingSpinner="crescent">
-      </ion-infinite-scroll-content>
+      <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
     </ion-infinite-scroll>
+
   </div>
 
-  <!-- FAB para crear negocio -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="createBusiness()">
+  <!-- Floating Action Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="t-fab">
+    <ion-fab-button (click)="createBusiness()" color="primary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
 </ion-content>

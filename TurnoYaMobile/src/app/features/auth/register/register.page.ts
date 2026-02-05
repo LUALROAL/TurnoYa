@@ -1,31 +1,17 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonItem,
-  IonLabel,
-  IonInput,
   IonButton,
-  IonText,
-  IonSelect,
-  IonSelectOption,
+  IonSpinner,
   IonIcon,
-  LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest, UserRole } from '../../../core/models';
+// Icons handled globally via main.ts
 
 @Component({
   selector: 'app-register',
@@ -35,116 +21,70 @@ import { RegisterRequest, UserRole } from '../../../core/models';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
+    RouterModule,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonIcon,
-    IonSelect,
-    IonSelectOption
+    IonButton,
+    IonSpinner,
+    IonIcon
   ]
 })
-export class RegisterPage implements OnInit, AfterViewInit {
-  registerForm!: FormGroup;
+export class RegisterPage implements OnInit {
+  registerForm: FormGroup;
   isLoading = false;
+  showPassword = false;
 
   userRoles = [
-    { value: UserRole.Customer, label: 'Cliente - Busco servicios para agendar citas' },
-    { value: UserRole.BusinessOwner, label: 'Dueño de Negocio - Ofrezco servicios' }
+    { value: UserRole.Customer, label: 'Cliente (Reservar)' },
+    { value: UserRole.BusinessOwner, label: 'Dueño (Ofrecer Servicios)' }
   ];
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private loadingController: LoadingController,
     private toastController: ToastController
-  ) { }
-
-  ngOnInit() {
-    this.initializeForm();
-  }
-
-  ngAfterViewInit() {
-    this.setupInputStyles();
-  }
-
-  private initializeForm() {
-    this.registerForm = this.formBuilder.group({
+  ) {
+    this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        // Debe incluir minúscula, mayúscula, número y caracter especial
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
-      ]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+      lastName: ['', [Validators.required]],
+      phone: ['', [Validators.required]],
       role: [UserRole.Customer, [Validators.required]]
-    }, {
-      validators: this.passwordMatchValidator
-    });
+    }, { validators: this.passwordMatchValidator });
   }
 
-  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  ngOnInit() { }
+
+  passwordMatchValidator(control: AbstractControl) {
     const password = control.get('password');
-    const confirmPassword = control.get('confirmPassword');
-
-    if (!password || !confirmPassword) {
-      return null;
-    }
-
-    return password.value === confirmPassword.value ? null : { passwordMismatch: true };
+    const confirm = control.get('confirmPassword');
+    if (!password || !confirm) return null;
+    return password.value === confirm.value ? null : { passwordMismatch: true };
   }
 
-  async onRegister() {
-    if (this.registerForm.invalid || this.isLoading) {
-      this.markFormGroupTouched(this.registerForm);
+  get confirmPassword() { return this.registerForm.get('confirmPassword'); }
+
+  onRegister() {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
     this.isLoading = true;
-    const loading = await this.loadingController.create({
-      message: 'Creando cuenta...',
-      cssClass: 'custom-loading',
-      spinner: 'crescent'
-    });
-    await loading.present();
-
-    // Enviar confirmPassword al backend (requerido por el validador)
     const request: RegisterRequest = this.registerForm.value;
 
     this.authService.register(request).subscribe({
-      next: async (response) => {
+      next: async () => {
         this.isLoading = false;
-        await loading.dismiss();
-        await this.showToast('¡Cuenta creada exitosamente! Bienvenido a TurnoYa', 'success');
+        await this.showToast('¡Cuenta creada exitosamente!', 'success');
         this.router.navigate(['/home']);
       },
       error: async (error) => {
         this.isLoading = false;
-        await loading.dismiss();
-        await this.showToast(error.message || 'Error al crear la cuenta', 'danger');
-      },
-      complete: () => {
-        this.isLoading = false;
+        await this.showToast(error.message || 'Error al registrarse', 'danger');
       }
-    });
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      control?.markAsTouched();
     });
   }
 
@@ -153,75 +93,8 @@ export class RegisterPage implements OnInit, AfterViewInit {
       message,
       duration: 3000,
       color,
-      position: 'bottom',
-      cssClass: 'custom-toast',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
+      position: 'bottom'
     });
     await toast.present();
-  }
-
-  private setupInputStyles() {
-    // Forzar estilos en inputs para prevenir problemas de autofill
-    setTimeout(() => {
-      const inputs = document.querySelectorAll('.custom-input');
-      inputs.forEach(input => {
-        // Asegurar que los inputs mantengan los estilos correctos
-        const styleInput = (e: Event) => {
-          const target = e.target as HTMLInputElement;
-          if (target.value) {
-            target.style.color = '#ffffff';
-            target.style.backgroundColor = 'transparent';
-          }
-        };
-
-        input.addEventListener('input', styleInput);
-        input.addEventListener('change', styleInput);
-        input.addEventListener('blur', styleInput);
-
-        // Verificar y aplicar estilos inmediatamente
-        const htmlInput = input as HTMLInputElement;
-        if (htmlInput.value) {
-          htmlInput.style.color = '#ffffff';
-          htmlInput.style.backgroundColor = 'transparent';
-        }
-      });
-    }, 100);
-  }
-
-  get email() {
-    return this.registerForm.get('email');
-  }
-
-  get password() {
-    return this.registerForm.get('password');
-  }
-
-  get confirmPassword() {
-    return this.registerForm.get('confirmPassword');
-  }
-
-  get firstName() {
-    return this.registerForm.get('firstName');
-  }
-
-  get lastName() {
-    return this.registerForm.get('lastName');
-  }
-
-  get phone() {
-    return this.registerForm.get('phone');
-  }
-
-  get role() {
-    return this.registerForm.get('role');
-  }
-
-  get passwordsMatch(): boolean {
-    return !this.registerForm.hasError('passwordMismatch');
   }
 }

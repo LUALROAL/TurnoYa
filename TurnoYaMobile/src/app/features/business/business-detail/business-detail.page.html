@@ -1,128 +1,133 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/business/list"></ion-back-button>
+      <ion-back-button defaultHref="/business/list" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title>Detalle del Negocio</ion-title>
+    <ion-buttons slot="end">
+      <!-- Owner Options Actions -->
+      @if (isOwner) {
+      <ion-button (click)="presentOwnerActionSheet()">
+        <ion-icon slot="icon-only" name="ellipsis-vertical" color="light"></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando información...</p>
+
+  @if (isLoading) {
+  <div class="t-page t-flex-col t-justify-center t-items-center" style="height: 100%">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="t-body t-mt-4">Cargando detalles...</p>
   </div>
+  }
 
-  <!-- Detalle del negocio -->
-  <div *ngIf="!isLoading && business" class="business-detail ion-padding">
-    <!-- Información principal -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>{{ business.name }}</ion-card-title>
-        <ion-chip *ngIf="business.category" class="category-chip">
-          <ion-icon name="pricetag"></ion-icon>
-          <ion-label>{{ business.category }}</ion-label>
-        </ion-chip>
-      </ion-card-header>
+  @if (!isLoading && business) {
+  <!-- Hero Section (Full width top) -->
+  <div class="hero-section">
+    <div class="hero-content t-page">
+      <div class="category-badge">{{ business.category }}</div>
+      <h1 class="t-h1 text-white t-mt-2">{{ business.name }}</h1>
 
-      <ion-card-content>
-        <p *ngIf="business.description" class="description">{{ business.description }}</p>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Información de contacto -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Información de Contacto</ion-card-title>
-      </ion-card-header>
-
-      <ion-card-content>
-        <ion-list>
-          <ion-item *ngIf="business.address">
-            <ion-icon name="location-outline" slot="start"></ion-icon>
-            <ion-label>
-              <h3>Dirección</h3>
-              <p>{{ business.address }}</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item *ngIf="business.phone">
-            <ion-icon name="call-outline" slot="start"></ion-icon>
-            <ion-label>
-              <h3>Teléfono</h3>
-              <p>{{ business.phone }}</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item *ngIf="business.email">
-            <ion-icon name="mail-outline" slot="start"></ion-icon>
-            <ion-label>
-              <h3>Email</h3>
-              <p>{{ business.email }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Servicios -->
-    <ion-card *ngIf="business.services && business.services.length > 0">
-      <ion-card-header>
-        <ion-card-title>Servicios</ion-card-title>
-      </ion-card-header>
-
-      <ion-card-content>
-        <ion-list [inset]="true">
-          <ion-item *ngFor="let service of business.services">
-            <ion-label>
-              <h3>{{ service.name }}</h3>
-              <p *ngIf="service.description">{{ service.description }}</p>
-              <p class="price">${{ service.price }} - {{ service.duration }} min</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
-    <ion-card *ngIf="!business.services || business.services.length === 0">
-      <ion-card-header>
-        <ion-card-title>Servicios</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p class="ion-text-center">Este negocio aún no tiene servicios publicados.</p>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Acciones -->
-    <div class="actions ion-padding">
-      <ion-button expand="block" (click)="bookAppointment()">
-        Agendar Cita
-      </ion-button>
-
-      <!-- Acciones de propietario -->
-      <div *ngIf="isOwner" class="owner-actions">
-        <ion-button expand="block" fill="outline" (click)="editBusiness()">
-          <ion-icon name="create-outline" slot="start"></ion-icon>
-          Editar Negocio
-        </ion-button>
-
-        <ion-button expand="block" fill="outline" (click)="viewBusinessAppointments()">
-          Ver Citas del Negocio
-        </ion-button>
-
-        <ion-button expand="block" fill="outline" (click)="navigateToServices()">
-          Gestionar Servicios
-        </ion-button>
-
-        <ion-button expand="block" fill="outline" (click)="navigateToEmployees()">
-          Gestionar Empleados
-        </ion-button>
-
-        <ion-button expand="block" fill="outline" color="danger" (click)="deleteBusiness()">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
-          Eliminar Negocio
-        </ion-button>
+      <div class="t-flex-row t-mt-2 text-white-alpha">
+        <ion-icon name="location"></ion-icon>
+        <span class="t-body" style="color: rgba(255,255,255,0.9)">
+          {{ business.city || 'Ubicación no especificada' }}
+        </span>
       </div>
+
+      @if (business.averageRating > 0) {
+      <div class="hero-rating t-mt-2">
+        <ion-icon name="star"></ion-icon>
+        <span>{{ business.averageRating | number:'1.1-1' }}</span>
+      </div>
+      }
     </div>
   </div>
+
+  <!-- Main Content (Overlapping Hero) -->
+  <div class="detail-content t-page">
+
+    <!-- Info Card -->
+    <div class="t-card info-card">
+      <h2 class="t-h3">Sobre Nosotros</h2>
+      <p class="t-body t-mb-4">{{ business.description || 'Sin descripción disponible.' }}</p>
+
+      <div class="info-grid">
+        @if (business.address) {
+        <div class="info-item">
+          <div class="icon-box">
+            <ion-icon name="map"></ion-icon>
+          </div>
+          <div>
+            <label>Dirección</label>
+            <p>{{ business.address }}</p>
+          </div>
+        </div>
+        }
+
+        @if (business.phone) {
+        <div class="info-item">
+          <div class="icon-box">
+            <ion-icon name="call"></ion-icon>
+          </div>
+          <div>
+            <label>Teléfono</label>
+            <p>{{ business.phone }}</p>
+          </div>
+        </div>
+        }
+
+        @if (business.email) {
+        <div class="info-item">
+          <div class="icon-box">
+            <ion-icon name="mail"></ion-icon>
+          </div>
+          <div>
+            <label>Email</label>
+            <p class="text-truncate">{{ business.email }}</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Services List -->
+    <h2 class="t-h2 t-mt-6">Servicios</h2>
+
+    @if (business.services && business.services.length > 0) {
+    <div class="t-grid">
+      @for (service of business.services; track service.id) {
+      <div class="t-card service-card">
+        <div class="t-flex-row t-justify-between t-mb-1">
+          <span class="service-price">${{ service.price }}</span>
+          <span class="service-duration">{{ service.duration }} min</span>
+        </div>
+        <h3 class="t-h3">{{ service.name }}</h3>
+        @if (service.description) {
+        <p class="t-caption t-mt-1">{{ service.description }}</p>
+        }
+        <ion-button expand="block" class="t-mt-3" fill="outline" size="small">
+          Reservar
+        </ion-button>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="t-card t-flex-col t-items-center t-py-8">
+      <ion-icon name="albums-outline" style="font-size: 32px; color: var(--t-text-tertiary);"></ion-icon>
+      <p class="t-body t-mt-2">No hay servicios disponibles.</p>
+    </div>
+    }
+
+    <!-- Bottom Action Bar (Floating) -->
+    <div class="floating-action-bar">
+      <ion-button expand="block" size="large" (click)="bookAppointment()">
+        Agendar Cita
+      </ion-button>
+    </div>
+
+  </div>
+  }
 </ion-content>

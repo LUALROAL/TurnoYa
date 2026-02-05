@@ -5,13 +5,16 @@ import { Router, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
+  IonButton,
+  IonSpinner,
   LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from '../../../core/models';
-import { addIcons } from 'ionicons/dist/types/components/icon/utils';
-import { mailOutline } from 'ionicons/icons';
+
+// Icons are globally registered in main.ts, so we don't need addIcons here
+// We just import IonIcon to use the component.
 
 @Component({
   selector: 'app-login',
@@ -23,7 +26,9 @@ import { mailOutline } from 'ionicons/icons';
     ReactiveFormsModule,
     RouterLink,
     IonContent,
-    IonIcon
+    IonIcon,
+    IonButton,
+    IonSpinner
   ]
 })
 export class LoginPage implements OnInit {
@@ -34,10 +39,8 @@ export class LoginPage implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private loadingController: LoadingController,
     private toastController: ToastController
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     this.initializeForm();
@@ -52,52 +55,41 @@ export class LoginPage implements OnInit {
 
   async onLogin() {
     if (this.loginForm.invalid) {
-      this.markFormGroupTouched(this.loginForm);
+      this.loginForm.markAllAsTouched();
       return;
     }
 
-    const loading = await this.loadingController.create({
-      message: 'Iniciando sesión...',
-    });
-    await loading.present();
-
+    this.isLoading = true;
     const loginData: LoginRequest = this.loginForm.value;
 
     this.authService.login(loginData).subscribe({
-      next: async (response) => {
-        await loading.dismiss();
+      next: async () => {
+        // Success: Redirect to business list
         await this.showToast('¡Bienvenido!', 'success');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/business/list']);
+        this.isLoading = false;
       },
       error: async (error) => {
-        await loading.dismiss();
-        await this.showToast(error.message || 'Error al iniciar sesión', 'danger');
+        // Error: Show feedback
+        console.error('Login error:', error);
+        await this.showToast(error.message || 'Credenciales incorrectas', 'danger');
+        this.isLoading = false;
       }
     });
   }
 
-  private markFormGroupTouched(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      control?.markAsTouched();
-    });
-  }
-
-  private async showToast(message: string, color: string = 'dark') {
+  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
       color,
-      position: 'bottom'
+      position: 'bottom',
+      cssClass: 't-toast' // We can style this globally later
     });
     await toast.present();
   }
 
-  get email() {
-    return this.loginForm.get('email');
-  }
-
-  get password() {
-    return this.loginForm.get('password');
-  }
+  // Helper getters for template
+  get email() { return this.loginForm.get('email'); }
+  get password() { return this.loginForm.get('password'); }
 }

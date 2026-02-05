@@ -1,228 +1,182 @@
-.business-detail {
-  max-width: 800px;
-  margin: 0 auto;
-  padding-bottom: 80px;
+/* 
+   BUSINESS DETAIL - NEO TURNO STYLES 
+*/
+
+/* 1. Transparent Header */
+.transparent-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
 }
 
-// Header
-ion-header {
-  ion-toolbar {
-    --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
-    --color: white;
+/* 2. Hero Section */
+.hero-section {
+  position: relative;
+  height: 35vh;
+  background: linear-gradient(135deg, var(--t-color-primary-600), var(--t-color-secondary-600));
+  overflow: hidden;
 
-    ion-title {
-      font-weight: 700;
-      font-size: 20px;
-    }
+  /* Abstract Shapes for Texture */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    z-index: 0;
+  }
 
-    ion-back-button {
-      --color: white;
-    }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: var(--t-space-12);
+    /* Space for overlap */
+  }
+
+  .text-white {
+    color: white !important;
+  }
+
+  .text-white-alpha {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .category-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    padding: 4px 12px;
+    border-radius: var(--t-radius-full);
+    color: white;
+    font-size: var(--t-text-xs);
+    font-weight: bold;
+    align-self: flex-start;
+    text-transform: uppercase;
+  }
+
+  .hero-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: white;
+    color: var(--t-color-warning);
+    padding: 4px 8px;
+    border-radius: var(--t-radius-md);
+    font-weight: bold;
+    font-size: var(--t-text-sm);
+    width: fit-content;
   }
 }
 
-// Loading
-.loading-container {
+/* 3. Main Content (Overlap) */
+.detail-content {
+  margin-top: -32px;
+  /* Pull up over hero */
+  position: relative;
+  z-index: 2;
+  border-top-left-radius: var(--t-radius-xl);
+  border-top-right-radius: var(--t-radius-xl);
+  background: var(--t-surface-0);
+  min-height: 60vh;
+  padding-bottom: 100px;
+  /* Space for FAB */
+
+  /* Ensure background covers the cut corners */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--t-surface-0);
+    z-index: -1;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+  }
+}
+
+/* 4. Info Card Grid */
+.info-grid {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  gap: 16px;
+  gap: var(--t-space-4);
+  margin-top: var(--t-space-4);
 
-  ion-spinner {
-    width: 48px;
-    height: 48px;
-    --color: var(--ion-color-primary);
-  }
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--t-space-3);
 
-  p {
-    color: var(--ion-color-medium);
-    font-size: 16px;
-    font-weight: 500;
-  }
-}
+    .icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--t-radius-md);
+      background: var(--t-surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t-color-primary-400);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
 
-// Cards
-ion-card {
-  margin: 16px 0;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-
-  ion-card-header {
-    padding: 20px;
-
-    .category-chip {
-      height: 28px;
-      font-size: 12px;
+    label {
+      display: block;
+      font-size: var(--t-text-xs);
+      color: var(--t-text-tertiary);
+      text-transform: uppercase;
       font-weight: 600;
-      margin: 0 0 12px 0;
-      max-width: fit-content;
-      --background: rgba(59, 130, 246, 0.15);
-      --color: var(--ion-color-primary);
-
-      ion-icon {
-        font-size: 14px;
-        color: var(--ion-color-primary);
-      }
-
-      ion-label {
-        margin: 0;
-      }
     }
 
-    ion-card-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--ion-text-color);
-      letter-spacing: -0.3px;
-      margin-bottom: 8px;
-    }
-  }
-
-  ion-card-content {
-    padding: 0 20px 20px;
-
-    .description {
-      color: var(--ion-text-color);
-      line-height: 1.6;
-      font-size: 15px;
+    p {
       margin: 0;
-    }
-
-    ion-list {
-      background: transparent;
-      padding: 0;
-
-      ion-item {
-        --padding-start: 0;
-        --inner-padding-end: 0;
-        --background: transparent;
-        --border-color: rgba(0, 0, 0, 0.1);
-        margin-bottom: 12px;
-
-        &:last-child {
-          --border-width: 0;
-          margin-bottom: 0;
-        }
-
-        ion-icon {
-          color: var(--ion-color-primary);
-          font-size: 24px;
-          margin-right: 16px;
-        }
-
-        ion-label {
-          h3 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--ion-color-medium);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-
-          p {
-            font-size: 15px;
-            color: var(--ion-text-color);
-            font-weight: 500;
-            margin: 0;
-          }
-
-          .price {
-            color: var(--ion-color-primary);
-            font-weight: 700;
-            margin-top: 4px;
-            font-size: 16px;
-          }
-        }
-      }
+      font-size: var(--t-text-sm);
+      color: var(--t-text-primary);
     }
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  ion-card {
-    background: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+/* 5. Service Cards */
+.service-card {
+  border-left: 4px solid var(--t-color-primary-500);
 
-    ion-card-header {
-      .category-chip {
-        --background: rgba(96, 165, 250, 0.25);
-      }
-    }
+  .service-price {
+    font-size: var(--t-text-lg);
+    font-weight: bold;
+    color: var(--t-color-primary-400);
+  }
 
-    ion-card-content {
-      ion-list {
-        ion-item {
-          --border-color: rgba(255, 255, 255, 0.1);
-        }
-      }
-    }
+  .service-duration {
+    font-size: var(--t-text-xs);
+    background: var(--t-surface-2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--t-text-secondary);
   }
 }
 
-// Acciones
-.actions {
-  margin-top: 24px;
+/* 6. Floating Action Bar */
+.floating-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: var(--t-space-4);
+  background: var(--t-surface-1);
+  border-top: 1px solid var(--t-glass-border);
+  z-index: 10;
 
-  ion-button {
-    --border-radius: 12px;
-    height: 52px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin: 8px 0;
-    font-size: 16px;
-
-    &[fill="outline"] {
-      margin-top: 12px;
-    }
-  }
-
-  .owner-actions {
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 2px solid var(--ion-border-color);
-
-    ion-button {
-      margin: 6px 0;
-    }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .actions {
-    .owner-actions {
-      border-top-color: rgba(255, 255, 255, 0.1);
-    }
-  }
-}
-
-// Responsive
-@media (min-width: 768px) {
-  .business-detail {
-    padding: 24px;
-  }
-
-  ion-card {
-    margin: 24px 0;
-  }
-
-  .actions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-
-    > ion-button:first-child {
-      grid-column: 1 / -1;
-    }
-
-    .owner-actions {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-  }
+  /* Glass effect */
+  backdrop-filter: blur(10px);
+  background: rgba(30, 41, 59, 0.8);
 }

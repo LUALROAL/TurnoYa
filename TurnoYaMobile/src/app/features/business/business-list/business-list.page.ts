@@ -10,41 +10,18 @@ import {
   IonButtons,
   IonBackButton,
   IonSearchbar,
-  IonList,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
   IonButton,
   IonIcon,
-  IonSpinner,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonRefresher,
   IonRefresherContent,
   IonFab,
   IonFabButton,
-  IonSelect,
-  IonSelectOption,
-  IonChip,
-  IonLabel,
-  LoadingController,
-  ToastController
+  IonSkeletonText
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import {
-  add,
-  locationOutline,
-  timeOutline,
-  starOutline,
-  callOutline,
-  pricetagOutline,
-  pricetag,
-  businessOutline,
-  closeCircle,
-  funnelOutline
-} from 'ionicons/icons';
+// import { addIcons } ... removed, handled globally in main.ts
+
 import { BusinessService } from '../../../core/services/business.service';
 import { Business } from '../../../core/models';
 
@@ -63,25 +40,13 @@ import { Business } from '../../../core/models';
     IonButtons,
     IonBackButton,
     IonSearchbar,
-    IonList,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
     IonButton,
     IonIcon,
-    IonSpinner,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
-    IonRefresher,
-    IonRefresherContent,
+    IonSkeletonText,
     IonFab,
-    IonFabButton,
-    IonSelect,
-    IonSelectOption,
-    IonChip,
-    IonLabel
+    IonFabButton
   ]
 })
 export class BusinessListPage implements OnInit {
@@ -97,27 +62,12 @@ export class BusinessListPage implements OnInit {
 
   constructor(
     private businessService: BusinessService,
-    private router: Router,
-    private loadingController: LoadingController,
-    private toastController: ToastController
+    private router: Router
   ) {
-    addIcons({
-      add,
-      locationOutline,
-      timeOutline,
-      starOutline,
-      callOutline,
-      pricetagOutline,
-      pricetag,
-      businessOutline,
-      closeCircle,
-      funnelOutline
-    });
+    // Icons are now global
   }
 
   ngOnInit() {
-    console.log('🚀 BusinessListPage inicializada');
-    console.log('📍 Current URL:', this.router.url);
     this.loadBusinesses();
     this.loadCategories();
   }
@@ -136,9 +86,6 @@ export class BusinessListPage implements OnInit {
   }
 
   async loadBusinesses(reset: boolean = false) {
-    console.log('📊 loadBusinesses() ejecutándose...');
-    console.log('🔄 Reset:', reset);
-
     if (reset) {
       this.currentPage = 1;
       this.businesses = [];
@@ -146,9 +93,7 @@ export class BusinessListPage implements OnInit {
       this.hasMore = true;
     }
 
-    if (!this.hasMore) {
-      return;
-    }
+    if (!this.hasMore) return;
 
     this.isLoading = true;
 
@@ -157,108 +102,93 @@ export class BusinessListPage implements OnInit {
       this.pageSize,
       this.searchTerm
     ).subscribe({
-      next: (response) => {
-        console.log('✅ Response raw:', JSON.stringify(response));
+      next: (response: any) => {
+        let rawData: any[] = [];
 
-        let businessData: any[] = [];
-
-        // Estrategia de extracción de datos en cascada
         if (Array.isArray(response)) {
-          businessData = response;
+          rawData = response;
         } else if (response?.data && Array.isArray(response.data)) {
-          businessData = response.data;
+          rawData = response.data;
         } else if (response?.items && Array.isArray(response.items)) {
-          businessData = response.items;
+          rawData = response.items;
         } else if (response?.result && Array.isArray(response.result)) {
-          businessData = response.result;
-        } else if (typeof response === 'object' && response !== null) {
-          // Último recurso: intentar envolver el objeto si parece ser un solo negocio
-          businessData = [response];
+          rawData = response.result;
+        } else if (response && (response.id || response.name)) {
+          rawData = [response];
         }
 
-        console.log(`✅ Datos extraídos (Count: ${businessData.length})`);
+        const mappedBusinesses: Business[] = rawData.map(item => ({
+          id: item.id || item._id,
+          name: item.name || item.nombre || 'Negocio sin nombre',
+          description: item.description || item.descripcion,
+          category: item.category || item.categoria || 'General',
+          address: item.address || item.direccion || '',
+          city: item.city || item.ciudad || '',
+          department: item.department || item.departamento || '',
+          phone: item.phone || item.telefono,
+          email: item.email,
+          website: item.website || item.sitioWeb,
+          latitude: item.latitude || item.latitud,
+          longitude: item.longitude || item.longitud,
+          averageRating: item.averageRating || item.rating || 0,
+          totalReviews: item.totalReviews || 0,
+          isActive: item.isActive ?? true,
+          createdAt: item.createdAt || new Date().toISOString(),
+          ownerId: item.ownerId || '',
+          ownerName: item.ownerName || ''
+        })).filter(b => b.id);
 
         if (reset) {
-          this.allBusinesses = businessData;
-          this.loadCategories();
+          this.allBusinesses = mappedBusinesses;
         } else {
-          this.allBusinesses = [...this.allBusinesses, ...businessData];
+          const existingIds = new Set(this.allBusinesses.map(b => b.id));
+          const newUnique = mappedBusinesses.filter(b => !existingIds.has(b.id));
+          this.allBusinesses = [...this.allBusinesses, ...newUnique];
         }
 
         this.applyFilters();
 
-        // Lógica de paginación
-        if (response && response.totalPages) {
+        if (response && typeof response.totalPages === 'number') {
           this.hasMore = this.currentPage < response.totalPages;
         } else {
-          // Si devolvió menos del pageSize, probablemente no hay más
-          this.hasMore = businessData.length >= this.pageSize;
+          this.hasMore = mappedBusinesses.length >= this.pageSize;
         }
 
         this.isLoading = false;
       },
       error: async (error) => {
-        console.error('❌ Error loading businesses:', error);
+        console.error('Error loading businesses:', error);
         this.isLoading = false;
-
-        let msg = 'Error desconocido al cargar negocios.';
-        if (error.status === 401) {
-          msg = 'Tu sesión ha expirado.';
-          this.router.navigate(['/login']);
-        } else if (error.status === 0) {
-          msg = 'No se puede conectar con el servidor.';
-        }
-
-        await this.showToast(msg, 'danger');
       }
     });
   }
 
   applyFilters() {
-    console.log('🔍 applyFilters() ejecutándose...');
-    console.log('📦 allBusinesses length:', this.allBusinesses.length);
-    console.log('🔍 searchTerm:', this.searchTerm);
-    console.log('🏷️ selectedCategory:', this.selectedCategory);
-
     let filtered = [...this.allBusinesses];
-
-    // Filtro por búsqueda de texto
     const term = this.searchTerm.trim().toLowerCase();
+
     if (term.length >= 2) {
       filtered = filtered.filter(b => (
         (b.name?.toLowerCase().includes(term)) ||
         (b.category?.toLowerCase().includes(term)) ||
-        (b.city?.toLowerCase().includes(term)) ||
-        (b.address?.toLowerCase().includes(term))
+        (b.city?.toLowerCase().includes(term))
       ));
-      console.log('✅ Después del filtro de búsqueda:', filtered.length);
     }
 
-    // Filtro por categoría
     if (this.selectedCategory) {
       filtered = filtered.filter(b => b.category === this.selectedCategory);
-      console.log('✅ Después del filtro de categoría:', filtered.length);
     }
 
     this.businesses = filtered;
-    console.log('✅ businesses final length:', this.businesses.length);
-    console.log('✅ businesses array:', this.businesses);
   }
 
   onSearch(event: any) {
     const value = (event?.target?.value ?? '').trim();
     this.searchTerm = value;
     this.applyFilters();
-
-    // Además refrescar desde backend si hay término
     if (value.length >= 2) {
       this.loadBusinesses(true);
     }
-  }
-
-  onCategoryChange(event: any) {
-    this.selectedCategory = event?.detail?.value ?? '';
-    this.applyFilters();
   }
 
   onCategorySelect(category: string) {
@@ -269,11 +199,6 @@ export class BusinessListPage implements OnInit {
   clearCategory() {
     this.selectedCategory = '';
     this.applyFilters();
-  }
-
-  async onRefresh(event: any) {
-    await this.loadBusinesses(true);
-    event.target.complete();
   }
 
   onLoadMore(event: any) {
@@ -289,15 +214,5 @@ export class BusinessListPage implements OnInit {
 
   createBusiness() {
     this.router.navigate(['/business/form']);
-  }
-
-  private async showToast(message: string, color: string = 'dark') {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 }

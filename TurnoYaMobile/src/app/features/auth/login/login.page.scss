@@ -1,453 +1,100 @@
-/* ============================================
-   ESTILOS CORREGIDOS PARA PÁGINA DE LOGIN - TURNOYA
-   ============================================ */
+/* 
+  LOGIN PAGE STYLES - NEO TURNO SYSTEM 
+  Scope: Local to Login Page
+*/
 
-.login-content {
-  --background: var(--gradient-dark);
-  display: flex;
-  align-items: center;
+/* 1. Layout & Spacing Overrides */
+.t-page {
+  /* Center content vertically on mobile */
   justify-content: center;
-  min-height: 100vh;
-  padding: var(--ion-spacing-md);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 40%;
-    background: var(--gradient-primary);
-    opacity: 0.1;
-    border-radius: 0 0 40% 40%;
-    z-index: 0;
-  }
+  gap: var(--t-space-8);
 }
 
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  position: relative;
-  z-index: 1;
-  animation: fadeIn 0.8s ease-out;
-}
+/* 2. Brand Header */
+.login-header {
+  align-items: center;
 
-/* Sección del logo */
-.logo-section {
-  text-align: center;
-  margin-bottom: var(--ion-spacing-xl);
-  padding: 0 var(--ion-spacing-md);
-
-  .logo-circle {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto var(--ion-spacing-md);
-    background: var(--gradient-primary);
-    border-radius: 50%;
+  .logo-container {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--t-color-primary-500), var(--t-color-secondary-600));
+    border-radius: var(--t-radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 24px rgba(45, 140, 255, 0.3);
-    position: relative;
-    overflow: hidden;
-    animation: slideInUp 0.6s ease-out;
+    margin-bottom: var(--t-space-4);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    /* Glow effect */
 
-    &::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 70%
-      );
-      animation: shine 3s infinite linear;
-    }
-
-    ion-icon {
-      font-size: 36px;
+    .brand-icon {
+      font-size: 32px;
       color: white;
-      z-index: 2;
     }
   }
 
-  h1.gradient-text {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: var(--ion-spacing-xs);
-    background: var(--gradient-primary);
+  h1 {
+    margin-bottom: var(--t-space-1);
+    background: linear-gradient(to right, #fff, var(--t-color-primary-400));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 3px;
-      background: var(--gradient-primary);
-      border-radius: 2px;
-    }
-  }
-
-  .subtitle {
-    color: var(--ion-text-color-step-300);
-    font-size: 0.9rem;
-    margin-top: var(--ion-spacing-lg);
-    letter-spacing: 0.5px;
   }
 }
 
-/* Card de login */
+/* 3. Form Styling */
 .login-card {
-  background: var(--surface-color);
-  border-radius: var(--border-radius-xl);
-  padding: var(--ion-spacing-xl);
-  box-shadow: var(--ion-box-shadow);
-  border: 1px solid rgba(45, 140, 255, 0.1);
-  backdrop-filter: blur(10px);
-  animation: slideInUp 0.8s ease-out 0.2s both;
+  border: 1px solid var(--t-glass-border);
+  background: linear-gradient(180deg, var(--t-surface-1), rgba(15, 23, 42, 0.6));
+  backdrop-filter: blur(var(--t-blur-md));
+}
 
-  .card-header {
-    text-align: center;
-    margin-bottom: var(--ion-spacing-xl);
+.t-input-group {
+  margin-bottom: var(--t-space-4);
 
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: var(--ion-spacing-xs);
-      color: white;
-    }
-
-    p {
-      color: var(--ion-text-color-step-400);
-      font-size: 0.9rem;
-    }
+  label {
+    display: block;
+    margin-bottom: var(--t-space-2);
+    margin-left: var(--t-space-1);
   }
 }
 
-/* Formulario CORREGIDO */
-.login-form {
-  .input-group {
-    margin-bottom: var(--ion-spacing-lg);
-
-    .input-label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--ion-text-color-step-200);
-      font-size: 0.9rem;
-      padding-left: 4px;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: stretch;
-      background: var(--surface-color-light);
-      border-radius: var(--border-radius-md);
-      border: 2px solid transparent;
-      transition: all var(--transition-fast);
-      min-height: 56px;
-      overflow: hidden;
-      height: 56px;
-
-      &:focus-within {
-        border-color: var(--ion-color-primary);
-        box-shadow: 0 0 0 3px rgba(45, 140, 255, 0.1);
-      }
-
-      .input-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--ion-color-primary);
-        font-size: 1.2rem;
-        min-width: 56px;
-        height: 100%;
-        flex-shrink: 0;
-      }
-
-      .custom-input {
-        flex: 1;
-        background: transparent !important;
-        border: none !important;
-        color: white !important;
-        font-size: 1rem !important;
-        outline: none !important;
-        height: 100%;
-        width: 100%;
-        font-family: var(--ion-font-family) !important;
-        padding: 0 16px !important;
-        margin: 0 !important;
-        line-height: 1.5 !important;
-        display: flex;
-        align-items: center;
-
-        &::placeholder {
-          color: var(--ion-text-color-step-500) !important;
-          opacity: 1 !important;
-        }
-
-        /* Override de autofill */
-        &:-webkit-autofill,
-        &:-webkit-autofill:hover,
-        &:-webkit-autofill:focus {
-          -webkit-text-fill-color: white !important;
-          -webkit-box-shadow: 0 0 0px 1000px var(--surface-color-light) inset !important;
-          transition: background-color 5000s ease-in-out 0s !important;
-          caret-color: white !important;
-          font-size: 1rem !important;
-          line-height: 1.5 !important;
-        }
-
-        /* Remover efectos de navegador */
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0;
-      }
-    }
-
-    /* Estados de validación */
-    &.has-error {
-      .input-wrapper {
-        border-color: var(--ion-color-danger);
-
-        .input-icon {
-          color: var(--ion-color-danger);
-        }
-      }
-    }
-
-    &.is-valid {
-      .input-wrapper {
-        border-color: var(--ion-color-success);
-
-        .input-icon {
-          color: var(--ion-color-success);
-        }
-      }
-    }
-
-    .error-message {
-      color: var(--ion-color-danger);
-      font-size: 0.8rem;
-      margin-top: 6px;
-      min-height: 20px;
-      opacity: 0;
-      transform: translateY(-5px);
-      transition: all var(--transition-fast);
-      padding-left: 4px;
-
-      span {
-        display: block;
-      }
-
-      &.ng-touched.ng-invalid {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  }
-}
-
-/* Botón de login */
-.login-button {
+/* Native Input Reset & Styling */
+.native-input {
   width: 100%;
-  background: var(--gradient-primary);
-  color: white;
+  background: transparent;
   border: none;
-  padding: 18px 24px;
-  border-radius: var(--border-radius-md);
-  font-size: 1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ion-spacing-sm);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  margin-top: var(--ion-spacing-lg);
-  position: relative;
-  overflow: hidden;
-  height: 56px;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(45, 140, 255, 0.3);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  span {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: var(--ion-spacing-sm);
-  }
-
-  ion-icon {
-    font-size: 1.2rem;
-    transition: transform var(--transition-fast);
-    z-index: 2;
-  }
-
-  &:hover:not(:disabled) ion-icon {
-    transform: translateX(4px);
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left var(--transition-normal);
-  }
-
-  &:hover:not(:disabled)::before {
-    left: 100%;
-  }
-
-  &.loading {
-    opacity: 0.8;
-    cursor: wait;
-  }
-}
-
-/* Link de registro */
-.register-link {
-  text-align: center;
-  margin-top: var(--ion-spacing-xl);
-  padding-top: var(--ion-spacing-md);
-  border-top: 1px solid var(--ion-border-color);
-
-  p {
-    color: var(--ion-text-color-step-400);
-    font-size: 0.9rem;
-  }
-
-  .link-text {
-    color: var(--ion-color-primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color var(--transition-fast);
-
-    &:hover {
-      color: var(--ion-color-primary-tint);
-      text-decoration: underline;
-    }
-  }
-}
-
-/* Efectos de partículas en el fondo */
-.login-content::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(45, 140, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(107, 91, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .login-container {
-    padding: 0 var(--ion-spacing-sm);
-  }
-
-  .login-card {
-    padding: var(--ion-spacing-lg);
-  }
-
-  .logo-section {
-    h1.gradient-text {
-      font-size: 2rem;
-    }
-  }
-}
-
-/* Estilos específicos para inputs - SOLUCIÓN DEFINITIVA */
-.custom-input {
-  all: initial !important;
-  font-family: var(--ion-font-family) !important;
-  color: white !important;
-  background: transparent !important;
-  border: none !important;
-  outline: none !important;
-  width: 100% !important;
-  height: 100% !important;
-  font-size: 1rem !important;
-  padding: 0 16px !important;
-  margin: 0 !important;
-  line-height: 1.5 !important;
-  display: flex !important;
-  align-items: center !important;
+  color: var(--t-text-primary);
+  font-family: var(--t-font-sans);
+  font-size: var(--t-text-base);
+  outline: none;
+  padding: 0;
 
   &::placeholder {
-    color: var(--ion-text-color-step-500) !important;
-  }
-
-  /* Asegurar que el texto esté alineado verticalmente */
-  &::-webkit-input-placeholder {
-    line-height: normal !important;
-  }
-
-  &::-moz-placeholder {
-    line-height: normal !important;
+    color: var(--t-text-tertiary);
   }
 }
 
-/* Override específico para iOS */
-@media screen and (max-width: 768px) {
-  .custom-input {
-    font-size: 16px !important;
-  }
-
-  .input-wrapper {
-    height: 56px !important;
-    min-height: 56px !important;
-  }
+.input-icon {
+  color: var(--t-text-tertiary);
+  font-size: 20px;
 }
 
-/* Estados de validación del formulario */
-.input-wrapper.ng-touched.ng-invalid {
-  border-color: var(--ion-color-danger) !important;
-
-  .input-icon {
-    color: var(--ion-color-danger) !important;
-  }
+/* Error Feedback */
+.error-feedback {
+  color: var(--ion-color-danger);
+  font-size: var(--t-text-xs);
+  margin-top: var(--t-space-1);
+  margin-left: var(--t-space-1);
+  min-height: 18px;
+  /* Prevent layout shift */
 }
 
-.input-wrapper.ng-touched.ng-valid {
-  border-color: var(--ion-color-success) !important;
+/* 4. Footer Links */
+.link-primary {
+  color: var(--t-color-primary-400);
+  text-decoration: none;
+  font-weight: var(--t-font-medium);
 
-  .input-icon {
-    color: var(--ion-color-success) !important;
+  &:active {
+    opacity: 0.8;
   }
 }

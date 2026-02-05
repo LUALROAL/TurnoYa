@@ -1,72 +1,107 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/appointments/list"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalle de Cita</ion-title>
-  </ion-toolbar>
+<ion-header class="ion-no-border">
+  <div class="t-page-header t-pt-6 t-px-4">
+    <div class="t-flex-row t-items-center">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/appointments/list" color="dark"></ion-back-button>
+      </ion-buttons>
+      <div class="t-flex-col t-ml-2">
+        <h1 class="t-h3">Detalle del Turno</h1>
+        <p class="t-caption text-secondary" *ngIf="appointment">ID: #{{ appointment.id | slice:0:8 }}</p>
+      </div>
+      <div class="t-flex-1"></div>
+
+      @if (isOwner) {
+      <ion-button fill="clear" color="dark" (click)="presentOwnerActionSheet()">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+      }
+    </div>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="main-bg">
+
   @if (isLoading) {
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando información...</p>
-    </div>
+  <div class="t-flex-col t-items-center t-justify-center t-h-full">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="t-body t-mt-4">Cargando...</p>
+  </div>
   }
 
   @if (!isLoading && appointment) {
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>{{ appointment.service?.name || 'Servicio' }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p><strong>Negocio:</strong> {{ appointment.business?.name }}</p>
-        <p><strong>Fecha:</strong> {{ appointment.startDate | date:'full' }}</p>
-        <p><strong>Hora:</strong> {{ appointment.startDate | date:'shortTime' }}</p>
-        <p><strong>Estado:</strong> {{ appointment.status }}</p>
-        @if (appointment.notes) {
-          <p><strong>Notas:</strong> {{ appointment.notes }}</p>
-        }
-      </ion-card-content>
-    </ion-card>
+  <div class="t-page">
 
-    <!-- Acciones para el cliente -->
-    <div class="actions">
-      @if (appointment.status === 'Pending' || appointment.status === 'Confirmed') {
-        <ion-button expand="block" color="danger" (click)="cancelAppointment()">
-          Cancelar Cita
-        </ion-button>
-      }
+    <!-- STATUS CARD -->
+    <div class="status-card t-mb-6 t-flex-col t-items-center" [ngClass]="appointment.status.toLowerCase()">
+      <div class="status-icon">
+        <ion-icon [name]="getStatusIcon(appointment.status)"></ion-icon>
+      </div>
+      <h2 class="t-h3 t-mt-2">{{ getStatusLabel(appointment.status) }}</h2>
+      <p class="t-caption t-mt-1 t-text-center">
+        {{ getStatusDescription(appointment.status) }}
+      </p>
+    </div>
 
-      <!-- Acciones para dueño/admin -->
-      @if (isOwner) {
-        <div class="owner-actions">
-          <ion-button expand="block" fill="outline" color="primary" (click)="editAppointment()">
-            <ion-icon name="create-outline" slot="start"></ion-icon>
-            Editar Cita
-          </ion-button>
-
-          @if (appointment.status === 'Pending') {
-            <ion-button expand="block" fill="outline" color="success" (click)="confirmAppointment()">
-              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-              Confirmar Cita
-            </ion-button>
-          }
-
-          @if (appointment.status === 'Confirmed') {
-            <ion-button expand="block" fill="outline" color="tertiary" (click)="completeAppointment()">
-              <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
-              Marcar como Completada
-            </ion-button>
-          }
-
-          <ion-button expand="block" color="danger" (click)="deleteAppointment()">
-            <ion-icon name="trash-outline" slot="start"></ion-icon>
-            Eliminar Permanentemente
-          </ion-button>
+    <!-- TICKET / RECEIPT CARD -->
+    <div class="t-card receipt-card">
+      <!-- Service Header -->
+      <div class="receipt-header t-pb-4 t-mb-4 border-dashed-bottom">
+        <p class="t-caption t-uppercase text-secondary">Servicio</p>
+        <h3 class="t-h2 text-primary">{{ appointment.service?.name || 'Servicio General' }}</h3>
+        <div class="t-flex-row t-items-center t-mt-1">
+          <ion-icon name="storefront-outline" class="t-mr-2 text-secondary"></ion-icon>
+          <span class="t-body">{{ appointment.business?.name }}</span>
         </div>
+      </div>
+
+      <!-- Date & Time -->
+      <div class="t-grid t-grid-cols-2 t-gap-4 t-mb-6">
+        <div class="info-box">
+          <ion-icon name="calendar-outline" class="info-icon"></ion-icon>
+          <div>
+            <label>Fecha</label>
+            <p>{{ appointment.startDate | date:'dd MMM yyyy' }}</p>
+          </div>
+        </div>
+        <div class="info-box">
+          <ion-icon name="time-outline" class="info-icon"></ion-icon>
+          <div>
+            <label>Hora</label>
+            <p>{{ appointment.startDate | date:'HH:mm' }} hs</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price Breakdown -->
+      <div class="price-section t-mt-4 t-pt-4 border-top">
+        <div class="t-flex-row t-justify-between t-mb-2">
+          <span class="t-body text-secondary">Precio Base</span>
+          <span class="t-body">${{ appointment.service?.price || 0 }}</span>
+        </div>
+        <div class="t-flex-row t-justify-between total-row t-mt-2">
+          <span class="t-h3">Total</span>
+          <span class="t-h3 text-primary">${{ appointment.service?.price || 0 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes (Optional) -->
+    @if (appointment.notes) {
+    <div class="t-card t-mt-4">
+      <h4 class="t-h4 t-mb-2">Notas</h4>
+      <p class="t-body text-secondary">{{ appointment.notes }}</p>
+    </div>
+    }
+
+    <!-- Actions -->
+    <div class="t-mt-8 t-mb-8">
+      @if (appointment.status === 'Pending' || appointment.status === 'Confirmed') {
+      <ion-button expand="block" shape="round" color="danger" fill="outline" (click)="cancelAppointment()">
+        Cancelar Turno
+      </ion-button>
       }
     </div>
+
+  </div>
   }
 </ion-content>

@@ -1,422 +1,194 @@
-.business-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-bottom: 80px;
+/* 
+   BUSINESS LIST - NEO TURNO STYLES 
+*/
+
+/* 1. Header & Search */
+ion-toolbar {
+  --background: var(--t-surface-0);
+  --color: var(--t-text-primary);
 }
 
-// Header
-ion-header {
-  ion-toolbar {
-    &:first-child {
-      --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
-      --color: white;
+.search-toolbar {
+  padding-bottom: var(--t-space-2);
+}
 
-      ion-title {
-        font-weight: 700;
-        font-size: 20px;
-      }
+.search-container {
+  padding: 0 var(--t-space-4);
 
-      ion-back-button {
-        --color: white;
-      }
-    }
+  ion-searchbar.custom-searchbar {
+    --background: var(--t-surface-1);
+    --color: var(--t-text-primary);
+    --placeholder-color: var(--t-text-tertiary);
+    --icon-color: var(--t-color-primary-500);
+    --border-radius: var(--t-radius-md);
+    --box-shadow: none;
+    padding: 0;
   }
 }
 
-// Searchbar
-ion-searchbar {
-  --background: rgba(255, 255, 255, 0.9);
-  --border-radius: 12px;
-  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --placeholder-color: var(--ion-color-medium);
-  --icon-color: var(--ion-color-primary);
-  padding: 8px 16px;
-}
-
-@media (prefers-color-scheme: dark) {
-  ion-searchbar {
-    --background: rgba(51, 65, 85, 0.8);
-    --color: #F1F5F9;
-    --placeholder-color: rgba(156, 163, 175, 0.8);
-  }
-}
-
-// Filtro de categorías
-.filter-container {
+/* 2. Categories Scroll */
+.category-scroll {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--ion-background-color);
   overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+  gap: var(--t-space-2);
+  padding: var(--t-space-2) var(--t-space-4) var(--t-space-4);
+  scrollbar-width: none;
+  /* Hide scrollbar */
 
   &::-webkit-scrollbar {
     display: none;
   }
 
-  ion-chip {
-    flex-shrink: 0;
-    font-weight: 600;
-    height: 36px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  .chip-button {
+    background: var(--t-surface-1);
+    color: var(--t-text-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--t-radius-full);
+    padding: 8px 16px;
+    font-size: var(--t-text-sm);
+    font-weight: var(--t-font-medium);
+    white-space: nowrap;
+    transition: all var(--t-duration-fast);
 
-    ion-icon {
-      margin-right: 4px;
-      font-size: 18px;
-    }
-
-    ion-label {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    &[color="primary"] {
-      --background: var(--ion-color-primary);
-      --color: white;
-
-      ion-icon {
-        color: white;
-      }
-    }
-
-    &[color="medium"] {
-      --background: rgba(0, 0, 0, 0.05);
-      --color: var(--ion-text-color);
-
-      ion-icon {
-        color: var(--ion-color-primary);
-      }
+    &.active {
+      background: var(--t-color-primary-500);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .filter-container {
-    ion-chip[color="medium"] {
-      --background: rgba(255, 255, 255, 0.1);
-      --color: #F1F5F9;
-    }
-  }
-}
-
-// Estilos para el popover de categorías (iOS style)
-ion-popover {
-  --background: rgba(255, 255, 255, 0.95);
-  --backdrop-opacity: 0.4;
-  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --border-radius: 14px;
-  --width: 280px;
-  --max-height: 400px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  ion-list {
-    background: transparent;
-    padding: 0;
-  }
-
-  ion-item {
-    --padding-start: 20px;
-    --padding-end: 48px;
-    --inner-padding-end: 0;
-    --background: transparent;
-    --background-hover: rgba(0, 0, 0, 0.05);
-    --background-activated: rgba(0, 0, 0, 0.1);
-    --min-height: 48px;
-    --border-color: rgba(0, 0, 0, 0.1);
-    --inner-border-width: 0 0 0.5px 0;
-    margin: 0;
-    border-radius: 0;
-    text-align: center;
-    position: relative;
-    cursor: pointer;
-    transition: background 0.2s ease;
-
-    &:first-child {
-      border-radius: 14px 14px 0 0;
-      --inner-border-width: 0 0 0.5px 0;
-    }
-
-    &:last-child {
-      border-radius: 0 0 14px 14px;
-      --inner-border-width: 0;
-    }
-
-    &:only-child {
-      border-radius: 14px;
-      --inner-border-width: 0;
-    }
-
-    &.item-radio-checked {
-      --background: rgba(59, 130, 246, 0.08);
-
-      &::after {
-        content: '✓';
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--ion-color-primary);
-        font-size: 20px;
-        font-weight: 600;
-      }
-
-      ion-label {
-        color: var(--ion-color-primary);
-        font-weight: 600;
-      }
-    }
-
-    &:hover {
-      --background: rgba(0, 0, 0, 0.05);
-    }
-
-    ion-label {
-      text-align: center;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--ion-text-color);
-      white-space: normal;
-      line-height: 1.4;
-    }
-
-    ion-radio {
-      display: none;
-    }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  ion-popover {
-    --background: rgba(30, 41, 59, 0.95);
-    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-
-    ion-item {
-      --border-color: rgba(255, 255, 255, 0.1);
-      --background-hover: rgba(255, 255, 255, 0.05);
-      --background-activated: rgba(255, 255, 255, 0.1);
-
-      &.item-radio-checked {
-        --background: rgba(96, 165, 250, 0.15);
-
-        ion-label {
-          color: var(--ion-color-primary);
-        }
-      }
-
-      &:hover {
-        --background: rgba(255, 255, 255, 0.05);
-      }
-
-      ion-label {
-        color: #F1F5F9;
-      }
-    }
-  }
-}
-
-// Cards de negocios
-ion-card {
-  cursor: pointer;
-  position: relative;
+/* 3. Business Card */
+.business-card {
+  padding: 0;
+  /* Override default card padding */
   overflow: hidden;
-  margin: 16px 0;
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-
-    &::before {
-      opacity: 1;
-    }
-  }
+  position: relative;
+  transition: transform var(--t-duration-fast);
 
   &:active {
-    transform: translateY(-2px);
+    transform: scale(0.98);
   }
 
-  ion-card-header {
-    padding-bottom: 8px;
+  /* Pseudo-hero section (simulating an image until we have real ones) */
+  .card-hero {
+    height: 100px;
+    background: linear-gradient(135deg, var(--t-surface-2), var(--t-surface-1));
+    position: relative;
 
-    ion-card-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: var(--ion-text-color);
-      letter-spacing: -0.3px;
+    /* Decorative pattern */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(var(--t-surface-3) 1px, transparent 1px);
+      background-size: 10px 10px;
+      opacity: 0.2;
     }
 
-    ion-card-subtitle {
+    .category-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      color: white;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: var(--t-radius-sm);
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .rating-tag {
+      position: absolute;
+      bottom: -12px;
+      right: 12px;
+      background: var(--t-surface-1);
+      color: var(--t-color-warning);
+      /* Amber */
+      box-shadow: var(--t-shadow-sm);
+      border-radius: var(--t-radius-full);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: bold;
       display: flex;
       align-items: center;
-      gap: 6px;
-      color: var(--ion-color-medium);
-      font-size: 14px;
-      font-weight: 600;
+      gap: 4px;
+      z-index: 2;
+    }
+  }
 
-      ion-icon {
-        font-size: 16px;
-        color: var(--ion-color-primary);
+  .card-body {
+    padding: 20px 16px 16px;
+
+    h3 {
+      margin-bottom: 4px;
+    }
+
+    .location-row {
+      color: var(--t-text-tertiary);
+
+      .icon-sm {
+        font-size: 14px;
       }
     }
-  }
 
-  ion-card-content {
-    p {
-      color: var(--ion-color-medium);
-      line-height: 1.6;
-      margin-bottom: 16px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .status-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ion-color-danger);
+
+      &.open {
+        color: var(--ion-color-success);
+      }
+    }
+
+    .action-link {
+      background: none;
+      border: none;
+      color: var(--t-color-primary-400);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  ion-card {
-    background: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(10px);
+/* 4. Empty State */
+.empty-state-container {
+  min-height: 50vh;
 
-    &:hover {
-      background: rgba(30, 41, 59, 0.8);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-    }
-  }
-}
-
-.business-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-
-  .info-item {
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--t-surface-1);
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--ion-text-color);
+    justify-content: center;
+    margin-bottom: var(--t-space-4);
 
     ion-icon {
-      font-size: 18px;
-      color: var(--ion-color-primary);
-      flex-shrink: 0;
-    }
-
-    span {
-      line-height: 1.4;
+      font-size: 32px;
+      color: var(--t-text-tertiary);
     }
   }
 }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
+/* 5. Utility Helpers */
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-items-center {
   align-items: center;
+}
+
+.t-justify-center {
   justify-content: center;
-  min-height: 300px;
-  gap: 16px;
-
-  ion-spinner {
-    width: 48px;
-    height: 48px;
-    --color: var(--ion-color-primary);
-  }
-
-  p {
-    color: var(--ion-color-medium);
-    font-size: 16px;
-    font-weight: 500;
-  }
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 24px;
-  min-height: 300px;
-
-  ion-icon {
-    font-size: 80px;
-    color: var(--ion-color-medium);
-    opacity: 0.5;
-    margin-bottom: 24px;
-  }
-
-  h3 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--ion-text-color);
-    margin-bottom: 8px;
-    letter-spacing: -0.3px;
-  }
-
-  p {
-    font-size: 16px;
-    color: var(--ion-color-medium);
-    max-width: 300px;
-    text-align: center;
-    line-height: 1.5;
-  }
-}
-
-// Responsive grid
-@media (min-width: 768px) {
-  ion-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-
-    ion-card {
-      margin: 0;
-    }
-  }
-}
-
-@media (min-width: 1024px) {
-  ion-list {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-// Animaciones
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }

@@ -1,26 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   IonContent,
   IonHeader,
-  IonTitle,
-  IonToolbar,
   IonButtons,
   IonBackButton,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonSegment,
-  IonSegmentButton,
-  IonSpinner,
   IonRefresher,
   IonRefresherContent,
+  IonSkeletonText,
+  IonIcon,
+  IonButton,
   ToastController
 } from '@ionic/angular/standalone';
 import { AppointmentService } from '../../../core/services/appointment.service';
-import { Appointment } from '../../../core/models';
+import { Appointment, AppointmentStatus } from '../../../core/models';
+// Icons handled globally
 
 @Component({
   selector: 'app-appointments-list',
@@ -30,20 +26,16 @@ import { Appointment } from '../../../core/models';
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     IonContent,
     IonHeader,
-    IonTitle,
-    IonToolbar,
     IonButtons,
     IonBackButton,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonSegment,
-    IonSegmentButton,
-    IonSpinner,
     IonRefresher,
-    IonRefresherContent
+    IonRefresherContent,
+    IonSkeletonText,
+    IonIcon,
+    IonButton
   ]
 })
 export class AppointmentsListPage implements OnInit {
@@ -61,45 +53,44 @@ export class AppointmentsListPage implements OnInit {
     this.loadAppointments();
   }
 
-  /* Helper para extraer datos de cualquier formato de respuesta */
-  private extractData(response: any): any[] {
-    if (Array.isArray(response)) {
-      return response;
-    } else if (response?.data && Array.isArray(response.data)) {
-      return response.data;
-    } else if (response?.items && Array.isArray(response.items)) {
-      return response.items;
-    } else if (response?.result && Array.isArray(response.result)) {
-      return response.result;
-    } else if (typeof response === 'object' && response !== null) {
-      return [response];
-    }
-    return [];
-  }
-
   loadAppointments() {
     this.isLoading = true;
-    console.log('📅 loadAppointments() loading status:', this.status);
+    this.appointments = [];
 
     this.appointmentService.getMyAppointments(this.status).subscribe({
-      next: (response) => {
-        console.log('✅ Appointments response:', JSON.stringify(response));
-        this.appointments = this.extractData(response);
-        console.log(`✅ Loaded ${this.appointments.length} appointments`);
+      next: (response: any) => {
+        let rawData: any[] = [];
+        if (Array.isArray(response)) rawData = response;
+        else if (response?.data && Array.isArray(response.data)) rawData = response.data;
+
+        // Robust Mapping
+        this.appointments = rawData.map(item => ({
+          id: item.id || item._id,
+          businessId: item.businessId || item.negocioId,
+          serviceId: item.serviceId || item.servicioId,
+          userId: item.userId || item.usuarioId,
+          startDate: item.startDate || item.fechaInicio,
+          endDate: item.endDate || item.fechaFin,
+          status: (item.status || item.estado || AppointmentStatus.Pending) as AppointmentStatus,
+          notes: item.notes,
+          business: item.business ? { name: item.business.name || 'Negocio' } : undefined,
+          service: item.service ? { name: item.service.name || 'Servicio', price: item.service.price } : undefined
+        } as Appointment));
+
         this.isLoading = false;
       },
       error: async (error) => {
-        console.error('❌ Error loading appointments:', error);
         this.isLoading = false;
-        await this.showErrorToast(error);
+        await this.showToast('Error al cargar citas');
       }
     });
   }
 
-  onStatusChange(ev: any) {
-    this.status = ev?.detail?.value ?? 'Upcoming';
-    this.appointments = []; // Limpiar lista al cambiar tab
-    this.loadAppointments();
+  onStatusChange(newStatus: string) {
+    if (this.status !== newStatus) {
+      this.status = newStatus;
+      this.loadAppointments();
+    }
   }
 
   viewDetail(id: string) {
@@ -107,30 +98,27 @@ export class AppointmentsListPage implements OnInit {
   }
 
   handleRefresh(event: any) {
-    this.appointmentService.getMyAppointments(this.status).subscribe({
-      next: (response) => {
-        this.appointments = this.extractData(response);
-        event.target.complete();
-      },
-      error: async (error) => {
-        event.target.complete();
-        await this.showErrorToast(error);
-      }
-    });
+    this.status = 'Upcoming'; // Reset to default on pull refresh? Or keep current? Let's keep current.
+    this.loadAppointments();
+    setTimeout(() => {
+      event.target.complete();
+    }, 800);
   }
 
-  private async showErrorToast(error: any) {
-    let msg = 'Error al cargar citas.';
-    if (error.status === 401) {
-      msg = 'Sesión expirada.';
-      this.router.navigate(['/login']);
-    } else if (error.status === 0) {
-      msg = 'Sin conexión al servidor.';
-    }
+  getStatusLabel(status: string): string {
+    const map: { [key: string]: string } = {
+      'Pending': 'Pendiente',
+      'Confirmed': 'Confirmada',
+      'Cancelled': 'Cancelada',
+      'Completed': 'Completada'
+    };
+    return map[status] || status;
+  }
 
+  private async showToast(message: string) {
     const toast = await this.toastController.create({
-      message: msg,
-      duration: 3000,
+      message,
+      duration: 2000,
       color: 'danger',
       position: 'bottom'
     });

@@ -1,125 +1,151 @@
-// ============================================
-// VARIABLES PARA TURNOYA - TEMA OSCURO AZUL
-// ============================================
+/* ==========================================================================
+   TURNOYA 2.0 - NEO DESIGN SYSTEM TOKENS
+   ========================================================================== */
 
-// Paleta de colores principal - Azules modernos
 :root {
-  // Colores primarios
-  --ion-color-primary: #2d8cff;
-  --ion-color-primary-rgb: 45, 140, 255;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #287be0;
-  --ion-color-primary-tint: #4298ff;
+  /* --------------------------------------------------------------------------
+     1. BRAND COLORS (Palette)
+     -------------------------------------------------------------------------- */
+  /* Primary: Electric Blue */
+  --t-color-primary-400: #60a5fa;
+  --t-color-primary-500: #3b82f6;
+  /* Base Brand Color */
+  --t-color-primary-600: #2563eb;
 
-  // Colores secundarios
-  --ion-color-secondary: #00d4ff;
-  --ion-color-secondary-rgb: 0, 212, 255;
-  --ion-color-secondary-contrast: #000000;
-  --ion-color-secondary-contrast-rgb: 0, 0, 0;
-  --ion-color-secondary-shade: #00bbe0;
-  --ion-color-secondary-tint: #1ad8ff;
+  /* Secondary: Violet/Purple */
+  --t-color-secondary-400: #a78bfa;
+  --t-color-secondary-500: #8b5cf6;
+  --t-color-secondary-600: #7c3aed;
 
-  // Colores terciarios
-  --ion-color-tertiary: #6b5bff;
-  --ion-color-tertiary-rgb: 107, 91, 255;
-  --ion-color-tertiary-contrast: #ffffff;
-  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
-  --ion-color-tertiary-shade: #5e50e0;
-  --ion-color-tertiary-tint: #7a6bff;
+  /* Accent: Teal */
+  --t-color-accent-400: #2dd4bf;
+  --t-color-accent-500: #14b8a6;
 
-  // Colores de éxito
-  --ion-color-success: #2dd36f;
-  --ion-color-success-rgb: 45, 211, 111;
-  --ion-color-success-contrast: #000000;
-  --ion-color-success-contrast-rgb: 0, 0, 0;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+  /* --------------------------------------------------------------------------
+     2. SURFACE LAYERS (OLED/Dark Theme Optimized)
+     -------------------------------------------------------------------------- */
+  /* Level 0: App Background (Deep almost-black blue) */
+  --t-surface-0: #0f172a;
 
-  // Colores de advertencia
-  --ion-color-warning: #ffc409;
-  --ion-color-warning-rgb: 255, 196, 9;
-  --ion-color-warning-contrast: #000000;
-  --ion-color-warning-contrast-rgb: 0, 0, 0;
-  --ion-color-warning-shade: #e0ac08;
-  --ion-color-warning-tint: #ffca22;
+  /* Level 1: Cards / Panels */
+  --t-surface-1: #1e293b;
 
-  // Colores de peligro
-  --ion-color-danger: #eb445a;
-  --ion-color-danger-rgb: 235, 68, 90;
-  --ion-color-danger-contrast: #ffffff;
-  --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #cf3c4f;
-  --ion-color-danger-tint: #ed576b;
+  /* Level 2: Modals / Floating / Active components */
+  --t-surface-2: #334155;
 
-  // Fondos y superficies - Tema oscuro
-  --ion-background-color: #0a0e17;
-  --ion-background-color-rgb: 10, 14, 23;
+  /* Level 3: Inputs / Highlights */
+  --t-surface-3: #475569;
 
-  --ion-card-background: #1a1f2e;
-  --ion-item-background: #1a1f2e;
-  --ion-toolbar-background: #0f131f;
+  /* --------------------------------------------------------------------------
+     3. TYPOGRAPHY (System Stack)
+     -------------------------------------------------------------------------- */
+  --t-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
-  // Textos
-  --ion-text-color: #ffffff;
-  --ion-text-color-rgb: 255, 255, 255;
+  /* Text Colors */
+  --t-text-primary: #f1f5f9;
+  /* Slate 100 - High Contrast */
+  --t-text-secondary: #94a3b8;
+  /* Slate 400 - Medium Contrast */
+  --t-text-tertiary: #64748b;
+  /* Slate 500 - Low Contrast/Disabled */
 
-  --ion-text-color-step-50: #f2f2f2;
-  --ion-text-color-step-100: #e6e6e6;
-  --ion-text-color-step-150: #d9d9d9;
-  --ion-text-color-step-200: #cccccc;
-  --ion-text-color-step-250: #bfbfbf;
-  --ion-text-color-step-300: #b3b3b3;
-  --ion-text-color-step-350: #a6a6a6;
-  --ion-text-color-step-400: #999999;
-  --ion-text-color-step-450: #8c8c8c;
-  --ion-text-color-step-500: #808080;
-  --ion-text-color-step-550: #737373;
-  --ion-text-color-step-600: #666666;
-  --ion-text-color-step-650: #595959;
-  --ion-text-color-step-700: #4d4d4d;
-  --ion-text-color-step-750: #404040;
-  --ion-text-color-step-800: #333333;
-  --ion-text-color-step-850: #262626;
-  --ion-text-color-step-900: #191919;
-  --ion-text-color-step-950: #0d0d0d;
+  /* Font Sizes (Scale 1.2) */
+  --t-text-xs: 0.75rem;
+  /* 12px */
+  --t-text-sm: 0.875rem;
+  /* 14px */
+  --t-text-base: 1rem;
+  /* 16px */
+  --t-text-lg: 1.125rem;
+  /* 18px */
+  --t-text-xl: 1.25rem;
+  /* 20px */
+  --t-text-2xl: 1.5rem;
+  /* 24px */
+  --t-text-3xl: 1.875rem;
+  /* 30px */
 
-  // Bordes y sombras
-  --ion-border-color: #2a3042;
-  --ion-border-radius: 12px;
-  --ion-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  --ion-box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* Font Weights */
+  --t-font-regular: 400;
+  --t-font-medium: 500;
+  --t-font-bold: 700;
 
-  // Gradientes personalizados
-  --gradient-primary: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-tertiary) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--ion-color-secondary) 0%, var(--ion-color-primary) 100%);
-  --gradient-dark: linear-gradient(135deg, #1a1f2e 0%, #0f131f 100%);
+  /* --------------------------------------------------------------------------
+     4. SPACING & SHAPES
+     -------------------------------------------------------------------------- */
+  /* Radius */
+  --t-radius-sm: 8px;
+  --t-radius-md: 12px;
+  --t-radius-lg: 16px;
+  --t-radius-full: 9999px;
 
-  // Espaciados
-  --ion-padding: 16px;
-  --ion-margin: 16px;
-  --ion-spacing-xs: 4px;
-  --ion-spacing-sm: 8px;
-  --ion-spacing-md: 16px;
-  --ion-spacing-lg: 24px;
-  --ion-spacing-xl: 32px;
+  /* Spacing Scale (4pt grid) */
+  --t-space-1: 4px;
+  --t-space-2: 8px;
+  --t-space-3: 12px;
+  --t-space-4: 16px;
+  --t-space-5: 20px;
+  --t-space-6: 24px;
+  --t-space-8: 32px;
+  --t-space-12: 48px;
 
-  // Fuentes
-  --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* --------------------------------------------------------------------------
+     5. EFFECTS
+     -------------------------------------------------------------------------- */
+  /* Shadows */
+  --t-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --t-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --t-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+
+  /* Glassmorphism */
+  --t-glass-bg: rgba(30, 41, 59, 0.7);
+  --t-glass-border: rgba(255, 255, 255, 0.08);
+  --t-blur-md: 12px;
+
+  /* Transitions */
+  --t-ease-out: cubic-bezier(0.21, 1.02, 0.48, 1);
+  --t-duration-fast: 200ms;
 }
 
-// Variables personalizadas adicionales
+/* 
+   IONIC OVERRIDES 
+   Mapping our design tokens to Ionic's expected variables 
+   to ensure system-wide consistency even in native components.
+*/
 :root {
-  --surface-color: #1a1f2e;
-  --surface-color-light: #242a3d;
-  --surface-color-dark: #0f131f;
+  --ion-font-family: var(--t-font-sans);
 
-  --border-radius-sm: 8px;
-  --border-radius-md: 12px;
-  --border-radius-lg: 16px;
-  --border-radius-xl: 24px;
+  /* Binding Backgrounds */
+  --ion-background-color: var(--t-surface-0);
+  --ion-background-color-rgb: 15, 23, 42;
 
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
+  --ion-text-color: var(--t-text-primary);
+  --ion-text-color-rgb: 241, 245, 249;
+
+  --ion-card-background: var(--t-surface-1);
+  --ion-toolbar-background: var(--t-surface-0);
+  --ion-item-background: var(--t-surface-1);
+
+  /* Binding Primary Color */
+  --ion-color-primary: var(--t-color-primary-500);
+  --ion-color-primary-rgb: 59, 130, 246;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: var(--t-color-primary-600);
+  --ion-color-primary-tint: var(--t-color-primary-400);
+
+  /* Binding Secondary */
+  --ion-color-secondary: var(--t-color-secondary-500);
+  --ion-color-secondary-rgb: 139, 92, 246;
+
+  /* Binding Danger (Error) */
+  --ion-color-danger: #ef4444;
+  /* Red 500 */
+
+  /* Binding Success */
+  --ion-color-success: #10b981;
+  /* Emerald 500 */
+
+  /* Binding Warning */
+  --ion-color-warning: #f59e0b;
+  /* Amber 500 */
 }

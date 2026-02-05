@@ -1,204 +1,112 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login" text="Volver"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Crear Cuenta</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="t-page t-flex-col t-justify-center" style="min-height: 100vh;">
 
-<ion-content [fullscreen]="true" class="register-content">
-  <div class="register-container">
-    <div class="logo-section">
-      <h1 class="gradient-text">TurnoYa</h1>
-      <p>Únete a nuestra comunidad</p>
-    </div>
+    <!-- BRAND HEADER (Matches Login) -->
+    <header class="auth-header t-flex-col t-items-center t-mb-8">
+      <div class="logo-container">
+        <ion-icon name="person-add" class="brand-icon"></ion-icon>
+      </div>
+      <h1 class="t-h1 text-center t-mt-4">Crear Cuenta</h1>
+      <p class="t-body text-center t-text-secondary">Únete a TurnoYa</p>
+    </header>
 
-    <ion-card class="register-card">
-      <ion-card-header>
-        <ion-card-title>Registro</ion-card-title>
-      </ion-card-header>
+    <!-- REGISTER CARD -->
+    <main class="t-card auth-card">
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
 
-      <ion-card-content>
-        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-          <!-- Nombre -->
-          <div class="input-group"
-               [class.has-error]="firstName?.invalid && firstName?.touched"
-               [class.is-valid]="firstName?.valid && firstName?.touched">
-            <label class="input-label">Nombre</label>
+        <!-- Name Fields Row -->
+        <div class="t-grid t-grid-cols-2 t-gap-4">
+          <div class="t-input-group">
+            <label>Nombre</label>
             <div class="input-wrapper">
-              <ion-icon name="person-outline" class="input-icon"></ion-icon>
-              <input
-                type="text"
-                formControlName="firstName"
-                autocomplete="given-name"
-                placeholder="Juan"
-                class="custom-input"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="words">
-            </div>
-            <div class="error-message" *ngIf="firstName?.invalid && firstName?.touched">
-              <span *ngIf="firstName?.errors?.['required']">El nombre es requerido</span>
-              <span *ngIf="firstName?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</span>
+              <ion-icon name="person-outline"></ion-icon>
+              <input type="text" formControlName="firstName" placeholder="Juan" autocomplete="given-name">
             </div>
           </div>
-
-          <!-- Apellido -->
-          <div class="input-group"
-               [class.has-error]="lastName?.invalid && lastName?.touched"
-               [class.is-valid]="lastName?.valid && lastName?.touched">
-            <label class="input-label">Apellido</label>
+          <div class="t-input-group">
+            <label>Apellido</label>
             <div class="input-wrapper">
-              <ion-icon name="person-circle-outline" class="input-icon"></ion-icon>
-              <input
-                type="text"
-                formControlName="lastName"
-                autocomplete="family-name"
-                placeholder="Pérez"
-                class="custom-input"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="words">
-            </div>
-            <div class="error-message" *ngIf="lastName?.invalid && lastName?.touched">
-              <span *ngIf="lastName?.errors?.['required']">El apellido es requerido</span>
-              <span *ngIf="lastName?.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</span>
+              <ion-icon name="person-outline"></ion-icon>
+              <input type="text" formControlName="lastName" placeholder="Pérez" autocomplete="family-name">
             </div>
           </div>
-
-          <!-- Email -->
-          <div class="input-group"
-               [class.has-error]="email?.invalid && email?.touched"
-               [class.is-valid]="email?.valid && email?.touched">
-            <label class="input-label">Email</label>
-            <div class="input-wrapper">
-              <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-              <input
-                type="email"
-                formControlName="email"
-                autocomplete="email"
-                placeholder="tu@email.com"
-                class="custom-input"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="off"
-                inputmode="email">
-            </div>
-            <div class="error-message" *ngIf="email?.invalid && email?.touched">
-              <span *ngIf="email?.errors?.['required']">El email es requerido</span>
-              <span *ngIf="email?.errors?.['email']">Ingresa un email válido</span>
-            </div>
-          </div>
-
-          <!-- Teléfono -->
-          <div class="input-group"
-               [class.has-error]="phone?.invalid && phone?.touched"
-               [class.is-valid]="phone?.valid && phone?.touched">
-            <label class="input-label">Teléfono</label>
-            <div class="input-wrapper">
-              <ion-icon name="call-outline" class="input-icon"></ion-icon>
-              <input
-                type="tel"
-                formControlName="phone"
-                autocomplete="tel"
-                placeholder="1234567890"
-                class="custom-input"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="off"
-                inputmode="tel">
-            </div>
-            <div class="error-message" *ngIf="phone?.invalid && phone?.touched">
-              <span *ngIf="phone?.errors?.['required']">El teléfono es requerido</span>
-              <span *ngIf="phone?.errors?.['pattern']">Ingresa un teléfono válido (10-15 dígitos)</span>
-            </div>
-          </div>
-
-          <!-- Contraseña -->
-          <div class="input-group"
-               [class.has-error]="password?.invalid && password?.touched"
-               [class.is-valid]="password?.valid && password?.touched">
-            <label class="input-label">Contraseña</label>
-            <div class="input-wrapper">
-              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-              <input
-                type="password"
-                formControlName="password"
-                autocomplete="new-password"
-                placeholder="••••••••"
-                class="custom-input"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="off"
-                inputmode="text">
-            </div>
-            <div class="error-message" *ngIf="password?.invalid && password?.touched">
-              <span *ngIf="password?.errors?.['required']">La contraseña es requerida</span>
-              <span *ngIf="password?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres</span>
-              <span *ngIf="password?.errors?.['pattern']">Debe incluir mayúscula, minúscula, número y símbolo</span>
-            </div>
-          </div>
-
-          <!-- Confirmar Contraseña -->
-          <div class="input-group"
-               [class.has-error]="confirmPassword?.invalid && confirmPassword?.touched"
-               [class.is-valid]="confirmPassword?.valid && confirmPassword?.touched">
-            <label class="input-label">Confirmar Contraseña</label>
-            <div class="input-wrapper">
-              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-              <input
-                type="password"
-                formControlName="confirmPassword"
-                autocomplete="new-password"
-                placeholder="••••••••"
-                class="custom-input"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="off"
-                inputmode="text">
-            </div>
-            <div class="error-message" *ngIf="confirmPassword?.invalid && confirmPassword?.touched">
-              <span *ngIf="confirmPassword?.errors?.['required']">Confirma tu contraseña</span>
-            </div>
-            <div class="error-message" *ngIf="!passwordsMatch && confirmPassword?.touched">
-              <span>Las contraseñas no coinciden</span>
-            </div>
-          </div>
-
-          <!-- Rol -->
-          <div class="input-group custom-select"
-               [class.has-error]="role?.invalid && role?.touched"
-               [class.is-valid]="role?.valid && role?.touched">
-            <label class="input-label">Tipo de Usuario</label>
-            <div class="select-wrapper">
-              <ion-select
-                formControlName="role"
-                placeholder="Selecciona tu rol"
-                interface="action-sheet">
-                <ion-select-option *ngFor="let role of userRoles" [value]="role.value">
-                  {{ role.label }}
-                </ion-select-option>
-              </ion-select>
-            </div>
-          </div>
-
-          <!-- Botón de registro -->
-          <button
-            type="submit"
-            [disabled]="registerForm.invalid || isLoading"
-            class="register-button"
-            [class.loading]="isLoading">
-            <span *ngIf="!isLoading">Crear Cuenta</span>
-            <span *ngIf="isLoading">Creando cuenta...</span>
-            <ion-icon name="person-add-outline" *ngIf="!isLoading"></ion-icon>
-          </button>
-        </form>
-
-        <div class="login-link">
-          <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
         </div>
-      </ion-card-content>
-    </ion-card>
+
+        <!-- Phone -->
+        <div class="t-input-group">
+          <label>Teléfono</label>
+          <div class="input-wrapper">
+            <ion-icon name="call-outline"></ion-icon>
+            <input type="tel" formControlName="phone" placeholder="123456789" autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="t-input-group">
+          <label>Email</label>
+          <div class="input-wrapper">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" formControlName="email" placeholder="tu@email.com" autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="t-input-group">
+          <label>Contraseña</label>
+          <div class="input-wrapper">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
+              autocomplete="new-password">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" class="password-toggle"
+              (click)="showPassword = !showPassword">
+            </ion-icon>
+          </div>
+          <!-- Password Strength Hint could go here -->
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="t-input-group">
+          <label>Confirmar Contraseña</label>
+          <div class="input-wrapper">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••"
+              autocomplete="new-password">
+          </div>
+          @if (registerForm.hasError('passwordMismatch') && confirmPassword?.touched) {
+          <p class="error-msg">Las contraseñas no coinciden</p>
+          }
+        </div>
+
+        <!-- Role Select -->
+        <div class="t-input-group">
+          <label>Quiero...</label>
+          <div class="input-wrapper select-wrapper">
+            <ion-icon name="briefcase-outline"></ion-icon>
+            <select formControlName="role">
+              @for (role of userRoles; track role.value) {
+              <option [value]="role.value">{{ role.label }}</option>
+              }
+            </select>
+            <ion-icon name="chevron-down-outline" class="select-arrow"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <ion-button expand="block" type="submit" [disabled]="registerForm.invalid || isLoading" class="t-mt-6 auth-btn">
+          @if (isLoading) {
+          <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+          Registrarse
+          }
+        </ion-button>
+
+      </form>
+
+      <div class="footer-link t-mt-6 t-text-center">
+        <p class="t-caption t-text-secondary">
+          ¿Ya tienes cuenta? <a routerLink="/login" class="link-primary">Inicia Sesión</a>
+        </p>
+      </div>
+    </main>
   </div>
 </ion-content>

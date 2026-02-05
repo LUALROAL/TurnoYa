@@ -1,421 +1,132 @@
-/* ============================================
-   ESTILOS PARA PÁGINA DE REGISTRO - TURNOYA
-   ============================================ */
+/* Reusing Auth Styles Pattern (Login/Register consistency) */
 
-ion-toolbar {
-  --background: var(--ion-toolbar-background);
-  --color: var(--ion-text-color);
-  border-bottom: 1px solid var(--ion-border-color);
-
-  ion-title {
-    font-weight: 600;
-    font-size: 1.2rem;
-  }
-
-  ion-back-button {
-    --color: var(--ion-color-primary);
-  }
-}
-
-.register-content {
-  --background: var(--gradient-dark);
-  min-height: 100vh;
-  padding: var(--ion-spacing-md);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 30%;
-    background: var(--gradient-primary);
-    opacity: 0.1;
-    border-radius: 0 0 40% 40%;
-    z-index: 0;
-  }
-}
-
-.register-container {
-  max-width: 500px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-  animation: fadeIn 0.8s ease-out;
-}
-
-/* Sección del logo */
-.logo-section {
-  text-align: center;
-  margin-bottom: var(--ion-spacing-lg);
-  padding: 0 var(--ion-spacing-md);
-
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: var(--ion-spacing-xs);
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  p {
-    color: var(--ion-text-color-step-300);
-    font-size: 0.9rem;
-  }
-}
-
-/* Card de registro */
-.register-card {
-  background: var(--surface-color);
-  border-radius: var(--border-radius-xl);
-  box-shadow: var(--ion-box-shadow);
-  border: 1px solid rgba(45, 140, 255, 0.1);
-  backdrop-filter: blur(10px);
-  animation: slideInUp 0.8s ease-out 0.2s both;
-  overflow: hidden;
-
-  ion-card-header {
-    background: rgba(45, 140, 255, 0.05);
-    border-bottom: 1px solid var(--ion-border-color);
-    padding: var(--ion-spacing-lg);
-
-    ion-card-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: white;
-      text-align: center;
-    }
-  }
-
-  ion-card-content {
-    padding: var(--ion-spacing-xl);
-  }
-}
-
-/* Formulario de registro */
-form {
-  .input-group {
-    margin-bottom: var(--ion-spacing-lg);
-
-    .input-label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--ion-text-color-step-200);
-      font-size: 0.9rem;
-      padding-left: 4px;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: stretch;
-      background: var(--surface-color-light);
-      border-radius: var(--border-radius-md);
-      border: 2px solid transparent;
-      transition: all var(--transition-fast);
-      min-height: 56px;
-      overflow: hidden;
-      height: 56px;
-
-      &:focus-within {
-        border-color: var(--ion-color-primary);
-        box-shadow: 0 0 0 3px rgba(45, 140, 255, 0.1);
-      }
-
-      .input-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--ion-color-primary);
-        font-size: 1.2rem;
-        min-width: 56px;
-        height: 100%;
-        flex-shrink: 0;
-      }
-
-      .custom-input {
-        flex: 1;
-        background: transparent !important;
-        border: none !important;
-        color: white !important;
-        font-size: 1rem !important;
-        outline: none !important;
-        height: 100%;
-        width: 100%;
-        font-family: var(--ion-font-family) !important;
-        padding: 0 16px !important;
-        margin: 0 !important;
-        line-height: 1.5 !important;
-        display: flex;
-        align-items: center;
-
-        &::placeholder {
-          color: var(--ion-text-color-step-500) !important;
-          opacity: 1 !important;
-        }
-
-        /* Override de autofill */
-        &:-webkit-autofill,
-        &:-webkit-autofill:hover,
-        &:-webkit-autofill:focus {
-          -webkit-text-fill-color: white !important;
-          -webkit-box-shadow: 0 0 0px 1000px var(--surface-color-light) inset !important;
-          transition: background-color 5000s ease-in-out 0s !important;
-          caret-color: white !important;
-          font-size: 1rem !important;
-          line-height: 1.5 !important;
-        }
-      }
-    }
-
-    /* Select personalizado */
-    .custom-select {
-      .select-wrapper {
-        background: var(--surface-color-light);
-        border-radius: var(--border-radius-md);
-        border: 2px solid transparent;
-        transition: all var(--transition-fast);
-        min-height: 56px;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        padding: 0 16px;
-
-        &:focus-within {
-          border-color: var(--ion-color-primary);
-          box-shadow: 0 0 0 3px rgba(45, 140, 255, 0.1);
-        }
-
-        ion-select {
-          width: 100%;
-          --background: transparent;
-          --color: white;
-          --placeholder-color: var(--ion-text-color-step-500);
-          --padding-start: 0;
-          --padding-end: 0;
-
-          &::part(placeholder) {
-            color: var(--ion-text-color-step-500);
-          }
-
-          &::part(text) {
-            color: white;
-          }
-
-          &::part(icon) {
-            color: var(--ion-color-primary);
-            opacity: 1;
-          }
-        }
-      }
-    }
-
-    /* Estados de validación */
-    &.has-error {
-      .input-wrapper,
-      .select-wrapper {
-        border-color: var(--ion-color-danger);
-
-        .input-icon {
-          color: var(--ion-color-danger);
-        }
-      }
-    }
-
-    &.is-valid {
-      .input-wrapper,
-      .select-wrapper {
-        border-color: var(--ion-color-success);
-
-        .input-icon {
-          color: var(--ion-color-success);
-        }
-      }
-    }
-
-    .error-message {
-      color: var(--ion-color-danger);
-      font-size: 0.8rem;
-      margin-top: 6px;
-      min-height: 20px;
-      opacity: 0;
-      transform: translateY(-5px);
-      transition: all var(--transition-fast);
-      padding-left: 4px;
-
-      span {
-        display: block;
-      }
-
-      &.ng-touched.ng-invalid {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  }
-}
-
-/* Botón de registro */
-.register-button {
-  width: 100%;
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: 18px 24px;
-  border-radius: var(--border-radius-md);
-  font-size: 1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ion-spacing-sm);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  margin-top: var(--ion-spacing-xl);
-  position: relative;
-  overflow: hidden;
-  height: 56px;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(45, 140, 255, 0.3);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  span {
-    position: relative;
-    z-index: 2;
+.auth-header {
+  .logo-container {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--t-color-primary-500), var(--t-color-secondary-600));
+    border-radius: var(--t-radius-xl);
     display: flex;
     align-items: center;
-    gap: var(--ion-spacing-sm);
-  }
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
 
-  ion-icon {
-    font-size: 1.2rem;
-    transition: transform var(--transition-fast);
-    z-index: 2;
-  }
-
-  &:hover:not(:disabled) ion-icon {
-    transform: translateX(4px);
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left var(--transition-normal);
-  }
-
-  &:hover:not(:disabled)::before {
-    left: 100%;
-  }
-
-  &.loading {
-    opacity: 0.8;
-    cursor: wait;
-  }
-}
-
-/* Link de login */
-.login-link {
-  text-align: center;
-  margin-top: var(--ion-spacing-xl);
-  padding-top: var(--ion-spacing-md);
-  border-top: 1px solid var(--ion-border-color);
-
-  p {
-    color: var(--ion-text-color-step-400);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-
-  a {
-    color: var(--ion-color-primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color var(--transition-fast);
-
-    &:hover {
-      color: var(--ion-color-primary-tint);
-      text-decoration: underline;
+    .brand-icon {
+      font-size: 32px;
+      color: white;
     }
   }
+
+  h1 {
+    background: linear-gradient(to right, #fff, var(--t-color-primary-300));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
-/* Efectos de partículas en el fondo */
-.register-content::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+.auth-card {
+  border: 1px solid var(--t-glass-border);
+  background: linear-gradient(180deg, var(--t-surface-1), rgba(15, 23, 42, 0.6));
+  backdrop-filter: blur(var(--t-blur-md));
   width: 100%;
-  height: 100%;
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(45, 140, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(107, 91, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
-  z-index: 0;
-  pointer-events: none;
+  max-width: 500px;
+  /* Desktop constraint */
+  margin: 0 auto;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .register-container {
-    padding: 0 var(--ion-spacing-sm);
+/* Input Groups */
+.t-input-group {
+  margin-bottom: var(--t-space-4);
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: var(--t-text-xs);
+    font-weight: 600;
+    color: var(--t-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  .register-card {
-    ion-card-content {
-      padding: var(--ion-spacing-lg);
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--t-surface-2);
+    border-radius: var(--t-radius-md);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+
+    &:focus-within {
+      border-color: var(--t-color-primary-500);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    ion-icon {
+      margin-left: 12px;
+      color: var(--t-text-tertiary);
+      font-size: 20px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--t-text-primary);
+      padding: 14px 12px;
+      font-size: var(--t-text-sm);
+      outline: none;
+
+      &::placeholder {
+        color: var(--t-text-tertiary);
+      }
+    }
+
+    /* Select specific styles */
+    select {
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 12px;
+      pointer-events: none;
+    }
+
+    .password-toggle {
+      margin-right: 12px;
+      cursor: pointer;
+      color: var(--t-text-secondary);
+
+      &:hover {
+        color: var(--t-text-primary);
+      }
     }
   }
 
-  .logo-section {
-    h1 {
-      font-size: 1.8rem;
-    }
+  .error-msg {
+    color: var(--t-color-danger);
+    font-size: 11px;
+    margin-top: 4px;
   }
 }
 
-/* Estilos para select de Ionic */
-ion-select {
-  --background: transparent !important;
-  --color: white !important;
-  --placeholder-color: var(--ion-text-color-step-500) !important;
-  --placeholder-opacity: 1 !important;
-
-  &::part(placeholder),
-  &::part(text) {
-    color: white !important;
-  }
-
-  &::part(icon) {
-    color: var(--ion-color-primary) !important;
-  }
+.auth-btn {
+  --background: linear-gradient(135deg, var(--t-color-primary-500), var(--t-color-primary-600));
+  --border-radius: var(--t-radius-md);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  height: 48px;
 }
 
-/* Estilos para opciones del select */
-ion-select-option {
-  --color: white;
-  --background: var(--surface-color);
+.link-primary {
+  color: var(--t-color-primary-400);
+  text-decoration: none;
+  font-weight: 600;
 
   &:hover {
-    --background: var(--surface-color-light);
+    text-decoration: underline;
   }
 }

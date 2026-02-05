@@ -8,24 +8,14 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
   IonButton,
   IonSpinner,
   IonIcon,
   AlertController,
   ToastController,
-  LoadingController
+  LoadingController,
+  ActionSheetController
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import {
-  createOutline,
-  checkmarkCircleOutline,
-  checkmarkDoneOutline,
-  trashOutline
-} from 'ionicons/icons';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { BusinessService } from '../../../core/services/business.service';
@@ -40,14 +30,8 @@ import { Appointment } from '../../../core/models';
     CommonModule,
     IonContent,
     IonHeader,
-    IonTitle,
-    IonToolbar,
     IonButtons,
     IonBackButton,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     IonButton,
     IonSpinner,
     IonIcon
@@ -67,15 +51,9 @@ export class AppointmentDetailPage implements OnInit {
     private businessService: BusinessService,
     private alertController: AlertController,
     private toastController: ToastController,
-    private loadingController: LoadingController
-  ) {
-    addIcons({
-      createOutline,
-      checkmarkCircleOutline,
-      checkmarkDoneOutline,
-      trashOutline
-    });
-  }
+    private loadingController: LoadingController,
+    private actionSheetController: ActionSheetController
+  ) { }
 
   ngOnInit() {
     this.appointmentId = this.route.snapshot.paramMap.get('id') || '';
@@ -94,6 +72,7 @@ export class AppointmentDetailPage implements OnInit {
       },
       error: () => {
         this.isLoading = false;
+        this.showToast('No se encontró la cita', 'danger');
         this.router.navigate(['/appointments/list']);
       }
     });
@@ -101,64 +80,117 @@ export class AppointmentDetailPage implements OnInit {
 
   checkOwnership() {
     if (!this.appointment?.businessId) return;
-
     this.authService.currentUser$.subscribe(user => {
       if (!user) return;
-
       this.businessService.getBusinessById(this.appointment!.businessId).subscribe({
         next: (response) => {
           const business = (response && (response as any).data) ? (response as any).data : response;
           this.isOwner = user.id === business.ownerId || user.role === 'Admin';
         },
-        error: () => {
-          this.isOwner = false;
-        }
+        error: () => { this.isOwner = false; }
       });
     });
   }
 
-  async cancelAppointment() {
-    const alert = await this.alertController.create({
-      header: 'Cancelar Cita',
-      message: '¿Estás seguro de que deseas cancelar esta cita?',
-      inputs: [
-        {
-          name: 'reason',
-          type: 'textarea',
-          placeholder: 'Motivo de cancelación (opcional)'
-        }
-      ],
+  getStatusIcon(status: string): string {
+    const icons: { [key: string]: string } = {
+      'Pending': 'hourglass-outline',
+      'Confirmed': 'checkmark-circle-outline',
+      'Completed': 'ribbon-outline',
+      'Cancelled': 'close-circle-outline'
+    };
+    return icons[status] || 'help-circle-outline';
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: { [key: string]: string } = {
+      'Pending': 'Pendiente de Confirmación',
+      'Confirmed': 'Confirmado',
+      'Completed': 'Finalizado',
+      'Cancelled': 'Cancelado'
+    };
+    return labels[status] || status;
+  }
+
+  getStatusDescription(status: string): string {
+    const desc: { [key: string]: string } = {
+      'Pending': 'El negocio debe aceptar tu solicitud.',
+      'Confirmed': '¡Todo listo! Te esperamos en la fecha y hora indicadas.',
+      'Completed': 'Gracias por confiar en nosotros.',
+      'Cancelled': 'Este turno ha sido cancelado.'
+    };
+    return desc[status] || '';
+  }
+
+  async presentOwnerActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Gestionar Turno',
       buttons: [
         {
-          text: 'No',
-          role: 'cancel'
+          text: 'Confirmar Turno',
+          icon: 'checkmark-circle',
+          cssClass: !this.canConfirm() ? 'disabled-action' : '',
+          handler: () => { if (this.canConfirm()) this.confirmAppointment(); }
         },
         {
-          text: 'Sí, cancelar',
+          text: 'Completar Turno',
+          icon: 'checkmark-done-circle',
+          handler: () => { this.completeAppointment(); }
+        },
+        {
+          text: 'Editar',
+          icon: 'create',
+          handler: () => { this.editAppointment(); }
+        },
+        {
+          text: 'Eliminar',
           role: 'destructive',
-          handler: async (data) => {
-            const loading = await this.loadingController.create({
-              message: 'Cancelando cita...'
-            });
-            await loading.present();
-
-            this.appointmentService.cancel(this.appointmentId, data.reason).subscribe({
-              next: async () => {
-                await loading.dismiss();
-                await this.showToast('Cita cancelada exitosamente', 'success');
-                this.router.navigate(['/appointments/list']);
-              },
-              error: async (error) => {
-                await loading.dismiss();
-                await this.showToast('Error al cancelar la cita', 'danger');
-              }
-            });
-          }
+          icon: 'trash',
+          handler: () => { this.deleteAppointment(); }
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close',
+          role: 'cancel'
         }
       ]
     });
+    await actionSheet.present();
+  }
 
+  // Helper to visually disable actions in sheet if not applicable, though simple logic is fine too
+  canConfirm() { return this.appointment?.status === 'Pending'; }
+
+  async cancelAppointment() {
+    const alert = await this.alertController.create({
+      header: 'Cancelar Cita',
+      message: '¿Seguro que deseas cancelar?',
+      buttons: [
+        { text: 'No', role: 'cancel' },
+        {
+          text: 'Sí, cancelar',
+          role: 'destructive',
+          handler: () => { this.processCancellation(); }
+        }
+      ]
+    });
     await alert.present();
+  }
+
+  async processCancellation() {
+    const loading = await this.loadingController.create({ message: 'Cancelando...' });
+    await loading.present();
+    this.appointmentService.cancel(this.appointmentId, 'Cancelado por usuario').subscribe({
+      next: async () => {
+        await loading.dismiss();
+        await this.showToast('Cita cancelada', 'success');
+        this.loadAppointment(); // Reload to show new status instead of nav back immediately?
+      },
+      error: async () => {
+        await loading.dismiss();
+        await this.showToast('Error al cancelar', 'danger');
+      }
+    });
   }
 
   editAppointment() {
@@ -166,111 +198,46 @@ export class AppointmentDetailPage implements OnInit {
   }
 
   async confirmAppointment() {
-    const alert = await this.alertController.create({
-      header: 'Confirmar Cita',
-      message: '¿Deseas confirmar esta cita?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirmar',
-          handler: async () => {
-            const loading = await this.loadingController.create({
-              message: 'Confirmando cita...'
-            });
-            await loading.present();
-
-            this.appointmentService.updateStatus(this.appointmentId, 'Confirmed').subscribe({
-              next: async () => {
-                await loading.dismiss();
-                await this.showToast('Cita confirmada exitosamente', 'success');
-                this.loadAppointment();
-              },
-              error: async () => {
-                await loading.dismiss();
-                await this.showToast('Error al confirmar la cita', 'danger');
-              }
-            });
-          }
-        }
-      ]
-    });
-
-    await alert.present();
+    this.updateStatus('Confirmed', 'Cita confirmada');
   }
 
   async completeAppointment() {
-    const alert = await this.alertController.create({
-      header: 'Completar Cita',
-      message: '¿Marcar esta cita como completada?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Completar',
-          handler: async () => {
-            const loading = await this.loadingController.create({
-              message: 'Actualizando cita...'
-            });
-            await loading.present();
+    this.updateStatus('Completed', 'Cita completada');
+  }
 
-            this.appointmentService.updateStatus(this.appointmentId, 'Completed').subscribe({
-              next: async () => {
-                await loading.dismiss();
-                await this.showToast('Cita completada exitosamente', 'success');
-                this.loadAppointment();
-              },
-              error: async () => {
-                await loading.dismiss();
-                await this.showToast('Error al completar la cita', 'danger');
-              }
-            });
-          }
-        }
-      ]
+  async updateStatus(status: 'Confirmed' | 'Completed' | 'Cancelled', successMsg: string) {
+    const loading = await this.loadingController.create({ message: 'Procesando...' });
+    await loading.present();
+    this.appointmentService.updateStatus(this.appointmentId, status).subscribe({
+      next: async () => {
+        await loading.dismiss();
+        await this.showToast(successMsg, 'success');
+        this.loadAppointment();
+      },
+      error: async () => {
+        await loading.dismiss();
+        await this.showToast('Error al actualizar estado', 'danger');
+      }
     });
-
-    await alert.present();
   }
 
   async deleteAppointment() {
     const alert = await this.alertController.create({
-      header: 'Eliminar Cita',
-      message: '¿Estás seguro de que deseas eliminar permanentemente esta cita? Esta acción no se puede deshacer.',
+      header: 'Eliminar Permanentemente',
+      message: 'Esta acción no se puede deshacer.',
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           role: 'destructive',
-          handler: async () => {
-            const loading = await this.loadingController.create({
-              message: 'Eliminando cita...'
-            });
-            await loading.present();
-
-            this.appointmentService.delete(this.appointmentId).subscribe({
-              next: async () => {
-                await loading.dismiss();
-                await this.showToast('Cita eliminada exitosamente', 'success');
-                this.router.navigate(['/appointments/list']);
-              },
-              error: async () => {
-                await loading.dismiss();
-                await this.showToast('Error al eliminar la cita', 'danger');
-              }
+          handler: () => {
+            this.appointmentService.delete(this.appointmentId).subscribe(() => {
+              this.router.navigate(['/appointments/list']);
             });
           }
         }
       ]
     });
-
     await alert.present();
   }
 

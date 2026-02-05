@@ -14,10 +14,8 @@ import {
   IonCardContent,
   IonItem,
   IonLabel,
-  IonInput,
   IonSelect,
   IonSelectOption,
-  IonButton,
   IonList,
   IonBadge,
   IonSearchbar,
@@ -59,10 +57,8 @@ interface PagedUsersResponse {
     IonCardContent,
     IonItem,
     IonLabel,
-    IonInput,
     IonSelect,
     IonSelectOption,
-    IonButton,
     IonList,
     IonBadge,
     IonSearchbar,
@@ -90,7 +86,7 @@ export class AdminDashboardPage implements OnInit {
     private toastController: ToastController,
     private loadingController: LoadingController,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadUsers();
