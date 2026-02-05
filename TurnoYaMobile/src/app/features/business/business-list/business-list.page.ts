@@ -138,9 +138,6 @@ export class BusinessListPage implements OnInit {
   async loadBusinesses(reset: boolean = false) {
     console.log('📊 loadBusinesses() ejecutándose...');
     console.log('🔄 Reset:', reset);
-    console.log('📄 Current page:', this.currentPage);
-    console.log('📦 Page size:', this.pageSize);
-    console.log('🔍 Search term:', this.searchTerm);
 
     if (reset) {
       this.currentPage = 1;
@@ -150,7 +147,6 @@ export class BusinessListPage implements OnInit {
     }
 
     if (!this.hasMore) {
-      console.log('⛔ No hay más páginas, retornando');
       return;
     }
 
@@ -162,69 +158,58 @@ export class BusinessListPage implements OnInit {
       this.searchTerm
     ).subscribe({
       next: (response) => {
-        console.log('✅ Response from backend:', response);
-        console.log('📦 Type of response:', typeof response);
-        console.log('📋 Is array?', Array.isArray(response));
+        console.log('✅ Response raw:', JSON.stringify(response));
 
-        // Extraer datos dependiendo del formato
         let businessData: any[] = [];
 
+        // Estrategia de extracción de datos en cascada
         if (Array.isArray(response)) {
-          // Formato: [{...}, {...}]
           businessData = response;
-          console.log('✅ Formato: Array directo');
-        } else if (response && typeof response === 'object') {
-          // Formato: { data: [...], items: [...], o directamente el objeto }
-          businessData = response.data || response.items || [response];
-          console.log('✅ Formato: Object con data/items');
-        } else {
-          console.error('❌ Formato de respuesta inesperado:', response);
-          businessData = [];
+        } else if (response?.data && Array.isArray(response.data)) {
+          businessData = response.data;
+        } else if (response?.items && Array.isArray(response.items)) {
+          businessData = response.items;
+        } else if (response?.result && Array.isArray(response.result)) {
+          businessData = response.result;
+        } else if (typeof response === 'object' && response !== null) {
+          // Último recurso: intentar envolver el objeto si parece ser un solo negocio
+          businessData = [response];
         }
 
-        console.log('✅ Datos extraídos:', businessData);
-        console.log('✅ Cantidad de negocios:', businessData.length);
+        console.log(`✅ Datos extraídos (Count: ${businessData.length})`);
 
-        // Mantener una copia completa para filtros locales
         if (reset) {
           this.allBusinesses = businessData;
-          // Recargar categorías cuando se refrescan los negocios
           this.loadCategories();
         } else {
           this.allBusinesses = [...this.allBusinesses, ...businessData];
         }
 
-        // Aplicar filtros locales
         this.applyFilters();
 
-        // Si tiene paginación, usar totalPages, sino determinar por cantidad de datos
+        // Lógica de paginación
         if (response && response.totalPages) {
           this.hasMore = this.currentPage < response.totalPages;
         } else {
-          // Si no hay paginación o llegaron menos registros que el pageSize, no hay más
+          // Si devolvió menos del pageSize, probablemente no hay más
           this.hasMore = businessData.length >= this.pageSize;
         }
 
-        console.log('Total businesses in array:', this.businesses.length);
-        console.log('Has more pages?', this.hasMore);
         this.isLoading = false;
       },
       error: async (error) => {
-        console.error('❌ Error al cargar negocios:', error);
-        console.error('❌ Status:', error.status);
-        console.error('❌ Message:', error.message);
-        console.error('❌ Full error:', JSON.stringify(error, null, 2));
-
+        console.error('❌ Error loading businesses:', error);
         this.isLoading = false;
 
+        let msg = 'Error desconocido al cargar negocios.';
         if (error.status === 401) {
-          await this.showToast('Sesión expirada. Por favor inicia sesión nuevamente.', 'danger');
+          msg = 'Tu sesión ha expirado.';
           this.router.navigate(['/login']);
         } else if (error.status === 0) {
-          await this.showToast('No se puede conectar con el servidor. Verifica que esté corriendo.', 'danger');
-        } else {
-          await this.showToast(`Error al cargar negocios: ${error.message || 'Error desconocido'}`, 'danger');
+          msg = 'No se puede conectar con el servidor.';
         }
+
+        await this.showToast(msg, 'danger');
       }
     });
   }
