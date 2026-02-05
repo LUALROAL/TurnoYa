@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
   IonButton,
   IonSpinner,
-  LoadingController,
+  NavController,
   ToastController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../../core/services/auth.service';
@@ -38,7 +38,7 @@ export class LoginPage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router,
+    private navController: NavController,
     private toastController: ToastController
   ) { }
 
@@ -66,7 +66,7 @@ export class LoginPage implements OnInit {
       next: async () => {
         // Success: Redirect to business list
         await this.showToast('¡Bienvenido!', 'success');
-        this.router.navigate(['/business/list']);
+        this.navController.navigateRoot('/home');
         this.isLoading = false;
       },
       error: async (error) => {

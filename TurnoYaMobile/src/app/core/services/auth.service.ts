@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import { map, tap, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { StorageService } from './storage.service';
 import { UserRole } from '../models';
@@ -56,7 +56,9 @@ export class AuthService {
   register(data: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/Auth/register`, data)
       .pipe(
-        tap(response => this.handleAuthResponse(response))
+        switchMap(response =>
+          from(this.handleAuthResponse(response)).pipe(map(() => response))
+        )
       );
   }
 
@@ -66,7 +68,9 @@ export class AuthService {
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/Auth/login`, data)
       .pipe(
-        tap(response => this.handleAuthResponse(response))
+        switchMap(response =>
+          from(this.handleAuthResponse(response)).pipe(map(() => response))
+        )
       );
   }
 
@@ -97,7 +101,9 @@ export class AuthService {
 
         return this.http.post<AuthResponse>(`${this.apiUrl}/Auth/refresh`, request);
       }),
-      tap(response => this.handleAuthResponse(response))
+      switchMap(response =>
+        from(this.handleAuthResponse(response)).pipe(map(() => response))
+      )
     );
   }
 

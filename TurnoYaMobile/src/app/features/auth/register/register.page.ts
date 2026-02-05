@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import {
   IonContent,
   IonButton,
   IonSpinner,
   IonIcon,
+  NavController,
   ToastController
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../../core/services/auth.service';
@@ -41,7 +42,7 @@ export class RegisterPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,
+    private navController: NavController,
     private toastController: ToastController
   ) {
     this.registerForm = this.fb.group({
@@ -79,7 +80,7 @@ export class RegisterPage implements OnInit {
       next: async () => {
         this.isLoading = false;
         await this.showToast('¡Cuenta creada exitosamente!', 'success');
-        this.router.navigate(['/home']);
+        this.navController.navigateRoot('/home');
       },
       error: async (error) => {
         this.isLoading = false;
