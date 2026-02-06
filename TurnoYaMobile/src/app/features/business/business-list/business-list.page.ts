@@ -215,4 +215,8 @@ export class BusinessListPage implements OnInit {
   createBusiness() {
     this.router.navigate(['/business/form']);
   }
+
+  trackByBusinessId(_: number, business: Business) {
+    return business.id;
+  }
 }

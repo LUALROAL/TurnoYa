@@ -1,4 +1,3 @@
-<div class="ion-page">
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -26,46 +25,42 @@
       Todo
     </button>
 
-    @for (category of availableCategories; track category) {
-    <button class="chip-button" [class.active]="selectedCategory === category" (click)="onCategorySelect(category)">
+    <button
+      *ngFor="let category of availableCategories"
+      class="chip-button"
+      [class.active]="selectedCategory === category"
+      (click)="onCategorySelect(category)"
+    >
       {{ category }}
     </button>
-    }
   </div>
 </ion-header>
 
-<ion-content>
-  <div class="t-page">
+<ion-content class="t-page">
 
     <!-- Loading State -->
-    @if (isLoading && businesses.length === 0) {
-    <div class="t-grid">
-      @for (i of [1,2,3,4,5,6]; track i) {
-      <div class="t-card skeleton-card">
-        <ion-skeleton-text animated
-          style="width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px;"></ion-skeleton-text>
+    <div class="t-grid" *ngIf="isLoading && businesses.length === 0">
+      <div class="t-card skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+        <ion-skeleton-text
+          animated
+          style="width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px;"
+        ></ion-skeleton-text>
         <ion-skeleton-text animated style="width: 60%; height: 20px;"></ion-skeleton-text>
         <ion-skeleton-text animated style="width: 40%; height: 16px; margin-top: 8px;"></ion-skeleton-text>
       </div>
-      }
     </div>
-    }
 
     <!-- Content Grid -->
-    @if (!isLoading || businesses.length > 0) {
-    <div class="t-grid">
-      @for (business of businesses; track business.id) {
-      <div class="t-card business-card" (click)="viewBusinessDetail(business.id)">
+    <div class="t-grid" *ngIf="!isLoading || businesses.length > 0">
+      <div class="t-card business-card" *ngFor="let business of businesses; trackBy: trackByBusinessId" (click)="viewBusinessDetail(business.id)">
 
         <!-- Card Header / Image Placeholder -->
         <div class="card-hero">
           <div class="category-tag">{{ business.category }}</div>
-          @if (business.averageRating > 0) {
-          <div class="rating-tag">
+          <div class="rating-tag" *ngIf="business.averageRating > 0">
             <ion-icon name="star"></ion-icon>
             {{ business.averageRating | number:'1.1-1' }}
           </div>
-          }
         </div>
 
         <!-- Card Content -->
@@ -88,13 +83,10 @@
         </div>
 
       </div>
-      }
     </div>
-    }
 
     <!-- Empty State -->
-    @if (!isLoading && businesses.length === 0) {
-    <div class="empty-state-container t-flex-col t-justify-center t-items-center">
+    <div class="empty-state-container t-flex-col t-justify-center t-items-center" *ngIf="!isLoading && businesses.length === 0">
       <div class="icon-circle">
         <ion-icon name="search-outline"></ion-icon>
       </div>
@@ -104,13 +96,10 @@
         Recargar
       </ion-button>
     </div>
-    }
 
     <ion-infinite-scroll (ionInfinite)="onLoadMore($event)" [disabled]="!hasMore">
       <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
     </ion-infinite-scroll>
-
-  </div>
 
   <!-- Floating Action Button -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="t-fab">
@@ -120,4 +109,3 @@
   </ion-fab>
 
 </ion-content>
-</div>
