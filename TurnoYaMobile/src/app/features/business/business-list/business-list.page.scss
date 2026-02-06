@@ -1,11 +1,22 @@
-/* 
-   BUSINESS LIST - NEO TURNO STYLES 
+/*
+   BUSINESS LIST - NEO TURNO STYLES
 */
 
 /* 1. Header & Search */
 ion-toolbar {
   --background: var(--t-surface-0);
   --color: var(--t-text-primary);
+}
+
+ion-content {
+  --padding-top: var(--t-space-3);
+  --padding-start: var(--t-space-4);
+  --padding-end: var(--t-space-4);
+  --padding-bottom: calc(var(--t-space-12) + env(safe-area-inset-bottom) + 150px);
+}
+
+ion-content::part(scroll) {
+  padding-bottom: calc(var(--t-space-12) + env(safe-area-inset-bottom) + 150px);
 }
 
 .search-toolbar {

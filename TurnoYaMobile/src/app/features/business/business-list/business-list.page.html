@@ -36,7 +36,7 @@
   </div>
 </ion-header>
 
-<ion-content class="t-page">
+<ion-content [fullscreen]="false">
 
     <!-- Loading State -->
     <div class="t-grid" *ngIf="isLoading && businesses.length === 0">
