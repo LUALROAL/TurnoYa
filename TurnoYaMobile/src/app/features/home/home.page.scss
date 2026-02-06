@@ -3,11 +3,16 @@
   margin: 0 auto;
   width: 100%;
   color: var(--t-text-primary);
-  padding-bottom: 24px;
+  padding-bottom: calc(24px + var(--ion-safe-area-bottom, 0px));
 }
 
 ion-content {
   --background: var(--t-surface-0);
+  --padding-bottom: calc(24px + var(--ion-safe-area-bottom, 0px));
+}
+
+ion-button[color='danger'] {
+  margin-bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
 }
 
 .user-card {
