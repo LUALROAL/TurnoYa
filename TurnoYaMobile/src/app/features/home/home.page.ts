@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import {
   IonContent,
   IonHeader,
@@ -14,7 +14,8 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonIcon
+  IonIcon,
+  NavController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -48,7 +49,8 @@ import { User, UserRole } from '../../core/models';
     IonGrid,
     IonRow,
     IonCol,
-    IonIcon
+    IonIcon,
+    RouterLink
   ]
 })
 export class HomePage implements OnInit {
@@ -56,7 +58,7 @@ export class HomePage implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private navController: NavController
   ) {
     addIcons({
       businessOutline,
@@ -102,10 +104,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  navigateTo(route: string) {
-    this.router.navigate([route]);
-  }
-
   get isCustomer(): boolean {
     return this.authService.isCustomer();
   }
@@ -120,6 +118,6 @@ export class HomePage implements OnInit {
 
   async logout() {
     await this.authService.logout();
-    this.router.navigate(['/login']);
+    this.navController.navigateRoot('/login');
   }
 }

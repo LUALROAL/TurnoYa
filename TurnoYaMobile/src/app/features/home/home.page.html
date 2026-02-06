@@ -25,7 +25,7 @@
         </ng-container>
         <ng-template #guestState>
           <p>Inicia sesion para ver tu informacion y gestionar tus citas.</p>
-          <ion-button expand="block" (click)="navigateTo('/login')">Ir a Login</ion-button>
+          <ion-button expand="block" routerLink="/login">Ir a Login</ion-button>
         </ng-template>
       </ion-card-content>
     </ion-card>
@@ -37,7 +37,7 @@
       <ion-grid>
         <ion-row>
           <ion-col size="12" size-md="6">
-            <ion-card button (click)="navigateTo('/business/list')">
+            <ion-card button routerLink="/business/list" routerDirection="forward">
               <ion-card-header>
                 <ion-icon name="business-outline" size="large" color="primary"></ion-icon>
                 <ion-card-title>Buscar Negocios</ion-card-title>
@@ -49,7 +49,7 @@
           </ion-col>
 
           <ion-col size="12" size-md="6">
-            <ion-card button (click)="navigateTo('/appointments/list')">
+            <ion-card button routerLink="/appointments/list" routerDirection="forward">
               <ion-card-header>
                 <ion-icon name="calendar-outline" size="large" color="primary"></ion-icon>
                 <ion-card-title>Mis Citas</ion-card-title>
@@ -63,7 +63,7 @@
 
         <ion-row *ngIf="isBusinessOwner">
           <ion-col size="12" size-md="6">
-            <ion-card button (click)="navigateTo('/business/form')">
+            <ion-card button routerLink="/business/form" routerDirection="forward">
               <ion-card-header>
                 <ion-icon name="business-outline" size="large" color="success"></ion-icon>
                 <ion-card-title>Crear Negocio</ion-card-title>
@@ -75,7 +75,7 @@
           </ion-col>
 
           <ion-col size="12" size-md="6">
-            <ion-card button (click)="navigateTo('/business/list')">
+            <ion-card button routerLink="/business/list" routerDirection="forward">
               <ion-card-header>
                 <ion-icon name="albums-outline" size="large" color="success"></ion-icon>
                 <ion-card-title>Gestionar Negocios</ion-card-title>
@@ -89,7 +89,7 @@
 
         <ion-row *ngIf="isAdmin">
           <ion-col size="12" size-md="6">
-            <ion-card button (click)="navigateTo('/admin')">
+            <ion-card button routerLink="/admin" routerDirection="forward">
               <ion-card-header>
                 <ion-icon name="shield-checkmark-outline" size="large" color="danger"></ion-icon>
                 <ion-card-title>Panel Admin</ion-card-title>
@@ -103,7 +103,7 @@
 
         <ion-row>
           <ion-col size="12" size-md="6">
-            <ion-card button (click)="navigateTo('/profile')">
+            <ion-card button routerLink="/profile" routerDirection="forward">
               <ion-card-header>
                 <ion-icon name="person-outline" size="large" color="primary"></ion-icon>
                 <ion-card-title>Mi Perfil</ion-card-title>

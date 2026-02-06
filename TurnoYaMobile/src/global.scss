@@ -266,3 +266,10 @@ ion-modal {
     --color: var(--t-text-primary);
   }
 }
+
+/* Ensure hidden Ionic pages do not remain visible */
+.ion-page.ion-page-hidden,
+ion-page.ion-page-hidden,
+[class*="ion-page-hidden"] {
+  display: none !important;
+}
