@@ -22,7 +22,9 @@ import {
   calendarOutline,
   personOutline,
   cardOutline,
-  logOutOutline
+  logOutOutline,
+  albumsOutline,
+  shieldCheckmarkOutline
 } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
 import { User, UserRole } from '../../core/models';
@@ -61,7 +63,9 @@ export class HomePage implements OnInit {
       calendarOutline,
       personOutline,
       cardOutline,
-      logOutOutline
+      logOutOutline,
+      albumsOutline,
+      shieldCheckmarkOutline
     });
   }
 
@@ -69,6 +73,33 @@ export class HomePage implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
+  }
+
+  getDisplayName(): string {
+    if (!this.currentUser) return 'Invitado';
+    const first = this.currentUser.firstName?.trim();
+    const last = this.currentUser.lastName?.trim();
+    return [first, last].filter(Boolean).join(' ') || this.currentUser.email;
+  }
+
+  getInitials(): string {
+    if (!this.currentUser) return 'TY';
+    const first = this.currentUser.firstName?.charAt(0) || '';
+    const last = this.currentUser.lastName?.charAt(0) || '';
+    return (first + last).toUpperCase() || 'TY';
+  }
+
+  getRoleLabel(): string {
+    switch (this.currentUser?.role) {
+      case UserRole.BusinessOwner:
+        return 'Propietario';
+      case UserRole.Employee:
+        return 'Empleado';
+      case UserRole.Admin:
+        return 'Administrador';
+      default:
+        return 'Cliente';
+    }
   }
 
   navigateTo(route: string) {

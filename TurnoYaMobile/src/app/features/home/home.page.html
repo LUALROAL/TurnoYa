@@ -1,35 +1,40 @@
-<div class="ion-page">
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
     <ion-title>Inicio</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="t-page">
   <div class="home-container">
     <!-- Información del Usuario -->
-    <ion-card>
+    <ion-card class="user-card">
       <ion-card-header>
-        <ion-card-title>¡Bienvenido a TurnoYa!</ion-card-title>
+        <ion-card-title>Hola, {{ getDisplayName() }}</ion-card-title>
       </ion-card-header>
 
       <ion-card-content>
-        @if (currentUser) {
-          <div>
-            <p><strong>Usuario:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
-            <p><strong>Email:</strong> {{ currentUser.email }}</p>
-            <p><strong>Rol:</strong> {{ currentUser.role }}</p>
+        <ng-container *ngIf="currentUser; else guestState">
+          <div class="user-info">
+            <div class="user-avatar">{{ getInitials() }}</div>
+            <div class="user-meta">
+              <p><strong>Email:</strong> {{ currentUser.email }}</p>
+              <p><strong>Telefono:</strong> {{ currentUser.phone || 'No registrado' }}</p>
+              <p><strong>Rol:</strong> {{ getRoleLabel() }}</p>
+            </div>
           </div>
-        }
+        </ng-container>
+        <ng-template #guestState>
+          <p>Inicia sesion para ver tu informacion y gestionar tus citas.</p>
+          <ion-button expand="block" (click)="navigateTo('/login')">Ir a Login</ion-button>
+        </ng-template>
       </ion-card-content>
     </ion-card>
 
-    <!-- Navegación a Módulos -->
+    <!-- Acciones Rapidas -->
     <div class="modules-section ion-margin-top">
-      <h2>Módulos Disponibles</h2>
+      <h2>Acciones Rapidas</h2>
 
       <ion-grid>
-        <!-- SIEMPRE: Buscar Negocios y Mis Citas (todos los roles) -->
         <ion-row>
           <ion-col size="12" size-md="6">
             <ion-card button (click)="navigateTo('/business/list')">
@@ -56,24 +61,46 @@
           </ion-col>
         </ion-row>
 
-        <!-- SOLO BusinessOwner: Mis Negocios -->
-        @if (isBusinessOwner) {
-          <ion-row>
-            <ion-col size="12" size-md="6">
-              <ion-card button (click)="navigateTo('/business/form')">
-                <ion-card-header>
-                  <ion-icon name="business-outline" size="large" color="success"></ion-icon>
-                  <ion-card-title>Crear Negocio</ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                  Registra un nuevo negocio y sus servicios
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-          </ion-row>
-        }
+        <ion-row *ngIf="isBusinessOwner">
+          <ion-col size="12" size-md="6">
+            <ion-card button (click)="navigateTo('/business/form')">
+              <ion-card-header>
+                <ion-icon name="business-outline" size="large" color="success"></ion-icon>
+                <ion-card-title>Crear Negocio</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Registra un nuevo negocio y sus servicios
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
 
-        <!-- Perfil y Pagos (próximamente) -->
+          <ion-col size="12" size-md="6">
+            <ion-card button (click)="navigateTo('/business/list')">
+              <ion-card-header>
+                <ion-icon name="albums-outline" size="large" color="success"></ion-icon>
+                <ion-card-title>Gestionar Negocios</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Revisa y administra tus negocios existentes
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="isAdmin">
+          <ion-col size="12" size-md="6">
+            <ion-card button (click)="navigateTo('/admin')">
+              <ion-card-header>
+                <ion-icon name="shield-checkmark-outline" size="large" color="danger"></ion-icon>
+                <ion-card-title>Panel Admin</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Gestiona usuarios y roles del sistema
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
         <ion-row>
           <ion-col size="12" size-md="6">
             <ion-card button (click)="navigateTo('/profile')">
@@ -82,7 +109,7 @@
                 <ion-card-title>Mi Perfil</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                Actualiza tu información y cambia de rol
+                Actualiza tu informacion y cambia de rol
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -94,7 +121,7 @@
                 <ion-card-title>Pagos</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                Administra tus métodos de pago (Próximamente)
+                Administra tus metodos de pago (Proximamente)
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -102,11 +129,9 @@
       </ion-grid>
     </div>
 
-    <!-- Botón de Cerrar Sesión -->
-    <ion-button expand="block" color="danger" (click)="logout()" class="ion-margin-top">
+    <ion-button *ngIf="currentUser" expand="block" color="danger" (click)="logout()" class="ion-margin-top">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>
-      Cerrar Sesión
+      Cerrar Sesion
     </ion-button>
   </div>
 </ion-content>
-</div>

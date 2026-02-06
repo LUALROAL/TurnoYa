@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
@@ -24,7 +23,6 @@ import { LoginRequest } from '../../../core/models';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     IonContent,
     IonIcon,
     IonButton,
