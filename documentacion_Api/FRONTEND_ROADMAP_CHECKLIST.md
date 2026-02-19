@@ -6,7 +6,7 @@ Use this checklist to mark each card as completed.
 - [x] Crear proyecto Ionic Angular (Priority: High, Points: 3) X
 - [x] Configurar Tailwind CSS (Priority: High, Points: 2, Depends: F-001) X
 - [x] Configurar entornos y API base URL (Priority: High, Points: 1, Depends: F-001) X
-- [ ] Crear cliente HTTP base (Priority: High, Points: 3, Depends: F-003)
+- [x] Crear cliente HTTP base (Priority: High, Points: 3, Depends: F-003) X
 - [ ] Implementar interceptor JWT (Priority: High, Points: 2, Depends: F-004)
 - [ ] Manejo global de errores HTTP (Priority: High, Points: 3, Depends: F-005)
 

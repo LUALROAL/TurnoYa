@@ -6,7 +6,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Crear proyecto Ionic Angular
   - [x] Configurar Tailwind CSS
   - [x] Configurar entornos y API base URL
-  - [ ] Crear cliente HTTP base
+  - [x] Crear cliente HTTP base
   - [ ] Implementar interceptor JWT
   - [ ] Manejo global de errores HTTP
 
@@ -22,6 +22,12 @@ Este documento se completa punto por punto segun el checklist de frontend.
 ## Endpoints conectados
 - Ninguno aun (se documentara al implementar cada card)
 
+## Cliente HTTP base
+- Ubicacion: src/app/core/services/api.service.ts
+- Metodos: get, post, put, patch, delete
+- Base URL: environment.apiBaseUrl
+- Params: soporta query params tipados
+
 ## Entornos y API base
 - Desarrollo: src/environments/environment.ts
   - apiBaseUrl: https://localhost:7187
@@ -33,3 +39,4 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Bootstrap con `bootstrapApplication` y routing por `loadComponent`.
 - Tailwind habilitado con tokens de diseno base (Tech Pro).
 - Base URL de API definida por ambiente (dev/prod).
+- Cliente HTTP base listo para servicios por modulo.
