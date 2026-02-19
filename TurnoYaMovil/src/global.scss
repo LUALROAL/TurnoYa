@@ -42,3 +42,6 @@
 
 /* Tech Pro design tokens */
 @import "./theme/tokens.css";
+
+/* Auth shared styles */
+@import "./app/features/auth/styles/auth-shared.scss";
