@@ -4,7 +4,7 @@ Use this checklist to mark each card as completed.
 
 ## EPIC 1 - Bootstrap
 - [x] Crear proyecto Ionic Angular (Priority: High, Points: 3) X
-- [ ] Configurar Tailwind CSS (Priority: High, Points: 2, Depends: F-001)
+- [x] Configurar Tailwind CSS (Priority: High, Points: 2, Depends: F-001) X
 - [ ] Configurar entornos y API base URL (Priority: High, Points: 1, Depends: F-001)
 - [ ] Crear cliente HTTP base (Priority: High, Points: 3, Depends: F-003)
 - [ ] Implementar interceptor JWT (Priority: High, Points: 2, Depends: F-004)

@@ -3,18 +3,21 @@
 Este documento se completa punto por punto segun el checklist de frontend.
 
 ## Estado de avance
-- EPIC 1 - Bootstrap
   - [x] Crear proyecto Ionic Angular
-  - [ ] Configurar Tailwind CSS
+  - [x] Configurar Tailwind CSS
   - [ ] Configurar entornos y API base URL
   - [ ] Crear cliente HTTP base
   - [ ] Implementar interceptor JWT
   - [ ] Manejo global de errores HTTP
 
 ## Base tecnica
-- Stack: Ionic + Angular (Standalone Components)
-- Ruta del proyecto: C:\Users\USUARIO\Desktop\TurnoYa\TurnoYaMovil
-- Arquitectura: standalone (sin NgModules)
+
+## Tailwind CSS
+- Dependencias: tailwindcss@3.4.17, postcss, autoprefixer (dev)
+- Nota: se usa Tailwind v3 por compatibilidad con el builder de Angular.
+- Config: tailwind.config.js y postcss.config.js en la raiz del proyecto
+- Estilos globales: directivas Tailwind agregadas en src/global.scss
+- Tokens Tech Pro: src/theme/tokens.css importado en global.scss
 
 ## Endpoints conectados
 - Ninguno aun (se documentara al implementar cada card)
@@ -22,3 +25,4 @@ Este documento se completa punto por punto segun el checklist de frontend.
 ## Notas de implementacion
 - Proyecto inicializado con template blank.
 - Bootstrap con `bootstrapApplication` y routing por `loadComponent`.
+- Tailwind habilitado con tokens de diseno base (Tech Pro).
