@@ -11,8 +11,16 @@ import { errorInterceptor } from './app/core/interceptors/error.interceptor';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'auth/login',
     pathMatch: 'full',
+  },
+  {
+    path: 'auth/login',
+    loadComponent: () => import('./app/features/auth/pages/login/login.page').then(m => m.LoginPage),
+  },
+  {
+    path: 'auth/register',
+    loadComponent: () => import('./app/features/auth/pages/register/register.page').then(m => m.RegisterPage),
   },
   {
     path: 'home',

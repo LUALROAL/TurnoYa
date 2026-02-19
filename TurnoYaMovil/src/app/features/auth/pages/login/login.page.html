@@ -1,0 +1,89 @@
+<ion-content class="auth-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="brand-icon-wrap">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <h1 class="brand-title">Turno<span>Ya</span></h1>
+      <p class="brand-subtitle">Gestiona tus citas con eficiencia</p>
+    </div>
+
+    <div class="auth-card card glass-panel">
+      <div class="card-header">
+        <h2 class="auth-title">Bienvenido de nuevo</h2>
+        <p class="auth-subtitle">Ingresa tus credenciales para acceder</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+        <div class="field-block">
+          <label for="emailInput">Correo electronico</label>
+          <ion-item lines="none" class="field-item field-item-icon">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-input
+              id="emailInput"
+              class="input"
+              type="email"
+              formControlName="email"
+              placeholder="ejemplo@correo.com"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="field-block">
+          <label for="passwordInput">Contrasena</label>
+          <ion-item lines="none" class="field-item field-item-icon">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-input
+              id="passwordInput"
+              class="input"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+            ></ion-input>
+            <ion-button fill="clear" type="button" class="visibility-btn" (click)="togglePasswordVisibility()">
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </div>
+
+        <div class="row-actions">
+          <label class="remember-me">
+            <input type="checkbox" formControlName="rememberMe" />
+            <span>Recordarme</span>
+          </label>
+          <a class="forgot-link" href="#">Olvidaste tu contrasena?</a>
+        </div>
+
+        <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading">
+          <span>{{ loading ? 'Entrando...' : 'Iniciar sesion' }}</span>
+          <ion-icon name="log-in-outline"></ion-icon>
+        </ion-button>
+      </form>
+
+      <div class="divider">
+        <span>o continuar con</span>
+      </div>
+
+      <div class="social-grid">
+        <ion-button fill="outline" class="social-btn" type="button">
+          <ion-icon name="logo-google"></ion-icon>
+          <span>Google</span>
+        </ion-button>
+        <ion-button fill="outline" class="social-btn" type="button">
+          <ion-icon name="logo-apple"></ion-icon>
+          <span>Apple</span>
+        </ion-button>
+      </div>
+
+      <p class="auth-switch">
+        No tienes cuenta?
+        <a routerLink="/auth/register">Registrate</a>
+      </p>
+    </div>
+  </div>
+</ion-content>

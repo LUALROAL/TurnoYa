@@ -1,0 +1,100 @@
+<ion-content class="auth-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="brand-icon-wrap">
+        <ion-icon name="sparkles-outline"></ion-icon>
+      </div>
+      <h1 class="brand-title">Turno<span>Ya</span></h1>
+      <p class="brand-subtitle">Comienza a gestionar tus citas</p>
+    </div>
+
+    <div class="auth-card card glass-panel">
+      <div class="card-header">
+        <h2 class="auth-title">Crear cuenta</h2>
+        <p class="auth-subtitle">Registra tus datos para empezar</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+        <div class="field-block">
+          <label for="fullNameInput">Nombre completo</label>
+          <ion-item lines="none" class="field-item field-item-icon">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-input
+              id="fullNameInput"
+              class="input"
+              type="text"
+              formControlName="fullName"
+              placeholder="Tu nombre"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="field-block">
+          <label for="emailInput">Correo electronico</label>
+          <ion-item lines="none" class="field-item field-item-icon">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-input
+              id="emailInput"
+              class="input"
+              type="email"
+              formControlName="email"
+              placeholder="ejemplo@correo.com"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="field-block">
+          <label for="passwordInput">Contrasena</label>
+          <ion-item lines="none" class="field-item field-item-icon">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-input
+              id="passwordInput"
+              class="input"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+            ></ion-input>
+            <ion-button fill="clear" type="button" class="visibility-btn" (click)="togglePasswordVisibility()">
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </div>
+
+        <label class="remember-me terms-check">
+          <input type="checkbox" formControlName="acceptTerms" />
+          <span>Acepto los terminos y condiciones</span>
+        </label>
+
+        <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading || form.invalid">
+          <span>{{ loading ? 'Creando...' : 'Crear cuenta' }}</span>
+          <ion-icon name="person-add-outline"></ion-icon>
+        </ion-button>
+      </form>
+
+      <div class="divider">
+        <span>o continuar con</span>
+      </div>
+
+      <div class="social-grid">
+        <ion-button fill="outline" class="social-btn" type="button">
+          <ion-icon name="logo-google"></ion-icon>
+          <span>Google</span>
+        </ion-button>
+        <ion-button fill="outline" class="social-btn" type="button">
+          <ion-icon name="logo-apple"></ion-icon>
+          <span>Apple</span>
+        </ion-button>
+      </div>
+
+      <p class="auth-switch">
+        Ya tienes cuenta?
+        <a routerLink="/auth/login">Inicia sesion</a>
+      </p>
+    </div>
+  </div>
+</ion-content>

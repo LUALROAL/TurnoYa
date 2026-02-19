@@ -9,6 +9,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Crear cliente HTTP base
   - [x] Implementar interceptor JWT
   - [x] Manejo global de errores HTTP
+  - [x] Crear modulo/paginas de Auth
 
 ## Base tecnica
 
@@ -21,6 +22,13 @@ Este documento se completa punto por punto segun el checklist de frontend.
 
 ## Endpoints conectados
 - Ninguno aun (se documentara al implementar cada card)
+
+## Auth UI (standalone)
+- Login: src/app/features/auth/pages/login/login.page.ts
+- Register: src/app/features/auth/pages/register/register.page.ts
+- Servicio base de auth (temporal): src/app/features/auth/services/auth.service.ts
+- Rutas: /auth/login, /auth/register
+- Flujo inicial: / redirige a /auth/login
 
 ## Manejo global de errores HTTP
 - Archivo: src/app/core/interceptors/error.interceptor.ts
@@ -56,3 +64,4 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Cliente HTTP base listo para servicios por modulo.
 - Sesion y JWT gestionados por interceptor y storage local.
 - Manejo global de errores con notificaciones por toast.
+- Auth UI creada con formularios reactivos y estilo Tech Pro.
