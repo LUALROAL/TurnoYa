@@ -8,7 +8,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Configurar entornos y API base URL
   - [x] Crear cliente HTTP base
   - [x] Implementar interceptor JWT
-  - [ ] Manejo global de errores HTTP
+  - [x] Manejo global de errores HTTP
 
 ## Base tecnica
 
@@ -21,6 +21,15 @@ Este documento se completa punto por punto segun el checklist de frontend.
 
 ## Endpoints conectados
 - Ninguno aun (se documentara al implementar cada card)
+
+## Manejo global de errores HTTP
+- Archivo: src/app/core/interceptors/error.interceptor.ts
+- Notificaciones: src/app/core/services/notify.service.ts (ToastController)
+- Acciones:
+  - 400: muestra mensaje del backend
+  - 401: limpia sesion y redirige a /auth/login
+  - 403: mensaje de permisos
+  - 500+: mensaje generico
 
 ## Interceptor JWT
 - Archivo: src/app/core/interceptors/auth.interceptor.ts
@@ -46,3 +55,4 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Base URL de API definida por ambiente (dev/prod).
 - Cliente HTTP base listo para servicios por modulo.
 - Sesion y JWT gestionados por interceptor y storage local.
+- Manejo global de errores con notificaciones por toast.

@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { AppComponent } from './app/app.component';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
+import { errorInterceptor } from './app/core/interceptors/error.interceptor';
 
 const routes: Routes = [
   {
@@ -23,6 +24,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(IonicModule.forRoot()),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
   ],
 }).catch(err => console.log(err));

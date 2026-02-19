@@ -8,7 +8,7 @@ Use this checklist to mark each card as completed.
 - [x] Configurar entornos y API base URL (Priority: High, Points: 1, Depends: F-001) X
 - [x] Crear cliente HTTP base (Priority: High, Points: 3, Depends: F-003) X
 - [x] Implementar interceptor JWT (Priority: High, Points: 2, Depends: F-004) X
-- [ ] Manejo global de errores HTTP (Priority: High, Points: 3, Depends: F-005)
+- [x] Manejo global de errores HTTP (Priority: High, Points: 3, Depends: F-005) X
 
 ## EPIC 2 - Autenticacion
 - [ ] Crear modulo/paginas de Auth (Priority: High, Points: 5, Depends: F-002, F-004)
