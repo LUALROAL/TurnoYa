@@ -7,7 +7,7 @@ Use this checklist to mark each card as completed.
 - [x] Configurar Tailwind CSS (Priority: High, Points: 2, Depends: F-001) X
 - [x] Configurar entornos y API base URL (Priority: High, Points: 1, Depends: F-001) X
 - [x] Crear cliente HTTP base (Priority: High, Points: 3, Depends: F-003) X
-- [ ] Implementar interceptor JWT (Priority: High, Points: 2, Depends: F-004)
+- [x] Implementar interceptor JWT (Priority: High, Points: 2, Depends: F-004) X
 - [ ] Manejo global de errores HTTP (Priority: High, Points: 3, Depends: F-005)
 
 ## EPIC 2 - Autenticacion

@@ -1,10 +1,11 @@
 import { importProvidersFrom } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { PreloadAllModules, provideRouter, Routes, withPreloading } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AppComponent } from './app/app.component';
+import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 
 const routes: Routes = [
   {
@@ -22,6 +23,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(IonicModule.forRoot()),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
   ],
 }).catch(err => console.log(err));

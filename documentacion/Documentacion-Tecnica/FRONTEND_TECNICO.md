@@ -7,7 +7,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Configurar Tailwind CSS
   - [x] Configurar entornos y API base URL
   - [x] Crear cliente HTTP base
-  - [ ] Implementar interceptor JWT
+  - [x] Implementar interceptor JWT
   - [ ] Manejo global de errores HTTP
 
 ## Base tecnica
@@ -21,6 +21,11 @@ Este documento se completa punto por punto segun el checklist de frontend.
 
 ## Endpoints conectados
 - Ninguno aun (se documentara al implementar cada card)
+
+## Interceptor JWT
+- Archivo: src/app/core/interceptors/auth.interceptor.ts
+- Storage: localStorage (key: turnoya.session)
+- Excluye rutas publicas: /api/auth/login, /api/auth/register, /api/auth/refresh, /api/payments/webhook
 
 ## Cliente HTTP base
 - Ubicacion: src/app/core/services/api.service.ts
@@ -40,3 +45,4 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Tailwind habilitado con tokens de diseno base (Tech Pro).
 - Base URL de API definida por ambiente (dev/prod).
 - Cliente HTTP base listo para servicios por modulo.
+- Sesion y JWT gestionados por interceptor y storage local.
