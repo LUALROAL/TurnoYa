@@ -5,7 +5,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 ## Estado de avance
   - [x] Crear proyecto Ionic Angular
   - [x] Configurar Tailwind CSS
-  - [ ] Configurar entornos y API base URL
+  - [x] Configurar entornos y API base URL
   - [ ] Crear cliente HTTP base
   - [ ] Implementar interceptor JWT
   - [ ] Manejo global de errores HTTP
@@ -22,7 +22,14 @@ Este documento se completa punto por punto segun el checklist de frontend.
 ## Endpoints conectados
 - Ninguno aun (se documentara al implementar cada card)
 
+## Entornos y API base
+- Desarrollo: src/environments/environment.ts
+  - apiBaseUrl: https://localhost:7187
+- Produccion: src/environments/environment.prod.ts
+  - apiBaseUrl: https://api.turnoya.com
+
 ## Notas de implementacion
 - Proyecto inicializado con template blank.
 - Bootstrap con `bootstrapApplication` y routing por `loadComponent`.
 - Tailwind habilitado con tokens de diseno base (Tech Pro).
+- Base URL de API definida por ambiente (dev/prod).
