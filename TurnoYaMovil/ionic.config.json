@@ -1,0 +1,7 @@
+{
+  "name": "TurnoYaMovil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

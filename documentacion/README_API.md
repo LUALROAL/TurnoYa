@@ -1,5 +1,13 @@
 # TurnoYa Backend API
 
+> ⚠️ **Actualización importante**
+>
+> Este documento tiene secciones desactualizadas (por ejemplo referencias a `/health` y roadmap antiguo).
+>
+> La referencia técnica actualizada (análisis backend real + roadmap frontend) está en:
+>
+> **`FASE1_ANALISIS_Y_FASE2_ROADMAP_FRONTEND.md`**
+
 API REST construida con .NET 8 + SQL Server para el sistema de gestión de citas TurnoYa.
 
 ## Arquitectura

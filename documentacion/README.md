@@ -1,5 +1,13 @@
 # TurnoYa · App de Reservas
 
+> ⚠️ **Nota de vigencia documental**
+>
+> Este archivo contiene contenido histórico/ideal de producto y arquitectura, pero no refleja al 100% el estado implementado actual del backend.
+>
+> Para análisis real del código, endpoints actuales y roadmap frontend oficial, usar:
+>
+> **`FASE1_ANALISIS_Y_FASE2_ROADMAP_FRONTEND.md`**
+
 Experiencia rápida y confiable para reservar servicios (barberías, salones, spas) con pagos seguros vía Wompi y gestión completa para negocios.
 
 <!-- markdownlint-disable MD033 MD022 MD032 MD031 MD029 -->

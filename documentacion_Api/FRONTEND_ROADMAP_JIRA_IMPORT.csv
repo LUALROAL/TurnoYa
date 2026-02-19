@@ -1,0 +1,83 @@
+Issue Type,Summary,Epic Name,Priority,Description,Acceptance Criteria,Dependencies,Story Points
+Story,Crear proyecto Ionic Angular,EPIC 1 - Bootstrap,High,"Inicializar app base con routing y estructura feature-first para habilitar desarrollo escalable.","- Proyecto arranca en http://localhost:8100
+- Estructura core/shared/features creada
+- Build de desarrollo exitoso",,3
+Story,Configurar Tailwind CSS,EPIC 1 - Bootstrap,High,"Instalar y conectar Tailwind al proyecto Ionic para habilitar utilidades visuales para UI.","- Clases Tailwind aplican correctamente en vistas Ionic
+- Configuración de purge/content correcta
+- No rompe estilos base de Ionic",F-001,2
+Story,Configurar entornos y API base URL,EPIC 1 - Bootstrap,High,"Definir environment.dev/prod y base URL backend para desacoplar configuración de despliegue.","- URL backend configurable por entorno
+- Servicios HTTP consumen desde config central",F-001,1
+Story,Crear cliente HTTP base,EPIC 1 - Bootstrap,High,"Implementar wrapper para GET/POST/PUT/PATCH/DELETE para centralizar llamadas y headers comunes.","- Servicio base reutilizable por módulos
+- Soporte de query params tipados",F-003,3
+Story,Implementar interceptor JWT,EPIC 1 - Bootstrap,High,"Añadir bearer token automáticamente cuando haya sesión para autenticación homogénea en requests protegidos.","- Header Authorization: Bearer <token> presente en rutas protegidas
+- Rutas públicas (/auth/*, webhook) sin token forzado",F-004,2
+Story,Manejo global de errores HTTP,EPIC 1 - Bootstrap,High,"Interceptor/resolvedor para 400/401/403/500 para UX consistente y trazabilidad de fallos.","- 401 dispara flujo de refresh/logout
+- Mensajes de validación 400 mostrados al usuario
+- 500 con mensaje genérico sin exponer detalles",F-005,3
+Story,Crear módulo/páginas de Auth,EPIC 2 - Autenticación,High,"Pantallas de login y registro para entrada al sistema con backend real.","- Formularios con validación local
+- Navegación a home tras login exitoso
+- Formulario registro usa controles Ionic","F-002,F-004",5
+Story,Integrar endpoint register,EPIC 2 - Autenticación,High,"Conectar POST /api/auth/register para creación de cuenta desde app.","- Envía payload conforme a RegisterUserDto
+- Maneja errores de email duplicado/validación
+- Muestra mensajes de validación al usuario",F-010,2
+Story,Integrar endpoint login,EPIC 2 - Autenticación,High,"Conectar POST /api/auth/login para autenticación y almacenamiento de sesión.","- Guarda token, refreshToken, expiración y user
+- Redirige correctamente según rol
+- Persiste sesión en storage persistente",F-010,2
+Story,Implementar refresh automático,EPIC 2 - Autenticación,High,"Renovar access token usando refresh al detectar expiración para sesión persistente sin fricción.","- Usa POST /api/auth/refresh
+- Si falla refresh, limpia sesión y redirige a login
+- No interrumpe requests en curso","F-012,F-005,F-006",3
+Story,Guard de rutas protegidas,EPIC 2 - Autenticación,High,"Bloquear pantallas privadas sin sesión válida para reforzar seguridad del lado cliente.","- Acceso no autenticado redirige a login
+- Acceso autenticado permitido según rol
+- No bloquea rutas públicas",F-012,2
+Story,Crear página listado de negocios,EPIC 3 - Catálogo y negocios,High,"Vista pública con GET /api/business para descubrimiento inicial de oferta.","- Renderiza lista con loading/error/empty states
+- Tarjetas muestran nombre, categoría, ciudad, rating
+- Navegación a detalle funciona",F-004,5
+Story,Implementar búsqueda y filtros,EPIC 3 - Catálogo y negocios,Medium,"Conectar GET /api/business/search y categorías para mejorar conversión de búsqueda.","- Filtros por query, city, category funcionales
+- Query params reflejados en URL
+- Lista GET /api/business/categories para filtro",F-020,3
+Story,Crear detalle de negocio,EPIC 3 - Catálogo y negocios,High,"Integrar GET /api/business/{id} para mostrar servicios y empleados del negocio.","- Muestra info principal + listas relacionadas
+- Maneja 404 con pantalla amigable
+- Botón para agendar visible",F-020,5
+Story,Crear módulo owner business,EPIC 3 - Catálogo y negocios,High,"Crear/editar/eliminar negocio del dueño para habilitar operación del negocio.","- Conecta POST, PUT, DELETE /api/business
+- Restringido por sesión autenticada
+- Validación de campos completa","F-014,F-004",8
+Story,Configuración de negocio,EPIC 3 - Catálogo y negocios,Medium,"Consumir GET/PUT /api/business/{id}/settings para exponer reglas de booking y horarios.","- Formulario mapea BusinessSettingsDto actual
+- Guardado persiste cambios y refresca vista
+- Horarios de trabajo editables por día",F-023,5
+Story,CRUD servicios de negocio,EPIC 4 - Servicios y empleados,High,"Integrar endpoints de ServicesController para permitir al dueño administrar oferta.","- Listar, crear, editar, eliminar servicios
+- Validar campos de precio, duración y depósito
+- Asocia servicios al negocio correcto",F-023,5
+Story,CRUD empleados de negocio,EPIC 4 - Servicios y empleados,High,"Integrar endpoints de EmployeesController para gestionar staff por negocio.","- Listar, crear, editar, eliminar empleados
+- Manejo de discrepancias DTO/entidad sin romper UI
+- Foto de perfil opcional",F-023,5
+Story,Crear flujo agendar cita,EPIC 5 - Citas,High,"Pantalla de reserva + POST /api/appointments para core transaccional de cliente.","- Selección de negocio/servicio/empleado/fecha
+- Manejo de conflictos de horario con mensaje backend
+- Confirmación visual de referencia creada","F-022,F-030,F-031",8
+Story,Mis citas (cliente),EPIC 5 - Citas,High,"Integrar GET /api/appointments/my para seguimiento de reservas del usuario.","- Filtros por fechas/estado
+- Render de estado y referencia
+- Navegación a detalle de cita",F-040,3
+Story,Agenda de negocio (owner),EPIC 5 - Citas,High,"Integrar GET /api/appointments/business/{businessId} para operación diaria del negocio.","- Lista por rango de fechas
+- Acciones rápidas por cita
+- Vista de calendario opcional",F-023,5
+Story,Cambios de estado de cita,EPIC 5 - Citas,High,"Integrar confirm/cancel/complete/noshow para completar ciclo de vida de la cita.","- Llama PATCH correcto según acción
+- Actualiza UI sin recarga completa
+- Confirmación antes de acciones destructivas",F-042,3
+Story,Integrar crear intento de pago,EPIC 6 - Pagos y administración,Medium,"POST /api/payments/intent para habilitar pagos/depositos en flujo de cita.","- Envía CreatePaymentIntentDto válido
+- Muestra referencia y estado inicial
+- Integra con flujo de cita",F-040,3
+Story,Integrar estado de pago,EPIC 6 - Pagos y administración,Medium,"GET /api/payments/{appointmentId}/status para feedback de pago al usuario.","- Consulta periódica/manual del estado
+- Maneja 404 de forma clara
+- Actualiza UI según estado",F-050,2
+Story,Módulo admin usuarios,EPIC 6 - Pagos y administración,Low,"GET /api/admin/users con filtros y paginación para dar capacidad de administración básica.","- Tabla paginada con TotalCount/TotalPages
+- Búsqueda por término y rol
+- Solo accesible por admin",F-014,5
+Story,Estandarizar contratos de API frontend,EPIC 7 - Calidad y entrega,Medium,"Definir interfaces TS por endpoint usado para evitar errores por tipado inconsistente.","- Modelos centralizados por feature
+- Sin uso de any en capa API
+- Documentación inline de tipos",F-004,3
+Story,Observabilidad frontend mínima,EPIC 7 - Calidad y entrega,Low,"Logging de errores de red y tracking de fallos de auth para acelerar debug en QA.","- Logs de error categorizados por módulo
+- Captura de 401/403/500 con contexto
+- Integración opcional con servicio externo",F-006,2
+Task,Checklist de salida a QA,EPIC 7 - Calidad y entrega,High,"Validar flujos críticos E2E manuales para asegurar estabilidad antes de pruebas formales.","- Login/register/refresh OK
+- Crear negocio, servicio, empleado OK
+- Crear y transicionar cita OK
+- Intento de pago y consulta de estado OK","F-011,F-012,F-013,F-023,F-030,F-031,F-040,F-043,F-050,F-051",1

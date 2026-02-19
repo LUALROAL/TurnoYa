@@ -1,0 +1,45 @@
+# TurnoYa Frontend - Roadmap Checklist
+
+Use this checklist to mark each card as completed.
+
+## EPIC 1 - Bootstrap
+- [x] Crear proyecto Ionic Angular (Priority: High, Points: 3) X
+- [ ] Configurar Tailwind CSS (Priority: High, Points: 2, Depends: F-001)
+- [ ] Configurar entornos y API base URL (Priority: High, Points: 1, Depends: F-001)
+- [ ] Crear cliente HTTP base (Priority: High, Points: 3, Depends: F-003)
+- [ ] Implementar interceptor JWT (Priority: High, Points: 2, Depends: F-004)
+- [ ] Manejo global de errores HTTP (Priority: High, Points: 3, Depends: F-005)
+
+## EPIC 2 - Autenticacion
+- [ ] Crear modulo/paginas de Auth (Priority: High, Points: 5, Depends: F-002, F-004)
+- [ ] Integrar endpoint register (Priority: High, Points: 2, Depends: F-010)
+- [ ] Integrar endpoint login (Priority: High, Points: 2, Depends: F-010)
+- [ ] Implementar refresh automatico (Priority: High, Points: 3, Depends: F-012, F-005, F-006)
+- [ ] Guard de rutas protegidas (Priority: High, Points: 2, Depends: F-012)
+
+## EPIC 3 - Catalogo y negocios
+- [ ] Crear pagina listado de negocios (Priority: High, Points: 5, Depends: F-004)
+- [ ] Implementar busqueda y filtros (Priority: Medium, Points: 3, Depends: F-020)
+- [ ] Crear detalle de negocio (Priority: High, Points: 5, Depends: F-020)
+- [ ] Crear modulo owner business (Priority: High, Points: 8, Depends: F-014, F-004)
+- [ ] Configuracion de negocio (Priority: Medium, Points: 5, Depends: F-023)
+
+## EPIC 4 - Servicios y empleados
+- [ ] CRUD servicios de negocio (Priority: High, Points: 5, Depends: F-023)
+- [ ] CRUD empleados de negocio (Priority: High, Points: 5, Depends: F-023)
+
+## EPIC 5 - Citas
+- [ ] Crear flujo agendar cita (Priority: High, Points: 8, Depends: F-022, F-030, F-031)
+- [ ] Mis citas (cliente) (Priority: High, Points: 3, Depends: F-040)
+- [ ] Agenda de negocio (owner) (Priority: High, Points: 5, Depends: F-023)
+- [ ] Cambios de estado de cita (Priority: High, Points: 3, Depends: F-042)
+
+## EPIC 6 - Pagos y administracion
+- [ ] Integrar crear intento de pago (Priority: Medium, Points: 3, Depends: F-040)
+- [ ] Integrar estado de pago (Priority: Medium, Points: 2, Depends: F-050)
+- [ ] Modulo admin usuarios (Priority: Low, Points: 5, Depends: F-014)
+
+## EPIC 7 - Calidad y entrega
+- [ ] Estandarizar contratos de API frontend (Priority: Medium, Points: 3, Depends: F-004)
+- [ ] Observabilidad frontend minima (Priority: Low, Points: 2, Depends: F-006)
+- [ ] Checklist de salida a QA (Priority: High, Points: 1, Depends: F-011, F-012, F-013, F-023, F-030, F-031, F-040, F-043, F-050, F-051)
