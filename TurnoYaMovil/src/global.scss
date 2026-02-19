@@ -9,6 +9,8 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+@use "./app/features/auth/styles/auth-shared";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,6 +44,3 @@
 
 /* Tech Pro design tokens */
 @import "./theme/tokens.css";
-
-/* Auth shared styles */
-@import "./app/features/auth/styles/auth-shared.scss";
