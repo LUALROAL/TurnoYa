@@ -364,4 +364,12 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Guardar nuevas categorías en el backend para que otros usuarios pueda verlas
   - Actualizar dropdown de categorías dinámicamente sin recargar la página
   - Mismo flujo en listado/búsqueda de negocios (filtro dinámico de categorías)
+- **Campos dependientes en formulario de negocio (Departamento → Ciudad)**:
+  - Reordenar campos del formulario: mover Departamento antes de Ciudad/Dirección
+  - Implementar cascada de selección: cuando el usuario selecciona un Departamento, cargar dinámicamente solo las ciudades/pueblos/municipios de ese departamento
+  - Obtener datos de División Política Administrativa (DIVIPOLA) de Colombia para mapeo Departamento → Municipios
+  - Backend: crear endpoint GET /api/locations/municipalities?department={id} o traer datos embebidos en configuración inicial
+  - Frontend: usar RxJS valueChanges en campo Departamento para disparar carga de municipios
+  - UX: mostrar loading state en select de Ciudad mientras se cargan datos
+  - Validación: asegurar que Ciudad siempre pertenezca al Departamento seleccionado
 
