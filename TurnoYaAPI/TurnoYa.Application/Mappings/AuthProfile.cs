@@ -1,4 +1,5 @@
 using AutoMapper;
+using TurnoYa.Application.DTOs.Admin;
 using TurnoYa.Application.DTOs.Auth;
 using TurnoYa.Core.Entities;
 
@@ -42,6 +43,14 @@ public class AuthProfile : Profile
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.PhotoUrl));
+
+        // User → UserProfileDto
+        CreateMap<User, UserProfileDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
+
+        // User → UserManageDto (para admin)
+        CreateMap<User, UserManageDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
         // User → AuthResponseDto (no se usa directamente, solo UserDto)
         // Se construye manualmente en el servicio

@@ -76,6 +76,7 @@ builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 // Application Services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();

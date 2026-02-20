@@ -1,15 +1,15 @@
-using TurnoYa.Application.DTOs.Admin;
-
 namespace TurnoYa.Application.DTOs.Admin;
 
 /// <summary>
 /// Respuesta paginada de usuarios
 /// </summary>
-public class PagedUsersResponseDto
+public class PaginatedUsersDto
 {
     public IEnumerable<UserManageDto> Users { get; set; } = new List<UserManageDto>();
     public int TotalCount { get; set; }
-    public int Page { get; set; }
+    public int PageNumber { get; set; }
     public int PageSize { get; set; }
-    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    public int TotalPages => (TotalCount + PageSize - 1) / PageSize;
+    public bool HasNextPage => PageNumber < TotalPages;
+    public bool HasPreviousPage => PageNumber > 1;
 }

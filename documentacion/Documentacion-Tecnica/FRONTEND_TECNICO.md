@@ -26,6 +26,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Mis citas (cliente)
   - [x] Agenda de negocio (owner)
   - [x] Cambios de estado de cita
+  - [x] Perfil de usuario (información y cambio de contraseña)
 
 ## Base tecnica
 
@@ -66,6 +67,9 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - PATCH /api/appointments/{id}/cancel
 - PATCH /api/appointments/{id}/complete
 - PATCH /api/appointments/{id}/noshow
+- GET /api/users/me
+- PUT /api/users/me
+- PATCH /api/users/me/password
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -75,6 +79,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Si no existe, redirige a /auth/login con returnUrl
 - Rutas protegidas actuales:
   - /home
+  - /profile
   - /businesses
   - /businesses/:id
   - /owner/businesses
@@ -570,7 +575,54 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Estados UX:
   - Procesando: botones deshabilitados por cita
   - Error: toast si no se puede actualizar el estado
-
+## Perfil de Usuario
+- Archivos:
+  - src/app/features/account/pages/profile/profile.page.ts (nuevo)
+  - src/app/features/account/services/user.service.ts (nuevo)
+- Ruta: `/profile` (protegida con authGuard)
+- Integracion backend:
+  - GET /api/users/me - obtener perfil actual
+  - PUT /api/users/me - actualizar información personal
+  - PATCH /api/users/me/password - cambiar contraseña
+- Estructura:
+  - Dos pestañas: "Información Personal" y "Seguridad"
+  - **Pestaña Información:**
+    - Avatar con foto de perfil (si existe)
+    - Email (solo lectura)
+    - Nombre y Apellido (editables)
+    - Teléfono (editable)
+    - Género (select: Masculino/Femenino/Otro)
+    - Fecha de Nacimiento (date picker)
+    - Estadísticas: Citas Completadas y Calificación
+    - Botón "Actualizar Perfil"
+  - **Pestaña Seguridad:**
+    - Contraseña Actual (requiere)
+    - Contraseña Nueva (requiere)
+    - Confirmar Contraseña (requiere)
+    - Validador de requisitos: mínimo 8 caracteres, mayúscula, minúscula, dígito
+    - Botón "Cambiar Contraseña"
+- Servicios:
+  - `UserService.getProfile()` - GET /api/users/me
+  - `UserService.updateProfile(data)` - PUT /api/users/me
+  - `UserService.changePassword(data)` - PATCH /api/users/me/password
+- Estados:
+  - loading: mientras carga perfil inicial
+  - updatingProfile: mientras se actualiza información
+  - changingPassword: mientras se cambia contraseña
+- Validaciones frontend:
+  - Forma reactiva con validadores
+  - UpdateUserProfileDtoValidator: nombre/apellido, email válido, teléfono, género válido, edad mínima
+  - ChangePasswordDtoValidator: contraseña actual requerida, nueva contraseña requisitos, confirmación coincide
+- Notificaciones:
+  - Toast success al actualizar perfil exitosamente
+  - Toast success al cambiar contraseña exitosamente
+  - Toast error si algo falla (devuelve detail de ProblemDetails)
+- Caracteristicas:
+  - Solo actualiza campos que han cambiado (PATCH semántico)
+  - Formulario se pre-llena con datos actuales al cargar
+  - Botones deshabilitados mientras están en progreso
+  - Acceso desde Home en "Perfil" (quick access menu)
+  - Refresh al volver a la página (ionViewWillEnter)
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.
 - Agregar distinctUntilChanged en filtros para evitar consultas repetidas con el mismo valor.

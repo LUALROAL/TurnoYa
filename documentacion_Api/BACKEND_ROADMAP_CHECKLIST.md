@@ -3,8 +3,8 @@
 Use this checklist to mark each card as completed.
 
 ## EPIC 1 - Base API
-- [ ] Estandarizar respuestas de error (ProblemDetails) (Priority: Medium, Points: 3)
-- [ ] Validaciones globales y mensajes consistentes (Priority: Medium, Points: 3)
+- [x] Estandarizar respuestas de error (ProblemDetails) (Priority: Medium, Points: 3)
+- [x] Validaciones globales y mensajes consistentes (Priority: Medium, Points: 3)
 - [ ] Versionado de API (v1) (Priority: Low, Points: 2)
 
 ## EPIC 2 - Autenticacion y seguridad
@@ -15,15 +15,15 @@ Use this checklist to mark each card as completed.
 - [ ] Politicas por rol (Admin/Owner/Customer) (Priority: Medium, Points: 3)
 
 ## EPIC 3 - Perfil y cuenta
-- [ ] GET /api/users/me (Priority: High, Points: 3, Depends: EPIC2)
-- [ ] PUT /api/users/me (Priority: High, Points: 3, Depends: EPIC2)
-- [ ] PATCH /api/users/me/password (Priority: High, Points: 3, Depends: EPIC2)
+- [x] GET /api/users/me (Priority: High, Points: 3, Depends: EPIC2)
+- [x] PUT /api/users/me (Priority: High, Points: 3, Depends: EPIC2)
+- [x] PATCH /api/users/me/password (Priority: High, Points: 3, Depends: EPIC2)
 
 ## EPIC 4 - Admin usuarios
-- [ ] GET /api/admin/users (Priority: High, Points: 5, Depends: EPIC2)
-- [ ] GET /api/admin/users/{id} (Priority: Medium, Points: 3, Depends: EPIC2)
-- [ ] PATCH /api/admin/users/{id}/status (Priority: Medium, Points: 3, Depends: EPIC2)
-- [ ] PATCH /api/admin/users/{id}/role (Priority: Medium, Points: 3, Depends: EPIC2)
+- [x] GET /api/admin/users (Priority: High, Points: 5, Depends: EPIC2)
+- [x] GET /api/admin/users/{id} (Priority: Medium, Points: 3, Depends: EPIC2)
+- [x] PATCH /api/admin/users/{id}/status (Priority: Medium, Points: 3, Depends: EPIC2)
+- [x] PATCH /api/admin/users/{id}/role (Priority: Medium, Points: 3, Depends: EPIC2)
 
 ## EPIC 5 - Citas y pagos
 - [ ] Endpoints de pagos (definir con negocio) (Priority: Medium, Points: 5)
