@@ -29,7 +29,7 @@
       <h3 class="section-title">Accesos rapidos</h3>
 
       <div class="quick-grid">
-        <button type="button" class="quick-card card" *ngFor="let item of quickAccessItems">
+        <button type="button" class="quick-card card" *ngFor="let item of quickAccessItems" [routerLink]="item.route">
           <div class="quick-icon">
             <ion-icon [name]="item.icon"></ion-icon>
           </div>
@@ -44,7 +44,7 @@
     <section class="recommendations">
       <div class="section-head">
         <h3 class="section-title">Recomendados para ti</h3>
-        <button type="button" class="link-btn">Ver todo</button>
+        <button type="button" class="link-btn" routerLink="/businesses">Ver todo</button>
       </div>
 
       <div *ngIf="loadingRecommendations" class="recommendation-list">

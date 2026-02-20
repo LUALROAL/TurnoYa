@@ -13,6 +13,9 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Integrar endpoint register
   - [x] Integrar endpoint login
   - [x] Implementar refresh automatico
+  - [x] Guard de rutas protegidas
+  - [x] Configurar Home y navegacion inicial
+  - [x] Crear pagina listado de negocios
 
 ## Base tecnica
 
@@ -27,6 +30,44 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - POST /api/auth/register
 - POST /api/auth/login
 - POST /api/auth/refresh
+- GET /api/business
+
+## Guard de rutas protegidas
+- Archivo: src/app/core/guards/auth.guard.ts
+- Uso: canActivate en rutas privadas
+- Flujo:
+  - Si existe accessToken, permite acceso
+  - Si no existe, redirige a /auth/login con returnUrl
+- Rutas protegidas actuales:
+  - /home
+  - /businesses
+
+## Home marketplace (base)
+- Archivos:
+  - src/app/home/home.page.ts
+  - src/app/home/home.page.html
+  - src/app/home/home.page.scss
+- Implementado:
+  - Header de bienvenida y buscador visual
+  - Accesos rapidos (Negocios, Mis citas, Perfil)
+  - Seccion recomendados con estado de carga y estado vacio
+  - Navegacion a listado de negocios desde "Negocios" y "Ver todo"
+
+## Listado de negocios
+- Archivos:
+  - src/app/features/business/models/business-list.model.ts
+  - src/app/features/business/services/business.service.ts
+  - src/app/features/business/pages/list/business-list.page.ts
+  - src/app/features/business/pages/list/business-list.page.html
+  - src/app/features/business/pages/list/business-list.page.scss
+- Ruta:
+  - /businesses (standalone + canActivate)
+- Integracion backend:
+  - GET /api/business para obtener BusinessListDto[]
+- Estados UX:
+  - Cargando: skeleton cards
+  - Vacio: mensaje de no disponibilidad
+  - Exito: tarjetas con nombre, categoria, ciudad, rating, direccion y reseñas
 
 ## Estructura de modelos (profesional)
 - Feature auth:
@@ -114,3 +155,6 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Login conectado al backend real con persistencia de sesion.
 - Refresh automatico implementado con retry transparente en 401.
 - Modelos e interfaces movidos a carpetas models por feature/core.
+- Guard de rutas aplicado en paginas privadas.
+- Home base implementado siguiendo estilo Tech Pro y mockups.
+- Listado de negocios conectado al backend y enlazado desde Home.

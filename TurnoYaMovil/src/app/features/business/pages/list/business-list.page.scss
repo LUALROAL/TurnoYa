@@ -1,0 +1,192 @@
+:host {
+  display: block;
+}
+
+.business-bg {
+  --background: var(--color-bg);
+}
+
+.bg-decoration {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-orb {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
+  filter: blur(88px);
+  opacity: 0.25;
+}
+
+.orb-top {
+  top: -95px;
+  left: -70px;
+}
+
+.orb-bottom {
+  right: -80px;
+  bottom: -120px;
+}
+
+.business-wrap {
+  position: relative;
+  z-index: 1;
+  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4) calc(var(--space-8) + env(safe-area-inset-bottom));
+  display: grid;
+  gap: var(--space-5);
+}
+
+.business-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
+}
+
+.glass-panel {
+  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-overline {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.business-header h1 {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-display-a);
+  font-size: 1.4rem;
+}
+
+.back-btn {
+  --color: var(--color-text);
+  --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
+  --border-radius: 999px;
+}
+
+.section-head {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.section-head h2 {
+  margin: 0;
+  font-family: var(--font-display-a);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.section-head p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.cards-grid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.business-card {
+  padding: var(--space-4);
+  border-color: color-mix(in srgb, var(--color-accent-1) 10%, var(--color-outline));
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.business-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.meta {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent-1) 22%, transparent);
+  color: var(--color-accent-1);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.rating-pill ion-icon {
+  font-size: 12px;
+}
+
+.address {
+  margin: var(--space-3) 0;
+  font-size: 0.88rem;
+}
+
+.bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.empty-state {
+  border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-6);
+}
+
+.empty-state ion-icon {
+  color: var(--color-accent-1);
+  font-size: 22px;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.skeleton {
+  min-height: 126px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-surface-2) 94%, transparent) 25%,
+    color-mix(in srgb, var(--color-outline) 55%, transparent) 50%,
+    color-mix(in srgb, var(--color-surface-2) 94%, transparent) 75%
+  );
+  background-size: 220% 100%;
+  animation: skeleton-loading 1.2s infinite;
+}
+
+@keyframes skeleton-loading {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}

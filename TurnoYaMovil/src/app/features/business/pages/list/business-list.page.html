@@ -1,0 +1,55 @@
+<ion-content class="business-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="business-wrap">
+    <header class="business-header card glass-panel">
+      <div>
+        <p class="header-overline">Marketplace</p>
+        <h1>Negocios</h1>
+      </div>
+      <ion-button fill="clear" class="back-btn" routerLink="/home" aria-label="Volver a inicio">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </header>
+
+    <section class="section-head">
+      <h2>Explora opciones cerca de ti</h2>
+      <p>Encuentra negocios por categoria y disponibilidad.</p>
+    </section>
+
+    <section *ngIf="loading" class="cards-grid">
+      <article class="business-card card skeleton" *ngFor="let item of [1, 2, 3]"></article>
+    </section>
+
+    <article *ngIf="!loading && businesses.length === 0" class="empty-state card glass-panel">
+      <ion-icon name="storefront-outline"></ion-icon>
+      <p>No hay negocios disponibles en este momento.</p>
+    </article>
+
+    <section *ngIf="!loading && businesses.length > 0" class="cards-grid">
+      <article class="business-card card" *ngFor="let business of businesses; trackBy: trackByBusinessId">
+        <div class="top-row">
+          <div>
+            <h3>{{ business.name }}</h3>
+            <p class="meta">{{ business.category }} · {{ business.city }}</p>
+          </div>
+
+          <span class="rating-pill">
+            <ion-icon name="star"></ion-icon>
+            {{ business.averageRating | number: '1.1-1' }}
+          </span>
+        </div>
+
+        <p class="address">{{ business.address }}</p>
+
+        <div class="bottom-row">
+          <span class="reviews">{{ business.totalReviews }} reseñas</span>
+          <span class="distance" *ngIf="business.distance !== null">{{ business.distance }} km</span>
+        </div>
+      </article>
+    </section>
+  </div>
+</ion-content>

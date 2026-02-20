@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 type QuickAccessItem = {
   title: string;
   subtitle: string;
   icon: string;
+  route?: string;
 };
 
 type RecommendedBusiness = {
@@ -21,7 +23,7 @@ type RecommendedBusiness = {
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [IonicModule, CommonModule, RouterLink],
 })
 export class HomePage implements OnInit, OnDestroy {
   protected readonly quickAccessItems: QuickAccessItem[] = [
@@ -29,16 +31,19 @@ export class HomePage implements OnInit, OnDestroy {
       title: 'Negocios',
       subtitle: 'Explorar servicios',
       icon: 'storefront-outline',
+      route: '/businesses',
     },
     {
       title: 'Mis citas',
       subtitle: 'Ver agenda',
       icon: 'calendar-clear-outline',
+      route: '/home',
     },
     {
       title: 'Perfil',
       subtitle: 'Editar cuenta',
       icon: 'person-circle-outline',
+      route: '/home',
     },
   ];
 

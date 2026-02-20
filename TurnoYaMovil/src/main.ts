@@ -28,6 +28,11 @@ const routes: Routes = [
     loadComponent: () => import('./app/home/home.page').then(m => m.HomePage),
     canActivate: [authGuard],
   },
+  {
+    path: 'businesses',
+    loadComponent: () => import('./app/features/business/pages/list/business-list.page').then(m => m.BusinessListPage),
+    canActivate: [authGuard],
+  },
 ];
 
 bootstrapApplication(AppComponent, {
