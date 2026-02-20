@@ -44,13 +44,26 @@ export class LoginPage {
 
     this.loading = true;
     this.authService.login(email, password).subscribe({
-      next: () => {
+      next: response => {
         this.loading = false;
-        void this.router.navigateByUrl("/home");
+        const targetRoute = this.resolveRouteByRole(response.user.role);
+        void this.router.navigateByUrl(targetRoute);
       },
       error: () => {
         this.loading = false;
       },
     });
+  }
+
+  private resolveRouteByRole(role: string) {
+    if (role === "BusinessOwner") {
+      return "/home";
+    }
+
+    if (role === "Admin") {
+      return "/home";
+    }
+
+    return "/home";
   }
 }
