@@ -1,0 +1,95 @@
+<ion-content class="detail-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="detail-wrap">
+    <header class="detail-header card glass-panel">
+      <ion-button fill="clear" class="back-btn" routerLink="/businesses" aria-label="Volver al listado">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+
+      <div>
+        <p class="header-overline">Detalle</p>
+        <h1>Negocio</h1>
+      </div>
+    </header>
+
+    <section *ngIf="loading" class="detail-skeleton card"></section>
+
+    <article *ngIf="!loading && !business" class="empty-state card glass-panel">
+      <ion-icon name="storefront-outline"></ion-icon>
+      <p>No pudimos cargar la informacion del negocio.</p>
+    </article>
+
+    <ng-container *ngIf="!loading && business">
+      <section class="hero card glass-panel">
+        <div class="hero-top">
+          <div>
+            <h2>{{ business.name }}</h2>
+            <p class="hero-meta">{{ business.category }} · {{ business.city }}, {{ business.department }}</p>
+          </div>
+
+          <span class="rating-pill">
+            <ion-icon name="star"></ion-icon>
+            {{ business.averageRating | number: '1.1-1' }}
+          </span>
+        </div>
+
+        <p class="hero-description" *ngIf="business.description">{{ business.description }}</p>
+
+        <div class="contact-grid">
+          <div class="contact-item" *ngIf="business.address">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{{ business.address }}</span>
+          </div>
+          <div class="contact-item" *ngIf="business.phone">
+            <ion-icon name="call-outline"></ion-icon>
+            <span>{{ business.phone }}</span>
+          </div>
+          <div class="contact-item" *ngIf="business.email">
+            <ion-icon name="mail-outline"></ion-icon>
+            <span>{{ business.email }}</span>
+          </div>
+          <div class="contact-item" *ngIf="business.website">
+            <ion-icon name="globe-outline"></ion-icon>
+            <span>{{ business.website }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section card">
+        <div class="section-head">
+          <h3>Servicios</h3>
+          <span>{{ business.services.length }}</span>
+        </div>
+
+        <article class="line-item" *ngFor="let service of business.services; trackBy: trackByServiceId">
+          <div>
+            <h4>{{ service.name }}</h4>
+            <p>{{ service.duration }} min</p>
+          </div>
+          <strong>{{ service.price | currency: 'COP':'symbol':'1.0-0' }}</strong>
+        </article>
+
+        <p class="empty-copy" *ngIf="business.services.length === 0">Este negocio no tiene servicios publicados.</p>
+      </section>
+
+      <section class="section card">
+        <div class="section-head">
+          <h3>Equipo</h3>
+          <span>{{ business.employees.length }}</span>
+        </div>
+
+        <div class="chip-row" *ngIf="business.employees.length > 0">
+          <span class="employee-chip" *ngFor="let employee of business.employees; trackBy: trackByEmployeeId">
+            {{ employee.fullName }}
+          </span>
+        </div>
+
+        <p class="empty-copy" *ngIf="business.employees.length === 0">No hay empleados activos para este negocio.</p>
+      </section>
+    </ng-container>
+  </div>
+</ion-content>

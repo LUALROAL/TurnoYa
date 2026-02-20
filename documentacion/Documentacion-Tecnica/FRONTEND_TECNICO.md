@@ -17,6 +17,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Configurar Home y navegacion inicial
   - [x] Crear pagina listado de negocios
   - [x] Implementar busqueda y filtros de negocios
+  - [x] Crear detalle de negocio
 
 ## Base tecnica
 
@@ -34,6 +35,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - GET /api/business
 - GET /api/business/search
 - GET /api/business/categories
+- GET /api/business/{id}
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -73,6 +75,24 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Cargando: skeleton cards
   - Vacio: mensaje de no disponibilidad
   - Exito: tarjetas con nombre, categoria, ciudad, rating, direccion y reseñas
+  - Navegacion: boton "Ver detalle" hacia /businesses/:id
+
+## Detalle de negocio
+- Archivos:
+  - src/app/features/business/models/business-detail.model.ts
+  - src/app/features/business/pages/detail/business-detail.page.ts
+  - src/app/features/business/pages/detail/business-detail.page.html
+  - src/app/features/business/pages/detail/business-detail.page.scss
+- Ruta:
+  - /businesses/:id (standalone + canActivate)
+- Integracion backend:
+  - GET /api/business/{id} para BusinessDetailDto
+- Renderizado:
+  - Informacion general (nombre, categoria, ciudad, rating, descripcion)
+  - Contacto (direccion, telefono, email, website)
+  - Servicios con duracion y precio
+  - Equipo de empleados (chips)
+  - Estados de carga y vacio
 
 ## Busqueda y filtros de negocios
 - Archivo principal: src/app/features/business/pages/list/business-list.page.ts
@@ -177,3 +197,10 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Home base implementado siguiendo estilo Tech Pro y mockups.
 - Listado de negocios conectado al backend y enlazado desde Home.
 - Busqueda y filtros del listado conectados a endpoints de backend.
+- Detalle de negocio conectado al backend y enlazado desde listado.
+
+## Deuda tecnica y mejoras planificadas (post-MVP)
+- Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.
+- Agregar distinctUntilChanged en filtros para evitar consultas repetidas con el mismo valor.
+- Definir umbral minimo de busqueda (ej. 2 caracteres) antes de consultar backend.
+- Mostrar estado de sin conexion y opcion de reintento en listado de negocios.

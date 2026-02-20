@@ -91,7 +91,12 @@
 
         <div class="bottom-row">
           <span class="reviews">{{ business.totalReviews }} reseñas</span>
-          <span class="distance" *ngIf="business.distance !== null">{{ business.distance }} km</span>
+          <div class="actions-row">
+            <span class="distance" *ngIf="business.distance !== null">{{ business.distance }} km</span>
+            <ion-button size="small" fill="clear" class="detail-btn" [routerLink]="['/businesses', business.id]">
+              Ver detalle
+            </ion-button>
+          </div>
         </div>
       </article>
     </section>

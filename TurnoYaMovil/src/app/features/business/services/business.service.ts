@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
-import { BusinessListItem } from "../models";
+import { BusinessDetail, BusinessListItem } from "../models";
 
 type BusinessSearchParams = {
   query?: string;
@@ -28,5 +28,9 @@ export class BusinessService {
     return this.api.get<BusinessListItem[]>("/api/business/search", {
       params,
     });
+  }
+
+  getById(id: string): Observable<BusinessDetail> {
+    return this.api.get<BusinessDetail>(`/api/business/${id}`);
   }
 }

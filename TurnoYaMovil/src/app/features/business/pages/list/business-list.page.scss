@@ -233,6 +233,20 @@
   font-size: 0.8rem;
 }
 
+.actions-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.detail-btn {
+  --color: var(--color-accent-1);
+  --border-radius: 999px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  font-size: 0.75rem;
+}
+
 .empty-state {
   border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
   display: grid;

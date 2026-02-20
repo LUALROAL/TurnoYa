@@ -33,6 +33,11 @@ const routes: Routes = [
     loadComponent: () => import('./app/features/business/pages/list/business-list.page').then(m => m.BusinessListPage),
     canActivate: [authGuard],
   },
+  {
+    path: 'businesses/:id',
+    loadComponent: () => import('./app/features/business/pages/detail/business-detail.page').then(m => m.BusinessDetailPage),
+    canActivate: [authGuard],
+  },
 ];
 
 bootstrapApplication(AppComponent, {
