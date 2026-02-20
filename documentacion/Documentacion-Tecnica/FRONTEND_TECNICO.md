@@ -372,4 +372,20 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Frontend: usar RxJS valueChanges en campo Departamento para disparar carga de municipios
   - UX: mostrar loading state en select de Ciudad mientras se cargan datos
   - Validación: asegurar que Ciudad siempre pertenezca al Departamento seleccionado
+- **Mapa interactivo de negocios cercanos en HOME**:
+  - Agregar sección "Disponibilidad cercana" en la página de inicio (entre accesos rápidos y recomendados)
+  - Integrar Google Maps API o Mapbox para visualización interactiva
+  - Obtener ubicación del usuario (Geolocation API con permiso solicitado)
+  - Endpoint backend: GET /api/business/nearby?latitude={lat}&longitude={lng}&radius={km} para negocios cercanos
+  - Mostrar pines en el mapa con:
+    - Nombre del negocio al hover
+    - Distancia en km
+    - Categoría del servicio
+    - Rating del negocio
+  - Click en pin → abrir detalle del negocio o modal rápido con opción reservar
+  - Implementar búsqueda de negocios por categoría en el mapa (filtros dinámicos)
+  - Agregar botón para centrar mapa en ubicación actual del usuario
+  - Mostrar ruta desde ubicación usuario hasta negocio seleccionado (Directions API)
+  - Soportar modo oscuro/claro para los estilos del mapa
+  - Manejo de permisos: solicitar permiso de ubicación al usuario la primera vez
 
