@@ -15,7 +15,7 @@ export interface AppointmentItem {
   employeeId?: string;
   scheduledDate: string;
   endDate: string;
-  status: string;
+  status: string | number;
   totalAmount: number;
   depositAmount: number;
   depositPaid: boolean;

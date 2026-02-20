@@ -66,6 +66,20 @@
             @if (appointment.notes) {
               <p class="notes">Notas: {{ appointment.notes }}</p>
             }
+
+            @if (canCancel(appointment)) {
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="action-btn danger"
+                  [disabled]="isProcessing(appointment.id)"
+                  (click)="cancelAppointment(appointment)"
+                >
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                  Cancelar cita
+                </button>
+              </div>
+            }
           </article>
         }
       </section>

@@ -25,6 +25,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Crear flujo agendar cita
   - [x] Mis citas (cliente)
   - [x] Agenda de negocio (owner)
+  - [x] Cambios de estado de cita
 
 ## Base tecnica
 
@@ -61,6 +62,10 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - GET /api/appointments/my
 - GET /api/appointments/business/{businessId}
 - GET /api/appointments/{id}
+- PATCH /api/appointments/{id}/confirm
+- PATCH /api/appointments/{id}/cancel
+- PATCH /api/appointments/{id}/complete
+- PATCH /api/appointments/{id}/noshow
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -510,6 +515,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /appointments (standalone + canActivate)
 - Integracion backend:
   - GET /api/appointments/my para cargar citas del usuario
+  - PATCH /api/appointments/{id}/cancel para cancelar cita propia
 - Estados UX:
   - Cargando: skeleton cards
   - Vacio: mensaje con CTA "Buscar negocios"
@@ -521,6 +527,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Caracteristicas:
   - Acceso desde Home en el acceso rápido "Mis citas"
   - Refresh al volver a la vista (ionViewWillEnter)
+  - Opcion para cancelar cita en estados Pendiente o Confirmada
 
 ## Agenda de negocio (owner)
 - Archivos:
@@ -544,6 +551,25 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Caracteristicas:
   - Acceso desde "Mis Negocios" en el botón "Agenda"
   - Refresh al volver a la vista (ionViewWillEnter)
+
+## Cambios de estado de cita
+- Archivos:
+  - src/app/features/appointments/services/appointments.service.ts
+  - src/app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page.ts
+  - src/app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page.html
+  - src/app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page.scss
+- Integracion backend:
+  - PATCH /api/appointments/{id}/confirm
+  - PATCH /api/appointments/{id}/cancel (con motivo opcional)
+  - PATCH /api/appointments/{id}/complete
+  - PATCH /api/appointments/{id}/noshow
+- Reglas UX:
+  - Pendiente: permitir confirmar o cancelar
+  - Confirmada: permitir completar, marcar no asistió o cancelar
+  - Completada/Cancelada/No asistió: sin acciones
+- Estados UX:
+  - Procesando: botones deshabilitados por cita
+  - Error: toast si no se puede actualizar el estado
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.

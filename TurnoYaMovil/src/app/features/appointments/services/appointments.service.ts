@@ -25,4 +25,22 @@ export class AppointmentsService {
       params,
     });
   }
+
+  confirm(id: string): Observable<void> {
+    return this.api.patch<void>(`/api/appointments/${id}/confirm`, {});
+  }
+
+  complete(id: string): Observable<void> {
+    return this.api.patch<void>(`/api/appointments/${id}/complete`, {});
+  }
+
+  markNoShow(id: string): Observable<void> {
+    return this.api.patch<void>(`/api/appointments/${id}/noshow`, {});
+  }
+
+  cancel(id: string, reason?: string | null): Observable<void> {
+    return this.api.patch<void>(`/api/appointments/${id}/cancel`, {
+      reason: reason || null,
+    });
+  }
 }

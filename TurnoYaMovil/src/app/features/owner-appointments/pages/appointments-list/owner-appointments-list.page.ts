@@ -3,7 +3,16 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, calendarOutline, cashOutline, timeOutline } from 'ionicons/icons';
+import {
+  alertCircleOutline,
+  arrowBackOutline,
+  calendarOutline,
+  cashOutline,
+  checkmarkCircleOutline,
+  checkmarkDoneOutline,
+  closeCircleOutline,
+  timeOutline,
+} from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { AppointmentItem } from '../../../appointments/models';
@@ -26,9 +35,19 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
   protected loading = true;
   protected isEmpty = false;
   protected appointments: AppointmentItem[] = [];
+  protected processingIds = new Set<string>();
 
   constructor() {
-    addIcons({ arrowBackOutline, calendarOutline, timeOutline, cashOutline });
+    addIcons({
+      alertCircleOutline,
+      arrowBackOutline,
+      calendarOutline,
+      cashOutline,
+      checkmarkCircleOutline,
+      checkmarkDoneOutline,
+      closeCircleOutline,
+      timeOutline,
+    });
   }
 
   ngOnInit(): void {
@@ -59,8 +78,8 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
     return appointment.id;
   }
 
-  protected getStatusLabel(status: string): string {
-    const normalized = (status || '').toLowerCase();
+  protected getStatusLabel(status: string | number): string {
+    const normalized = this.normalizeStatus(status);
     switch (normalized) {
       case 'pending':
         return 'Pendiente';
@@ -73,16 +92,131 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
       case 'noshow':
         return 'No asistió';
       default:
-        return status || 'Estado';
+        return status != null ? String(status) : 'Estado';
     }
   }
 
-  protected getStatusClass(status: string): string {
-    const normalized = (status || '').toLowerCase();
+  protected getStatusClass(status: string | number): string {
+    const normalized = this.normalizeStatus(status);
     if (normalized === 'completed') return 'status-pill success';
     if (normalized === 'confirmed') return 'status-pill info';
     if (normalized === 'cancelled' || normalized === 'noshow') return 'status-pill danger';
     return 'status-pill warning';
+  }
+
+  protected canConfirm(appointment: AppointmentItem): boolean {
+    return this.normalizeStatus(appointment.status) === 'pending';
+  }
+
+  protected canComplete(appointment: AppointmentItem): boolean {
+    return this.normalizeStatus(appointment.status) === 'confirmed';
+  }
+
+  protected canCancel(appointment: AppointmentItem): boolean {
+    const status = this.normalizeStatus(appointment.status);
+    return status === 'pending' || status === 'confirmed';
+  }
+
+  protected canNoShow(appointment: AppointmentItem): boolean {
+    return this.normalizeStatus(appointment.status) === 'confirmed';
+  }
+
+  protected isProcessing(appointmentId: string): boolean {
+    return this.processingIds.has(appointmentId);
+  }
+
+  protected confirmAppointment(appointment: AppointmentItem): void {
+    if (this.isProcessing(appointment.id)) return;
+    this.setProcessing(appointment.id, true);
+
+    this.appointmentsService
+      .confirm(appointment.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          appointment.status = 'confirmed';
+          this.setProcessing(appointment.id, false);
+        },
+        error: (error: unknown) => {
+          console.error('Error al confirmar cita:', error);
+          this.notify.showError('No se pudo confirmar la cita');
+          this.setProcessing(appointment.id, false);
+        },
+      });
+  }
+
+  protected completeAppointment(appointment: AppointmentItem): void {
+    if (this.isProcessing(appointment.id)) return;
+    this.setProcessing(appointment.id, true);
+
+    this.appointmentsService
+      .complete(appointment.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          appointment.status = 'completed';
+          this.setProcessing(appointment.id, false);
+        },
+        error: (error: unknown) => {
+          console.error('Error al completar cita:', error);
+          this.notify.showError('No se pudo completar la cita');
+          this.setProcessing(appointment.id, false);
+        },
+      });
+  }
+
+  protected noShowAppointment(appointment: AppointmentItem): void {
+    if (this.isProcessing(appointment.id)) return;
+    const confirmed = confirm('¿Marcar esta cita como no asistió?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.setProcessing(appointment.id, true);
+
+    this.appointmentsService
+      .markNoShow(appointment.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          appointment.status = 'noshow';
+          this.setProcessing(appointment.id, false);
+        },
+        error: (error: unknown) => {
+          console.error('Error al marcar no asistió:', error);
+          this.notify.showError('No se pudo actualizar la cita');
+          this.setProcessing(appointment.id, false);
+        },
+      });
+  }
+
+  protected cancelAppointment(appointment: AppointmentItem): void {
+    if (this.isProcessing(appointment.id)) return;
+    const confirmed = confirm('¿Cancelar esta cita?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    const reason = prompt('Motivo de cancelación (opcional)')?.trim();
+    this.setProcessing(appointment.id, true);
+
+    this.appointmentsService
+      .cancel(appointment.id, reason)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          appointment.status = 'cancelled';
+          this.notify.showSuccess('Cita cancelada');
+          this.setProcessing(appointment.id, false);
+        },
+        error: (error: unknown) => {
+          console.error('Error al cancelar cita:', error);
+          this.notify.showError('No se pudo cancelar la cita');
+          this.setProcessing(appointment.id, false);
+        },
+      });
   }
 
   private loadAppointments(): void {
@@ -107,5 +241,43 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
           this.loading = false;
         },
       });
+  }
+
+  private normalizeStatus(status: string | number): string {
+    if (typeof status === 'number') {
+      return this.mapStatusNumber(status);
+    }
+
+    const trimmed = (status || '').toString().trim();
+    if (trimmed !== '' && !Number.isNaN(Number(trimmed))) {
+      return this.mapStatusNumber(Number(trimmed));
+    }
+
+    return trimmed.toLowerCase();
+  }
+
+  private mapStatusNumber(value: number): string {
+    switch (value) {
+      case 0:
+        return 'pending';
+      case 1:
+        return 'confirmed';
+      case 2:
+        return 'completed';
+      case 3:
+        return 'cancelled';
+      case 4:
+        return 'noshow';
+      default:
+        return '';
+    }
+  }
+
+  private setProcessing(appointmentId: string, isProcessing: boolean): void {
+    if (isProcessing) {
+      this.processingIds.add(appointmentId);
+    } else {
+      this.processingIds.delete(appointmentId);
+    }
   }
 }

@@ -78,6 +78,56 @@
             @if (appointment.notes) {
               <p class="notes">Notas: {{ appointment.notes }}</p>
             }
+
+            <div class="card-actions">
+              @if (canConfirm(appointment)) {
+                <button
+                  type="button"
+                  class="action-btn primary"
+                  [disabled]="isProcessing(appointment.id)"
+                  (click)="confirmAppointment(appointment)"
+                >
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Confirmar
+                </button>
+              }
+
+              @if (canComplete(appointment)) {
+                <button
+                  type="button"
+                  class="action-btn primary"
+                  [disabled]="isProcessing(appointment.id)"
+                  (click)="completeAppointment(appointment)"
+                >
+                  <ion-icon name="checkmark-done-outline"></ion-icon>
+                  Completar
+                </button>
+              }
+
+              @if (canNoShow(appointment)) {
+                <button
+                  type="button"
+                  class="action-btn secondary"
+                  [disabled]="isProcessing(appointment.id)"
+                  (click)="noShowAppointment(appointment)"
+                >
+                  <ion-icon name="alert-circle-outline"></ion-icon>
+                  No asistió
+                </button>
+              }
+
+              @if (canCancel(appointment)) {
+                <button
+                  type="button"
+                  class="action-btn danger"
+                  [disabled]="isProcessing(appointment.id)"
+                  (click)="cancelAppointment(appointment)"
+                >
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                  Cancelar
+                </button>
+              }
+            </div>
           </article>
         }
       </section>

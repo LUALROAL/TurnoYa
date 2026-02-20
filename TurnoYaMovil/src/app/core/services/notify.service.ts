@@ -17,4 +17,15 @@ export class NotifyService {
 
     await toast.present();
   }
+
+  async showSuccess(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      position: "top",
+      color: "success",
+    });
+
+    await toast.present();
+  }
 }
