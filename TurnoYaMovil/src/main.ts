@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { AppComponent } from './app/app.component';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { errorInterceptor } from './app/core/interceptors/error.interceptor';
+import { authGuard } from './app/core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
   {
     path: 'home',
     loadComponent: () => import('./app/home/home.page').then(m => m.HomePage),
+    canActivate: [authGuard],
   },
 ];
 

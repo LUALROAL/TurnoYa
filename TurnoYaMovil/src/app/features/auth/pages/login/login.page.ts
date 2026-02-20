@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
 
 import { AuthService } from "../../services/auth.service";
@@ -17,6 +17,7 @@ export class LoginPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   protected readonly form = this.formBuilder.group({
     email: ["", [Validators.required, Validators.email]],
@@ -46,8 +47,9 @@ export class LoginPage {
     this.authService.login(email, password).subscribe({
       next: response => {
         this.loading = false;
-        const targetRoute = this.resolveRouteByRole(response.user.role);
-        void this.router.navigateByUrl(targetRoute);
+        // Obtener returnUrl del query param o usar ruta por defecto
+        const returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || this.resolveRouteByRole(response.user.role);
+        void this.router.navigateByUrl(returnUrl);
       },
       error: () => {
         this.loading = false;

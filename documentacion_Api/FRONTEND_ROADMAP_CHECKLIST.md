@@ -15,7 +15,7 @@ Use this checklist to mark each card as completed.
 - [x] Integrar endpoint register (Priority: High, Points: 2, Depends: F-010) X
 - [x] Integrar endpoint login (Priority: High, Points: 2, Depends: F-010) X
 - [x] Implementar refresh automatico (Priority: High, Points: 3, Depends: F-012, F-005, F-006) X
-- [ ] Guard de rutas protegidas (Priority: High, Points: 2, Depends: F-012)
+- [x] Guard de rutas protegidas (Priority: High, Points: 2, Depends: F-012) X
 
 ## EPIC 3 - Catalogo y negocios
 - [ ] Crear pagina listado de negocios (Priority: High, Points: 5, Depends: F-004)
