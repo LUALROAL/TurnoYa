@@ -1,0 +1,251 @@
+:host {
+  display: block;
+}
+
+.form-bg {
+  --background: var(--color-bg);
+}
+
+.bg-decoration {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-orb {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
+  filter: blur(88px);
+  opacity: 0.25;
+}
+
+.orb-top {
+  top: -95px;
+  left: -70px;
+}
+
+.orb-bottom {
+  right: -80px;
+  bottom: -120px;
+}
+
+.form-wrap {
+  position: relative;
+  z-index: 1;
+  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4)
+    calc(var(--space-8) + env(safe-area-inset-bottom));
+  display: grid;
+  gap: var(--space-5);
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
+
+  ion-button {
+    --color: var(--color-text);
+    --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
+    --border-radius: 999px;
+  }
+}
+
+.glass-panel {
+  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-overline {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.form-header h1 {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-display-a);
+  font-size: 1.4rem;
+}
+
+.form-section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.section-head {
+  display: grid;
+  gap: var(--space-1);
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display-a);
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+}
+
+.form-card {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.form-field {
+  display: grid;
+  gap: var(--space-2);
+
+  label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .required {
+    color: color-mix(in srgb, #ff4444 90%, var(--color-text));
+    font-weight: 700;
+  }
+
+  .field-hint {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+  }
+
+  ion-input,
+  ion-textarea {
+    --background: var(--color-surface-2);
+    --border-radius: var(--radius-input);
+    --padding-start: var(--space-3);
+    --padding-end: var(--space-3);
+    --padding-top: var(--space-2);
+    --padding-bottom: var(--space-2);
+    --color: var(--color-text);
+    --placeholder-color: var(--color-text-muted);
+    font-size: 0.95rem;
+
+    &.invalid {
+      --border-color: color-mix(in srgb, #ff4444 70%, transparent);
+    }
+  }
+
+  ion-textarea {
+    --padding-top: var(--space-3);
+    --padding-bottom: var(--space-3);
+  }
+
+  .error-msg {
+    font-size: 0.8rem;
+    color: color-mix(in srgb, #ff4444 90%, var(--color-text));
+    margin-top: -4px;
+  }
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkbox-field {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-3);
+
+  ion-checkbox {
+    margin-top: 2px;
+    --size: 24px;
+    --checkbox-background-checked: var(--color-accent-1);
+    --border-color: var(--color-outline);
+    --border-radius: 6px;
+  }
+
+  label {
+    flex: 1;
+    display: grid;
+    gap: 4px;
+  }
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+
+  ion-button {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+.skeleton {
+  min-height: 460px;
+  position: relative;
+  overflow: hidden;
+
+  .skeleton-content {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-surface-2) 70%, transparent) 25%,
+      color-mix(in srgb, var(--color-surface-2) 50%, transparent) 50%,
+      color-mix(in srgb, var(--color-surface-2) 70%, transparent) 75%
+    );
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-wrap {
+    gap: var(--space-4);
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    ion-button {
+      width: 100%;
+    }
+  }
+}

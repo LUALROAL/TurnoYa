@@ -20,6 +20,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Crear detalle de negocio
   - [x] Crear modulo owner business
   - [x] Configuracion de negocio
+  - [x] CRUD servicios de negocio
 
 ## Base tecnica
 
@@ -42,6 +43,11 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - POST /api/business
 - PUT /api/business/{id}
 - DELETE /api/business/{id}
+- GET /api/services/business/{businessId}
+- GET /api/services/{id}
+- POST /api/services/business/{businessId}
+- PUT /api/services/{id}
+- DELETE /api/services/{id}
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -54,6 +60,9 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /businesses
   - /businesses/:id
   - /owner/businesses
+  - /owner/businesses/:businessId/services
+  - /owner/businesses/:businessId/services/create
+  - /owner/businesses/:businessId/services/:serviceId/edit
 
 ## Home marketplace (base)
 - Archivos:
@@ -208,6 +217,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Busqueda y filtros del listado conectados a endpoints de backend.
 - Detalle de negocio conectado al backend y enlazado desde listado.
 - Modulo owner business implementado con listado, creación, edición y configuración de negocios (UI en español).
+- Modulo owner services implementado con listado, creación, edición, activación/desactivación y eliminación por negocio (UI en español).
 
 ## Modulo owner business (Mis Negocios)
 - Archivos:
@@ -346,6 +356,53 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Navegacion desde listado de negocios (boton "Configurar")
   - Navegacion de retorno a /owner/businesses tras guardar
   - Design system coherente con glass-panel y orbs
+
+## CRUD servicios de negocio (Owner Services)
+- Archivos:
+  - src/app/features/owner-services/models/owner-service.model.ts
+  - src/app/features/owner-services/models/index.ts
+  - src/app/features/owner-services/services/owner-services.service.ts
+  - src/app/features/owner-services/pages/services-list/services-list.page.ts
+  - src/app/features/owner-services/pages/services-list/services-list.page.html
+  - src/app/features/owner-services/pages/services-list/services-list.page.scss
+  - src/app/features/owner-services/pages/service-form/service-form.page.ts
+  - src/app/features/owner-services/pages/service-form/service-form.page.html
+  - src/app/features/owner-services/pages/service-form/service-form.page.scss
+  - src/app/features/owner-services/pages/index.ts
+- Rutas:
+  - /owner/businesses/:businessId/services (listado)
+  - /owner/businesses/:businessId/services/create (crear)
+  - /owner/businesses/:businessId/services/:serviceId/edit (editar)
+  - Todas standalone + canActivate
+- Integracion backend:
+  - GET /api/services/business/{businessId} para listar servicios del negocio
+  - GET /api/services/{id} para cargar servicio en edición
+  - POST /api/services/business/{businessId} para crear servicio
+  - PUT /api/services/{id} para actualizar servicio
+  - DELETE /api/services/{id} para eliminar servicio
+- Campos del formulario:
+  - Nombre (requerido, 3-120 caracteres)
+  - Descripción (opcional, máx 500)
+  - Precio (requerido, decimal >= 0)
+  - Duración en minutos (requerido, entero >= 5)
+  - Requiere anticipo (checkbox)
+  - Valor anticipo (condicional cuando requiere anticipo)
+  - Servicio activo (solo edición)
+- Estados UX:
+  - Cargando: skeleton cards en listado y skeleton en formulario
+  - Vacio: mensaje con CTA "Crear servicio"
+  - Exito: tarjetas con precio, duración, anticipo y estado activo/inactivo
+  - Errores: toast mediante NotifyService
+- UI en español:
+  - Titulo listado: "Servicios del negocio"
+  - Titulo formulario: "Crear Servicio" / "Editar Servicio"
+  - Botones: "Crear servicio", "Editar", "Activar/Desactivar", "Eliminar", "Cancelar"
+- Caracteristicas:
+  - Acceso desde "Mis Negocios" con nuevo botón "Servicios" en cada card
+  - FAB para crear servicio desde listado
+  - Activación/desactivación rápida desde tarjeta
+  - Eliminación con confirmación nativa
+  - Navegación de retorno a /owner/businesses/:businessId/services tras guardar/cancelar
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.

@@ -125,6 +125,14 @@
               <button
                 type="button"
                 class="action-btn secondary"
+                [routerLink]="['/owner/businesses', business.id, 'services']"
+              >
+                <ion-icon name="construct-outline"></ion-icon>
+                Servicios
+              </button>
+              <button
+                type="button"
+                class="action-btn secondary"
                 [routerLink]="['/owner/businesses', business.id, 'settings']"
               >
                 <ion-icon name="settings-outline"></ion-icon>

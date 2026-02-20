@@ -1,0 +1,100 @@
+<ion-content class="services-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="services-wrap">
+    <header class="services-header card glass-panel">
+      <div>
+        <p class="header-overline">Gestión de servicios</p>
+        <h1>Servicios del negocio</h1>
+      </div>
+      <ion-button fill="clear" class="back-btn" [routerLink]="['/owner/businesses']" aria-label="Volver">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </header>
+
+    @if (loading) {
+      <section class="cards-grid">
+        @for (i of [1, 2, 3]; track i) {
+          <article class="service-card card skeleton"></article>
+        }
+      </section>
+    }
+
+    @if (!loading && isEmpty) {
+      <article class="empty-state card glass-panel">
+        <ion-icon name="cash-outline"></ion-icon>
+        <h3>Aún no tienes servicios</h3>
+        <p>Agrega tu primer servicio para que tus clientes puedan reservar.</p>
+        <ion-button [routerLink]="['/owner/businesses', businessId, 'services', 'create']" class="button-primary">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Crear servicio
+        </ion-button>
+      </article>
+    }
+
+    @if (!loading && !isEmpty) {
+      <section class="cards-grid">
+        @for (service of services; track trackByServiceId($index, service)) {
+          <article class="service-card card">
+            <div class="card-top">
+              <div>
+                <h3>{{ service.name }}</h3>
+                <p class="card-meta">
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ service.duration }} min
+                </p>
+              </div>
+              <span class="status-badge" [class.active]="service.isActive" [class.inactive]="!service.isActive">
+                {{ service.isActive ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            @if (service.description) {
+              <p class="description">{{ service.description }}</p>
+            }
+
+            <div class="info-row">
+              <div class="price-pill">
+                <ion-icon name="cash-outline"></ion-icon>
+                ${{ service.price }}
+              </div>
+              @if (service.requiresDeposit) {
+                <div class="deposit-pill">
+                  Anticipo: ${{ service.depositAmount || 0 }}
+                </div>
+              }
+            </div>
+
+            <div class="card-actions">
+              <button
+                type="button"
+                class="action-btn secondary"
+                [routerLink]="['/owner/businesses', businessId, 'services', service.id, 'edit']"
+              >
+                <ion-icon name="create-outline"></ion-icon>
+                Editar
+              </button>
+              <button type="button" class="action-btn" (click)="toggleServiceStatus(service)">
+                <ion-icon [name]="service.isActive ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
+                {{ service.isActive ? 'Desactivar' : 'Activar' }}
+              </button>
+              <button type="button" class="action-btn danger" (click)="deleteService(service)">
+                <ion-icon name="trash-outline"></ion-icon>
+                Eliminar
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button [routerLink]="['/owner/businesses', businessId, 'services', 'create']">
+          <ion-icon name="add-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    }
+  </div>
+</ion-content>

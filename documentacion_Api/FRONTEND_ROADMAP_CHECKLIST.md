@@ -29,7 +29,7 @@ Use this checklist to mark each card as completed.
 - [x] Configuracion de negocio (Priority: Medium, Points: 5, Depends: F-023) X
 
 ## EPIC 4 - Servicios y empleados
-- [ ] CRUD servicios de negocio (Priority: High, Points: 5, Depends: F-023)
+- [x] CRUD servicios de negocio (Priority: High, Points: 5, Depends: F-023) X
 - [ ] CRUD empleados de negocio (Priority: High, Points: 5, Depends: F-023)
 
 ## EPIC 5 - Citas

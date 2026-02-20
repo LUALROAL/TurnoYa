@@ -12,6 +12,7 @@ import { addIcons } from 'ionicons';
 import {
   addOutline,
   businessOutline,
+  constructOutline,
   locationOutline,
   callOutline,
   mailOutline,
@@ -54,6 +55,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
     addIcons({
       addOutline,
       businessOutline,
+      constructOutline,
       locationOutline,
       callOutline,
       mailOutline,
