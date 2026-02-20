@@ -59,10 +59,14 @@
           <a class="forgot-link" href="#">Olvidaste tu contrasena?</a>
         </div>
 
-        <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading">
-          <span>{{ loading ? 'Entrando...' : 'Iniciar sesion' }}</span>
-          <ion-icon name="log-in-outline"></ion-icon>
-        </ion-button>
+        <ion-text color="danger" *ngIf="errorMessage" class="error-message">
+          <p>
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            {{ errorMessage }}
+          </p>
+        </ion-text>
+
+        <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading">\n          <span>{{ loading ? 'Entrando...' : 'Iniciar sesion' }}</span>\n          <ion-icon name="log-in-outline"></ion-icon>\n        </ion-button>
       </form>
 
       <div class="divider">

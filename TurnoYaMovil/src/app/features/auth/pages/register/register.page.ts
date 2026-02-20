@@ -27,6 +27,7 @@ export class RegisterPage {
 
   protected loading = false;
   protected showPassword = false;
+  protected errorMessage = '';
 
   protected togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -44,13 +45,22 @@ export class RegisterPage {
     }
 
     this.loading = true;
+    this.errorMessage = '';
     this.authService.register(fullName, email, password).subscribe({
       next: () => {
         this.loading = false;
         void this.router.navigateByUrl("/auth/login");
       },
-      error: () => {
+      error: (error) => {
         this.loading = false;
+        // Mostrar mensaje de error específico
+        if (error.status === 400) {
+          this.errorMessage = error.error?.message || 'El correo ya está registrado o los datos son inválidos.';
+        } else if (error.status === 0) {
+          this.errorMessage = 'No se pudo conectar con el servidor.';
+        } else {
+          this.errorMessage = error.error?.message || 'Ocurrió un error. Inténtalo de nuevo.';
+        }
       },
     });
   }

@@ -70,6 +70,13 @@
           <span>Acepto los terminos y condiciones</span>
         </label>
 
+        <ion-text color="danger" *ngIf="errorMessage" class="error-message">
+          <p>
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            {{ errorMessage }}
+          </p>
+        </ion-text>
+
         <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading || form.invalid">
           <span>{{ loading ? 'Creando...' : 'Crear cuenta' }}</span>
           <ion-icon name="person-add-outline"></ion-icon>

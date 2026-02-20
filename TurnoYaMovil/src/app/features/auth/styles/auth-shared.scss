@@ -245,3 +245,27 @@
   text-decoration: none;
   font-weight: 700;
 }
+
+.error-message {
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-1);
+  font-size: 0.87rem;
+  font-weight: 500;
+}
+
+.error-message p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  background: color-mix(in srgb, rgb(235, 68, 90) 8%, transparent);
+  border: 1px solid color-mix(in srgb, rgb(235, 68, 90) 25%, transparent);
+  border-radius: var(--radius-input);
+  color: rgb(235, 68, 90);
+}
+
+.error-message ion-icon {
+  flex-shrink: 0;
+  font-size: 18px;
+}

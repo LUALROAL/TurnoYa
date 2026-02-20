@@ -27,6 +27,7 @@ export class LoginPage {
 
   protected loading = false;
   protected showPassword = false;
+  protected errorMessage = '';
 
   protected togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -44,6 +45,7 @@ export class LoginPage {
     }
 
     this.loading = true;
+    this.errorMessage = '';
     this.authService.login(email, password).subscribe({
       next: response => {
         this.loading = false;
@@ -51,8 +53,16 @@ export class LoginPage {
         const returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || this.resolveRouteByRole(response.user.role);
         void this.router.navigateByUrl(returnUrl);
       },
-      error: () => {
+      error: (error) => {
         this.loading = false;
+        // Mostrar mensaje de error específico
+        if (error.status === 401) {
+          this.errorMessage = 'Credenciales inválidas. Verifica tu correo y contraseña.';
+        } else if (error.status === 0) {
+          this.errorMessage = 'No se pudo conectar con el servidor.';
+        } else {
+          this.errorMessage = error.error?.message || 'Ocurrió un error. Inténtalo de nuevo.';
+        }
       },
     });
   }
