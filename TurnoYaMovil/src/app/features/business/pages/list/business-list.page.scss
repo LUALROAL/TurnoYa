@@ -165,6 +165,21 @@
   gap: var(--space-3);
 }
 
+.searching-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.searching-indicator ion-spinner {
+  width: 16px;
+  height: 16px;
+  color: var(--color-accent-1);
+}
+
 .business-card {
   padding: var(--space-4);
   border-color: color-mix(in srgb, var(--color-accent-1) 10%, var(--color-outline));

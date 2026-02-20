@@ -57,6 +57,11 @@
         <button type="button" class="link-btn" (click)="clearFilters()">Limpiar</button>
         <ion-button size="small" class="button-primary" (click)="applyFilters()">Buscar</ion-button>
       </div>
+
+      <div class="searching-indicator" *ngIf="searching">
+        <ion-spinner name="dots"></ion-spinner>
+        <span>Buscando...</span>
+      </div>
     </section>
 
     <section *ngIf="loading" class="cards-grid">
