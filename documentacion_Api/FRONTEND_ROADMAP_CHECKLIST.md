@@ -18,6 +18,10 @@ Use this checklist to mark each card as completed.
 - [x] Guard de rutas protegidas (Priority: High, Points: 2, Depends: F-012) X
 
 ## EPIC 3 - Catalogo y negocios
+- [x] Configurar pagina Home y navegacion inicial (Priority: High, Points: 3, Depends: F-012) X
+- [x] Home: layout base y header de bienvenida (Priority: High, Points: 2, Depends: F-020) X
+- [x] Home: accesos rapidos a Negocios, Mis citas y Perfil (Priority: Medium, Points: 2, Depends: F-020) X
+- [x] Home: estado vacio y carga inicial de datos (Priority: Medium, Points: 2, Depends: F-020) X
 - [ ] Crear pagina listado de negocios (Priority: High, Points: 5, Depends: F-004)
 - [ ] Implementar busqueda y filtros (Priority: Medium, Points: 3, Depends: F-020)
 - [ ] Crear detalle de negocio (Priority: High, Points: 5, Depends: F-020)

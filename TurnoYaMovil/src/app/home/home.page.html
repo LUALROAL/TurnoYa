@@ -1,20 +1,79 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="home-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="home-wrap">
+    <header class="home-header glass-panel card">
+      <div>
+        <p class="home-greeting">Hola de nuevo,</p>
+        <h1 class="home-name">TurnoYa</h1>
+      </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+      <ion-button fill="clear" class="notify-btn" aria-label="Notificaciones">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </header>
+
+    <section class="home-hero">
+      <h2 class="hero-title">¿Que necesitas hoy?</h2>
+
+      <div class="search-shell">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" placeholder="¿Que servicio buscas?" />
+      </div>
+    </section>
+
+    <section class="quick-access">
+      <h3 class="section-title">Accesos rapidos</h3>
+
+      <div class="quick-grid">
+        <button type="button" class="quick-card card" *ngFor="let item of quickAccessItems">
+          <div class="quick-icon">
+            <ion-icon [name]="item.icon"></ion-icon>
+          </div>
+          <div class="quick-copy">
+            <p>{{ item.title }}</p>
+            <span>{{ item.subtitle }}</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section class="recommendations">
+      <div class="section-head">
+        <h3 class="section-title">Recomendados para ti</h3>
+        <button type="button" class="link-btn">Ver todo</button>
+      </div>
+
+      <div *ngIf="loadingRecommendations" class="recommendation-list">
+        <article class="business-card card skeleton" *ngFor="let item of [1, 2]"></article>
+      </div>
+
+      <article *ngIf="!loadingRecommendations && recommendedBusinesses.length === 0" class="empty-state card glass-panel">
+        <ion-icon name="sparkles-outline"></ion-icon>
+        <p>No encontramos recomendaciones por ahora.</p>
+      </article>
+
+      <div *ngIf="!loadingRecommendations && recommendedBusinesses.length > 0" class="recommendation-list">
+        <article class="business-card card" *ngFor="let business of recommendedBusinesses; trackBy: trackByBusinessName">
+          <div class="business-top">
+            <h4>{{ business.name }}</h4>
+            <span class="rating-pill">
+              <ion-icon name="star"></ion-icon>
+              {{ business.rating }}
+            </span>
+          </div>
+
+          <p class="business-meta">{{ business.category }} · {{ business.distanceKm }} km</p>
+
+          <div class="business-bottom">
+            <strong>{{ business.priceLabel }}</strong>
+            <ion-button size="small" class="button-primary">Reservar</ion-button>
+          </div>
+        </article>
+      </div>
+    </section>
   </div>
 </ion-content>
