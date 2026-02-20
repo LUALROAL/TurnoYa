@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { AppComponent } from './app/app.component';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { errorInterceptor } from './app/core/interceptors/error.interceptor';
-import { authGuard } from './app/core/guards/auth.guard';
+import { authGuard, adminGuard } from './app/core/guards';
 
 const routes: Routes = [
   {
@@ -109,6 +109,11 @@ const routes: Routes = [
       import('./app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page')
         .then(m => m.OwnerAppointmentsListPage),
     canActivate: [authGuard],
+  },
+  {
+    path: 'admin/users',
+    loadComponent: () => import('./app/features/admin/pages/admin-users/admin-users.page').then(m => m.AdminUsersPage),
+    canActivate: [adminGuard],
   },
 ];
 

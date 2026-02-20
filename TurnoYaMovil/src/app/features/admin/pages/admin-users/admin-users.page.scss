@@ -1,0 +1,222 @@
+// ===== FILTER SECTION =====
+.filter-section {
+  background: color-mix(in srgb, var(--color-surface-1) 60%, transparent);
+  padding: var(--space-4);
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-outline);
+  margin-bottom: var(--space-4);
+}
+
+.filter-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+ion-select {
+  flex: 1;
+  min-width: 120px;
+}
+
+// ===== USER ITEM STYLES =====
+.user-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  gap: var(--space-3);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-status {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+// ===== USER DETAILS MODAL STYLES =====
+.user-details {
+  background: color-mix(in srgb, var(--color-surface-1) 50%, transparent);
+  padding: var(--space-4);
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-outline);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-outline) 50%, transparent);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.warning {
+    background: color-mix(in srgb, #FFA500 15%, transparent);
+    padding: var(--space-3);
+    border-radius: calc(var(--radius-input) / 2);
+    border-left: 3px solid #FFA500;
+  }
+}
+
+.detail-label {
+  font-weight: 600;
+  min-width: 120px;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.detail-value {
+  text-align: right;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+// ===== ACTION BUTTONS =====
+.actions-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+
+  ion-button {
+    flex: 1;
+    min-width: 100px;
+    --padding-start: var(--space-3);
+    --padding-end: var(--space-3);
+  }
+}
+
+// ===== PAGINATION =====
+.pagination-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-surface-1) 40%, transparent);
+  border-radius: var(--radius-input);
+}
+
+// ===== EMPTY STATE =====
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 300px;
+  color: var(--color-text-muted);
+
+  ion-icon {
+    font-size: 48px;
+    opacity: 0.3;
+  }
+}
+
+// ===== UTILITY CLASSES (PROJECT ALIGNED) =====
+.gap-2 {
+  gap: var(--space-2);
+}
+
+.gap-3 {
+  gap: var(--space-3);
+}
+
+.mb-2 {
+  margin-bottom: var(--space-2);
+}
+
+.mb-3 {
+  margin-bottom: var(--space-3);
+}
+
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+
+.mt-2 {
+  margin-top: var(--space-2);
+}
+
+.mt-4 {
+  margin-top: var(--space-4);
+}
+
+.mr-2 {
+  margin-right: var(--space-2);
+}
+
+.mr-3 {
+  margin-right: var(--space-3);
+}
+
+.p-3 {
+  padding: var(--space-3);
+}
+
+.p-4 {
+  padding: var(--space-4);
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-sm {
+  font-size: 0.85rem;
+}
+
+.text-base {
+  font-size: 1rem;
+}
+
+.text-lg {
+  font-size: 1.1rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}

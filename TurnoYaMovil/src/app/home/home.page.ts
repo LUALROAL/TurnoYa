@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { AuthSessionService } from '../core/services/auth-session.service';
 
 type QuickAccessItem = {
   title: string;
@@ -51,6 +52,12 @@ export class HomePage implements OnInit, OnDestroy {
       icon: 'person-circle-outline',
       route: '/home',
     },
+    {
+      title: 'Administración',
+      subtitle: 'Gestionar usuarios',
+      icon: 'shield-checkmark-outline',
+      route: '/admin/users',
+    },
   ];
 
   protected loadingRecommendations = true;
@@ -81,6 +88,16 @@ export class HomePage implements OnInit, OnDestroy {
   ];
 
   private loadTimeoutId?: ReturnType<typeof setTimeout>;
+
+  constructor(protected authSession: AuthSessionService) {}
+
+  /**
+   * Verifica si el usuario actual es Admin
+   */
+  isAdmin(): boolean {
+    const session = this.authSession.getSession();
+    return session?.user?.role === 'Admin' ? true : false;
+  }
 
   ngOnInit() {
     this.loadTimeoutId = setTimeout(() => {

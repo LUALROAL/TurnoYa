@@ -29,15 +29,21 @@
       <h3 class="section-title">Accesos rapidos</h3>
 
       <div class="quick-grid">
-        <button type="button" class="quick-card card" *ngFor="let item of quickAccessItems" [routerLink]="item.route">
-          <div class="quick-icon">
-            <ion-icon [name]="item.icon"></ion-icon>
-          </div>
-          <div class="quick-copy">
-            <p>{{ item.title }}</p>
-            <span>{{ item.subtitle }}</span>
-          </div>
-        </button>
+        <ng-container *ngFor="let item of quickAccessItems">
+          <button
+            type="button"
+            class="quick-card card"
+            *ngIf="item.route !== '/admin/users' || isAdmin()"
+            [routerLink]="item.route">
+            <div class="quick-icon">
+              <ion-icon [name]="item.icon"></ion-icon>
+            </div>
+            <div class="quick-copy">
+              <p>{{ item.title }}</p>
+              <span>{{ item.subtitle }}</span>
+            </div>
+          </button>
+        </ng-container>
       </div>
     </section>
 
