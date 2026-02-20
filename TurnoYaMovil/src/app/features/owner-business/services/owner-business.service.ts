@@ -6,6 +6,7 @@ import {
   OwnerBusiness,
   CreateBusinessRequest,
   UpdateBusinessRequest,
+  BusinessSettings,
 } from '../models';
 
 /**
@@ -68,5 +69,22 @@ export class OwnerBusinessService {
    */
   toggleActive(id: string, isActive: boolean): Observable<OwnerBusiness> {
     return this.update(id, { isActive });
+  }
+
+  /**
+   * Get business settings/configuration
+   */
+  getSettings(businessId: string): Observable<BusinessSettings> {
+    return this.api.get<BusinessSettings>(`/api/business/${businessId}/settings`);
+  }
+
+  /**
+   * Update business settings/configuration (ownership verified in backend)
+   */
+  updateSettings(
+    businessId: string,
+    settings: BusinessSettings
+  ): Observable<BusinessSettings> {
+    return this.api.put<BusinessSettings>(`/api/business/${businessId}/settings`, settings);
   }
 }

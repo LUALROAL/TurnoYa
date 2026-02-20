@@ -124,6 +124,14 @@
               </button>
               <button
                 type="button"
+                class="action-btn secondary"
+                [routerLink]="['/owner/businesses', business.id, 'settings']"
+              >
+                <ion-icon name="settings-outline"></ion-icon>
+                Configurar
+              </button>
+              <button
+                type="button"
                 class="action-btn"
                 [class.danger]="business.isActive"
                 (click)="toggleBusinessStatus(business, $event)"

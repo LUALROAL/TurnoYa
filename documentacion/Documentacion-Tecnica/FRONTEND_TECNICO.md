@@ -19,6 +19,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Implementar busqueda y filtros de negocios
   - [x] Crear detalle de negocio
   - [x] Crear modulo owner business
+  - [x] Configuracion de negocio
 
 ## Base tecnica
 
@@ -236,7 +237,48 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Toggle de estado activo/inactivo con feedback visual
   - Navegacion a detalle publico desde boton "Ver"
   - Navegacion a edicion (ruta futura: /owner/businesses/:id/edit)
+  - Navegacion a configuracion desde boton "Configurar"
   - Responsive grid: 1 columna mobile, multiples en desktop
+
+## Configuracion de negocio (Business Settings)
+- Archivos:
+  - src/app/features/owner-business/models/business-settings.model.ts
+  - src/app/features/owner-business/pages/business-settings/business-settings.page.ts
+  - src/app/features/owner-business/pages/business-settings/business-settings.page.html
+  - src/app/features/owner-business/pages/business-settings/business-settings.page.scss
+- Ruta:
+  - /owner/businesses/:id/settings (standalone + canActivate)
+- Integracion backend:
+  - GET /api/business/{id}/settings para obtener configuracion actual
+  - PUT /api/business/{id}/settings para actualizar (solo propietario)
+- Campos del formulario:
+  - Reservas:
+    - Dias de anticipacion maxima (1-365 dias)
+    - Duracion de cita por defecto (5-480 minutos)
+    - Tiempo de separacion entre citas (0-120 minutos)
+  - Cancelaciones:
+    - Horas minimas para cancelar sin cargo (0-168 horas)
+    - Politica de no-show (textarea)
+  - Pagos:
+    - Requiere deposito (checkbox)
+- Estados UX:
+  - Cargando: skeleton card animado
+  - Formulario: validacion en tiempo real con mensajes de error
+  - Guardando: boton disabled con texto "Guardando..."
+- UI en espanol:
+  - Titulo: "Ajustes del Negocio"
+  - Secciones: "Reservas", "Cancelaciones", "Pagos"
+  - Botones: "Cancelar", "Guardar Cambios"
+  - Hints descriptivos en cada campo
+- Validaciones:
+  - Campos numericos con rangos especificos
+  - Validacion requerida en campos criticos
+  - Feedback visual con clase .invalid
+- Caracteristicas:
+  - Formulario reactivo con FormBuilder
+  - Navegacion desde listado de negocios (boton "Configurar")
+  - Navegacion de retorno a /owner/businesses tras guardar
+  - Design system coherente con glass-panel y orbs
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.

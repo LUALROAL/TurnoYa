@@ -1,0 +1,191 @@
+<ion-content class="settings-bg">
+  <div class="bg-decoration">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="settings-wrap">
+    <!-- Header -->
+    <header class="settings-header glass-panel">
+      <ion-button fill="clear" (click)="onCancel()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      <div>
+        <p class="header-overline">Configuración</p>
+        <h1>Ajustes del Negocio</h1>
+      </div>
+    </header>
+
+    <!-- Form -->
+    @if (loading) {
+      <article class="settings-card glass-panel skeleton">
+        <div class="skeleton-content"></div>
+      </article>
+    } @else {
+      <form [formGroup]="settingsForm" (ngSubmit)="onSave()">
+        <!-- Reservas -->
+        <section class="settings-section">
+          <div class="section-head">
+            <div class="section-icon">
+              <ion-icon name="calendar"></ion-icon>
+            </div>
+            <div>
+              <h2>Reservas</h2>
+              <p>Configura las reglas de reserva</p>
+            </div>
+          </div>
+
+          <div class="settings-card glass-panel">
+            <div class="form-field">
+              <label for="bookingAdvanceDays">
+                Días de anticipación máxima
+                <span class="field-hint">Máximo de días para reservar con anticipación</span>
+              </label>
+              <ion-input
+                id="bookingAdvanceDays"
+                type="number"
+                formControlName="bookingAdvanceDays"
+                placeholder="30"
+                min="1"
+                max="365"
+                [class.invalid]="formControls['bookingAdvanceDays'].touched && formControls['bookingAdvanceDays'].invalid"
+              ></ion-input>
+              @if (formControls['bookingAdvanceDays'].touched && formControls['bookingAdvanceDays'].invalid) {
+                <span class="error-msg">Ingresa un valor entre 1 y 365 días</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="defaultSlotDuration">
+                Duración de cita por defecto (minutos)
+                <span class="field-hint">Duración estándar de cada cita</span>
+              </label>
+              <ion-input
+                id="defaultSlotDuration"
+                type="number"
+                formControlName="defaultSlotDuration"
+                placeholder="30"
+                min="5"
+                max="480"
+                [class.invalid]="formControls['defaultSlotDuration'].touched && formControls['defaultSlotDuration'].invalid"
+              ></ion-input>
+              @if (formControls['defaultSlotDuration'].touched && formControls['defaultSlotDuration'].invalid) {
+                <span class="error-msg">Ingresa un valor entre 5 y 480 minutos</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="bufferTimeBetweenAppointments">
+                Tiempo de separación entre citas (minutos)
+                <span class="field-hint">Tiempo de descanso/preparación entre citas</span>
+              </label>
+              <ion-input
+                id="bufferTimeBetweenAppointments"
+                type="number"
+                formControlName="bufferTimeBetweenAppointments"
+                placeholder="0"
+                min="0"
+                max="120"
+                [class.invalid]="formControls['bufferTimeBetweenAppointments'].touched && formControls['bufferTimeBetweenAppointments'].invalid"
+              ></ion-input>
+              @if (formControls['bufferTimeBetweenAppointments'].touched && formControls['bufferTimeBetweenAppointments'].invalid) {
+                <span class="error-msg">Ingresa un valor entre 0 y 120 minutos</span>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Cancelaciones -->
+        <section class="settings-section">
+          <div class="section-head">
+            <div class="section-icon">
+              <ion-icon name="time"></ion-icon>
+            </div>
+            <div>
+              <h2>Cancelaciones</h2>
+              <p>Políticas de cancelación y no-show</p>
+            </div>
+          </div>
+
+          <div class="settings-card glass-panel">
+            <div class="form-field">
+              <label for="cancellationHours">
+                Horas mínimas para cancelar sin cargo
+                <span class="field-hint">Tiempo mínimo de anticipación para cancelaciones gratuitas</span>
+              </label>
+              <ion-input
+                id="cancellationHours"
+                type="number"
+                formControlName="cancellationHours"
+                placeholder="24"
+                min="0"
+                max="168"
+                [class.invalid]="formControls['cancellationHours'].touched && formControls['cancellationHours'].invalid"
+              ></ion-input>
+              @if (formControls['cancellationHours'].touched && formControls['cancellationHours'].invalid) {
+                <span class="error-msg">Ingresa un valor entre 0 y 168 horas</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="noShowPolicy">
+                Política de no-show
+                <span class="field-hint">Describe qué pasa si un cliente no se presenta</span>
+              </label>
+              <ion-textarea
+                id="noShowPolicy"
+                formControlName="noShowPolicy"
+                placeholder="Ej: Después de 3 no-shows, el cliente será bloqueado temporalmente..."
+                rows="4"
+              ></ion-textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pagos -->
+        <section class="settings-section">
+          <div class="section-head">
+            <div class="section-icon">
+              <ion-icon name="cash"></ion-icon>
+            </div>
+            <div>
+              <h2>Pagos</h2>
+              <p>Configura depósitos y adelantos</p>
+            </div>
+          </div>
+
+          <div class="settings-card glass-panel">
+            <div class="form-field checkbox-field">
+              <ion-checkbox formControlName="requiresDeposit"></ion-checkbox>
+              <label for="requiresDeposit">
+                Requiere depósito para reservar
+                <span class="field-hint">Solicitar pago adelantado al momento de la reserva</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <ion-button
+            type="button"
+            fill="outline"
+            expand="block"
+            (click)="onCancel()"
+            [disabled]="saving"
+          >
+            Cancelar
+          </ion-button>
+          <ion-button
+            type="submit"
+            expand="block"
+            [disabled]="settingsForm.invalid || saving"
+          >
+            <ion-icon name="save" slot="start"></ion-icon>
+            {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+          </ion-button>
+        </div>
+      </form>
+    }
+  </div>
+</ion-content>
