@@ -133,6 +133,14 @@
               <button
                 type="button"
                 class="action-btn secondary"
+                [routerLink]="['/owner/businesses', business.id, 'employees']"
+              >
+                <ion-icon name="people-outline"></ion-icon>
+                Empleados
+              </button>
+              <button
+                type="button"
+                class="action-btn secondary"
                 [routerLink]="['/owner/businesses', business.id, 'settings']"
               >
                 <ion-icon name="settings-outline"></ion-icon>

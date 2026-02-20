@@ -21,6 +21,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Crear modulo owner business
   - [x] Configuracion de negocio
   - [x] CRUD servicios de negocio
+  - [x] CRUD empleados de negocio
 
 ## Base tecnica
 
@@ -48,6 +49,11 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - POST /api/services/business/{businessId}
 - PUT /api/services/{id}
 - DELETE /api/services/{id}
+- GET /api/employees/business/{businessId}
+- GET /api/employees/{id}
+- POST /api/employees/business/{businessId}
+- PUT /api/employees/{id}
+- DELETE /api/employees/{id}
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -63,6 +69,9 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /owner/businesses/:businessId/services
   - /owner/businesses/:businessId/services/create
   - /owner/businesses/:businessId/services/:serviceId/edit
+  - /owner/businesses/:businessId/employees
+  - /owner/businesses/:businessId/employees/create
+  - /owner/businesses/:businessId/employees/:employeeId/edit
 
 ## Home marketplace (base)
 - Archivos:
@@ -218,6 +227,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Detalle de negocio conectado al backend y enlazado desde listado.
 - Modulo owner business implementado con listado, creación, edición y configuración de negocios (UI en español).
 - Modulo owner services implementado con listado, creación, edición, activación/desactivación y eliminación por negocio (UI en español).
+- Modulo owner employees implementado con listado, creación, edición, activación/desactivación y eliminación por negocio (UI en español).
 
 ## Modulo owner business (Mis Negocios)
 - Archivos:
@@ -403,6 +413,54 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Activación/desactivación rápida desde tarjeta
   - Eliminación con confirmación nativa
   - Navegación de retorno a /owner/businesses/:businessId/services tras guardar/cancelar
+
+## CRUD empleados de negocio (Owner Employees)
+- Archivos:
+  - src/app/features/owner-employees/models/owner-employee.model.ts
+  - src/app/features/owner-employees/models/index.ts
+  - src/app/features/owner-employees/services/owner-employees.service.ts
+  - src/app/features/owner-employees/pages/employees-list/employees-list.page.ts
+  - src/app/features/owner-employees/pages/employees-list/employees-list.page.html
+  - src/app/features/owner-employees/pages/employees-list/employees-list.page.scss
+  - src/app/features/owner-employees/pages/employee-form/employee-form.page.ts
+  - src/app/features/owner-employees/pages/employee-form/employee-form.page.html
+  - src/app/features/owner-employees/pages/employee-form/employee-form.page.scss
+  - src/app/features/owner-employees/pages/index.ts
+- Rutas:
+  - /owner/businesses/:businessId/employees (listado)
+  - /owner/businesses/:businessId/employees/create (crear)
+  - /owner/businesses/:businessId/employees/:employeeId/edit (editar)
+  - Todas standalone + canActivate
+- Integracion backend:
+  - GET /api/employees/business/{businessId} para listar empleados del negocio
+  - GET /api/employees/{id} para cargar empleado en edición
+  - POST /api/employees/business/{businessId} para crear empleado
+  - PUT /api/employees/{id} para actualizar empleado
+  - DELETE /api/employees/{id} para eliminar empleado
+- Campos del formulario:
+  - Nombres (requerido, 2-80 caracteres)
+  - Apellidos (requerido, 2-80 caracteres)
+  - Cargo (opcional, máx 120)
+  - Teléfono (opcional, patrón [0-9+\-() ]*)
+  - Email (opcional, formato válido)
+  - Foto de perfil por URL (opcional)
+  - Biografía (opcional, máx 500)
+  - Empleado activo (solo edición)
+- Estados UX:
+  - Cargando: skeleton cards en listado y skeleton en formulario
+  - Vacio: mensaje con CTA "Crear empleado"
+  - Exito: tarjetas con nombre, cargo, contacto y estado activo/inactivo
+  - Errores: toast mediante NotifyService
+- UI en español:
+  - Titulo listado: "Equipo del negocio"
+  - Titulo formulario: "Crear Empleado" / "Editar Empleado"
+  - Botones: "Crear empleado", "Editar", "Activar/Desactivar", "Eliminar", "Cancelar"
+- Caracteristicas:
+  - Acceso desde "Mis Negocios" con nuevo botón "Empleados" en cada card
+  - FAB para crear empleado desde listado
+  - Activación/desactivación rápida desde tarjeta
+  - Eliminación con confirmación nativa
+  - Navegación de retorno a /owner/businesses/:businessId/employees tras guardar/cancelar
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.

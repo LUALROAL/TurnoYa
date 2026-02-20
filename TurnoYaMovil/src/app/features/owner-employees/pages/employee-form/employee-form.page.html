@@ -1,0 +1,166 @@
+<ion-content class="form-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="form-wrap">
+    <header class="form-header glass-panel">
+      <ion-button fill="clear" (click)="onCancel()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      <div>
+        <p class="header-overline">Empleado</p>
+        <h1>{{ isEditMode ? 'Editar Empleado' : 'Crear Empleado' }}</h1>
+      </div>
+    </header>
+
+    @if (loading) {
+      <article class="form-card glass-panel skeleton">
+        <div class="skeleton-content"></div>
+      </article>
+    } @else {
+      <form [formGroup]="employeeForm" (ngSubmit)="onSave()">
+        <section class="form-section">
+          <div class="section-head">
+            <h2>Información básica</h2>
+            <p>Datos de perfil del colaborador</p>
+          </div>
+
+          <div class="form-card glass-panel">
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="firstName">Nombres <span class="required">*</span></label>
+                <ion-input
+                  id="firstName"
+                  type="text"
+                  formControlName="firstName"
+                  placeholder="Ej: Laura"
+                  [class.invalid]="formControls['firstName'].touched && formControls['firstName'].invalid"
+                ></ion-input>
+                @if (formControls['firstName'].touched && formControls['firstName'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('firstName') }}</span>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="lastName">Apellidos <span class="required">*</span></label>
+                <ion-input
+                  id="lastName"
+                  type="text"
+                  formControlName="lastName"
+                  placeholder="Ej: Gómez"
+                  [class.invalid]="formControls['lastName'].touched && formControls['lastName'].invalid"
+                ></ion-input>
+                @if (formControls['lastName'].touched && formControls['lastName'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('lastName') }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="position">Cargo <span class="field-hint">(Opcional)</span></label>
+              <ion-input
+                id="position"
+                type="text"
+                formControlName="position"
+                placeholder="Ej: Estilista senior"
+                [class.invalid]="formControls['position'].touched && formControls['position'].invalid"
+              ></ion-input>
+              @if (formControls['position'].touched && formControls['position'].invalid) {
+                <span class="error-msg">{{ getErrorMessage('position') }}</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="bio">Biografía <span class="field-hint">(Opcional)</span></label>
+              <ion-textarea
+                id="bio"
+                formControlName="bio"
+                rows="4"
+                placeholder="Experiencia, especialidades y enfoque de atención"
+                [class.invalid]="formControls['bio'].touched && formControls['bio'].invalid"
+              ></ion-textarea>
+              @if (formControls['bio'].touched && formControls['bio'].invalid) {
+                <span class="error-msg">{{ getErrorMessage('bio') }}</span>
+              }
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-head">
+            <h2>Contacto y perfil</h2>
+            <p>Canales de contacto opcionales</p>
+          </div>
+
+          <div class="form-card glass-panel">
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="phone">Teléfono <span class="field-hint">(Opcional)</span></label>
+                <ion-input
+                  id="phone"
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="Ej: +57 300 111 2233"
+                  [class.invalid]="formControls['phone'].touched && formControls['phone'].invalid"
+                ></ion-input>
+                @if (formControls['phone'].touched && formControls['phone'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('phone') }}</span>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="email">Email <span class="field-hint">(Opcional)</span></label>
+                <ion-input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  placeholder="empleado@negocio.com"
+                  [class.invalid]="formControls['email'].touched && formControls['email'].invalid"
+                ></ion-input>
+                @if (formControls['email'].touched && formControls['email'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('email') }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="profilePictureUrl">Foto de perfil (URL) <span class="field-hint">(Opcional)</span></label>
+              <ion-input
+                id="profilePictureUrl"
+                type="url"
+                formControlName="profilePictureUrl"
+                placeholder="https://..."
+                [class.invalid]="formControls['profilePictureUrl'].touched && formControls['profilePictureUrl'].invalid"
+              ></ion-input>
+              @if (formControls['profilePictureUrl'].touched && formControls['profilePictureUrl'].invalid) {
+                <span class="error-msg">{{ getErrorMessage('profilePictureUrl') }}</span>
+              }
+            </div>
+
+            @if (isEditMode) {
+              <div class="form-field checkbox-field">
+                <input id="isActive" type="checkbox" formControlName="isActive" />
+                <label for="isActive">
+                  Empleado activo
+                  <span class="field-hint">Disponible para asignación de citas</span>
+                </label>
+              </div>
+            }
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <ion-button type="button" fill="outline" expand="block" (click)="onCancel()" [disabled]="saving">
+            Cancelar
+          </ion-button>
+          <ion-button type="submit" expand="block" class="button-primary" [disabled]="saving">
+            <ion-icon slot="start" name="save"></ion-icon>
+            {{ saving ? 'Guardando...' : (isEditMode ? 'Actualizar Empleado' : 'Crear Empleado') }}
+          </ion-button>
+        </div>
+      </form>
+    }
+  </div>
+</ion-content>

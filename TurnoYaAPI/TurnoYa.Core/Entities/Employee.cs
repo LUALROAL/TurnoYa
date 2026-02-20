@@ -5,6 +5,8 @@ public class Employee : BaseEntity
     public Guid BusinessId { get; set; }
     public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string? Position { get; set; }
+    public string? Bio { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public string? PhotoUrl { get; set; }

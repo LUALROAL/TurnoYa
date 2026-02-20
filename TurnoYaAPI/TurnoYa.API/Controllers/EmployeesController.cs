@@ -112,6 +112,11 @@ public class EmployeesController : ControllerBase
 
             var employee = _mapper.Map<Employee>(dto);
             employee.BusinessId = businessId;
+            employee.UserId = userId;
+            employee.Name = $"{dto.FirstName} {dto.LastName}".Trim();
+            employee.Position = dto.Position;
+            employee.Bio = dto.Bio;
+            employee.PhotoUrl = dto.ProfilePictureUrl;
             employee.CreatedAt = DateTime.UtcNow;
             employee.UpdatedAt = DateTime.UtcNow;
 
@@ -159,7 +164,24 @@ public class EmployeesController : ControllerBase
             if (employee.Business?.OwnerId != userId)
                 return Forbid();
 
-            _mapper.Map(dto, employee);
+            if (dto.FirstName != null || dto.LastName != null)
+            {
+                var currentNames = (employee.Name ?? string.Empty).Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                var currentFirstName = currentNames.Length > 0 ? currentNames[0] : string.Empty;
+                var currentLastName = currentNames.Length > 1 ? currentNames[1] : string.Empty;
+
+                var firstName = dto.FirstName ?? currentFirstName;
+                var lastName = dto.LastName ?? currentLastName;
+
+                employee.Name = $"{firstName} {lastName}".Trim();
+            }
+
+            if (dto.Phone != null) employee.Phone = dto.Phone;
+            if (dto.Email != null) employee.Email = dto.Email;
+            if (dto.Position != null) employee.Position = dto.Position;
+            if (dto.Bio != null) employee.Bio = dto.Bio;
+            if (dto.ProfilePictureUrl != null) employee.PhotoUrl = dto.ProfilePictureUrl;
+            if (dto.IsActive.HasValue) employee.IsActive = dto.IsActive.Value;
             employee.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

@@ -1,0 +1,105 @@
+<ion-content class="employees-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="employees-wrap">
+    <header class="employees-header card glass-panel">
+      <div>
+        <p class="header-overline">Gestión de empleados</p>
+        <h1>Equipo del negocio</h1>
+      </div>
+      <ion-button fill="clear" class="back-btn" [routerLink]="['/owner/businesses']" aria-label="Volver">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </header>
+
+    @if (loading) {
+      <section class="cards-grid">
+        @for (i of [1, 2, 3]; track i) {
+          <article class="employee-card card skeleton"></article>
+        }
+      </section>
+    }
+
+    @if (!loading && isEmpty) {
+      <article class="empty-state card glass-panel">
+        <ion-icon name="people-outline"></ion-icon>
+        <h3>Aún no tienes empleados</h3>
+        <p>Agrega tu equipo para asignar citas y disponibilidad.</p>
+        <ion-button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']" class="button-primary">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Crear empleado
+        </ion-button>
+      </article>
+    }
+
+    @if (!loading && !isEmpty) {
+      <section class="cards-grid">
+        @for (employee of employees; track trackByEmployeeId($index, employee)) {
+          <article class="employee-card card">
+            <div class="card-top">
+              <div>
+                <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
+                @if (employee.position) {
+                  <p class="card-meta">
+                    <ion-icon name="person-outline"></ion-icon>
+                    {{ employee.position }}
+                  </p>
+                }
+              </div>
+              <span class="status-badge" [class.active]="employee.isActive" [class.inactive]="!employee.isActive">
+                {{ employee.isActive ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            @if (employee.bio) {
+              <p class="description">{{ employee.bio }}</p>
+            }
+
+            <div class="info-rows">
+              @if (employee.phone) {
+                <div class="info-item">
+                  <ion-icon name="call-outline"></ion-icon>
+                  <span>{{ employee.phone }}</span>
+                </div>
+              }
+              @if (employee.email) {
+                <div class="info-item">
+                  <ion-icon name="mail-outline"></ion-icon>
+                  <span>{{ employee.email }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="card-actions">
+              <button
+                type="button"
+                class="action-btn secondary"
+                [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'edit']"
+              >
+                <ion-icon name="create-outline"></ion-icon>
+                Editar
+              </button>
+              <button type="button" class="action-btn" (click)="toggleEmployeeStatus(employee)">
+                <ion-icon [name]="employee.isActive ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
+                {{ employee.isActive ? 'Desactivar' : 'Activar' }}
+              </button>
+              <button type="button" class="action-btn danger" (click)="deleteEmployee(employee)">
+                <ion-icon name="trash-outline"></ion-icon>
+                Eliminar
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']">
+          <ion-icon name="add-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    }
+  </div>
+</ion-content>

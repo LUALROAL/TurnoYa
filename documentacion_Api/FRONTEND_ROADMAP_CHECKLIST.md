@@ -30,7 +30,7 @@ Use this checklist to mark each card as completed.
 
 ## EPIC 4 - Servicios y empleados
 - [x] CRUD servicios de negocio (Priority: High, Points: 5, Depends: F-023) X
-- [ ] CRUD empleados de negocio (Priority: High, Points: 5, Depends: F-023)
+- [x] CRUD empleados de negocio (Priority: High, Points: 5, Depends: F-023) X
 
 ## EPIC 5 - Citas
 - [ ] Crear flujo agendar cita (Priority: High, Points: 8, Depends: F-022, F-030, F-031)

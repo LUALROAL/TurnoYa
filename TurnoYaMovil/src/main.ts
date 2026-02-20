@@ -73,6 +73,21 @@ const routes: Routes = [
     loadComponent: () => import('./app/features/owner-services/pages').then(m => m.ServiceFormPage),
     canActivate: [authGuard],
   },
+  {
+    path: 'owner/businesses/:businessId/employees',
+    loadComponent: () => import('./app/features/owner-employees/pages').then(m => m.EmployeesListPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'owner/businesses/:businessId/employees/create',
+    loadComponent: () => import('./app/features/owner-employees/pages').then(m => m.EmployeeFormPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'owner/businesses/:businessId/employees/:employeeId/edit',
+    loadComponent: () => import('./app/features/owner-employees/pages').then(m => m.EmployeeFormPage),
+    canActivate: [authGuard],
+  },
 ];
 
 bootstrapApplication(AppComponent, {
