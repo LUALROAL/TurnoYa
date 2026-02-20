@@ -120,6 +120,24 @@
   }
 }
 
+.danger-zone {
+  .danger-icon {
+    background: color-mix(in srgb, #ff4444 14%, transparent);
+    color: color-mix(in srgb, #ff4444 90%, var(--color-text));
+  }
+
+  .danger-card {
+    border: 1px solid color-mix(in srgb, #ff4444 28%, var(--color-outline));
+  }
+
+  .danger-text {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
+
 // Settings card
 .settings-card {
   padding: var(--space-4);

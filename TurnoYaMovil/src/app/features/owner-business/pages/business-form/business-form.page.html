@@ -276,19 +276,6 @@
           >
             Cancelar
           </ion-button>
-          @if (isEditMode) {
-            <ion-button
-              type="button"
-              fill="outline"
-              color="danger"
-              expand="block"
-              (click)="onDelete()"
-              [disabled]="saving"
-            >
-              <ion-icon name="trash" slot="start"></ion-icon>
-              Eliminar
-            </ion-button>
-          }
           <ion-button
             type="submit"
             expand="block"

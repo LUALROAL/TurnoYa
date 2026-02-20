@@ -238,7 +238,10 @@ public class BusinessController : ControllerBase
     {
         try
         {
-            var business = await _businessRepository.GetByIdAsync(id);
+            var business = await _context.Businesses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.Id == id);
+
             if (business == null)
                 return NotFound(new { message = "Negocio no encontrado" });
 
@@ -254,8 +257,90 @@ public class BusinessController : ControllerBase
             if (business.OwnerId != userId)
                 return Forbid();
 
-            await _businessRepository.DeleteAsync(id);
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            var appointmentIds = await _context.Appointments
+                .Where(a => a.BusinessId == id)
+                .Select(a => a.Id)
+                .ToListAsync();
+
+            if (appointmentIds.Count > 0)
+            {
+                var reviews = await _context.Reviews
+                    .Where(r => r.BusinessId == id || appointmentIds.Contains(r.AppointmentId))
+                    .ToListAsync();
+                if (reviews.Count > 0)
+                {
+                    _context.Reviews.RemoveRange(reviews);
+                }
+
+                var statusHistory = await _context.AppointmentStatusHistory
+                    .Where(h => appointmentIds.Contains(h.AppointmentId))
+                    .ToListAsync();
+                if (statusHistory.Count > 0)
+                {
+                    _context.AppointmentStatusHistory.RemoveRange(statusHistory);
+                }
+
+                var wompiTransactions = await _context.WompiTransactions
+                    .Where(t => appointmentIds.Contains(t.AppointmentId))
+                    .ToListAsync();
+                if (wompiTransactions.Count > 0)
+                {
+                    _context.WompiTransactions.RemoveRange(wompiTransactions);
+                }
+
+                var appointments = await _context.Appointments
+                    .Where(a => a.BusinessId == id)
+                    .ToListAsync();
+                if (appointments.Count > 0)
+                {
+                    _context.Appointments.RemoveRange(appointments);
+                }
+            }
+
+            var settings = await _context.BusinessSettings
+                .Where(s => s.BusinessId == id)
+                .ToListAsync();
+            if (settings.Count > 0)
+            {
+                _context.BusinessSettings.RemoveRange(settings);
+            }
+
+            var services = await _context.Services
+                .Where(s => s.BusinessId == id)
+                .ToListAsync();
+            if (services.Count > 0)
+            {
+                _context.Services.RemoveRange(services);
+            }
+
+            var employees = await _context.Employees
+                .Where(e => e.BusinessId == id)
+                .ToListAsync();
+            if (employees.Count > 0)
+            {
+                _context.Employees.RemoveRange(employees);
+            }
+
+            var businessEntity = await _context.Businesses.FindAsync(id);
+            if (businessEntity != null)
+            {
+                _context.Businesses.Remove(businessEntity);
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
             return NoContent();
+        }
+        catch (DbUpdateException dbEx)
+        {
+            _logger.LogError(dbEx, "Error de integridad al eliminar negocio {BusinessId}", id);
+            return BadRequest(new
+            {
+                message = "No se pudo eliminar el negocio porque tiene datos relacionados que requieren limpieza previa."
+            });
         }
         catch (Exception ex)
         {

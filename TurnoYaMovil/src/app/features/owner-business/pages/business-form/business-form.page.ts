@@ -14,7 +14,7 @@ import {
   IonCheckbox,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, save, trash } from 'ionicons/icons';
+import { arrowBack, save } from 'ionicons/icons';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
@@ -99,7 +99,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   ];
 
   constructor() {
-    addIcons({ arrowBack, save, trash });
+    addIcons({ arrowBack, save });
     this.initForm();
   }
 
@@ -247,28 +247,6 @@ export class BusinessFormPage implements OnInit, OnDestroy {
           this.saving = false;
         },
       });
-  }
-
-  onDelete() {
-    if (confirm('¿Estás seguro de que deseas eliminar este negocio? Esta acción no se puede deshacer.')) {
-      this.saving = true;
-
-      this.ownerBusinessService
-        .delete(this.businessId)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            console.log('Negocio eliminado correctamente');
-            this.saving = false;
-            this.router.navigate(['/owner/businesses']);
-          },
-          error: (error) => {
-            console.error('Error al eliminar negocio:', error);
-            this.notify.showError('Error al eliminar el negocio');
-            this.saving = false;
-          },
-        });
-    }
   }
 
   onCancel() {

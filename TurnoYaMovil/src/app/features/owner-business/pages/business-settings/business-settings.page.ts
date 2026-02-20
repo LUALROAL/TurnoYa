@@ -12,7 +12,7 @@ import {
   IonTextarea,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, save, time, calendar, cash } from 'ionicons/icons';
+import { arrowBack, save, time, calendar, cash, trash } from 'ionicons/icons';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { BusinessSettings } from '../../models';
@@ -42,18 +42,21 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   businessId: string = '';
+  businessName: string = '';
   settingsForm!: FormGroup;
   loading = false;
   saving = false;
+  deleting = false;
 
   constructor() {
-    addIcons({ arrowBack, save, time, calendar, cash });
+    addIcons({ arrowBack, save, time, calendar, cash, trash });
     this.initForm();
   }
 
   ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('id') || '';
     if (this.businessId) {
+      this.loadBusinessInfo();
       this.loadSettings();
     } else {
       this.notify.showError('ID de negocio no válido');
@@ -96,6 +99,20 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       });
   }
 
+  private loadBusinessInfo() {
+    this.ownerBusinessService
+      .getById(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (business) => {
+          this.businessName = business.name || '';
+        },
+        error: (error) => {
+          console.error('Error al cargar negocio:', error);
+        },
+      });
+  }
+
   onSave() {
     if (this.settingsForm.invalid) {
       this.settingsForm.markAllAsTouched();
@@ -126,6 +143,47 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
 
   onCancel() {
     this.router.navigate(['/owner/businesses']);
+  }
+
+  onDeleteBusiness() {
+    if (this.deleting || this.saving) {
+      return;
+    }
+
+    const confirmed = confirm(
+      'Vas a eliminar este negocio de forma permanente. Esta acción no se puede deshacer. ¿Deseas continuar?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const expectedText = this.businessName?.trim() || 'ELIMINAR';
+    const userInput = prompt(
+      `Confirmación final: escribe exactamente "${expectedText}" para eliminar el negocio.`
+    );
+
+    if (!userInput || userInput.trim() !== expectedText) {
+      this.notify.showError('Confirmación incorrecta. El negocio no fue eliminado.');
+      return;
+    }
+
+    this.deleting = true;
+
+    this.ownerBusinessService
+      .delete(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.deleting = false;
+          this.router.navigate(['/owner/businesses']);
+        },
+        error: (error) => {
+          console.error('Error al eliminar negocio:', error);
+          this.notify.showError('No se pudo eliminar el negocio');
+          this.deleting = false;
+        },
+      });
   }
 
   get formControls() {

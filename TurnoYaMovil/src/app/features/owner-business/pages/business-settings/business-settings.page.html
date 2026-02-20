@@ -165,6 +165,35 @@
           </div>
         </section>
 
+        <!-- Zona de peligro -->
+        <section class="settings-section danger-zone">
+          <div class="section-head">
+            <div class="section-icon danger-icon">
+              <ion-icon name="trash"></ion-icon>
+            </div>
+            <div>
+              <h2>Zona de peligro</h2>
+              <p>Eliminar este negocio y toda su información asociada</p>
+            </div>
+          </div>
+
+          <div class="settings-card glass-panel danger-card">
+            <p class="danger-text">
+              Esta acción es irreversible. Para mayor seguridad, se solicitará una confirmación adicional.
+            </p>
+            <ion-button
+              type="button"
+              color="danger"
+              fill="outline"
+              (click)="onDeleteBusiness()"
+              [disabled]="saving || deleting"
+            >
+              <ion-icon name="trash" slot="start"></ion-icon>
+              {{ deleting ? 'Eliminando...' : 'Eliminar negocio' }}
+            </ion-button>
+          </div>
+        </section>
+
         <!-- Actions -->
         <div class="form-actions">
           <ion-button
@@ -172,14 +201,14 @@
             fill="outline"
             expand="block"
             (click)="onCancel()"
-            [disabled]="saving"
+            [disabled]="saving || deleting"
           >
             Cancelar
           </ion-button>
           <ion-button
             type="submit"
             expand="block"
-            [disabled]="settingsForm.invalid || saving"
+            [disabled]="settingsForm.invalid || saving || deleting"
           >
             <ion-icon name="save" slot="start"></ion-icon>
             {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
