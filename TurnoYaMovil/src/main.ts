@@ -48,6 +48,16 @@ const routes: Routes = [
     loadComponent: () => import('./app/features/owner-business/pages').then(m => m.BusinessSettingsPage),
     canActivate: [authGuard],
   },
+  {
+    path: 'owner/businesses/create',
+    loadComponent: () => import('./app/features/owner-business/pages').then(m => m.BusinessFormPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'owner/businesses/:id/edit',
+    loadComponent: () => import('./app/features/owner-business/pages').then(m => m.BusinessFormPage),
+    canActivate: [authGuard],
+  },
 ];
 
 bootstrapApplication(AppComponent, {

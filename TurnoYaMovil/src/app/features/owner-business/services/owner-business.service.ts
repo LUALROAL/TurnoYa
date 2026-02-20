@@ -41,6 +41,13 @@ export class OwnerBusinessService {
   }
 
   /**
+   * Get a specific business by ID
+   */
+  getById(id: string): Observable<OwnerBusiness> {
+    return this.api.get<OwnerBusiness>(`/api/business/${id}`);
+  }
+
+  /**
    * Create a new business (OwnerId extracted from JWT in backend)
    */
   create(business: CreateBusinessRequest): Observable<OwnerBusiness> {

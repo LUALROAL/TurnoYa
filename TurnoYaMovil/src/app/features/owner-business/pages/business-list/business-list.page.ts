@@ -74,6 +74,14 @@ export class BusinessListPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /**
+   * Refresca la lista cada vez que la página vuelve a ser visible
+   * (después de navegar de vuelta desde edición/configuración)
+   */
+  ionViewWillEnter() {
+    this.loadMyBusinesses();
+  }
+
   private loadMyBusinesses(): void {
     this.loading = true;
     this.ownerBusinessService

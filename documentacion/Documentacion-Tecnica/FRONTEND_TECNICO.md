@@ -207,7 +207,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Listado de negocios conectado al backend y enlazado desde Home.
 - Busqueda y filtros del listado conectados a endpoints de backend.
 - Detalle de negocio conectado al backend y enlazado desde listado.
-- Modulo owner business implementado con listado de mis negocios (UI en español).
+- Modulo owner business implementado con listado, creación, edición y configuración de negocios (UI en español).
 
 ## Modulo owner business (Mis Negocios)
 - Archivos:
@@ -220,8 +220,10 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /owner/businesses (standalone + canActivate)
 - Integracion backend:
   - GET /api/business/owner/{ownerId} para obtener negocios del propietario autenticado
-  - PUT /api/business/{id} para actualizar (ej. activar/desactivar negocio)
-  - Preparado para: POST /api/business (crear), DELETE /api/business/{id} (eliminar)
+  - POST /api/business (crear nuevo negocio)
+  - PUT /api/business/{id} (editar/actualizar negocio, incluyendo status)
+  - DELETE /api/business/{id} (eliminar negocio)
+  - PUT /api/business/{id}/settings (configuración separada)
 - Estados UX:
   - Cargando: skeleton cards (3 placeholders)
   - Vacio: mensaje "Aun no tienes negocios" con boton "Crear mi primer negocio"
@@ -236,9 +238,74 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Floating Action Button (FAB) para crear nuevo negocio cuando hay items
   - Toggle de estado activo/inactivo con feedback visual
   - Navegacion a detalle publico desde boton "Ver"
-  - Navegacion a edicion (ruta futura: /owner/businesses/:id/edit)
-  - Navegacion a configuracion desde boton "Configurar"
+  - Navegacion a edición desde boton "Editar"
+  - Navegacion a configuración desde boton "Configurar"
   - Responsive grid: 1 columna mobile, multiples en desktop
+  - Confirmación de eliminación (modal nativa del navegador)
+
+## CRUD de negocios (Business Form)
+- Archivos:
+  - src/app/features/owner-business/pages/business-form/business-form.page.ts
+  - src/app/features/owner-business/pages/business-form/business-form.page.html
+  - src/app/features/owner-business/pages/business-form/business-form.page.scss
+- Rutas:
+  - /owner/businesses/create (crear nuevo negocio)
+  - /owner/businesses/:id/edit (editar negocio existente)
+  - Ambas standalone + canActivate
+- Integracion backend:
+  - POST /api/business (crear con CreateBusinessDto)
+  - PUT /api/business/{id} (editar con UpdateBusinessDto)
+  - DELETE /api/business/{id} (eliminar con confirmación)
+- Campos del formulario:
+  - Sección Información Básica:
+    - Nombre (requerido, 3-100 caracteres)
+    - Descripción (opcional, 500 caracteres máx)
+    - Categoría (requerido, select dropdown)
+    - Sitio web (opcional, URL válida)
+  - Sección Ubicación:
+    - Dirección (requerido, 5+ caracteres)
+    - Ciudad (requerido, texto)
+    - Departamento (requerido, select dropdown con 32 opciones de Colombia)
+    - Latitud (opcional, número decimal)
+    - Longitud (opcional, número decimal)
+  - Sección Contacto:
+    - Teléfono (opcional, patrón +57 300 123 4567)
+    - Email (opcional, email válido)
+  - Solo en edición:
+    - Botón "Eliminar" con confirmación
+- Categorías:
+  - Salón de Belleza, Peluquería, Spa, Estética, Masajes, Consultoría, Taller Automotriz, Dentista, Médico, Otros
+- Estados UX:
+  - Cargando: skeleton card animado (600px min-height)
+  - Formulario reactivo con validación en tiempo real
+  - Mensajes de error context-aware para cada tipo de validación
+  - Botón submit disabled si formulario inválido o guardando
+- UI en español:
+  - Crear: "Crear Negocio"
+  - Editar: "Editar Negocio"
+  - Botones: "Cancelar", "Eliminar", "Guardar Cambios"/"Crear Negocio"
+  - Placeholders descriptivos
+  - Hints y campos opcionales claramente marcados
+- Validaciones:
+  - Nombre: requerido, 3-100 caracteres
+  - Descripción: máx 500 caracteres
+  - Categoría: requerido, select validator
+  - Dirección: requerido, ménimo 5 caracteres
+  - Ciudad: requerido
+  - Departamento: requerido
+  - Teléfono: patrón regex [0-9+\-() ]*
+  - Email: validador email nativo
+  - Sitio web: patrón regex (https?:\/\/)?.{1,}
+  - Latitud/Longitud: number con step 0.0001
+- Caracteristicas:
+  - Formulario reactivo con FormBuilder
+  - Modo doble: crear (POST) y editar (PUT)
+  - Navegación desde listado (FAB para crear, botón "Editar" para editar)
+  - Confirmación nativa antes de eliminar
+  - Retorno a /owner/businesses tras guardar o cancelar
+  - Grid responsivo 2 columnas en desktop, 1 en mobile
+  - Feedback visual de errores y deshabilitación de submit
+  - Design system: glass-panel, orbs, mismo estilo que settings
 
 ## Configuracion de negocio (Business Settings)
 - Archivos:

@@ -1,0 +1,304 @@
+<ion-content class="form-bg">
+  <div class="bg-decoration">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="form-wrap">
+    <!-- Header -->
+    <header class="form-header glass-panel">
+      <ion-button fill="clear" (click)="onCancel()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      <div>
+        <p class="header-overline">Negocio</p>
+        <h1>{{ isEditMode ? 'Editar Negocio' : 'Crear Negocio' }}</h1>
+      </div>
+    </header>
+
+    <!-- Form -->
+    @if (loading) {
+      <article class="form-card glass-panel skeleton">
+        <div class="skeleton-content"></div>
+      </article>
+    } @else {
+      <form [formGroup]="businessForm" (ngSubmit)="onSave()">
+        <!-- Información Básica -->
+        <section class="form-section">
+          <div class="section-head">
+            <h2>Información Básica</h2>
+            <p>Datos principales del negocio</p>
+          </div>
+
+          <div class="form-card glass-panel">
+            <div class="form-field">
+              <label for="name">
+                Nombre del Negocio
+                <span class="required">*</span>
+              </label>
+              <ion-input
+                id="name"
+                type="text"
+                formControlName="name"
+                placeholder="Ej: Mi Salón de Belleza"
+                [class.invalid]="formControls['name'].touched && formControls['name'].invalid"
+              ></ion-input>
+              @if (formControls['name'].touched && formControls['name'].invalid) {
+                <span class="error-msg">{{ getErrorMessage('name') }}</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="description">
+                Descripción
+                <span class="field-hint">(Opcional)</span>
+              </label>
+              <ion-textarea
+                id="description"
+                formControlName="description"
+                placeholder="Cuéntanos sobre tu negocio, servicios principales, años de experiencia, etc."
+                rows="4"
+              ></ion-textarea>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="category">
+                  Categoría
+                  <span class="required">*</span>
+                </label>
+                <ion-select
+                  id="category"
+                  formControlName="category"
+                  [compareWith]="compareValues"
+                  placeholder="Selecciona una categoría"
+                  [class.invalid]="formControls['category'].touched && formControls['category'].invalid"
+                >
+                  @for (cat of categories; track cat) {
+                    <ion-select-option [value]="cat">{{ cat }}</ion-select-option>
+                  }
+                </ion-select>
+                @if (formControls['category'].touched && formControls['category'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('category') }}</span>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="website">
+                  Sitio Web
+                  <span class="field-hint">(Opcional)</span>
+                </label>
+                <ion-input
+                  id="website"
+                  type="url"
+                  formControlName="website"
+                  placeholder="https://example.com"
+                  [class.invalid]="formControls['website'].touched && formControls['website'].invalid"
+                ></ion-input>
+                @if (formControls['website'].touched && formControls['website'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('website') }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ubicación -->
+        <section class="form-section">
+          <div class="section-head">
+            <h2>Ubicación</h2>
+            <p>Dónde se encuentra tu negocio</p>
+          </div>
+
+          <div class="form-card glass-panel">
+            <div class="form-field">
+              <label for="address">
+                Dirección
+                <span class="required">*</span>
+              </label>
+              <ion-input
+                id="address"
+                type="text"
+                formControlName="address"
+                placeholder="Ej: Calle 45 #12-34"
+                [class.invalid]="formControls['address'].touched && formControls['address'].invalid"
+              ></ion-input>
+              @if (formControls['address'].touched && formControls['address'].invalid) {
+                <span class="error-msg">{{ getErrorMessage('address') }}</span>
+              }
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="city">
+                  Ciudad
+                  <span class="required">*</span>
+                </label>
+                <ion-input
+                  id="city"
+                  type="text"
+                  formControlName="city"
+                  placeholder="Ej: Bogotá"
+                  [class.invalid]="formControls['city'].touched && formControls['city'].invalid"
+                ></ion-input>
+                @if (formControls['city'].touched && formControls['city'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('city') }}</span>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="department">
+                  Departamento
+                  <span class="required">*</span>
+                </label>
+                <ion-select
+                  id="department"
+                  formControlName="department"
+                  placeholder="Selecciona un departamento"
+                  [class.invalid]="formControls['department'].touched && formControls['department'].invalid"
+                >
+                  @for (dept of departments; track dept) {
+                    <ion-select-option [value]="dept">{{ dept }}</ion-select-option>
+                  }
+                </ion-select>
+                @if (formControls['department'].touched && formControls['department'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('department') }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="latitude">
+                  Latitud
+                  <span class="field-hint">(Opcional)</span>
+                </label>
+                <ion-input
+                  id="latitude"
+                  type="number"
+                  step="0.0001"
+                  formControlName="latitude"
+                  placeholder="Ej: 4.7110"
+                ></ion-input>
+              </div>
+
+              <div class="form-field">
+                <label for="longitude">
+                  Longitud
+                  <span class="field-hint">(Opcional)</span>
+                </label>
+                <ion-input
+                  id="longitude"
+                  type="number"
+                  step="0.0001"
+                  formControlName="longitude"
+                  placeholder="Ej: -74.0721"
+                ></ion-input>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contacto -->
+        <section class="form-section">
+          <div class="section-head">
+            <h2>Información de Contacto</h2>
+            <p>Cómo pueden comunicarse contigo</p>
+          </div>
+
+          <div class="form-card glass-panel">
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="phone">
+                  Teléfono
+                  <span class="field-hint">(Opcional)</span>
+                </label>
+                <ion-input
+                  id="phone"
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="Ej: +57 300 123 4567"
+                  [class.invalid]="formControls['phone'].touched && formControls['phone'].invalid"
+                ></ion-input>
+                @if (formControls['phone'].touched && formControls['phone'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('phone') }}</span>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="email">
+                  Email
+                  <span class="field-hint">(Opcional)</span>
+                </label>
+                <ion-input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  placeholder="contacto@example.com"
+                  [class.invalid]="formControls['email'].touched && formControls['email'].invalid"
+                ></ion-input>
+                @if (formControls['email'].touched && formControls['email'].invalid) {
+                  <span class="error-msg">{{ getErrorMessage('email') }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Estado (solo en edición) -->
+        @if (isEditMode) {
+          <section class="form-section">
+            <div class="section-head">
+              <h2>Estado</h2>
+              <p>Publicación del negocio</p>
+            </div>
+
+            <div class="form-card glass-panel">
+              <div class="form-field checkbox-field">
+                <ion-checkbox id="isActive" formControlName="isActive"></ion-checkbox>
+                <label for="isActive">
+                  Negocio Activo
+                  <span class="field-hint">El negocio está disponible para recibir reservas</span>
+                </label>
+              </div>
+            </div>
+          </section>
+        }
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <ion-button
+            type="button"
+            fill="outline"
+            expand="block"
+            (click)="onCancel()"
+            [disabled]="saving"
+          >
+            Cancelar
+          </ion-button>
+          @if (isEditMode) {
+            <ion-button
+              type="button"
+              fill="outline"
+              color="danger"
+              expand="block"
+              (click)="onDelete()"
+              [disabled]="saving"
+            >
+              <ion-icon name="trash" slot="start"></ion-icon>
+              Eliminar
+            </ion-button>
+          }
+          <ion-button
+            type="submit"
+            expand="block"
+            [disabled]="businessForm.invalid || saving"
+          >
+            <ion-icon name="save" slot="start"></ion-icon>
+            {{ saving ? 'Guardando...' : (isEditMode ? 'Guardar Cambios' : 'Crear Negocio') }}
+          </ion-button>
+        </div>
+      </form>
+    }
+  </div>
+</ion-content>
