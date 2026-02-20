@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TurnoYa.Application.DTOs.Appointment;
 using TurnoYa.Application.Interfaces;
 using TurnoYa.Core.Entities;
@@ -41,8 +43,27 @@ namespace TurnoYaAPI.Controllers
         {
             var userId = GetUserId();
             if (userId == null) return Unauthorized();
-            var result = await _appointmentService.CreateAsync(dto, userId.Value);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+
+            try
+            {
+                var result = await _appointmentService.CreateAsync(dto, userId.Value);
+                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (DbUpdateException dbEx) when (dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+            {
+                return BadRequest(new
+                {
+                    message = "No se pudo crear la cita por una restricción de datos. Verifica servicio, profesional y estado de la cita."
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
         }
 
         /// <summary>
