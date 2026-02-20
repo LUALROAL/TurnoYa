@@ -352,3 +352,16 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Agregar distinctUntilChanged en filtros para evitar consultas repetidas con el mismo valor.
 - Definir umbral minimo de busqueda (ej. 2 caracteres) antes de consultar backend.
 - Mostrar estado de sin conexion y opcion de reintento en listado de negocios.
+- **Integrar mapas (Google Maps o Mapbox)** en el formulario de negocio para:
+  - Permitir al propietario seleccionar ubicación del negocio interactivamente
+  - Visualizar ubicación en el mapa durante la creación/edición
+  - Auto-completar latitud y longitud desde el marcador del mapa
+  - Mostrar mapa en la página de detalle de negocio
+- **Sistema dinámico de categorías** para el formulario de negocio:
+  - Agregar opción "Otra categoría (especificar)" en el select de categorías
+  - Cuando el usuario selecciona esta opción, mostrar campo texto libre para escribir su categoría personalizada
+  - Enviar categoría personalizada al backend (POST /api/business/categories o similar)
+  - Guardar nuevas categorías en el backend para que otros usuarios pueda verlas
+  - Actualizar dropdown de categorías dinámicamente sin recargar la página
+  - Mismo flujo en listado/búsqueda de negocios (filtro dinámico de categorías)
+
