@@ -1,0 +1,88 @@
+<ion-content class="booking-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="booking-wrap">
+    <header class="booking-header card glass-panel">
+      <ion-button fill="clear" class="back-btn" (click)="onCancel()" aria-label="Volver">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+
+      <div>
+        <p class="header-overline">Agendar cita</p>
+        <h1>{{ business?.name || 'Nuevo turno' }}</h1>
+      </div>
+    </header>
+
+    @if (loading) {
+      <section class="booking-card card skeleton"></section>
+    } @else {
+      <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="booking-form">
+        <section class="booking-card card glass-panel">
+          <h2>Detalle del turno</h2>
+
+          <div class="form-field">
+            <label for="serviceId">Servicio *</label>
+            <ion-select
+              id="serviceId"
+              formControlName="serviceId"
+              placeholder="Selecciona un servicio"
+              [class.invalid]="formControls['serviceId'].touched && formControls['serviceId'].invalid"
+            >
+              @for (service of services; track service.id) {
+                <ion-select-option [value]="service.id">
+                  {{ service.name }} · {{ service.duration }} min · {{ service.price | currency: 'COP':'symbol':'1.0-0' }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </div>
+
+          <div class="form-field">
+            <label for="employeeId">Profesional (opcional)</label>
+            <ion-select id="employeeId" formControlName="employeeId" placeholder="Sin preferencia">
+              <ion-select-option value="">Sin preferencia</ion-select-option>
+              @for (employee of employees; track employee.id) {
+                <ion-select-option [value]="employee.id">{{ employee.fullName }}</ion-select-option>
+              }
+            </ion-select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="scheduledDate">Fecha *</label>
+              <ion-input id="scheduledDate" type="date" formControlName="scheduledDate"></ion-input>
+            </div>
+
+            <div class="form-field">
+              <label for="scheduledTime">Hora *</label>
+              <ion-input id="scheduledTime" type="time" formControlName="scheduledTime"></ion-input>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="notes">Notas (opcional)</label>
+            <ion-textarea
+              id="notes"
+              formControlName="notes"
+              rows="4"
+              placeholder="Ej: Prefiero corte clásico y barba"
+            ></ion-textarea>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <ion-button type="button" fill="outline" expand="block" (click)="onCancel()" [disabled]="saving">
+            Cancelar
+          </ion-button>
+
+          <ion-button type="submit" expand="block" [disabled]="appointmentForm.invalid || saving">
+            <ion-icon slot="start" name="save"></ion-icon>
+            {{ saving ? 'Agendando...' : 'Agendar cita' }}
+          </ion-button>
+        </div>
+      </form>
+    }
+  </div>
+</ion-content>

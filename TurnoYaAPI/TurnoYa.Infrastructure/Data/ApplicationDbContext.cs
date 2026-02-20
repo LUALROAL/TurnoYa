@@ -56,6 +56,9 @@ public class ApplicationDbContext : DbContext
             e.HasOne(a => a.Business).WithMany(b => b.Appointments).HasForeignKey(a => a.BusinessId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(a => a.Service).WithMany(s => s.Appointments).HasForeignKey(a => a.ServiceId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(a => a.Employee).WithMany(e => e.Appointments).HasForeignKey(a => a.EmployeeId).OnDelete(DeleteBehavior.SetNull);
+            e.Property(a => a.Status).HasConversion<string>();
+            e.Property(a => a.PaymentMethod).HasConversion<string>();
+            e.Property(a => a.PaymentStatus).HasConversion<string>();
             e.Property(p => p.TotalAmount).HasPrecision(10,2);
             e.Property(p => p.DepositAmount).HasPrecision(10,2);
         });

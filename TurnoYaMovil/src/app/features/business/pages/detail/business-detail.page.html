@@ -57,6 +57,10 @@
             <span>{{ business.website }}</span>
           </div>
         </div>
+
+        <ion-button class="book-btn" [routerLink]="['/businesses', business.id, 'book']">
+          Agendar cita
+        </ion-button>
       </section>
 
       <section class="section card">

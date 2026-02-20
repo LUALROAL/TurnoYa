@@ -22,6 +22,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Configuracion de negocio
   - [x] CRUD servicios de negocio
   - [x] CRUD empleados de negocio
+  - [x] Crear flujo agendar cita
 
 ## Base tecnica
 
@@ -54,6 +55,9 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - POST /api/employees/business/{businessId}
 - PUT /api/employees/{id}
 - DELETE /api/employees/{id}
+- POST /api/appointments
+- GET /api/appointments/my
+- GET /api/appointments/{id}
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -72,6 +76,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /owner/businesses/:businessId/employees
   - /owner/businesses/:businessId/employees/create
   - /owner/businesses/:businessId/employees/:employeeId/edit
+  - /businesses/:id/book
 
 ## Home marketplace (base)
 - Archivos:
@@ -228,6 +233,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Modulo owner business implementado con listado, creación, edición y configuración de negocios (UI en español).
 - Modulo owner services implementado con listado, creación, edición, activación/desactivación y eliminación por negocio (UI en español).
 - Modulo owner employees implementado con listado, creación, edición, activación/desactivación y eliminación por negocio (UI en español).
+- Flujo de agendar cita implementado desde detalle de negocio con selección de servicio, profesional, fecha y hora.
 
 ## Modulo owner business (Mis Negocios)
 - Archivos:
@@ -461,6 +467,33 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Activación/desactivación rápida desde tarjeta
   - Eliminación con confirmación nativa
   - Navegación de retorno a /owner/businesses/:businessId/employees tras guardar/cancelar
+
+## Crear flujo agendar cita
+- Archivos:
+  - src/app/features/appointments/models/appointment.model.ts
+  - src/app/features/appointments/models/index.ts
+  - src/app/features/appointments/services/appointments.service.ts
+  - src/app/features/appointments/pages/appointment-create/appointment-create.page.ts
+  - src/app/features/appointments/pages/appointment-create/appointment-create.page.html
+  - src/app/features/appointments/pages/appointment-create/appointment-create.page.scss
+  - src/app/features/business/pages/detail/business-detail.page.html
+- Ruta:
+  - /businesses/:id/book (standalone + canActivate)
+- Integracion backend:
+  - POST /api/appointments para crear cita
+  - GET /api/business/{id} para precargar servicios y profesionales del negocio
+- Flujo implementado:
+  - Desde detalle de negocio, botón "Agendar cita"
+  - Selección de servicio (obligatorio)
+  - Selección de profesional (opcional, "Sin preferencia")
+  - Selección de fecha y hora (obligatorio)
+  - Campo de notas opcional (máx 500)
+  - Validación de fecha/hora futura antes de enviar
+  - Redirección al detalle de negocio al crear exitosamente
+- Estados UX:
+  - Cargando: skeleton del formulario
+  - Error: toast si no se puede cargar negocio o crear cita
+  - Guardando: botón deshabilitado con estado "Agendando..."
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.
