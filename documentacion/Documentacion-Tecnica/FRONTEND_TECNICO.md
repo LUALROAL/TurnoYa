@@ -24,6 +24,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] CRUD empleados de negocio
   - [x] Crear flujo agendar cita
   - [x] Mis citas (cliente)
+  - [x] Agenda de negocio (owner)
 
 ## Base tecnica
 
@@ -58,6 +59,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - DELETE /api/employees/{id}
 - POST /api/appointments
 - GET /api/appointments/my
+- GET /api/appointments/business/{businessId}
 - GET /api/appointments/{id}
 
 ## Guard de rutas protegidas
@@ -79,6 +81,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /owner/businesses/:businessId/employees/:employeeId/edit
   - /businesses/:id/book
   - /appointments
+  - /owner/businesses/:businessId/appointments
 
 ## Home marketplace (base)
 - Archivos:
@@ -517,6 +520,29 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Estado: "Pendiente", "Confirmada", "Completada", "Cancelada", "No asistió"
 - Caracteristicas:
   - Acceso desde Home en el acceso rápido "Mis citas"
+  - Refresh al volver a la vista (ionViewWillEnter)
+
+## Agenda de negocio (owner)
+- Archivos:
+  - src/app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page.ts
+  - src/app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page.html
+  - src/app/features/owner-appointments/pages/appointments-list/owner-appointments-list.page.scss
+  - src/app/features/appointments/services/appointments.service.ts
+  - src/app/features/owner-business/pages/business-list/business-list.page.html
+- Ruta:
+  - /owner/businesses/:businessId/appointments (standalone + canActivate)
+- Integracion backend:
+  - GET /api/appointments/business/{businessId} para cargar la agenda del negocio
+- Estados UX:
+  - Cargando: skeleton cards
+  - Vacio: mensaje con CTA "Ver servicios"
+  - Exito: tarjetas con referencia, fecha/hora, estado y total
+  - Error: toast si no se puede cargar la agenda
+- UI en español:
+  - Titulo: "Agenda del negocio"
+  - Estado: "Pendiente", "Confirmada", "Completada", "Cancelada", "No asistió"
+- Caracteristicas:
+  - Acceso desde "Mis Negocios" en el botón "Agenda"
   - Refresh al volver a la vista (ionViewWillEnter)
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)

@@ -16,4 +16,13 @@ export class AppointmentsService {
   getMy(): Observable<AppointmentItem[]> {
     return this.api.get<AppointmentItem[]>('/api/appointments/my');
   }
+
+  getByBusiness(
+    businessId: string,
+    params?: { from?: string; to?: string; status?: string }
+  ): Observable<AppointmentItem[]> {
+    return this.api.get<AppointmentItem[]>(`/api/appointments/business/${businessId}`, {
+      params,
+    });
+  }
 }

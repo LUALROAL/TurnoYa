@@ -141,6 +141,14 @@
               <button
                 type="button"
                 class="action-btn secondary"
+                [routerLink]="['/owner/businesses', business.id, 'appointments']"
+              >
+                <ion-icon name="calendar-outline"></ion-icon>
+                Agenda
+              </button>
+              <button
+                type="button"
+                class="action-btn secondary"
                 [routerLink]="['/owner/businesses', business.id, 'settings']"
               >
                 <ion-icon name="settings-outline"></ion-icon>
