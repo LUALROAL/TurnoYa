@@ -1,0 +1,148 @@
+<ion-content class="owner-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="owner-wrap">
+    <!-- Header -->
+    <header class="owner-header card glass-panel">
+      <div>
+        <p class="header-overline">Panel de Control</p>
+        <h1>Mis Negocios</h1>
+      </div>
+      <ion-button fill="clear" class="back-btn" routerLink="/home" aria-label="Volver a inicio">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </header>
+
+    <!-- Section header -->
+    <section class="section-head">
+      <h2>Gestiona tus Negocios</h2>
+      <p>Crea y administra los negocios que ofreces en TurnoYa</p>
+    </section>
+
+    <!-- Loading skeleton -->
+    @if (loading) {
+      <section class="cards-grid">
+        @for (i of [1, 2, 3]; track i) {
+          <article class="owner-card card skeleton"></article>
+        }
+      </section>
+    }
+
+    <!-- Empty state -->
+    @if (!loading && isEmpty) {
+      <article class="empty-state card glass-panel">
+        <ion-icon name="business-outline"></ion-icon>
+        <h3>Aún no tienes negocios</h3>
+        <p>
+          Crea tu primer negocio para comenzar a ofrecer servicios y gestionar
+          citas con tus clientes.
+        </p>
+        <ion-button
+          [routerLink]="['/owner/businesses/create']"
+          class="button-primary"
+        >
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Crear mi primer negocio
+        </ion-button>
+      </article>
+    }
+
+    <!-- Business list -->
+    @if (!loading && !isEmpty) {
+      <section class="cards-grid">
+        @for (business of businesses; track trackByBusinessId($index, business)) {
+          <article class="owner-card card">
+            <!-- Header with status -->
+            <div class="card-top">
+              <div>
+                <h3>{{ business.name }}</h3>
+                <p class="card-meta">
+                  <ion-icon name="business-outline"></ion-icon>
+                  {{ business.category }}
+                </p>
+              </div>
+              <span
+                class="status-badge"
+                [class.active]="business.isActive"
+                [class.inactive]="!business.isActive"
+              >
+                {{ business.isActive ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            <!-- Rating if exists -->
+            @if (business.averageRating > 0) {
+              <div class="rating-row">
+                <span class="rating-pill">
+                  <ion-icon name="star"></ion-icon>
+                  {{ business.averageRating.toFixed(1) }}
+                </span>
+                <span class="reviews-count">{{ business.totalReviews }} reseñas</span>
+              </div>
+            }
+
+            <!-- Info rows -->
+            <div class="info-rows">
+              <div class="info-item">
+                <ion-icon name="location-outline"></ion-icon>
+                <span>{{ business.city }}, {{ business.department }}</span>
+              </div>
+              @if (business.phone) {
+                <div class="info-item">
+                  <ion-icon name="call-outline"></ion-icon>
+                  <span>{{ business.phone }}</span>
+                </div>
+              }
+              @if (business.email) {
+                <div class="info-item">
+                  <ion-icon name="mail-outline"></ion-icon>
+                  <span>{{ business.email }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Actions -->
+            <div class="card-actions">
+              <button
+                type="button"
+                class="action-btn secondary"
+                [routerLink]="['/businesses', business.id]"
+              >
+                <ion-icon name="eye-outline"></ion-icon>
+                Ver
+              </button>
+              <button
+                type="button"
+                class="action-btn secondary"
+                [routerLink]="['/owner/businesses', business.id, 'edit']"
+              >
+                <ion-icon name="create-outline"></ion-icon>
+                Editar
+              </button>
+              <button
+                type="button"
+                class="action-btn"
+                [class.danger]="business.isActive"
+                (click)="toggleBusinessStatus(business, $event)"
+              >
+                <ion-icon name="toggle-outline"></ion-icon>
+                {{ business.isActive ? 'Desactivar' : 'Activar' }}
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+    }
+    <!-- Floating action button to create -->
+    @if (!loading && !isEmpty) {
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button [routerLink]="['/owner/businesses/create']">
+          <ion-icon name="add-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    }
+  </div>
+</ion-content>

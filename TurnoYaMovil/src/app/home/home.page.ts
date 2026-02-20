@@ -34,6 +34,12 @@ export class HomePage implements OnInit, OnDestroy {
       route: '/businesses',
     },
     {
+      title: 'Mis Negocios',
+      subtitle: 'Gestionar mis locales',
+      icon: 'business-outline',
+      route: '/owner/businesses',
+    },
+    {
       title: 'Mis citas',
       subtitle: 'Ver agenda',
       icon: 'calendar-clear-outline',

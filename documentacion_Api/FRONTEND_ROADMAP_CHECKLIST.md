@@ -25,7 +25,7 @@ Use this checklist to mark each card as completed.
 - [x] Crear pagina listado de negocios (Priority: High, Points: 5, Depends: F-004) X
 - [x] Implementar busqueda y filtros (Priority: Medium, Points: 3, Depends: F-020) X
 - [x] Crear detalle de negocio (Priority: High, Points: 5, Depends: F-020) X
-- [ ] Crear modulo owner business (Priority: High, Points: 8, Depends: F-014, F-004)
+- [x] Crear modulo owner business (Priority: High, Points: 8, Depends: F-014, F-004) X
 - [ ] Configuracion de negocio (Priority: Medium, Points: 5, Depends: F-023)
 
 ## EPIC 4 - Servicios y empleados

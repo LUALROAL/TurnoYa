@@ -18,6 +18,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Crear pagina listado de negocios
   - [x] Implementar busqueda y filtros de negocios
   - [x] Crear detalle de negocio
+  - [x] Crear modulo owner business
 
 ## Base tecnica
 
@@ -36,6 +37,10 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - GET /api/business/search
 - GET /api/business/categories
 - GET /api/business/{id}
+- GET /api/business/owner/{ownerId}
+- POST /api/business
+- PUT /api/business/{id}
+- DELETE /api/business/{id}
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -46,6 +51,8 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Rutas protegidas actuales:
   - /home
   - /businesses
+  - /businesses/:id
+  - /owner/businesses
 
 ## Home marketplace (base)
 - Archivos:
@@ -54,9 +61,10 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - src/app/home/home.page.scss
 - Implementado:
   - Header de bienvenida y buscador visual
-  - Accesos rapidos (Negocios, Mis citas, Perfil)
+  - Accesos rapidos (Negocios, Mis Negocios, Mis citas, Perfil)
   - Seccion recomendados con estado de carga y estado vacio
   - Navegacion a listado de negocios desde "Negocios" y "Ver todo"
+  - Navegacion a listado de mis negocios desde "Mis Negocios"
 
 ## Listado de negocios
 - Archivos:
@@ -198,6 +206,37 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Listado de negocios conectado al backend y enlazado desde Home.
 - Busqueda y filtros del listado conectados a endpoints de backend.
 - Detalle de negocio conectado al backend y enlazado desde listado.
+- Modulo owner business implementado con listado de mis negocios (UI en español).
+
+## Modulo owner business (Mis Negocios)
+- Archivos:
+  - src/app/features/owner-business/models/owner-business.model.ts
+  - src/app/features/owner-business/services/owner-business.service.ts
+  - src/app/features/owner-business/pages/business-list/business-list.page.ts
+  - src/app/features/owner-business/pages/business-list/business-list.page.html
+  - src/app/features/owner-business/pages/business-list/business-list.page.scss
+- Ruta:
+  - /owner/businesses (standalone + canActivate)
+- Integracion backend:
+  - GET /api/business/owner/{ownerId} para obtener negocios del propietario autenticado
+  - PUT /api/business/{id} para actualizar (ej. activar/desactivar negocio)
+  - Preparado para: POST /api/business (crear), DELETE /api/business/{id} (eliminar)
+- Estados UX:
+  - Cargando: skeleton cards (3 placeholders)
+  - Vacio: mensaje "Aun no tienes negocios" con boton "Crear mi primer negocio"
+  - Exito: tarjetas con nombre, categoria, ciudad, rating, contacto y acciones
+  - Acciones en cada card: Ver, Editar, Activar/Desactivar
+- UI en español:
+  - Titulo: "Mis Negocios"
+  - Subtitulo: "Gestiona tus Negocios"
+  - Botones: "Ver", "Editar", "Activar", "Desactivar", "Crear mi primer negocio"
+  - Estados: "Activo", "Inactivo"
+- Caracteristicas:
+  - Floating Action Button (FAB) para crear nuevo negocio cuando hay items
+  - Toggle de estado activo/inactivo con feedback visual
+  - Navegacion a detalle publico desde boton "Ver"
+  - Navegacion a edicion (ruta futura: /owner/businesses/:id/edit)
+  - Responsive grid: 1 columna mobile, multiples en desktop
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.
