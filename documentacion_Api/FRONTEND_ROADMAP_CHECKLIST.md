@@ -23,7 +23,7 @@ Use this checklist to mark each card as completed.
 - [x] Home: accesos rapidos a Negocios, Mis citas y Perfil (Priority: Medium, Points: 2, Depends: F-020) X
 - [x] Home: estado vacio y carga inicial de datos (Priority: Medium, Points: 2, Depends: F-020) X
 - [x] Crear pagina listado de negocios (Priority: High, Points: 5, Depends: F-004) X
-- [ ] Implementar busqueda y filtros (Priority: Medium, Points: 3, Depends: F-020)
+- [x] Implementar busqueda y filtros (Priority: Medium, Points: 3, Depends: F-020) X
 - [ ] Crear detalle de negocio (Priority: High, Points: 5, Depends: F-020)
 - [ ] Crear modulo owner business (Priority: High, Points: 8, Depends: F-014, F-004)
 - [ ] Configuracion de negocio (Priority: Medium, Points: 5, Depends: F-023)

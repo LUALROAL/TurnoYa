@@ -97,6 +97,74 @@
   gap: var(--space-3);
 }
 
+.filters {
+  padding: var(--space-4);
+  border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
+  display: grid;
+  gap: var(--space-3);
+}
+
+.filter-input-shell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-input);
+  padding: 0 12px;
+  height: 46px;
+}
+
+.filter-input-shell ion-icon {
+  color: var(--color-text-muted);
+  font-size: 18px;
+}
+
+.filter-input-shell input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.filter-input-shell input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.categories-row {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.category-chip {
+  border: 1px solid var(--color-outline);
+  background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
+  color: var(--color-text-muted);
+  border-radius: 999px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.category-chip.active {
+  border-color: color-mix(in srgb, var(--color-accent-1) 35%, transparent);
+  background: color-mix(in srgb, var(--color-accent-1) 20%, transparent);
+  color: var(--color-accent-1);
+}
+
+.filters-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .business-card {
   padding: var(--space-4);
   border-color: color-mix(in srgb, var(--color-accent-1) 10%, var(--color-outline));

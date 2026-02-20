@@ -16,6 +16,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] Guard de rutas protegidas
   - [x] Configurar Home y navegacion inicial
   - [x] Crear pagina listado de negocios
+  - [x] Implementar busqueda y filtros de negocios
 
 ## Base tecnica
 
@@ -31,6 +32,8 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - POST /api/auth/login
 - POST /api/auth/refresh
 - GET /api/business
+- GET /api/business/search
+- GET /api/business/categories
 
 ## Guard de rutas protegidas
 - Archivo: src/app/core/guards/auth.guard.ts
@@ -64,10 +67,25 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /businesses (standalone + canActivate)
 - Integracion backend:
   - GET /api/business para obtener BusinessListDto[]
+  - GET /api/business/search con query, city y category
+  - GET /api/business/categories para chips de filtro
 - Estados UX:
   - Cargando: skeleton cards
   - Vacio: mensaje de no disponibilidad
   - Exito: tarjetas con nombre, categoria, ciudad, rating, direccion y reseñas
+
+## Busqueda y filtros de negocios
+- Archivo principal: src/app/features/business/pages/list/business-list.page.ts
+- Filtros implementados:
+  - Busqueda por texto (query)
+  - Filtro por ciudad
+  - Filtro por categoria (chips dinamicos)
+- Acciones UX:
+  - Boton Buscar para aplicar filtros al endpoint search
+  - Boton Limpiar para resetear filtros y recargar listado general
+- Servicio actualizado:
+  - BusinessService.getCategories()
+  - BusinessService.search({ query, city, category })
 
 ## Estructura de modelos (profesional)
 - Feature auth:
@@ -158,3 +176,4 @@ Este documento se completa punto por punto segun el checklist de frontend.
 - Guard de rutas aplicado en paginas privadas.
 - Home base implementado siguiendo estilo Tech Pro y mockups.
 - Listado de negocios conectado al backend y enlazado desde Home.
+- Busqueda y filtros del listado conectados a endpoints de backend.

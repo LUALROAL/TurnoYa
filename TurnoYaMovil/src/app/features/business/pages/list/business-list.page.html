@@ -20,6 +20,45 @@
       <p>Encuentra negocios por categoria y disponibilidad.</p>
     </section>
 
+    <section class="filters card glass-panel">
+      <div class="filter-input-shell">
+        <ion-icon name="search-outline"></ion-icon>
+        <input
+          type="text"
+          placeholder="Buscar por nombre o categoria"
+          [value]="searchQuery"
+          (input)="onSearchQueryChange($event)"
+        />
+      </div>
+
+      <div class="filter-input-shell">
+        <ion-icon name="location-outline"></ion-icon>
+        <input
+          type="text"
+          placeholder="Filtrar por ciudad"
+          [value]="cityFilter"
+          (input)="onCityFilterChange($event)"
+        />
+      </div>
+
+      <div class="categories-row" *ngIf="categories.length > 0">
+        <button
+          type="button"
+          class="category-chip"
+          *ngFor="let category of categories"
+          (click)="selectCategory(category)"
+          [class.active]="isCategoryActive(category)"
+        >
+          {{ category }}
+        </button>
+      </div>
+
+      <div class="filters-actions">
+        <button type="button" class="link-btn" (click)="clearFilters()">Limpiar</button>
+        <ion-button size="small" class="button-primary" (click)="applyFilters()">Buscar</ion-button>
+      </div>
+    </section>
+
     <section *ngIf="loading" class="cards-grid">
       <article class="business-card card skeleton" *ngFor="let item of [1, 2, 3]"></article>
     </section>
