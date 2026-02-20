@@ -12,9 +12,9 @@ Use this checklist to mark each card as completed.
 
 ## EPIC 2 - Autenticacion
 - [x] Crear modulo/paginas de Auth (Priority: High, Points: 5, Depends: F-002, F-004) X
-- [ ] Integrar endpoint register (Priority: High, Points: 2, Depends: F-010)
-- [ ] Integrar endpoint login (Priority: High, Points: 2, Depends: F-010)
-- [ ] Implementar refresh automatico (Priority: High, Points: 3, Depends: F-012, F-005, F-006)
+- [x] Integrar endpoint register (Priority: High, Points: 2, Depends: F-010) X
+- [x] Integrar endpoint login (Priority: High, Points: 2, Depends: F-010) X
+- [x] Implementar refresh automatico (Priority: High, Points: 3, Depends: F-012, F-005, F-006) X
 - [ ] Guard de rutas protegidas (Priority: High, Points: 2, Depends: F-012)
 
 ## EPIC 3 - Catalogo y negocios

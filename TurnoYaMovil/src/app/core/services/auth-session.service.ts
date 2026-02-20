@@ -1,10 +1,5 @@
 import { Injectable } from "@angular/core";
-
-export interface AuthSession {
-  accessToken: string;
-  refreshToken?: string;
-  expiresAt?: string;
-}
+import { AuthSession } from "../models/auth-session.model";
 
 @Injectable({
   providedIn: "root",
