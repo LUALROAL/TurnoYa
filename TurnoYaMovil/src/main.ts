@@ -29,6 +29,11 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'appointments',
+    loadComponent: () => import('./app/features/appointments/pages/appointments-list/appointments-list.page').then(m => m.AppointmentsListPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'businesses',
     loadComponent: () => import('./app/features/business/pages/list/business-list.page').then(m => m.BusinessListPage),
     canActivate: [authGuard],

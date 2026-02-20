@@ -34,7 +34,7 @@ Use this checklist to mark each card as completed.
 
 ## EPIC 5 - Citas
 - [x] Crear flujo agendar cita (Priority: High, Points: 8, Depends: F-022, F-030, F-031) X
-- [ ] Mis citas (cliente) (Priority: High, Points: 3, Depends: F-040)
+- [x] Mis citas (cliente) (Priority: High, Points: 3, Depends: F-040) X
 - [ ] Agenda de negocio (owner) (Priority: High, Points: 5, Depends: F-023)
 - [ ] Cambios de estado de cita (Priority: High, Points: 3, Depends: F-042)
 

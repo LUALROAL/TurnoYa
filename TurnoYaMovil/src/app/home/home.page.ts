@@ -43,7 +43,7 @@ export class HomePage implements OnInit, OnDestroy {
       title: 'Mis citas',
       subtitle: 'Ver agenda',
       icon: 'calendar-clear-outline',
-      route: '/home',
+      route: '/appointments',
     },
     {
       title: 'Perfil',

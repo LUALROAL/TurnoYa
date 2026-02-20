@@ -1,0 +1,74 @@
+<ion-content class="appointments-bg" [fullscreen]="true">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb orb-top"></div>
+    <div class="bg-orb orb-bottom"></div>
+  </div>
+
+  <div class="appointments-wrap">
+    <header class="appointments-header card glass-panel">
+      <ion-button fill="clear" class="back-btn" routerLink="/home" aria-label="Volver">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+
+      <div>
+        <p class="header-overline">Cliente</p>
+        <h1>Mis citas</h1>
+      </div>
+    </header>
+
+    @if (loading) {
+      <section class="cards-grid">
+        @for (i of [1, 2, 3]; track i) {
+          <article class="appointment-card card skeleton"></article>
+        }
+      </section>
+    }
+
+    @if (!loading && isEmpty) {
+      <article class="empty-state card glass-panel">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <h3>Aún no tienes citas</h3>
+        <p>Explora negocios y agenda tu primera cita.</p>
+        <ion-button routerLink="/businesses" class="button-primary">
+          Buscar negocios
+        </ion-button>
+      </article>
+    }
+
+    @if (!loading && !isEmpty) {
+      <section class="cards-grid">
+        @for (appointment of appointments; track trackByAppointmentId($index, appointment)) {
+          <article class="appointment-card card">
+            <div class="card-top">
+              <div>
+                <h3>Cita {{ appointment.referenceNumber }}</h3>
+                <p class="card-meta">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ appointment.scheduledDate | date: 'medium' }}
+                </p>
+              </div>
+              <span [class]="getStatusClass(appointment.status)">
+                {{ getStatusLabel(appointment.status) }}
+              </span>
+            </div>
+
+            <div class="info-rows">
+              <div class="info-item">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>Duración estimada: {{ appointment.endDate | date: 'shortTime' }}</span>
+              </div>
+              <div class="info-item">
+                <ion-icon name="cash-outline"></ion-icon>
+                <span>Total: {{ appointment.totalAmount | currency: 'COP':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+
+            @if (appointment.notes) {
+              <p class="notes">Notas: {{ appointment.notes }}</p>
+            }
+          </article>
+        }
+      </section>
+    }
+  </div>
+</ion-content>

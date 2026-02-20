@@ -23,6 +23,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - [x] CRUD servicios de negocio
   - [x] CRUD empleados de negocio
   - [x] Crear flujo agendar cita
+  - [x] Mis citas (cliente)
 
 ## Base tecnica
 
@@ -77,6 +78,7 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - /owner/businesses/:businessId/employees/create
   - /owner/businesses/:businessId/employees/:employeeId/edit
   - /businesses/:id/book
+  - /appointments
 
 ## Home marketplace (base)
 - Archivos:
@@ -494,6 +496,28 @@ Este documento se completa punto por punto segun el checklist de frontend.
   - Cargando: skeleton del formulario
   - Error: toast si no se puede cargar negocio o crear cita
   - Guardando: botón deshabilitado con estado "Agendando..."
+
+## Mis citas (cliente)
+- Archivos:
+  - src/app/features/appointments/pages/appointments-list/appointments-list.page.ts
+  - src/app/features/appointments/pages/appointments-list/appointments-list.page.html
+  - src/app/features/appointments/pages/appointments-list/appointments-list.page.scss
+  - src/app/home/home.page.ts
+- Ruta:
+  - /appointments (standalone + canActivate)
+- Integracion backend:
+  - GET /api/appointments/my para cargar citas del usuario
+- Estados UX:
+  - Cargando: skeleton cards
+  - Vacio: mensaje con CTA "Buscar negocios"
+  - Exito: tarjetas con referencia, fecha/hora, estado y total
+  - Error: toast si no se pueden cargar las citas
+- UI en español:
+  - Titulo: "Mis citas"
+  - Estado: "Pendiente", "Confirmada", "Completada", "Cancelada", "No asistió"
+- Caracteristicas:
+  - Acceso desde Home en el acceso rápido "Mis citas"
+  - Refresh al volver a la vista (ionViewWillEnter)
 
 ## Deuda tecnica y mejoras planificadas (post-MVP)
 - Optimizar filtros con RxJS switchMap para cancelar requests anteriores en tipeo rapido.
