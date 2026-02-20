@@ -41,6 +41,10 @@ Use this checklist to mark each card as completed.
 ## EPIC 6 - Pagos y administracion
 - [ ] Integrar crear intento de pago (Priority: Medium, Points: 3, Depends: F-040)
 - [ ] Integrar estado de pago (Priority: Medium, Points: 2, Depends: F-050)
+- [ ] Modulo perfil y cuenta (Priority: Medium, Points: 5, Depends: F-012)
+- [ ] Editar datos personales (Priority: Medium, Points: 3, Depends: F-012)
+- [ ] Cambiar contraseña (Priority: Medium, Points: 3, Depends: F-012)
+- [ ] Cerrar sesion (Priority: Medium, Points: 1, Depends: F-012)
 - [ ] Modulo admin usuarios (Priority: Low, Points: 5, Depends: F-014)
 
 ## EPIC 7 - Calidad y entrega
