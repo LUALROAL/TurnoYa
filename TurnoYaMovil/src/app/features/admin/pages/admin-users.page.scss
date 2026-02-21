@@ -1,0 +1,145 @@
+/* admin-users.page.scss */
+/* Estilos migrados desde el styles inline del componente */
+
+.filter-section {
+  background: var(--ion-background-color-step-50);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+ion-select {
+  flex: 1;
+}
+
+.user-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-status {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.user-details {
+  background: var(--ion-background-color-step-50);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--ion-background-color-step-100);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row.warning {
+  background: rgba(255, 165, 0, 0.1);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  min-width: 120px;
+}
+
+.detail-value {
+  text-align: right;
+  color: var(--ion-text-color-step-500);
+}
+
+.actions-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.actions-row ion-button {
+  flex: 1;
+  min-width: 120px;
+}
+
+.pagination-section {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-base {
+  font-size: 1rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
