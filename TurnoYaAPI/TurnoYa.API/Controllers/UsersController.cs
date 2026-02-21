@@ -43,10 +43,21 @@ public class UsersController : ControllerBase
     /// </summary>
     private string GetUserId()
     {
-        return User.FindFirstValue(ClaimTypes.NameIdentifier)
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? User.FindFirstValue("nameid")
-            ?? User.FindFirstValue("sub")
-            ?? throw new UnauthorizedAccessException("Usuario no autenticado");
+            ?? User.FindFirstValue("sub");
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            _logger.LogWarning("No se encontró el claim de userId en el token");
+            throw new UnauthorizedAccessException("Usuario no autenticado");
+        }
+        // Validar formato GUID
+        if (!Guid.TryParse(userId, out var guid))
+        {
+            _logger.LogError("El userId extraído del token no es un GUID válido: {UserId}", userId);
+            throw new InvalidOperationException($"El userId del token no es un GUID válido: {userId}");
+        }
+        return userId;
     }
 
     /// <summary>
@@ -111,6 +122,7 @@ public class UsersController : ControllerBase
         try
         {
             var userId = GetUserId();
+            _logger.LogInformation("Intentando actualizar perfil para userId: {UserId}", userId);
             var updatedProfile = await _userService.UpdateUserProfileAsync(userId, updateDto);
             return Ok(updatedProfile);
         }
@@ -125,7 +137,7 @@ public class UsersController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Error al actualizar perfil");
+            _logger.LogWarning(ex, "Error al actualizar perfil: {Message}", ex.Message);
             var problemDetails = CreateProblemDetails(
                 StatusCodes.Status404NotFound,
                 "Perfil no encontrado",
@@ -134,7 +146,7 @@ public class UsersController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            _logger.LogWarning(ex, "Datos inválidos al actualizar perfil");
+            _logger.LogWarning(ex, "Datos inválidos al actualizar perfil: {Message}", ex.Message);
             var problemDetails = CreateProblemDetails(
                 StatusCodes.Status400BadRequest,
                 "Datos inválidos",

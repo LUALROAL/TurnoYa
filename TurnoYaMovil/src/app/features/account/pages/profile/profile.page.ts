@@ -175,7 +175,15 @@ export class ProfilePage implements OnInit, OnDestroy {
     if (form.firstName !== this.profile()?.firstName) updateData.firstName = form.firstName;
     if (form.lastName !== this.profile()?.lastName) updateData.lastName = form.lastName;
     if (form.phoneNumber !== this.profile()?.phoneNumber) updateData.phoneNumber = form.phoneNumber;
-    if (form.gender !== this.profile()?.gender) updateData.gender = form.gender;
+    // Mapear género a valores válidos para la base de datos
+    if (form.gender !== this.profile()?.gender) {
+      let genderValue = form.gender;
+      // Si el valor es 'Masculino' o 'Femenino', mapear a 'M' o 'F'
+      if (genderValue === 'Masculino') genderValue = 'M';
+      else if (genderValue === 'Femenino') genderValue = 'F';
+      else if (genderValue === 'Otro') genderValue = 'Other';
+      updateData.gender = genderValue;
+    }
     if (form.dateOfBirth !== this.profile()?.dateOfBirth) updateData.dateOfBirth = form.dateOfBirth;
 
     if (Object.keys(updateData).length === 0) {

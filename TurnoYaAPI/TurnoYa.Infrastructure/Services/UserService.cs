@@ -102,12 +102,22 @@ public class UserService : IUserService
 
         try
         {
+            _logger.LogInformation("Valor de Gender antes de guardar 🔥🔥🔥🔥🔥🔥🔥🔥🔥😁😁😁😁: {Gender}", user.Gender);
+            Console.WriteLine($"[DEBUG] Valor de Gender antes de guardar 🔥🔥🔥🔥🔥🔥🔥🔥🔥😁😁😁😁 👀: {user.Gender}");
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            
             _logger.LogInformation("Perfil actualizado para usuario: {UserId}", userId);
-            
             return _mapper.Map<UserProfileDto>(user);
+        }
+        catch (DbUpdateException dbEx) when (dbEx.InnerException != null && dbEx.InnerException.Message.Contains("CK__Users__Gender"))
+        {
+            _logger.LogWarning(dbEx, "Valor de género inválido para usuario: {UserId}", userId);
+            throw new ArgumentException("El valor de género es inválido. Solo se permiten: M, F, Other.");
+        }
+        catch (ArgumentException argEx)
+        {
+            _logger.LogWarning(argEx, "Datos inválidos al actualizar perfil para usuario: {UserId}", userId);
+            throw;
         }
         catch (Exception ex)
         {
