@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TurnoYa.Application.DTOs.Auth;
 using TurnoYa.Application.Interfaces;
 
@@ -42,7 +43,9 @@ public class UsersController : ControllerBase
     /// </summary>
     private string GetUserId()
     {
-        return User.Claims.FirstOrDefault(c => c.Type == "sub" || c.Type == "nameid")?.Value 
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("nameid")
+            ?? User.FindFirstValue("sub")
             ?? throw new UnauthorizedAccessException("Usuario no autenticado");
     }
 

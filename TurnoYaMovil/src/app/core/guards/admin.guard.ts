@@ -21,10 +21,11 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const sessionService = inject(AuthSessionService);
   const router = inject(Router);
 
-  const token = sessionService.getAccessToken();
+  const hasValidSession = sessionService.hasValidSession();
 
-  // Si no hay token, redirigir a login
-  if (!token) {
+  // Si no hay sesión válida, redirigir a login
+  if (!hasValidSession) {
+    sessionService.clearSession();
     const returnUrl = state.url;
     router.navigate(['/auth/login'], {
       queryParams: { returnUrl },

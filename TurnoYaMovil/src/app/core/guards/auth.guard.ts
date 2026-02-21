@@ -20,9 +20,10 @@ export const authGuard: CanActivateFn = (route, state) => {
   const sessionService = inject(AuthSessionService);
   const router = inject(Router);
 
-  const token = sessionService.getAccessToken();
+  const hasValidSession = sessionService.hasValidSession();
 
-  if (!token) {
+  if (!hasValidSession) {
+    sessionService.clearSession();
     // Guardar la URL solicitada para redirigir después del login
     const returnUrl = state.url;
     router.navigate(['/auth/login'], {

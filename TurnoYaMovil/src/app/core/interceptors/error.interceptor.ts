@@ -32,6 +32,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       const message = resolveErrorMessage(error);
 
       if (status === 401 && !isPublicEndpoint(req.url)) {
+        if (!session.hasValidSession()) {
+          session.clearSession();
+          void router.navigateByUrl("/auth/login");
+          return throwError(() => error);
+        }
+
         return authService.refreshToken().pipe(
           switchMap(() => {
             const refreshedToken = session.getAccessToken();

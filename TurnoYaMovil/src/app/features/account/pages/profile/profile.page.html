@@ -1,0 +1,176 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!loading()">
+    <!-- Tab Navigation -->
+    <ion-segment [value]="activeTab" (ionChange)="onTabChange($event.detail.value)" class="mb-4">
+      <ion-segment-button value="profile">
+        <ion-label>Información Personal</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="security">
+        <ion-label>Seguridad</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Profile Tab -->
+    <div *ngIf="activeTab === 'profile'">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Información Personal</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <!-- Avatar -->
+          <div class="avatar-container">
+            <ion-avatar class="avatar-large">
+              <img [src]="profile()?.photoUrl || 'assets/default-avatar.png'" alt="Foto de perfil" />
+            </ion-avatar>
+          </div>
+
+          <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
+            <!-- Email (Read-only) -->
+            <ion-item>
+              <ion-label position="floating">Email</ion-label>
+              <ion-input [value]="profile()?.email" readonly></ion-input>
+            </ion-item>
+
+            <!-- First Name -->
+            <ion-item>
+              <ion-label position="floating">Nombre</ion-label>
+              <ion-input formControlName="firstName" type="text" placeholder="Tu nombre"></ion-input>
+            </ion-item>
+
+            <!-- Last Name -->
+            <ion-item>
+              <ion-label position="floating">Apellido</ion-label>
+              <ion-input formControlName="lastName" type="text" placeholder="Tu apellido"></ion-input>
+            </ion-item>
+
+            <!-- Phone -->
+            <ion-item>
+              <ion-label position="floating">Teléfono</ion-label>
+              <ion-input formControlName="phoneNumber" type="tel" placeholder="Tu teléfono"></ion-input>
+            </ion-item>
+
+            <!-- Gender -->
+            <ion-item>
+              <ion-label position="floating">Género</ion-label>
+              <ion-select formControlName="gender">
+                <ion-select-option value="">Seleccionar</ion-select-option>
+                <ion-select-option value="M">Masculino</ion-select-option>
+                <ion-select-option value="F">Femenino</ion-select-option>
+                <ion-select-option value="Other">Otro</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <!-- Date of Birth -->
+            <ion-item>
+              <ion-label position="floating">Fecha de Nacimiento</ion-label>
+              <ion-input formControlName="dateOfBirth" type="date"></ion-input>
+            </ion-item>
+
+            <!-- Profile Stats -->
+            <div class="stats-container">
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <p class="stat-value">{{ profile()?.completedAppointments || 0 }}</p>
+                  <p class="stat-label">Citas Completadas</p>
+                </div>
+                <div class="stat-item">
+                  <p class="stat-value">{{ profile()?.averageRating?.toFixed(1) || '0.0' }}</p>
+                  <p class="stat-label">Calificación</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Update Button -->
+            <div class="button-container">
+              <ion-button
+                [disabled]="updatingProfile() || !profileForm.valid"
+                expand="block"
+                (click)="onUpdateProfile()"
+                color="primary">
+                <ion-spinner *ngIf="updatingProfile()" name="dots"></ion-spinner>
+                <span *ngIf="!updatingProfile()">Actualizar Perfil</span>
+              </ion-button>
+            </div>
+          </form>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Security Tab -->
+    <div *ngIf="activeTab === 'security'">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Cambiar Contraseña</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+            <!-- Current Password -->
+            <ion-item>
+              <ion-label position="floating">Contraseña Actual</ion-label>
+              <ion-input formControlName="currentPassword" type="password" placeholder="Contraseña actual"></ion-input>
+            </ion-item>
+
+            <!-- New Password -->
+            <ion-item>
+              <ion-label position="floating">Contraseña Nueva</ion-label>
+              <ion-input formControlName="newPassword" type="password" placeholder="Contraseña nueva"></ion-input>
+            </ion-item>
+
+            <!-- Confirm Password -->
+            <ion-item>
+              <ion-label position="floating">Confirmar Contraseña</ion-label>
+              <ion-input formControlName="confirmPassword" type="password" placeholder="Confirma la contraseña"></ion-input>
+            </ion-item>
+
+            <!-- Password Requirements -->
+            <div class="password-requirements">
+              <p class="requirements-title">Requisitos:</p>
+              <ul class="requirements-list">
+                <li
+                  [class.requirement-met]="passwordForm.get('newPassword')?.value?.length >= 8">
+                  Mínimo 8 caracteres
+                </li>
+                <li [class.requirement-met]="hasUpperCase()">
+                  Una mayúscula
+                </li>
+                <li [class.requirement-met]="hasLowerCase()">
+                  Una minúscula
+                </li>
+                <li [class.requirement-met]="hasDigit()">
+                  Un dígito
+                </li>
+              </ul>
+            </div>
+
+            <!-- Change Password Button -->
+            <div class="button-container">
+              <ion-button
+                [disabled]="changingPassword() || !passwordForm.valid"
+                expand="block"
+                (click)="onChangePassword()"
+                color="primary">
+                <ion-spinner *ngIf="changingPassword()" name="dots"></ion-spinner>
+                <span *ngIf="!changingPassword()">Cambiar Contraseña</span>
+              </ion-button>
+            </div>
+          </form>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

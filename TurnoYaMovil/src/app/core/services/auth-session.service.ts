@@ -24,6 +24,24 @@ export class AuthSessionService {
     return this.getSession()?.accessToken ?? null;
   }
 
+  isAccessTokenExpired(): boolean {
+    const session = this.getSession();
+    if (!session?.accessToken || !session.expiresAt) {
+      return true;
+    }
+
+    const expiresAt = new Date(session.expiresAt).getTime();
+    if (Number.isNaN(expiresAt)) {
+      return true;
+    }
+
+    return Date.now() >= expiresAt;
+  }
+
+  hasValidSession(): boolean {
+    return !this.isAccessTokenExpired();
+  }
+
   setSession(session: AuthSession) {
     localStorage.setItem(this.storageKey, JSON.stringify(session));
   }

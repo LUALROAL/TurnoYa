@@ -50,7 +50,7 @@ export class HomePage implements OnInit, OnDestroy {
       title: 'Perfil',
       subtitle: 'Editar cuenta',
       icon: 'person-circle-outline',
-      route: '/home',
+      route: '/profile',
     },
     {
       title: 'Administración',
