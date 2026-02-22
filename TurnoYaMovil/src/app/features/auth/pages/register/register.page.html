@@ -1,107 +1,293 @@
-<ion-content class="auth-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;">
+    </div>
   </div>
 
-  <div class="auth-wrap">
-    <div class="auth-brand">
-      <div class="brand-icon-wrap">
-        <ion-icon name="sparkles-outline"></ion-icon>
+  <div class="flex items-center justify-center min-h-full px-4 py-8 relative z-10">
+    <div class="w-full max-w-md">
+
+      <!-- Logo y Branding -->
+      <div class="text-center mb-8 animate-float">
+        <div class="relative inline-block">
+          <div class="absolute inset-0 rounded-full bg-neon-primary/20 blur-xl animate-pulse-slow"></div>
+
+          <div class="relative w-20 h-20 mx-auto mb-4">
+            <div class="absolute inset-0 bg-gradient-card rounded-2xl border border-neon-primary/30 shadow-neon"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <ion-icon name="sparkles-outline" class="text-4xl text-neon-primary"></ion-icon>
+            </div>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-neon-primary rounded-full animate-ping"></div>
+            <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-neon-secondary rounded-full animate-ping animation-delay-1000"></div>
+          </div>
+        </div>
+
+        <h1 class="text-4xl font-display font-bold mb-2">
+          <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+            TurnoYa
+          </span>
+        </h1>
+
+        <p class="text-text-secondary font-mono text-sm tracking-widest">
+          <!-- &lt;  -->
+          registro de nuevo usuario
+          <!-- /&gt; -->
+        </p>
       </div>
-      <h1 class="brand-title">Turno<span>Ya</span></h1>
-      <p class="brand-subtitle">Comienza a gestionar tus citas</p>
-    </div>
 
-    <div class="auth-card card glass-panel">
-      <div class="card-header">
-        <h2 class="auth-title">Crear cuenta</h2>
-        <p class="auth-subtitle">Registra tus datos para empezar</p>
-      </div>
+      <!-- Tarjeta del Formulario -->
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
-        <div class="field-block">
-          <label for="fullNameInput">Nombre completo</label>
-          <ion-item lines="none" class="field-item field-item-icon">
-            <ion-icon name="person-outline" slot="start"></ion-icon>
-            <ion-input
-              id="fullNameInput"
-              class="input"
-              type="text"
-              formControlName="fullName"
-              placeholder="Tu nombre"
-            ></ion-input>
-          </ion-item>
-        </div>
+        <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-8">
 
-        <div class="field-block">
-          <label for="emailInput">Correo electronico</label>
-          <ion-item lines="none" class="field-item field-item-icon">
-            <ion-icon name="mail-outline" slot="start"></ion-icon>
-            <ion-input
-              id="emailInput"
-              class="input"
-              type="email"
-              formControlName="email"
-              placeholder="ejemplo@correo.com"
-            ></ion-input>
-          </ion-item>
-        </div>
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full"></div>
 
-        <div class="field-block">
-          <label for="passwordInput">Contrasena</label>
-          <ion-item lines="none" class="field-item field-item-icon">
-            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-            <ion-input
-              id="passwordInput"
-              class="input"
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              placeholder="••••••••"
-            ></ion-input>
-            <ion-button fill="clear" type="button" class="visibility-btn" (click)="togglePasswordVisibility()">
-              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-            </ion-button>
-          </ion-item>
-        </div>
+          <!-- Títulos -->
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-display font-semibold text-text-primary mb-2">
+              Crear Cuenta
+            </h2>
+            <p class="text-text-secondary text-sm flex items-center justify-center gap-2">
+              <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+              Completa tus datos para empezar
+              <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+            </p>
+          </div>
 
-        <label class="remember-me terms-check">
-          <input type="checkbox" formControlName="acceptTerms" />
-          <span>Acepto los terminos y condiciones</span>
-        </label>
+          <!-- Formulario -->
+          <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5">
 
-        <ion-text color="danger" *ngIf="errorMessage" class="error-message">
-          <p>
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            {{ errorMessage }}
+            <!-- Campo Nombre Completo -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                <!-- &lt; -->
+                 NOMBRE COMPLETO
+                 <!-- /&gt; -->
+              </label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
+                  <ion-input
+                    id="fullNameInput"
+                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                    type="text"
+                    formControlName="fullName"
+                    placeholder="Juan Pérez"
+                  ></ion-input>
+                  <div *ngIf="form.get('fullName')?.valid && form.get('fullName')?.touched"
+                       class="w-2 h-2 bg-neon-secondary rounded-full animate-ping"></div>
+                </div>
+              </div>
+              <div *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched"
+                   class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                Mínimo 3 caracteres requeridos
+              </div>
+            </div>
+
+            <!-- Campo Email -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                <!-- &lt; -->
+                CORREO ELECTRÓNICO
+                <!-- /&gt; -->
+              </label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
+                  <ion-input
+                    id="emailInput"
+                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                    type="email"
+                    formControlName="email"
+                    placeholder="usuario@dominio.com"
+                  ></ion-input>
+                  <div *ngIf="form.get('email')?.valid && form.get('email')?.touched"
+                       class="w-2 h-2 bg-neon-secondary rounded-full animate-ping"></div>
+                </div>
+              </div>
+              <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+                   class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                Ingresa un email válido
+              </div>
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                <!-- &lt; -->
+                CONTRASEÑA
+                <!-- /&gt; -->
+              </label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
+                  <ion-input
+                    id="passwordInput"
+                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                    [type]="showPassword ? 'text' : 'password'"
+                    formControlName="password"
+                    placeholder="••••••••"
+                  ></ion-input>
+                  <button
+                    type="button"
+                    (click)="togglePasswordVisibility()"
+                    class="text-text-tertiary hover:text-neon-primary transition-all duration-300 transform hover:scale-110"
+                  >
+                    <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" class="text-xl"></ion-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Indicador de fortaleza de contraseña (AHORA SIN ERRORES) -->
+              <div class="mt-2 space-y-1">
+                <div class="flex gap-1 h-1">
+                  <!-- Barra 1 -->
+                  <div class="flex-1 rounded-full transition-all duration-300"
+                       [class.bg-red-500]="isWeakPassword"
+                       [class.bg-yellow-500]="isMediumPassword"
+                       [class.bg-neon-secondary]="isStrongPassword">
+                  </div>
+                  <!-- Barra 2 -->
+                  <div class="flex-1 rounded-full transition-all duration-300"
+                       [class.bg-bg-tertiary]="!isStrongPassword"
+                       [class.bg-neon-secondary]="isStrongPassword">
+                  </div>
+                  <!-- Barra 3 -->
+                  <div class="flex-1 rounded-full transition-all duration-300"
+                       [class.bg-bg-tertiary]="!isVeryStrongPassword"
+                       [class.bg-neon-secondary]="isVeryStrongPassword">
+                  </div>
+                </div>
+                <p class="text-xs font-mono text-text-tertiary">
+                  {{ passwordLength }}/8 caracteres mínimos
+                </p>
+              </div>
+            </div>
+
+            <!-- Términos y condiciones -->
+            <label class="flex items-start gap-3 text-text-secondary cursor-pointer group mt-4">
+              <div class="relative flex-shrink-0 mt-0.5">
+                <input
+                  type="checkbox"
+                  formControlName="acceptTerms"
+                  class="sr-only"
+                />
+                <div class="w-5 h-5 border-2 border-border-secondary rounded-md bg-bg-tertiary/50 group-hover:border-neon-primary/50 transition-all duration-300"></div>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <ion-icon
+                    name="checkmark-outline"
+                    class="text-neon-primary text-sm opacity-0 group-has-[:checked]:opacity-100 transition-opacity"
+                  ></ion-icon>
+                </div>
+              </div>
+              <span class="text-sm font-mono">
+                Acepto los
+                <a href="#" class="text-neon-primary hover:text-neon-secondary transition-colors">términos y condiciones</a>
+              </span>
+            </label>
+
+            <!-- Mensaje de Error -->
+            <div *ngIf="errorMessage"
+                 class="relative overflow-hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-transparent animate-pulse"></div>
+              <p class="relative text-red-400 text-sm flex items-center gap-2 font-mono">
+                <ion-icon name="warning-outline" class="text-lg"></ion-icon>
+                {{ errorMessage }}
+              </p>
+            </div>
+
+            <!-- Botón Crear Cuenta -->
+            <button
+              type="submit"
+              [disabled]="loading || form.invalid"
+              class="relative w-full group overflow-hidden rounded-xl mt-6"
+              [class.opacity-50]="form.invalid"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
+
+              <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+                <span>{{ loading ? 'CREANDO CUENTA...' : 'CREAR CUENTA' }}</span>
+                <ion-icon
+                  [name]="loading ? 'sync-outline' : 'person-add-outline'"
+                  class="text-xl"
+                  [class.animate-spin]="loading"
+                ></ion-icon>
+              </div>
+
+              <div class="absolute inset-0 border-2 border-transparent group-hover:border-white/20 rounded-xl transition-all duration-300"></div>
+            </button>
+
+            <!-- Mensaje de campos requeridos -->
+            <p *ngIf="form.invalid && form.touched"
+               class="text-xs text-text-tertiary font-mono text-center mt-2">
+              ⚡ Completa todos los campos correctamente ⚡
+            </p>
+          </form>
+
+          <!-- Divisor -->
+          <div class="relative my-8">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-border-secondary"></div>
+            </div>
+            <div class="relative flex justify-center">
+              <span class="px-4 bg-bg-card text-text-tertiary font-mono text-xs tracking-wider">
+                ⚡ REGISTRO RÁPIDO ⚡
+              </span>
+            </div>
+          </div>
+
+          <!-- Botones Sociales -->
+          <div class="grid grid-cols-1 gap-4">
+            <button type="button" class="group relative overflow-hidden rounded-lg">
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center justify-center gap-2 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
+                <ion-icon name="logo-google" class="text-xl text-neon-primary"></ion-icon>
+                <span class="text-text-secondary text-sm font-mono">Google</span>
+              </div>
+            </button>
+
+            <!-- <button type="button" class="group relative overflow-hidden rounded-lg">
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center justify-center gap-2 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
+                <ion-icon name="logo-apple" class="text-xl text-neon-primary"></ion-icon>
+                <span class="text-text-secondary text-sm font-mono">Apple</span>
+              </div>
+            </button> -->
+          </div>
+
+          <!-- Enlace a Login -->
+          <p class="mt-8 text-center text-text-secondary text-sm">
+            ¿Ya tienes cuenta?
+            <a routerLink="/auth/login" class="text-neon-primary hover:text-neon-secondary transition-colors duration-300 font-mono font-semibold ml-1">
+              Iniciar sesión
+               <!-- &lt;/&gt; -->
+            </a>
           </p>
-        </ion-text>
-
-        <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading || form.invalid">
-          <span>{{ loading ? 'Creando...' : 'Crear cuenta' }}</span>
-          <ion-icon name="person-add-outline"></ion-icon>
-        </ion-button>
-      </form>
-
-      <div class="divider">
-        <span>o continuar con</span>
+        </div>
       </div>
 
-      <div class="social-grid">
-        <ion-button fill="outline" class="social-btn" type="button">
-          <ion-icon name="logo-google"></ion-icon>
-          <span>Google</span>
-        </ion-button>
-        <ion-button fill="outline" class="social-btn" type="button">
-          <ion-icon name="logo-apple"></ion-icon>
-          <span>Apple</span>
-        </ion-button>
-      </div>
-
-      <p class="auth-switch">
-        Ya tienes cuenta?
-        <a routerLink="/auth/login">Inicia sesion</a>
-      </p>
+      <!-- Badge de seguridad -->
+      <!-- <div class="mt-6 text-center">
+        <p class="text-text-tertiary text-xs font-mono flex items-center justify-center gap-2">
+          <ion-icon name="shield-checkmark-outline" class="text-neon-primary"></ion-icon>
+          Tus datos están seguros · Encriptación AES-256
+          <ion-icon name="shield-checkmark-outline" class="text-neon-primary"></ion-icon>
+        </p>
+      </div> -->
     </div>
   </div>
 </ion-content>

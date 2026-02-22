@@ -29,6 +29,35 @@ export class RegisterPage {
   protected showPassword = false;
   protected errorMessage = '';
 
+  // Métodos auxiliares para la fortaleza de contraseña
+  protected get passwordLength(): number {
+    return this.form.get('password')?.value?.length || 0;
+  }
+
+  protected get passwordStrengthClass(): string {
+    const length = this.passwordLength;
+    if (length < 4) return 'bg-red-500';
+    if (length >= 4 && length < 6) return 'bg-yellow-500';
+    if (length >= 6) return 'bg-neon-secondary';
+    return 'bg-bg-tertiary';
+  }
+
+  protected get isWeakPassword(): boolean {
+    return this.passwordLength < 4;
+  }
+
+  protected get isMediumPassword(): boolean {
+    return this.passwordLength >= 4 && this.passwordLength < 6;
+  }
+
+  protected get isStrongPassword(): boolean {
+    return this.passwordLength >= 6;
+  }
+
+  protected get isVeryStrongPassword(): boolean {
+    return this.passwordLength >= 8;
+  }
+
   protected togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
@@ -53,7 +82,6 @@ export class RegisterPage {
       },
       error: (error) => {
         this.loading = false;
-        // Mostrar mensaje de error específico
         if (error.status === 400) {
           this.errorMessage = error.error?.message || 'El correo ya está registrado o los datos son inválidos.';
         } else if (error.status === 0) {
