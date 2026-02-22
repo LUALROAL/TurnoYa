@@ -12,7 +12,16 @@ import {
   IonTextarea,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, calendarOutline, personOutline, save, timeOutline } from 'ionicons/icons';
+import {
+  arrowBack,
+  calendarOutline,
+  personOutline,
+  save,
+  timeOutline,
+  warningOutline,
+  chatbubbleOutline,
+  syncOutline
+} from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from '../../../business/models';
@@ -55,7 +64,17 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected appointmentForm: FormGroup;
 
   constructor() {
-    addIcons({ arrowBack, calendarOutline, timeOutline, personOutline, save });
+    addIcons({
+      arrowBack,
+      calendarOutline,
+      timeOutline,
+      personOutline,
+      save,
+      warningOutline,
+      chatbubbleOutline,
+      syncOutline
+    });
+
     this.appointmentForm = this.fb.group({
       serviceId: ['', Validators.required],
       employeeId: [''],
@@ -118,6 +137,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.saving = false;
+          this.notify.showSuccess('¡Cita agendada exitosamente!');
           this.router.navigate(['/businesses', this.businessId]);
         },
         error: (error: unknown) => {
@@ -130,6 +150,12 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
   protected get formControls() {
     return this.appointmentForm.controls;
+  }
+
+  // Método para obtener la fecha mínima (hoy)
+  protected getMinDate(): string {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
   }
 
   private loadBusiness(): void {

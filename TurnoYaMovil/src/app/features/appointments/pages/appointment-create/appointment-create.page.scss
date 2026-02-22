@@ -1,170 +1,226 @@
 :host {
   display: block;
+  height: 100%;
 }
 
-.booking-bg {
-  --background: var(--color-bg);
+// Animaciones personalizadas
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
-.bg-orb {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
-  filter: blur(88px);
-  opacity: 0.25;
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 
-.orb-top {
-  top: -95px;
-  left: -70px;
+.animation-delay-1000 {
+  animation-delay: 1s;
 }
 
-.orb-bottom {
-  right: -80px;
-  bottom: -120px;
-}
-
-.booking-wrap {
-  position: relative;
-  z-index: 1;
-  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4)
-    calc(var(--space-8) + env(safe-area-inset-bottom));
-  display: grid;
-  gap: var(--space-5);
-  max-width: 768px;
-  margin: 0 auto;
-}
-
-.booking-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
-}
-
-.back-btn {
-  --color: var(--color-text);
-  --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
-  --border-radius: 999px;
-}
-
-.glass-panel {
-  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.header-overline {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-}
-
-.booking-header h1 {
-  margin: var(--space-1) 0 0;
-  font-family: var(--font-display-a);
-  font-size: 1.25rem;
-}
-
-.booking-card {
-  padding: var(--space-4);
-  display: grid;
-  gap: var(--space-4);
-
-  h2 {
-    margin: 0;
-    font-size: 1.12rem;
-    font-family: var(--font-display-a);
-  }
-}
-
-.form-field {
-  display: grid;
-  gap: var(--space-2);
-
-  label {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color-text);
-  }
-
-  ion-input,
-  ion-select,
-  ion-textarea {
-    --background: var(--color-surface-2);
-    --border-radius: var(--radius-input);
-    --padding-start: var(--space-3);
-    --padding-end: var(--space-3);
-    --padding-top: var(--space-2);
-    --padding-bottom: var(--space-2);
-    --color: var(--color-text);
-    --placeholder-color: var(--color-text-muted);
-
-    &.invalid {
-      --border-color: color-mix(in srgb, #ff4444 70%, transparent);
-    }
-  }
-}
-
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.form-actions {
-  display: flex;
-  gap: var(--space-3);
-
-  ion-button {
-    flex: 1;
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    font-weight: 600;
-  }
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-
-    ion-button {
-      width: 100%;
-    }
-  }
-}
-
-.skeleton {
-  min-height: 420px;
+// Skeleton loader
+.skeleton-form {
+  height: 600px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--color-surface-2) 70%, transparent) 25%,
-    color-mix(in srgb, var(--color-surface-2) 50%, transparent) 50%,
-    color-mix(in srgb, var(--color-surface-2) 70%, transparent) 75%
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
   );
   background-size: 200% 100%;
-  animation: loading 1.5s ease-in-out infinite;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
-@keyframes loading {
+@keyframes skeleton-loading {
   0% {
     background-position: 200% 0;
   }
-
   100% {
     background-position: -200% 0;
+  }
+}
+
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+
+  &:hover {
+    background: #00F5D4;
+  }
+}
+
+// Ajustes para Ionic
+ion-content {
+  --background: transparent;
+}
+
+// Estilo para los selects de Ionic
+ion-select::part(icon) {
+  color: #00E0FF;
+  opacity: 1;
+}
+
+ion-select::part(text) {
+  color: #FFFFFF;
+}
+
+ion-select.ios::part(icon) {
+  color: #00E0FF;
+}
+
+// Estilo para el placeholder
+ion-select::part(placeholder) {
+  color: rgba(112, 134, 160, 0.5);
+}
+
+// Estilo para el textarea
+ion-textarea {
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+// Efecto de brillo para los inputs
+.input-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 224, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.group:focus-within .input-glow {
+  opacity: 1;
+}
+
+// Estilo para el input nativo
+.input-native {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: #FFFFFF;
+  --placeholder-color: rgba(112, 134, 160, 0.5);
+  --placeholder-opacity: 1;
+  --caret-color: #00E0FF;
+}
+
+// Estilo para los items de action sheet personalizados
+::ng-deep .action-sheet {
+  --background: #1A1F2F;
+  --backdrop-opacity: 0.8;
+
+  .action-sheet-title {
+    color: #00E0FF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    border-bottom: 1px solid rgba(0, 224, 255, 0.2);
+  }
+
+  .action-sheet-button {
+    color: #FFFFFF;
+    font-family: 'Outfit', sans-serif;
+
+    &.selected {
+      color: #00E0FF;
+      font-weight: bold;
+    }
+  }
+
+  .action-sheet-cancel {
+    background: rgba(0, 224, 255, 0.1);
+    color: #00E0FF;
+  }
+}
+
+// Efecto hover para las opciones del select
+.select-option {
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(0, 224, 255, 0.1);
+  }
+}
+
+// Badge de precio en el select
+.price-badge {
+  background: rgba(0, 224, 255, 0.1);
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  color: #00E0FF;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+// Animación para el botón de guardar
+@keyframes save-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 224, 255, 0.6);
+  }
+}
+
+.save-button {
+  animation: save-pulse 2s infinite;
+}
+
+// Efecto de validación visual
+.valid-field {
+  border-color: #00F5D4 !important;
+  box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
+}
+
+.invalid-field {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+// Tooltip de validación
+.validation-tooltip {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  font-size: 0.7rem;
+  color: #ef4444;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+// Efecto de carga
+.saving-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 5, 10, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+
+  p {
+    color: #00E0FF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    animation: pulse 1.5s infinite;
   }
 }

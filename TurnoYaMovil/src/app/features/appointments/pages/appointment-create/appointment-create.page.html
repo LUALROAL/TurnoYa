@@ -1,88 +1,245 @@
-<ion-content class="booking-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div class="booking-wrap">
-    <header class="booking-header card glass-panel">
-      <ion-button fill="clear" class="back-btn" (click)="onCancel()" aria-label="Volver">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
-
-      <div>
-        <p class="header-overline">Agendar cita</p>
-        <h1>{{ business?.name || 'Nuevo turno' }}</h1>
+  <div class="relative z-10 pb-8">
+    <!-- Header con navegación -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <button (click)="onCancel()" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <ion-icon name="arrow-back" class="text-xl text-text-primary"></ion-icon>
+        </button>
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            <!-- &lt;  -->
+            AGENDAR CITA
+            <!-- /&gt; -->
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              {{ business?.name || 'Nuevo turno' }}
+            </span>
+          </h1>
+        </div>
       </div>
     </header>
 
-    @if (loading) {
-      <section class="booking-card card skeleton"></section>
-    } @else {
-      <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="booking-form">
-        <section class="booking-card card glass-panel">
-          <h2>Detalle del turno</h2>
-
-          <div class="form-field">
-            <label for="serviceId">Servicio *</label>
-            <ion-select
-              id="serviceId"
-              formControlName="serviceId"
-              placeholder="Selecciona un servicio"
-              [class.invalid]="formControls['serviceId'].touched && formControls['serviceId'].invalid"
-            >
-              @for (service of services; track service.id) {
-                <ion-select-option [value]="service.id">
-                  {{ service.name }} · {{ service.duration }} min · {{ service.price | currency: 'COP':'symbol':'1.0-0' }}
-                </ion-select-option>
-              }
-            </ion-select>
-          </div>
-
-          <div class="form-field">
-            <label for="employeeId">Profesional (opcional)</label>
-            <ion-select id="employeeId" formControlName="employeeId" placeholder="Sin preferencia">
-              <ion-select-option value="">Sin preferencia</ion-select-option>
-              @for (employee of employees; track employee.id) {
-                <ion-select-option [value]="employee.id">{{ employee.fullName }}</ion-select-option>
-              }
-            </ion-select>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-field">
-              <label for="scheduledDate">Fecha *</label>
-              <ion-input id="scheduledDate" type="date" formControlName="scheduledDate"></ion-input>
-            </div>
-
-            <div class="form-field">
-              <label for="scheduledTime">Hora *</label>
-              <ion-input id="scheduledTime" type="time" formControlName="scheduledTime"></ion-input>
-            </div>
-          </div>
-
-          <div class="form-field">
-            <label for="notes">Notas (opcional)</label>
-            <ion-textarea
-              id="notes"
-              formControlName="notes"
-              rows="4"
-              placeholder="Ej: Prefiero corte clásico y barba"
-            ></ion-textarea>
-          </div>
-        </section>
-
-        <div class="form-actions">
-          <ion-button type="button" fill="outline" expand="block" (click)="onCancel()" [disabled]="saving">
-            Cancelar
-          </ion-button>
-
-          <ion-button type="submit" expand="block" [disabled]="appointmentForm.invalid || saving">
-            <ion-icon slot="start" name="save"></ion-icon>
-            {{ saving ? 'Agendando...' : 'Agendar cita' }}
-          </ion-button>
+    <div class="px-4 space-y-4 mt-4">
+      @if (loading) {
+        <!-- Skeleton Loader -->
+        <div class="space-y-4">
+          <div class="skeleton-form"></div>
         </div>
-      </form>
-    }
+      } @else {
+        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+          <!-- Tarjeta principal del formulario -->
+          <div class="relative group">
+            <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+
+            <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+
+              <!-- Título de la sección -->
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
+                <h2 class="text-xl font-display font-semibold text-text-primary">Detalle del turno</h2>
+              </div>
+
+              <!-- Campo: Servicio -->
+              <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  <!-- &lt; -->
+                   SERVICIO *
+                   <!-- /&gt; -->
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                  <ion-select
+                    id="serviceId"
+                    formControlName="serviceId"
+                    placeholder="Selecciona un servicio"
+                    interface="action-sheet"
+                    class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
+                    [class.border-red-500/50]="formControls['serviceId'].touched && formControls['serviceId'].invalid"
+                  >
+                    @for (service of services; track service.id) {
+                      <ion-select-option [value]="service.id" class="bg-bg-card text-text-primary">
+                        <div class="flex items-center justify-between py-2">
+                          <span>{{ service.name }}</span>
+                          <span class="text-neon-primary text-sm">{{ service.duration }} min · {{ service.price | currency:'COP':'symbol':'1.0-0' }}</span>
+                        </div>
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                </div>
+                @if (formControls['serviceId'].touched && formControls['serviceId'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    Debes seleccionar un servicio
+                  </p>
+                }
+              </div>
+
+              <!-- Campo: Profesional -->
+              <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  <!-- &lt; -->
+                   PROFESIONAL (opcional)
+                   <!-- /&gt; -->
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                  <ion-select
+                    id="employeeId"
+                    formControlName="employeeId"
+                    placeholder="Sin preferencia"
+                    interface="action-sheet"
+                    class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
+                  >
+                    <ion-select-option value="" class="bg-bg-card text-text-primary">Sin preferencia</ion-select-option>
+                    @for (employee of employees; track employee.id) {
+                      <ion-select-option [value]="employee.id" class="bg-bg-card text-text-primary">
+                        {{ employee.fullName }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                </div>
+              </div>
+
+              <!-- Grid: Fecha y Hora -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Fecha -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    <!-- &lt; -->
+                     FECHA *
+                     <!-- /&gt; -->
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input
+                        id="scheduledDate"
+                        type="date"
+                        formControlName="scheduledDate"
+                        class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"
+                      ></ion-input>
+                    </div>
+                  </div>
+                  @if (formControls['scheduledDate'].touched && formControls['scheduledDate'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      Selecciona una fecha
+                    </p>
+                  }
+                </div>
+
+                <!-- Hora -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    <!-- &lt; -->
+                     HORA *
+                     <!-- /&gt; -->
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="time-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input
+                        id="scheduledTime"
+                        type="time"
+                        formControlName="scheduledTime"
+                        class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"
+                      ></ion-input>
+                    </div>
+                  </div>
+                  @if (formControls['scheduledTime'].touched && formControls['scheduledTime'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      Selecciona una hora
+                    </p>
+                  }
+                </div>
+              </div>
+
+              <!-- Campo: Notas -->
+              <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  <!-- &lt; -->
+                   NOTAS (opcional)
+                   <!-- /&gt; -->
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                  <div class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                    <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
+                    <ion-textarea
+                      id="notes"
+                      formControlName="notes"
+                      rows="4"
+                      placeholder="Ej: Prefiero corte clásico y barba"
+                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                    ></ion-textarea>
+                  </div>
+                </div>
+                @if (formControls['notes'].touched && formControls['notes'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    Máximo 500 caracteres
+                  </p>
+                }
+              </div>
+
+              <!-- Indicador de campos obligatorios -->
+              <p class="text-xs font-mono text-text-tertiary mt-2">
+                * Campos obligatorios
+              </p>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <!-- Botón Cancelar -->
+            <button
+              type="button"
+              (click)="onCancel()"
+              [disabled]="saving"
+              class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+
+            <!-- Botón Agendar -->
+            <button
+              type="submit"
+              [disabled]="appointmentForm.invalid || saving"
+              class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
+
+              <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+                <ion-icon
+                  [name]="saving ? 'sync-outline' : 'save'"
+                  class="text-xl"
+                  [class.animate-spin]="saving"
+                ></ion-icon>
+                <span>{{ saving ? 'AGENDANDO...' : 'AGENDAR CITA' }}</span>
+              </div>
+            </button>
+          </div>
+        </form>
+      }
+    </div>
   </div>
 </ion-content>
