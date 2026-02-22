@@ -1,390 +1,150 @@
-.home-bg {
-  --background: var(--color-bg);
+:host {
+  display: block;
+  height: 100%;
 }
 
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+// Animaciones personalizadas
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
-.bg-orb {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
-  filter: blur(88px);
-  opacity: 0.28;
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
-.orb-top {
-  top: -90px;
-  left: -80px;
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 
-.orb-bottom {
-  right: -70px;
-  bottom: -120px;
+.animation-delay-1000 {
+  animation-delay: 1s;
 }
 
-.home-wrap {
+// Skeleton loader mejorado
+.skeleton-card {
   position: relative;
-  z-index: 1;
-  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4) calc(var(--space-8) + env(safe-area-inset-bottom));
-  display: grid;
-  gap: var(--space-6);
-}
-
-.home-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
-}
-
-.glass-panel {
-  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.home-greeting {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-}
-
-.home-name {
-  margin: var(--space-1) 0 0;
-  font-size: 1.35rem;
-  font-family: var(--font-display-a);
-}
-
-.notify-btn {
-  --color: var(--color-text);
-  --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
-  --border-radius: 999px;
-  --padding-start: 10px;
-  --padding-end: 10px;
-}
-
-.notify-btn ion-icon {
-  font-size: 20px;
-}
-
-.home-hero {
-  display: grid;
-  gap: var(--space-4);
-}
-
-.hero-title {
-  margin: 0;
-  font-family: var(--font-display-a);
-  font-size: 1.8rem;
-  line-height: 1.15;
-}
-
-.search-shell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-input);
-  padding: 0 12px;
-  height: 52px;
-}
-
-.search-shell ion-icon {
-  color: var(--color-text-muted);
-  font-size: 20px;
-}
-
-.search-shell input {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--color-text);
-  font: inherit;
-}
-
-.search-shell input::placeholder {
-  color: var(--color-text-muted);
-}
-
-.quick-access,
-.recommendations {
-  display: grid;
-  gap: var(--space-4);
-}
-
-.section-title {
-  margin: 0;
-  font-size: 1.14rem;
-  font-family: var(--font-display-a);
-}
-
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-
-.quick-card {
-  border-color: color-mix(in srgb, var(--color-accent-1) 14%, var(--color-outline));
-  padding: var(--space-3);
-  display: grid;
-  gap: var(--space-2);
-  text-align: left;
-  min-height: auto;
   overflow: hidden;
-}
-
-.quick-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--color-accent-1) 20%, transparent);
-  flex-shrink: 0;
-}
-
-.quick-icon ion-icon {
-  font-size: 18px;
-  color: var(--color-accent-1);
-}
-
-.quick-copy {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.quick-copy p {
-  margin: 0;
-  font-weight: 700;
-  font-size: 0.85rem;
-  word-wrap: break-word;
-  line-height: 1.2;
-}
-
-.quick-copy span {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  word-wrap: break-word;
-  line-height: 1.1;
-}
-
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.link-btn {
-  border: none;
-  background: none;
-  color: var(--color-accent-1);
-  font-weight: 700;
-  font-size: 0.84rem;
-}
-
-.recommendation-list {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.business-card {
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 10%, var(--color-outline));
-}
-
-.business-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.business-top h4 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.rating-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-accent-1) 22%, transparent);
-  color: var(--color-accent-1);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.rating-pill ion-icon {
-  font-size: 12px;
-}
-
-.business-meta {
-  margin: var(--space-2) 0 var(--space-4);
-  color: var(--color-text-muted);
-  font-size: 0.82rem;
-}
-
-.business-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.business-bottom strong {
-  font-size: 0.93rem;
-}
-
-.button-primary {
-  --background: var(--color-accent-1);
-  --color: #041016;
-  --border-radius: var(--radius-pill);
-}
-
-.empty-state {
-  border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
-  display: grid;
-  justify-items: center;
-  text-align: center;
-  gap: var(--space-2);
-  padding: var(--space-6);
-}
-
-.empty-state ion-icon {
-  color: var(--color-accent-1);
-  font-size: 22px;
-}
-
-.empty-state p {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-
-.skeleton {
-  min-height: 118px;
+  height: 140px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--color-surface-2) 94%, transparent) 25%,
-    color-mix(in srgb, var(--color-outline) 55%, transparent) 50%,
-    color-mix(in srgb, var(--color-surface-2) 94%, transparent) 75%
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
   );
-  background-size: 220% 100%;
-  animation: skeleton-loading 1.2s infinite;
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
 @keyframes skeleton-loading {
-  from {
-    background-position: 100% 0;
+  0% {
+    background-position: 200% 0;
   }
-
-  to {
-    background-position: -100% 0;
+  100% {
+    background-position: -200% 0;
   }
 }
 
-// Mapa interactivo de disponibilidad
-.nearby-availability {
-  display: grid;
-  gap: var(--space-4);
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-.section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+::-webkit-scrollbar-track {
+  background: #0A0E17;
 }
 
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--color-accent-1);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  font-family: inherit;
-  transition: opacity 0.2s;
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
 
   &:hover {
+    background: #00F5D4;
+  }
+}
+
+// Efectos de hover para las tarjetas
+.business-card-hover {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px -10px rgba(0, 224, 255, 0.3);
+  }
+}
+
+// Badge de notificaciones
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00E0FF;
+  box-shadow: 0 0 10px #00E0FF;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
     opacity: 0.8;
   }
-
-  &:active {
-    opacity: 0.6;
-  }
 }
 
-.map-container {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  min-height: 200px;
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--color-surface-2) 60%, transparent) 0%,
-    color-mix(in srgb, var(--color-surface-1) 40%, transparent) 100%
-  );
-  border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
-  cursor: pointer;
-  transition: all 0.3s;
-
-  &:hover {
-    border-color: color-mix(in srgb, var(--color-accent-1) 28%, var(--color-outline));
-    transform: translateY(-2px);
-  }
+// Ajustes para Ionic
+ion-content {
+  --background: transparent;
 }
 
-.map-placeholder {
-  width: 100%;
-  height: 100%;
-  opacity: 0.6;
-}
-
-.map-overlay {
+// Efecto de brillo en los inputs
+.input-glow {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--color-bg) 0%, transparent) 0%,
-    color-mix(in srgb, var(--color-bg) 40%, transparent) 50%,
-    color-mix(in srgb, var(--color-bg) 0%, transparent) 100%
-  );
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  text-align: center;
+  background: radial-gradient(circle at center, rgba(0, 224, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
   pointer-events: none;
+  border-radius: inherit;
+}
 
-  ion-icon {
-    color: var(--color-accent-1);
-    opacity: 0.8;
+.group:focus-within .input-glow {
+  opacity: 1;
+}
+
+// Estilo para el texto del header
+.greeting-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: #9FB3C8;
+}
+
+// Animación para los pines del mapa
+.map-pin-pulse {
+  animation: pin-pulse 2s infinite;
+}
+
+@keyframes pin-pulse {
+  0% {
+    r: 8;
+    opacity: 1;
   }
-
-  p {
-    margin: 0;
-    max-width: 70%;
+  50% {
+    r: 12;
+    opacity: 0.5;
+  }
+  100% {
+    r: 8;
+    opacity: 1;
   }
 }

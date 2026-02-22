@@ -66,7 +66,7 @@ export class HomePage implements OnInit, OnDestroy {
   private readonly initialRecommendations: RecommendedBusiness[] = [
     {
       name: 'Luxe Barbershop',
-      category: 'Peluqueria',
+      category: 'Peluquería',
       distanceKm: 1.2,
       priceLabel: '$30 / corte',
       rating: 4.9,
@@ -81,9 +81,16 @@ export class HomePage implements OnInit, OnDestroy {
     {
       name: 'Pure Dental',
       category: 'Salud',
-      distanceKm: 4,
+      distanceKm: 4.0,
       priceLabel: '$120 / visita',
-      rating: 5,
+      rating: 5.0,
+    },
+    {
+      name: 'Tech Repair',
+      category: 'Electrónica',
+      distanceKm: 2.3,
+      priceLabel: '$45 / reparación',
+      rating: 4.7,
     },
   ];
 
@@ -96,14 +103,15 @@ export class HomePage implements OnInit, OnDestroy {
    */
   isAdmin(): boolean {
     const session = this.authSession.getSession();
-    return session?.user?.role === 'Admin' ? true : false;
+    return session?.user?.role === 'Admin';
   }
 
   ngOnInit() {
+    // Simulamos carga de datos
     this.loadTimeoutId = setTimeout(() => {
       this.recommendedBusinesses = this.initialRecommendations;
       this.loadingRecommendations = false;
-    }, 900);
+    }, 1500);
   }
 
   ngOnDestroy() {
@@ -114,5 +122,11 @@ export class HomePage implements OnInit, OnDestroy {
 
   protected trackByBusinessName(_: number, business: RecommendedBusiness) {
     return business.name;
+  }
+
+  // Método para obtener el nombre del usuario
+  protected getUserName(): string {
+    const session = this.authSession.getSession();
+    return session?.user?.firstName || 'Usuario';
   }
 }
