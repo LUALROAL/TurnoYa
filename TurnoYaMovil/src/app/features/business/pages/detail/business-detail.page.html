@@ -1,99 +1,260 @@
-<ion-content class="detail-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div class="detail-wrap">
-    <header class="detail-header card glass-panel">
-      <ion-button fill="clear" class="back-btn" routerLink="/businesses" aria-label="Volver al listado">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-
-      <div>
-        <p class="header-overline">Detalle</p>
-        <h1>Negocio</h1>
+  <div class="relative z-10 pb-8">
+    <!-- Header con navegación -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <button routerLink="/businesses" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
+        </button>
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            <!-- &lt;  -->
+            DETALLE DEL NEGOCIO
+            <!-- /&gt; -->
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              {{ business?.name || 'Cargando...' }}
+            </span>
+          </h1>
+        </div>
       </div>
     </header>
 
-    <section *ngIf="loading" class="detail-skeleton card"></section>
-
-    <article *ngIf="!loading && !business" class="empty-state card glass-panel">
-      <ion-icon name="storefront-outline"></ion-icon>
-      <p>No pudimos cargar la informacion del negocio.</p>
-    </article>
-
-    <ng-container *ngIf="!loading && business">
-      <section class="hero card glass-panel">
-        <div class="hero-top">
-          <div>
-            <h2>{{ business.name }}</h2>
-            <p class="hero-meta">{{ business.category }} · {{ business.city }}, {{ business.department }}</p>
-          </div>
-
-          <span class="rating-pill">
-            <ion-icon name="star"></ion-icon>
-            {{ business.averageRating | number: '1.1-1' }}
-          </span>
-        </div>
-
-        <p class="hero-description" *ngIf="business.description">{{ business.description }}</p>
-
-        <div class="contact-grid">
-          <div class="contact-item" *ngIf="business.address">
-            <ion-icon name="location-outline"></ion-icon>
-            <span>{{ business.address }}</span>
-          </div>
-          <div class="contact-item" *ngIf="business.phone">
-            <ion-icon name="call-outline"></ion-icon>
-            <span>{{ business.phone }}</span>
-          </div>
-          <div class="contact-item" *ngIf="business.email">
-            <ion-icon name="mail-outline"></ion-icon>
-            <span>{{ business.email }}</span>
-          </div>
-          <div class="contact-item" *ngIf="business.website">
-            <ion-icon name="globe-outline"></ion-icon>
-            <span>{{ business.website }}</span>
-          </div>
-        </div>
-
-        <ion-button class="book-btn" [routerLink]="['/businesses', business.id, 'book']">
-          Agendar cita
-        </ion-button>
+    <div class="px-4 space-y-4 mt-4">
+      <!-- Skeleton Loader -->
+      <section *ngIf="loading" class="space-y-4">
+        <div class="skeleton-detail-hero"></div>
+        <div class="skeleton-detail-section"></div>
+        <div class="skeleton-detail-section"></div>
       </section>
 
-      <section class="section card">
-        <div class="section-head">
-          <h3>Servicios</h3>
-          <span>{{ business.services.length }}</span>
-        </div>
-
-        <article class="line-item" *ngFor="let service of business.services; trackBy: trackByServiceId">
-          <div>
-            <h4>{{ service.name }}</h4>
-            <p>{{ service.duration }} min</p>
+      <!-- Empty State -->
+      <article *ngIf="!loading && !business"
+               class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
+        <div class="relative">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-neon-primary/10 flex items-center justify-center">
+            <ion-icon name="storefront-outline" class="text-3xl text-neon-primary"></ion-icon>
           </div>
-          <strong>{{ service.price | currency: 'COP':'symbol':'1.0-0' }}</strong>
-        </article>
-
-        <p class="empty-copy" *ngIf="business.services.length === 0">Este negocio no tiene servicios publicados.</p>
-      </section>
-
-      <section class="section card">
-        <div class="section-head">
-          <h3>Equipo</h3>
-          <span>{{ business.employees.length }}</span>
+          <h3 class="text-xl font-display font-semibold text-text-primary mb-2">Negocio no encontrado</h3>
+          <p class="text-text-secondary font-mono text-sm">
+            No pudimos cargar la información del negocio
+          </p>
+          <button routerLink="/businesses"
+                  class="mt-4 px-6 py-2 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display text-sm font-semibold hover:shadow-neon transition-all duration-300">
+            Volver al listado
+          </button>
         </div>
+      </article>
 
-        <div class="chip-row" *ngIf="business.employees.length > 0">
-          <span class="employee-chip" *ngFor="let employee of business.employees; trackBy: trackByEmployeeId">
-            {{ employee.fullName }}
-          </span>
+      <!-- Contenido del Negocio -->
+      <ng-container *ngIf="!loading && business">
+        <!-- Hero Section con imagen -->
+        <section class="relative group overflow-hidden rounded-2xl">
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+          <div class="relative bg-bg-card/90 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden">
+            <!-- Imagen de portada -->
+            <div class="relative h-64 overflow-hidden">
+              <img
+                [src]="getBusinessImage(business.category)"
+                [alt]="business.name"
+                class="w-full h-full object-cover"
+              />
+
+              <!-- Overlay degradado -->
+              <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div>
+
+              <!-- Badge Verificado -->
+              <div class="absolute top-4 left-4 flex items-center gap-1 px-3 py-1.5 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
+                <ion-icon name="checkmark-circle" class="text-neon-primary text-sm"></ion-icon>
+                <span class="text-xs font-mono text-text-primary">Verificado</span>
+              </div>
+
+              <!-- Rating -->
+              <div class="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
+                <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
+                <span class="text-xs font-mono text-text-primary font-bold">{{ business.averageRating | number:'1.1-1' }}</span>
+              </div>
+
+              <!-- Información principal sobre la imagen -->
+              <div class="absolute bottom-4 left-4 right-4">
+                <h2 class="text-3xl font-display font-bold text-text-primary mb-2">{{ business.name }}</h2>
+                <p class="text-text-secondary flex items-center gap-2 text-sm">
+                  <ion-icon name="location-outline" class="text-neon-primary"></ion-icon>
+                  {{ business.city }}, {{ business.department }}
+                  <span class="w-1 h-1 bg-neon-primary rounded-full"></span>
+                  <ion-icon name="pricetag-outline" class="text-neon-primary"></ion-icon>
+                  {{ business.category }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="p-5 border-t border-neon-primary/10" *ngIf="business.description">
+              <p class="text-text-secondary text-sm leading-relaxed">{{ business.description }}</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Información de Contacto -->
+        <section class="relative group overflow-hidden rounded-2xl">
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+          <div class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl p-5">
+            <h3 class="text-lg font-display font-semibold text-text-primary flex items-center gap-2 mb-4">
+              <span class="w-1 h-5 bg-neon-primary rounded-full"></span>
+              Información de Contacto
+            </h3>
+
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 text-text-secondary hover:text-neon-primary transition-colors" *ngIf="business.address">
+                <div class="w-8 h-8 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="location-outline" class="text-neon-primary"></ion-icon>
+                </div>
+                <span class="text-sm">{{ business.address }}</span>
+              </div>
+
+              <div class="flex items-center gap-3 text-text-secondary hover:text-neon-primary transition-colors" *ngIf="business.phone">
+                <div class="w-8 h-8 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="call-outline" class="text-neon-primary"></ion-icon>
+                </div>
+                <span class="text-sm">{{ business.phone }}</span>
+              </div>
+
+              <div class="flex items-center gap-3 text-text-secondary hover:text-neon-primary transition-colors" *ngIf="business.email">
+                <div class="w-8 h-8 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="mail-outline" class="text-neon-primary"></ion-icon>
+                </div>
+                <span class="text-sm">{{ business.email }}</span>
+              </div>
+
+              <div class="flex items-center gap-3 text-text-secondary hover:text-neon-primary transition-colors" *ngIf="business.website">
+                <div class="w-8 h-8 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="globe-outline" class="text-neon-primary"></ion-icon>
+                </div>
+                <span class="text-sm">{{ business.website }}</span>
+              </div>
+            </div>
+
+            <!-- Botón de acción rápida -->
+            <div class="mt-4 flex gap-2">
+              <button *ngIf="business.phone" class="flex-1 py-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-neon-primary font-mono text-sm hover:border-neon-primary/50 transition-all duration-300 flex items-center justify-center gap-2">
+                <ion-icon name="call-outline"></ion-icon>
+                Llamar
+              </button>
+              <button *ngIf="business.website" class="flex-1 py-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-neon-primary font-mono text-sm hover:border-neon-primary/50 transition-all duration-300 flex items-center justify-center gap-2">
+                <ion-icon name="globe-outline"></ion-icon>
+                Visitar web
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Servicios -->
+        <section class="relative group overflow-hidden rounded-2xl">
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+          <div class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-display font-semibold text-text-primary flex items-center gap-2">
+                <span class="w-1 h-5 bg-neon-primary rounded-full"></span>
+                Servicios
+              </h3>
+              <span class="px-2 py-1 bg-neon-primary/10 rounded-full text-xs font-mono text-neon-primary border border-neon-primary/20">
+                {{ business.services.length }} disponibles
+              </span>
+            </div>
+
+            <div class="space-y-3" *ngIf="business.services.length > 0">
+              <article *ngFor="let service of business.services; trackBy: trackByServiceId"
+                       class="group/service relative overflow-hidden rounded-xl">
+                <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-hover/service:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="relative p-4 bg-bg-tertiary/30 border border-neon-primary/10 rounded-xl hover:border-neon-primary/30 transition-all duration-300">
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <h4 class="font-display font-semibold text-text-primary">{{ service.name }}</h4>
+                      <p class="text-xs font-mono text-text-tertiary flex items-center gap-2 mt-1">
+                        <ion-icon name="time-outline" class="text-neon-primary"></ion-icon>
+                        {{ service.duration }} minutos
+                      </p>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-lg font-display font-bold text-neon-secondary">{{ service.price | currency:'COP':'symbol':'1.0-0' }}</span>
+                    </div>
+                  </div>
+
+                  <button class="w-full mt-3 py-2 bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20 rounded-lg text-neon-primary font-mono text-sm hover:from-neon-primary hover:to-neon-secondary hover:text-bg-primary transition-all duration-300">
+                    Reservar este servicio
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <p *ngIf="business.services.length === 0" class="text-text-secondary font-mono text-sm text-center py-4">
+              Este negocio no tiene servicios publicados
+            </p>
+          </div>
+        </section>
+
+        <!-- Equipo -->
+        <section class="relative group overflow-hidden rounded-2xl">
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+          <div class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-display font-semibold text-text-primary flex items-center gap-2">
+                <span class="w-1 h-5 bg-neon-primary rounded-full"></span>
+                Equipo
+              </h3>
+              <span class="px-2 py-1 bg-neon-primary/10 rounded-full text-xs font-mono text-neon-primary border border-neon-primary/20">
+                {{ business.employees.length }} profesionales
+              </span>
+            </div>
+
+            <div class="flex flex-wrap gap-2" *ngIf="business.employees.length > 0">
+              <span *ngFor="let employee of business.employees; trackBy: trackByEmployeeId"
+                    class="group relative overflow-hidden rounded-full">
+                <div class="absolute inset-0 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <span class="relative block px-4 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-full text-sm font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300 cursor-default">
+                  {{ employee.fullName }}
+                </span>
+              </span>
+            </div>
+
+            <p *ngIf="business.employees.length === 0" class="text-text-secondary font-mono text-sm text-center py-4">
+              No hay empleados activos para este negocio
+            </p>
+          </div>
+        </section>
+
+        <!-- Botón flotante para agendar -->
+        <div class="sticky bottom-4 z-10">
+          <div class="relative group">
+            <div class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+            <button [routerLink]="['/businesses', business.id, 'book']"
+                    class="relative w-full py-4 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-bold text-lg hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3">
+              <ion-icon name="calendar-outline" class="text-2xl"></ion-icon>
+              Agendar cita ahora
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </button>
+          </div>
         </div>
-
-        <p class="empty-copy" *ngIf="business.employees.length === 0">No hay empleados activos para este negocio.</p>
-      </section>
-    </ng-container>
+      </ng-container>
+    </div>
   </div>
 </ion-content>
