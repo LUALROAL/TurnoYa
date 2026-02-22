@@ -13,6 +13,7 @@ import {
   createOutline,
   timeOutline,
   trashOutline,
+  shieldCheckmarkOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -22,7 +23,7 @@ import { OwnerServicesService } from '../../services/owner-services.service';
 @Component({
   selector: 'app-services-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, IonContent, IonButton, IonIcon, IonFab, IonFabButton],
+  imports: [CommonModule, RouterLink, IonContent, IonIcon],
   templateUrl: './services-list.page.html',
   styleUrl: './services-list.page.scss',
 })
@@ -47,6 +48,7 @@ export class ServicesListPage implements OnInit, OnDestroy {
       timeOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
+      shieldCheckmarkOutline,
     });
   }
 
@@ -87,6 +89,9 @@ export class ServicesListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           service.isActive = newStatus;
+          this.notify.showSuccess(
+            `Servicio ${newStatus ? 'activado' : 'desactivado'} correctamente`
+          );
         },
         error: (error: unknown) => {
           console.error('Error al cambiar estado del servicio:', error);
@@ -96,7 +101,7 @@ export class ServicesListPage implements OnInit, OnDestroy {
   }
 
   protected deleteService(service: OwnerService): void {
-    const confirmed = confirm(`¿Eliminar el servicio "${service.name}"?`);
+    const confirmed = confirm(`¿Estás seguro de eliminar el servicio "${service.name}"? Esta acción no se puede deshacer.`);
 
     if (!confirmed) {
       return;
@@ -109,6 +114,7 @@ export class ServicesListPage implements OnInit, OnDestroy {
         next: () => {
           this.services = this.services.filter(item => item.id !== service.id);
           this.isEmpty = this.services.length === 0;
+          this.notify.showSuccess('Servicio eliminado correctamente');
         },
         error: (error: unknown) => {
           console.error('Error al eliminar servicio:', error);

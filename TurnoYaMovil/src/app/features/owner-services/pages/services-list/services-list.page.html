@@ -1,100 +1,195 @@
-<ion-content class="services-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div class="services-wrap">
-    <header class="services-header card glass-panel">
-      <div>
-        <p class="header-overline">Gestión de servicios</p>
-        <h1>Servicios del negocio</h1>
+  <div class="relative z-10 pb-20">
+    <!-- Header con navegación -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button [routerLink]="['/owner/businesses']" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+            <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
+          </button>
+          <div>
+            <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+              &lt; GESTIÓN DE SERVICIOS /&gt;
+            </p>
+            <h1 class="text-2xl font-display font-bold">
+              <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+                Servicios del Negocio
+              </span>
+            </h1>
+          </div>
+        </div>
       </div>
-      <ion-button fill="clear" class="back-btn" [routerLink]="['/owner/businesses']" aria-label="Volver">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
     </header>
 
-    @if (loading) {
-      <section class="cards-grid">
-        @for (i of [1, 2, 3]; track i) {
-          <article class="service-card card skeleton"></article>
-        }
-      </section>
-    }
+    <div class="px-4 space-y-6 mt-4">
+      <!-- Título de sección mejorado -->
+      <div class="space-y-2">
+        <h2 class="text-2xl font-display font-bold text-text-primary">
+          Catálogo de <span class="text-neon-primary">Servicios</span>
+        </h2>
+        <p class="text-text-secondary font-mono text-sm flex items-center gap-2">
+          <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+          Administra los servicios que ofreces a tus clientes
+          <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+        </p>
+      </div>
 
-    @if (!loading && isEmpty) {
-      <article class="empty-state card glass-panel">
-        <ion-icon name="cash-outline"></ion-icon>
-        <h3>Aún no tienes servicios</h3>
-        <p>Agrega tu primer servicio para que tus clientes puedan reservar.</p>
-        <ion-button [routerLink]="['/owner/businesses', businessId, 'services', 'create']" class="button-primary">
-          <ion-icon slot="start" name="add-outline"></ion-icon>
-          Crear servicio
-        </ion-button>
-      </article>
-    }
+      <!-- Loading skeleton -->
+      @if (loading) {
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (i of [1, 2, 3, 4]; track i) {
+            <div class="skeleton-card"></div>
+          }
+        </section>
+      }
 
-    @if (!loading && !isEmpty) {
-      <section class="cards-grid">
-        @for (service of services; track trackByServiceId($index, service)) {
-          <article class="service-card card">
-            <div class="card-top">
-              <div>
-                <h3>{{ service.name }}</h3>
-                <p class="card-meta">
-                  <ion-icon name="time-outline"></ion-icon>
-                  {{ service.duration }} min
-                </p>
-              </div>
-              <span class="status-badge" [class.active]="service.isActive" [class.inactive]="!service.isActive">
-                {{ service.isActive ? 'Activo' : 'Inactivo' }}
-              </span>
+      <!-- Empty state mejorado -->
+      @if (!loading && isEmpty) {
+        <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
+          <div class="relative">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+              <ion-icon name="cash-outline" class="text-5xl text-neon-primary"></ion-icon>
             </div>
+            <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes servicios</h3>
+            <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
+              Agrega tu primer servicio para que tus clientes puedan reservar.
+            </p>
+            <button [routerLink]="['/owner/businesses', businessId, 'services', 'create']"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
+              <ion-icon name="add-outline"></ion-icon>
+              Crear primer servicio
+            </button>
+          </div>
+        </div>
+      }
 
-            @if (service.description) {
-              <p class="description">{{ service.description }}</p>
-            }
+      <!-- Lista de servicios -->
+      @if (!loading && !isEmpty) {
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (service of services; track trackByServiceId($index, service)) {
+            <div class="relative group overflow-hidden rounded-2xl">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <div class="info-row">
-              <div class="price-pill">
-                <ion-icon name="cash-outline"></ion-icon>
-                ${{ service.price }}
-              </div>
-              @if (service.requiresDeposit) {
-                <div class="deposit-pill">
-                  Anticipo: ${{ service.depositAmount || 0 }}
+              <article class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
+
+                <!-- Cabecera con gradiente -->
+                <div class="relative h-24 overflow-hidden bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20">
+                  <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2300E0FF' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E'); background-repeat: repeat;"></div>
+
+                  <!-- Status badge en la imagen -->
+                  <div class="absolute top-3 right-3">
+                    <span class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm flex items-center gap-1"
+                          [class.bg-neon-primary/20]="service.isActive"
+                          [class.border-neon-primary/30]="service.isActive"
+                          [class.text-neon-primary]="service.isActive"
+                          [class.bg-text-tertiary/10]="!service.isActive"
+                          [class.border-text-tertiary/30]="!service.isActive"
+                          [class.text-text-tertiary]="!service.isActive">
+                      <span class="w-1.5 h-1.5 rounded-full"
+                            [class.bg-neon-primary]="service.isActive"
+                            [class.animate-ping]="service.isActive"
+                            [class.bg-text-tertiary]="!service.isActive"></span>
+                      {{ service.isActive ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </div>
+
+                  <!-- Título del servicio -->
+                  <div class="absolute bottom-3 left-4">
+                    <h3 class="text-xl font-display font-bold text-text-primary">{{ service.name }}</h3>
+                  </div>
                 </div>
-              }
-            </div>
 
-            <div class="card-actions">
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/owner/businesses', businessId, 'services', service.id, 'edit']"
-              >
-                <ion-icon name="create-outline"></ion-icon>
-                Editar
-              </button>
-              <button type="button" class="action-btn" (click)="toggleServiceStatus(service)">
-                <ion-icon [name]="service.isActive ? 'close-circle-outline' : 'checkmark-circle-outline'"></ion-icon>
-                {{ service.isActive ? 'Desactivar' : 'Activar' }}
-              </button>
-              <button type="button" class="action-btn danger" (click)="deleteService(service)">
-                <ion-icon name="trash-outline"></ion-icon>
-                Eliminar
-              </button>
-            </div>
-          </article>
-        }
-      </section>
+                <!-- Contenido de la tarjeta -->
+                <div class="p-4 space-y-3">
 
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button [routerLink]="['/owner/businesses', businessId, 'services', 'create']">
-          <ion-icon name="add-outline"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-    }
+                  <!-- Duración -->
+                  <div class="flex items-center gap-2 text-sm text-text-secondary">
+                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                      <ion-icon name="time-outline" class="text-neon-primary text-sm"></ion-icon>
+                    </div>
+                    <span class="font-mono text-xs">{{ service.duration }} minutos</span>
+                  </div>
+
+                  <!-- Descripción (si existe) -->
+                  @if (service.description) {
+                    <p class="text-text-secondary text-sm leading-relaxed border-l-2 border-neon-primary/30 pl-3">
+                      {{ service.description }}
+                    </p>
+                  }
+
+                  <!-- Precio y depósito -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-neon-primary/10 rounded-full border border-neon-primary/20">
+                      <ion-icon name="cash-outline" class="text-neon-primary text-sm"></ion-icon>
+                      <span class="text-sm font-mono text-neon-primary font-bold">${{ service.price }}</span>
+                    </div>
+
+                    @if (service.requiresDeposit) {
+                      <div class="flex items-center gap-1 px-2 py-1 bg-neon-secondary/10 rounded-full border border-neon-secondary/20">
+                        <ion-icon name="shield-checkmark-outline" class="text-neon-secondary text-xs"></ion-icon>
+                        <span class="text-xs font-mono text-neon-secondary">Anticipo: ${{ service.depositAmount }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Botones de acción -->
+                  <div class="grid grid-cols-3 gap-2 pt-2">
+                    <button [routerLink]="['/owner/businesses', businessId, 'services', service.id, 'edit']"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="create-outline" class="text-sm"></ion-icon>
+                      Editar
+                    </button>
+
+                    <button (click)="toggleServiceStatus(service)"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono transition-all duration-300"
+                            [class.text-neon-primary]="!service.isActive"
+                            [class.hover:border-neon-primary/50]="!service.isActive"
+                            [class.hover:text-neon-primary]="!service.isActive"
+                            [class.text-red-400]="service.isActive"
+                            [class.hover:border-red-500/50]="service.isActive"
+                            [class.hover:text-red-400]="service.isActive">
+                      <ion-icon [name]="service.isActive ? 'close-circle-outline' : 'checkmark-circle-outline'" class="text-sm"></ion-icon>
+                      {{ service.isActive ? 'Desactivar' : 'Activar' }}
+                    </button>
+
+                    <button (click)="deleteService(service)"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300">
+                      <ion-icon name="trash-outline" class="text-sm"></ion-icon>
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          }
+        </section>
+      }
+    </div>
   </div>
+
+  <!-- Floating action button mejorado -->
+  @if (!loading && !isEmpty) {
+    <div class="fixed bottom-6 right-6 z-30">
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+        <button [routerLink]="['/owner/businesses', businessId, 'services', 'create']"
+                class="relative w-14 h-14 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary flex items-center justify-center shadow-neon hover:scale-110 transition-transform duration-300">
+          <ion-icon name="add-outline" class="text-2xl text-bg-primary"></ion-icon>
+        </button>
+      </div>
+    </div>
+  }
 </ion-content>

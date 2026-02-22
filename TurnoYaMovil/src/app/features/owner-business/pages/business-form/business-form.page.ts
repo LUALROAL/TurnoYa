@@ -26,7 +26,6 @@ import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
     CommonModule,
     ReactiveFormsModule,
     IonContent,
-    IonButton,
     IonIcon,
     IonInput,
     IonTextarea,
