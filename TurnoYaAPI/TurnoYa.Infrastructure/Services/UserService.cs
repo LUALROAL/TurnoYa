@@ -102,8 +102,8 @@ public class UserService : IUserService
 
         try
         {
-            _logger.LogInformation("Valor de Gender antes de guardar 🔥🔥🔥🔥🔥🔥🔥🔥🔥😁😁😁😁: {Gender}", user.Gender);
-            Console.WriteLine($"[DEBUG] Valor de Gender antes de guardar 🔥🔥🔥🔥🔥🔥🔥🔥🔥😁😁😁😁 👀: {user.Gender}");
+            //_logger.LogInformation("Valor de Gender antes de guardar 🔥🔥🔥🔥🔥🔥🔥🔥🔥😁😁😁😁: {Gender}", user.Gender);
+            //Console.WriteLine($"[DEBUG] Valor de Gender antes de guardar 🔥🔥🔥🔥🔥🔥🔥🔥🔥😁😁😁😁 👀: {user.Gender}");
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Perfil actualizado para usuario: {UserId}", userId);
