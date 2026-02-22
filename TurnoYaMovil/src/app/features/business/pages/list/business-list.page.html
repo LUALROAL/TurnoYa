@@ -1,104 +1,225 @@
-<ion-content class="business-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div class="business-wrap">
-    <header class="business-header card glass-panel">
-      <div>
-        <p class="header-overline">Marketplace</p>
-        <h1>Negocios</h1>
+  <div class="relative z-10 pb-8">
+    <!-- Header con navegación -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <button routerLink="/home" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
+        </button>
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            &lt; MARKETPLACE /&gt;
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              Negocios
+            </span>
+          </h1>
+        </div>
       </div>
-      <ion-button fill="clear" class="back-btn" routerLink="/home" aria-label="Volver a inicio">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
     </header>
 
-    <section class="section-head">
-      <h2>Explora opciones cerca de ti</h2>
-      <p>Encuentra negocios por categoria y disponibilidad.</p>
-    </section>
-
-    <section class="filters card glass-panel">
-      <div class="filter-input-shell">
-        <ion-icon name="search-outline"></ion-icon>
-        <input
-          type="text"
-          placeholder="Buscar por nombre o categoria"
-          [value]="searchQuery"
-          (input)="onSearchQueryChange($event)"
-        />
+    <div class="px-4 space-y-6 mt-4">
+      <!-- Título de sección mejorado -->
+      <div class="space-y-2">
+        <h2 class="text-2xl font-display font-bold text-text-primary">
+          Explora opciones <span class="text-neon-primary">cerca de ti</span>
+        </h2>
+        <p class="text-text-secondary font-mono text-sm flex items-center gap-2">
+          <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+          Encuentra negocios por categoría y disponibilidad
+          <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+        </p>
       </div>
 
-      <div class="filter-input-shell">
-        <ion-icon name="location-outline"></ion-icon>
-        <input
-          type="text"
-          placeholder="Filtrar por ciudad"
-          [value]="cityFilter"
-          (input)="onCityFilterChange($event)"
-        />
-      </div>
+      <!-- Panel de filtros mejorado -->
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
 
-      <div class="categories-row" *ngIf="categories.length > 0">
-        <button
-          type="button"
-          class="category-chip"
-          *ngFor="let category of categories"
-          (click)="selectCategory(category)"
-          [class.active]="isCategoryActive(category)"
-        >
-          {{ category }}
-        </button>
-      </div>
+        <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-5 space-y-4">
 
-      <div class="filters-actions">
-        <button type="button" class="link-btn" (click)="clearFilters()">Limpiar</button>
-        <ion-button size="small" class="button-primary" (click)="applyFilters()">Buscar</ion-button>
-      </div>
-
-      <div class="searching-indicator" *ngIf="searching">
-        <ion-spinner name="dots"></ion-spinner>
-        <span>Buscando...</span>
-      </div>
-    </section>
-
-    <section *ngIf="loading" class="cards-grid">
-      <article class="business-card card skeleton" *ngFor="let item of [1, 2, 3]"></article>
-    </section>
-
-    <article *ngIf="!loading && businesses.length === 0" class="empty-state card glass-panel">
-      <ion-icon name="storefront-outline"></ion-icon>
-      <p>No hay negocios disponibles en este momento.</p>
-    </article>
-
-    <section *ngIf="!loading && businesses.length > 0" class="cards-grid">
-      <article class="business-card card" *ngFor="let business of businesses; trackBy: trackByBusinessId">
-        <div class="top-row">
-          <div>
-            <h3>{{ business.name }}</h3>
-            <p class="meta">{{ business.category }} · {{ business.city }}</p>
+          <!-- Buscador principal -->
+          <div class="relative">
+            <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+            <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+              <ion-icon name="search-outline" class="text-neon-primary text-xl"></ion-icon>
+              <input
+                type="text"
+                placeholder="Buscar por nombre o categoría..."
+                [value]="searchQuery"
+                (input)="onSearchQueryChange($event)"
+                class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+              />
+            </div>
           </div>
 
-          <span class="rating-pill">
-            <ion-icon name="star"></ion-icon>
-            {{ business.averageRating | number: '1.1-1' }}
-          </span>
+          <!-- Filtro por ciudad -->
+          <div class="relative">
+            <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+            <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+              <ion-icon name="location-outline" class="text-neon-primary text-xl"></ion-icon>
+              <input
+                type="text"
+                placeholder="Filtrar por ciudad..."
+                [value]="cityFilter"
+                (input)="onCityFilterChange($event)"
+                class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+              />
+            </div>
+          </div>
+
+          <!-- Categorías con chips mejorados -->
+          <div *ngIf="categories.length > 0" class="space-y-2">
+            <p class="text-xs font-mono text-neon-primary tracking-wider">
+              &lt; CATEGORÍAS /&gt;
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                *ngFor="let category of categories"
+                (click)="selectCategory(category)"
+                class="group relative overflow-hidden rounded-full transition-all duration-300"
+                [class.active]="isCategoryActive(category)"
+              >
+                <div class="absolute inset-0 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative px-4 py-2 text-sm font-mono transition-all duration-300"
+                     [class.bg-neon-primary/20]="isCategoryActive(category)"
+                     [class.text-neon-primary]="isCategoryActive(category)"
+                     [class.border]="!isCategoryActive(category)"
+                     [class.border-neon-primary/20]="!isCategoryActive(category)"
+                     [class.text-text-secondary]="!isCategoryActive(category)"
+                     [class.hover:border-neon-primary/50]="!isCategoryActive(category)">
+                  {{ category }}
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Acciones de filtros -->
+          <div class="flex items-center justify-between pt-2">
+            <button
+              type="button"
+              (click)="clearFilters()"
+              class="text-text-secondary hover:text-neon-primary transition-colors text-sm font-mono flex items-center gap-1"
+            >
+              <ion-icon name="close-outline"></ion-icon>
+              Limpiar filtros
+            </button>
+
+            <button
+              type="button"
+              (click)="applyFilters()"
+              class="px-6 py-2 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display text-sm font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105"
+            >
+              Buscar
+            </button>
+          </div>
+
+          <!-- Indicador de búsqueda -->
+          <div *ngIf="searching" class="flex items-center justify-center gap-3 py-2">
+            <ion-spinner name="crescent" class="text-neon-primary w-5 h-5"></ion-spinner>
+            <span class="text-text-secondary font-mono text-sm animate-pulse">Buscando negocios...</span>
+          </div>
         </div>
+      </div>
 
-        <p class="address">{{ business.address }}</p>
+      <!-- Skeleton Loader -->
+      <section *ngIf="loading" class="space-y-3">
+        <div *ngFor="let item of [1, 2, 3]" class="skeleton-card"></div>
+      </section>
 
-        <div class="bottom-row">
-          <span class="reviews">{{ business.totalReviews }} reseñas</span>
-          <div class="actions-row">
-            <span class="distance" *ngIf="business.distance !== null">{{ business.distance }} km</span>
-            <ion-button size="small" fill="clear" class="detail-btn" [routerLink]="['/businesses', business.id]">
-              Ver detalle
-            </ion-button>
+      <!-- Empty State -->
+      <article *ngIf="!loading && businesses.length === 0"
+               class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
+        <div class="relative">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-neon-primary/10 flex items-center justify-center">
+            <ion-icon name="storefront-outline" class="text-3xl text-neon-primary"></ion-icon>
           </div>
+          <h3 class="text-xl font-display font-semibold text-text-primary mb-2">No hay negocios disponibles</h3>
+          <p class="text-text-secondary font-mono text-sm">
+            Intenta con otros filtros o <button (click)="clearFilters()" class="text-neon-primary hover:text-neon-secondary">limpia la búsqueda</button>
+          </p>
         </div>
       </article>
-    </section>
+
+      <!-- Grid de Negocios -->
+      <section *ngIf="!loading && businesses.length > 0" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <p class="text-text-secondary font-mono text-sm">
+            <span class="text-neon-primary">{{ businesses.length }}</span> negocios encontrados
+          </p>
+          <span class="text-xs font-mono text-neon-primary animate-pulse">⚡</span>
+        </div>
+
+        <div class="space-y-3">
+          <article *ngFor="let business of businesses; trackBy: trackByBusinessId"
+                   class="group relative overflow-hidden rounded-2xl">
+            <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div class="relative p-5 bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl hover:border-neon-primary/30 transition-all duration-300">
+              <!-- Top Row con nombre y rating -->
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-neon-primary/20 to-neon-secondary/20 flex items-center justify-center">
+                    <ion-icon name="business-outline" class="text-2xl text-neon-primary"></ion-icon>
+                  </div>
+                  <div>
+                    <h3 class="font-display font-semibold text-text-primary">{{ business.name }}</h3>
+                    <p class="text-xs font-mono text-text-tertiary flex items-center gap-2 mt-1">
+                      <span>{{ business.category }}</span>
+                      <span class="w-1 h-1 bg-neon-primary rounded-full"></span>
+                      <span>{{ business.city }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Rating -->
+                <div class="flex items-center gap-1 px-2 py-1 bg-neon-primary/10 rounded-full border border-neon-primary/20">
+                  <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
+                  <span class="text-xs font-mono text-neon-primary font-bold">{{ business.averageRating | number:'1.1-1' }}</span>
+                </div>
+              </div>
+
+              <!-- Dirección -->
+              <p class="text-text-secondary text-sm mb-4 pl-2 border-l-2 border-neon-primary/30">
+                {{ business.address }}
+              </p>
+
+              <!-- Bottom Row con reseñas y acciones -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="text-xs font-mono text-text-tertiary flex items-center gap-1">
+                    <ion-icon name="chatbubble-outline" class="text-neon-primary text-sm"></ion-icon>
+                    {{ business.totalReviews }} reseñas
+                  </span>
+                  <span *ngIf="business.distance !== null" class="text-xs font-mono text-neon-primary flex items-center gap-1">
+                    <ion-icon name="location-outline"></ion-icon>
+                    {{ business.distance }} km
+                  </span>
+                </div>
+
+                <button [routerLink]="['/businesses', business.id]"
+                        class="px-4 py-2 bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20 rounded-full text-neon-primary font-mono text-sm font-semibold hover:from-neon-primary hover:to-neon-secondary hover:text-bg-primary transition-all duration-300">
+                  Ver detalle →
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
   </div>
 </ion-content>

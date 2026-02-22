@@ -1,289 +1,171 @@
 :host {
   display: block;
+  height: 100%;
 }
 
-.business-bg {
-  --background: var(--color-bg);
+// Animaciones personalizadas
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
-.bg-orb {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
-  filter: blur(88px);
-  opacity: 0.25;
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 
-.orb-top {
-  top: -95px;
-  left: -70px;
+.animation-delay-1000 {
+  animation-delay: 1s;
 }
 
-.orb-bottom {
-  right: -80px;
-  bottom: -120px;
-}
-
-.business-wrap {
+// Skeleton loader mejorado
+.skeleton-card {
   position: relative;
-  z-index: 1;
-  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4) calc(var(--space-8) + env(safe-area-inset-bottom));
-  display: grid;
-  gap: var(--space-5);
-}
-
-.business-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
-}
-
-.glass-panel {
-  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.header-overline {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-}
-
-.business-header h1 {
-  margin: var(--space-1) 0 0;
-  font-family: var(--font-display-a);
-  font-size: 1.4rem;
-}
-
-.back-btn {
-  --color: var(--color-text);
-  --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
-  --border-radius: 999px;
-}
-
-.section-head {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.section-head h2 {
-  margin: 0;
-  font-family: var(--font-display-a);
-  font-size: 1.5rem;
-  line-height: 1.1;
-}
-
-.section-head p {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-
-.cards-grid {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.filters {
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
-  display: grid;
-  gap: var(--space-3);
-}
-
-.filter-input-shell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-input);
-  padding: 0 12px;
-  height: 46px;
-}
-
-.filter-input-shell ion-icon {
-  color: var(--color-text-muted);
-  font-size: 18px;
-}
-
-.filter-input-shell input {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--color-text);
-  font: inherit;
-  font-size: 0.9rem;
-}
-
-.filter-input-shell input::placeholder {
-  color: var(--color-text-muted);
-}
-
-.categories-row {
-  display: flex;
-  gap: var(--space-2);
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
-
-.category-chip {
-  border: 1px solid var(--color-outline);
-  background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
-  color: var(--color-text-muted);
-  border-radius: 999px;
-  padding: 6px 12px;
-  white-space: nowrap;
-  font-size: 0.76rem;
-  font-weight: 700;
-}
-
-.category-chip.active {
-  border-color: color-mix(in srgb, var(--color-accent-1) 35%, transparent);
-  background: color-mix(in srgb, var(--color-accent-1) 20%, transparent);
-  color: var(--color-accent-1);
-}
-
-.filters-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.searching-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.searching-indicator ion-spinner {
-  width: 16px;
-  height: 16px;
-  color: var(--color-accent-1);
-}
-
-.business-card {
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 10%, var(--color-outline));
-}
-
-.top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
-.business-card h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.meta {
-  margin: var(--space-1) 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-}
-
-.rating-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-accent-1) 22%, transparent);
-  color: var(--color-accent-1);
-  font-size: 0.74rem;
-  font-weight: 700;
-}
-
-.rating-pill ion-icon {
-  font-size: 12px;
-}
-
-.address {
-  margin: var(--space-3) 0;
-  font-size: 0.88rem;
-}
-
-.bottom-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-}
-
-.actions-row {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.detail-btn {
-  --color: var(--color-accent-1);
-  --border-radius: 999px;
-  --padding-start: 8px;
-  --padding-end: 8px;
-  font-size: 0.75rem;
-}
-
-.empty-state {
-  border-color: color-mix(in srgb, var(--color-accent-1) 16%, var(--color-outline));
-  display: grid;
-  justify-items: center;
-  text-align: center;
-  gap: var(--space-2);
-  padding: var(--space-6);
-}
-
-.empty-state ion-icon {
-  color: var(--color-accent-1);
-  font-size: 22px;
-}
-
-.empty-state p {
-  margin: 0;
-  color: var(--color-text-muted);
-}
-
-.skeleton {
-  min-height: 126px;
+  overflow: hidden;
+  height: 180px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--color-surface-2) 94%, transparent) 25%,
-    color-mix(in srgb, var(--color-outline) 55%, transparent) 50%,
-    color-mix(in srgb, var(--color-surface-2) 94%, transparent) 75%
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
   );
-  background-size: 220% 100%;
-  animation: skeleton-loading 1.2s infinite;
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
 @keyframes skeleton-loading {
-  from {
-    background-position: 100% 0;
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+
+  &:hover {
+    background: #00F5D4;
+  }
+}
+
+// Estilo para los chips de categoría
+.category-chip {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 224, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
   }
 
-  to {
-    background-position: -100% 0;
+  &:hover::before {
+    transform: translateX(100%);
   }
+
+  &.active {
+    border-color: #00E0FF;
+    background: rgba(0, 224, 255, 0.1);
+    color: #00E0FF;
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.3);
+  }
+}
+
+// Efecto de brillo para los inputs
+.input-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 224, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.group:focus-within .input-glow {
+  opacity: 1;
+}
+
+// Estilo para el spinner
+ion-spinner {
+  --color: #00E0FF;
+}
+
+// Ajustes para Ionic
+ion-content {
+  --background: transparent;
+}
+
+// Efecto hover para las tarjetas de negocio
+.business-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Badge de distancia
+.distance-badge {
+  background: rgba(0, 224, 255, 0.1);
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  color: #00E0FF;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+// Contador de resultados
+.results-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #9FB3C8;
+
+  strong {
+    color: #00E0FF;
+    font-weight: 600;
+  }
+}
+
+// Animación para el indicador de búsqueda
+@keyframes search-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.searching-indicator {
+  animation: search-pulse 1.5s infinite;
+}
+
+// Estilo para el borde izquierdo de la dirección
+.address-border {
+  border-left: 2px solid rgba(0, 224, 255, 0.3);
+  padding-left: 12px;
 }
