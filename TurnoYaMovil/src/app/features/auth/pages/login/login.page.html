@@ -1,96 +1,248 @@
-<ion-content class="auth-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas (efecto futurista) -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <!-- Gradientes radiales animados -->
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <!-- Líneas de grid futuristas -->
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;">
+    </div>
   </div>
 
-  <div class="auth-wrap">
-    <div class="auth-brand">
-      <div class="brand-icon-wrap">
-        <ion-icon name="calendar-outline"></ion-icon>
+  <div class="flex items-center justify-center min-h-full px-4 py-8 relative z-10">
+    <!-- Tarjeta Principal con efecto glass -->
+    <div class="w-full max-w-md">
+
+      <!-- Logo y Branding con animación flotante -->
+      <div class="text-center mb-8 animate-float">
+        <div class="relative inline-block">
+          <!-- Círculo de neón animado -->
+          <div class="absolute inset-0 rounded-full bg-neon-primary/20 blur-xl animate-pulse-slow"></div>
+
+          <!-- Icono principal con efecto 3D -->
+          <div class="relative w-20 h-20 mx-auto mb-4">
+            <div class="absolute inset-0 bg-gradient-card rounded-2xl border border-neon-primary/30 shadow-neon"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <ion-icon name="calendar-number-outline" class="text-4xl text-neon-primary"></ion-icon>
+            </div>
+            <!-- Partículas decorativas -->
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-neon-primary rounded-full animate-ping"></div>
+            <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-neon-secondary rounded-full animate-ping animation-delay-1000"></div>
+          </div>
+        </div>
+
+        <!-- Título con efecto neón -->
+        <h1 class="text-4xl font-display font-bold mb-2">
+          <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+            TurnoYa
+          </span>
+        </h1>
+
+        <!-- Subtítulo con efecto de escritura -->
+        <p class="text-text-secondary font-mono text-sm tracking-widest">
+          <!-- &lt; -->
+           gestión inteligente de citas
+          <!-- /&gt; -->
+        </p>
       </div>
-      <h1 class="brand-title">Turno<span>Ya</span></h1>
-      <p class="brand-subtitle">Gestiona tus citas con eficiencia</p>
-    </div>
 
-    <div class="auth-card card glass-panel">
-      <div class="card-header">
-        <h2 class="auth-title">Bienvenido de nuevo</h2>
-        <p class="auth-subtitle">Ingresa tus credenciales para acceder</p>
-      </div>
+      <!-- Tarjeta del Formulario - Efecto Glass Avanzado -->
+      <div class="relative group">
+        <!-- Efecto de borde animado -->
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
-        <div class="field-block">
-          <label for="emailInput">Correo electronico</label>
-          <ion-item lines="none" class="field-item field-item-icon">
-            <ion-icon name="mail-outline" slot="start"></ion-icon>
-            <ion-input
-              id="emailInput"
-              class="input"
-              type="email"
-              formControlName="email"
-              placeholder="ejemplo@correo.com"
-            ></ion-input>
-          </ion-item>
-        </div>
+        <!-- Contenido de la tarjeta -->
+        <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-8">
 
-        <div class="field-block">
-          <label for="passwordInput">Contrasena</label>
-          <ion-item lines="none" class="field-item field-item-icon">
-            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-            <ion-input
-              id="passwordInput"
-              class="input"
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              placeholder="••••••••"
-            ></ion-input>
-            <ion-button fill="clear" type="button" class="visibility-btn" (click)="togglePasswordVisibility()">
-              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-            </ion-button>
-          </ion-item>
-        </div>
+          <!-- Indicador de estado (línea superior animada) -->
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full"></div>
 
-        <div class="row-actions">
-          <label class="remember-me">
-            <input type="checkbox" formControlName="rememberMe" />
-            <span>Recordarme</span>
-          </label>
-          <a class="forgot-link" href="#">Olvidaste tu contrasena?</a>
-        </div>
+          <!-- Títulos de la tarjeta -->
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-display font-semibold text-text-primary mb-2">
+              Acceso Seguro
+            </h2>
+            <!-- <p class="text-text-secondary text-sm flex items-center justify-center gap-2">
+              <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+              Sistema de autenticación biométrica
+              <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+            </p> -->
+          </div>
 
-        <ion-text color="danger" *ngIf="errorMessage" class="error-message">
-          <p>
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            {{ errorMessage }}
+          <!-- Formulario -->
+          <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+
+            <!-- Campo Email con diseño futurista -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                <!-- &lt; -->
+                 CORREO ELECTRÓNICO
+                <!-- /&gt; -->
+              </label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
+                  <ion-input
+                    id="emailInput"
+                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                    type="email"
+                    formControlName="email"
+                    placeholder="usuario@dominio.com"
+                  ></ion-input>
+                  <!-- Indicador de validación -->
+                  <div *ngIf="form.get('email')?.valid && form.get('email')?.touched"
+                       class="w-2 h-2 bg-neon-secondary rounded-full animate-ping"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                <!-- &lt; -->
+                 CONTRASEÑA
+                <!-- /&gt; -->
+              </label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
+                  <ion-input
+                    id="passwordInput"
+                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                    [type]="showPassword ? 'text' : 'password'"
+                    formControlName="password"
+                    placeholder="••••••••"
+                  ></ion-input>
+                  <button
+                    type="button"
+                    (click)="togglePasswordVisibility()"
+                    class="text-text-tertiary hover:text-neon-primary transition-all duration-300 transform hover:scale-110"
+                  >
+                    <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" class="text-xl"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fila de acciones -->
+            <div class="flex items-center justify-between text-sm">
+              <label class="flex items-center gap-2 text-text-secondary cursor-pointer group">
+                <div class="relative">
+                  <input
+                    type="checkbox"
+                    formControlName="rememberMe"
+                    class="sr-only"
+                  />
+                  <div class="w-5 h-5 border-2 border-border-secondary rounded-md bg-bg-tertiary/50 group-hover:border-neon-primary/50 transition-all duration-300"></div>
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <ion-icon
+                      name="checkmark-outline"
+                      class="text-neon-primary text-sm opacity-0 group-has-[:checked]:opacity-100 transition-opacity"
+                    ></ion-icon>
+                  </div>
+                </div>
+                <span class="font-mono text-xs">Recordar acceso</span>
+              </label>
+
+              <a href="#" class="text-neon-primary hover:text-neon-secondary transition-colors duration-300 font-mono text-xs flex items-center gap-1">
+                <ion-icon name="help-circle-outline" class="text-sm"></ion-icon>
+                ¿Olvidaste?
+              </a>
+            </div>
+
+            <!-- Mensaje de Error -->
+            <div *ngIf="errorMessage"
+                 class="relative overflow-hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-transparent animate-pulse"></div>
+              <p class="relative text-red-400 text-sm flex items-center gap-2 font-mono">
+                <ion-icon name="warning-outline" class="text-lg"></ion-icon>
+                {{ errorMessage }}
+              </p>
+            </div>
+
+            <!-- Botón Iniciar Sesión con efecto 3D -->
+            <button
+              type="submit"
+              [disabled]="loading"
+              class="relative w-full group overflow-hidden rounded-xl"
+            >
+              <!-- Fondo con gradiente animado -->
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+              <!-- Efecto de brillo -->
+              <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
+
+              <!-- Contenido del botón -->
+              <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+                <span>{{ loading ? 'PROCESANDO...' : 'INICIAR SESIÓN' }}</span>
+                <ion-icon
+                  [name]="loading ? 'sync-outline' : 'arrow-forward-outline'"
+                  class="text-xl"
+                  [class.animate-spin]="loading"
+                ></ion-icon>
+              </div>
+
+              <!-- Borde neón animado -->
+              <div class="absolute inset-0 border-2 border-transparent group-hover:border-white/20 rounded-xl transition-all duration-300"></div>
+            </button>
+          </form>
+
+          <!-- Divisor con estilo futurista -->
+          <div class="relative my-8">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-border-secondary"></div>
+            </div>
+            <div class="relative flex justify-center">
+              <span class="px-4 bg-bg-card text-text-tertiary font-mono text-xs tracking-wider">
+                ⚡ ACCESO RÁPIDO ⚡
+              </span>
+            </div>
+          </div>
+
+          <!-- Botones Sociales con efecto hover -->
+          <div class="grid grid-cols-1 gap-4">
+            <button type="button" class="group relative overflow-hidden rounded-lg">
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center justify-center gap-2 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
+                <ion-icon name="logo-google" class="text-xl text-neon-primary"></ion-icon>
+                <span class="text-text-secondary text-sm font-mono">Google</span>
+              </div>
+            </button>
+
+            <!-- <button type="button" class="group relative overflow-hidden rounded-lg">
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="relative flex items-center justify-center gap-2 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
+                <ion-icon name="logo-apple" class="text-xl text-neon-primary"></ion-icon>
+                <span class="text-text-secondary text-sm font-mono">Apple</span>
+              </div>
+            </button> -->
+          </div>
+
+          <!-- Enlace a Registro -->
+          <p class="mt-8 text-center text-text-secondary text-sm">
+            ¿Primera vez?
+            <a routerLink="/auth/register" class="text-neon-primary hover:text-neon-secondary transition-colors duration-300 font-mono font-semibold ml-1">
+              Crear cuenta
+              <!-- &lt;/&gt; -->
+            </a>
           </p>
-        </ion-text>
-
-        <ion-button class="button-primary submit-btn" expand="block" type="submit" [disabled]="loading">
-          <span>{{ loading ? 'Entrando...' : 'Iniciar sesion' }}</span>
-          <ion-icon name="log-in-outline"></ion-icon>
-        </ion-button>
-      </form>
-
-      <div class="divider">
-        <span>o continuar con</span>
+        </div>
       </div>
 
-      <div class="social-grid">
-        <ion-button fill="outline" class="social-btn" type="button">
-          <ion-icon name="logo-google"></ion-icon>
-          <span>Google</span>
-        </ion-button>
-        <ion-button fill="outline" class="social-btn" type="button">
-          <ion-icon name="logo-apple"></ion-icon>
-          <span>Apple</span>
-        </ion-button>
-      </div>
-
-      <p class="auth-switch">
-        No tienes cuenta?
-        <a routerLink="/auth/register">Registrate</a>
-      </p>
+      <!-- Badge de seguridad -->
+      <!-- <div class="mt-6 text-center">
+        <p class="text-text-tertiary text-xs font-mono flex items-center justify-center gap-2">
+          <ion-icon name="shield-checkmark-outline" class="text-neon-primary"></ion-icon>
+          Conexión segura · Encriptación AES-256
+          <ion-icon name="shield-checkmark-outline" class="text-neon-primary"></ion-icon>
+        </p>
+      </div> -->
     </div>
   </div>
 </ion-content>

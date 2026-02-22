@@ -1,3 +1,67 @@
 :host {
   display: block;
+  height: 100%;
+}
+
+.input-native {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: #FFFFFF;
+  --placeholder-color: rgba(112, 134, 160, 0.5);
+  --placeholder-opacity: 1;
+
+  // Estilo para el cursor
+  --caret-color: #00E0FF;
+}
+
+// Animaciones personalizadas
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+// Estilo para el checkbox personalizado
+.group:has(input:checked) .border-border-secondary {
+  border-color: #00E0FF;
+  background: rgba(0, 224, 255, 0.1);
+}
+
+// Efecto de brillo para inputs
+.input-container:focus-within {
+  .input-glow {
+    opacity: 1;
+  }
+}
+
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+
+  &:hover {
+    background: #00F5D4;
+  }
 }

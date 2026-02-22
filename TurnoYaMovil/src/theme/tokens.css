@@ -1,82 +1,121 @@
 :root {
-  /* Typography */
-  --font-display-a: "Space Grotesk", sans-serif;
-  --font-body-a: "IBM Plex Sans", sans-serif;
-  --font-display-b: "Sora", sans-serif;
-  --font-body-b: "Work Sans", sans-serif;
+  /* 🎨 Tipografía Futurista */
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  /* Core palette */
-  --color-bg: #0b0e12;
-  --color-surface-1: #10151c;
-  --color-surface-2: #141b24;
-  --color-outline: #202a36;
-  --color-text: #e8eef6;
-  --color-text-muted: #a9b4c2;
+  /* 🌌 Paleta Profunda - MODO SIEMPRE OSCURO (forzado) */
+  --bg-primary: #03050A;
+  --bg-secondary: #0A0E17;
+  --bg-tertiary: #121826;
+  --bg-card: #1A1F2F;
+  --bg-card-hover: #222837;
 
-  /* Accents */
-  --color-accent-1: #22d3ee; /* cyan */
-  --color-accent-2: #7c3aed; /* violet */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  /* 💎 Efectos de vidrio */
+  --glass-bg: rgba(18, 24, 38, 0.7);
+  --glass-border: rgba(0, 224, 255, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
 
-  /* Spacing (4px base) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
+  /* ⚡ Neón principal */
+  --neon-primary: #00E0FF;
+  --neon-primary-dark: #00B8D4;
+  --neon-primary-glow: 0 0 20px rgba(0, 224, 255, 0.5);
+  --neon-primary-glow-strong: 0 0 30px rgba(0, 224, 255, 0.8);
 
-  /* Radius */
-  --radius-card: 12px;
-  --radius-input: 10px;
-  --radius-pill: 999px;
+  /* 🟢 Neón secundario */
+  --neon-secondary: #00F5D4;
+  --neon-secondary-dark: #00D9C0;
+  --neon-secondary-glow: 0 0 20px rgba(0, 245, 212, 0.4);
 
-  /* Shadows */
-  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --shadow-glow: 0 0 24px rgba(34, 211, 238, 0.25);
+  /* 📝 Texto */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0C4DE;
+  --text-tertiary: #7086A0;
+  --text-inverse: #03050A;
+
+  /* 🎯 Bordes y líneas */
+  --border-primary: rgba(0, 224, 255, 0.3);
+  --border-secondary: rgba(255, 255, 255, 0.08);
+  --border-glow: 0 0 15px rgba(0, 224, 255, 0.3);
+
+  /* ✨ Efectos especiales */
+  --gradient-glow: linear-gradient(
+    135deg,
+    rgba(0, 224, 255, 0.2) 0%,
+    rgba(0, 245, 212, 0.2) 50%,
+    rgba(0, 224, 255, 0.2) 100%
+  );
+
+  --gradient-card: linear-gradient(
+    145deg,
+    #1A1F2F 0%,
+    #121826 100%
+  );
+
+  /* 📐 Espaciado */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
+
+  /* 🌀 Radio de bordes */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* 🌟 Sombras */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --shadow-neon: 0 0 30px rgba(0, 224, 255, 0.3);
 }
 
-/* Theme defaults */
+/* Forzar modo oscuro en todo momento */
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.card {
-  background: var(--color-surface-1);
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
+/* Reset de Ionic para mantener consistencia */
+ion-content {
+  --background: transparent;
 }
 
-.button-primary {
-  background: var(--color-accent-1);
-  color: #041016;
-  border-radius: var(--radius-pill);
+ion-item {
+  --background: transparent;
+  --border-color: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
 }
 
-.button-secondary {
-  background: transparent;
-  color: var(--color-text);
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-pill);
+/* Clases utilitarias globales */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
 }
 
-.input {
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-input);
-  color: var(--color-text);
+.neon-text {
+  color: var(--neon-primary);
+  text-shadow: var(--neon-primary-glow);
 }
 
-.input:focus {
-  outline: none;
-  box-shadow: var(--shadow-glow);
-  border-color: var(--color-accent-1);
+.neon-border {
+  border: 1px solid var(--neon-primary);
+  box-shadow: var(--neon-primary-glow);
+}
+
+.gradient-bg {
+  background: var(--gradient-card);
 }
