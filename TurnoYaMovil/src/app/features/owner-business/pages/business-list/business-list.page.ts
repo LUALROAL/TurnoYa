@@ -18,11 +18,14 @@ import {
   locationOutline,
   callOutline,
   mailOutline,
-  starOutline,
+  star,
   toggleOutline,
   createOutline,
   trashOutline,
   eyeOutline,
+  checkmarkCircleOutline,
+  arrowBackOutline,
+  settingsOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { OwnerBusinessService } from '../../services/owner-business.service';
@@ -38,10 +41,7 @@ import { NotifyService } from '../../../../core/services/notify.service';
     CommonModule,
     RouterLink,
     IonContent,
-    IonButton,
     IonIcon,
-    IonFab,
-    IonFabButton,
   ],
 })
 export class BusinessListPage implements OnInit, OnDestroy {
@@ -63,11 +63,14 @@ export class BusinessListPage implements OnInit, OnDestroy {
       locationOutline,
       callOutline,
       mailOutline,
-      starOutline,
+      star,
       toggleOutline,
       createOutline,
       trashOutline,
       eyeOutline,
+      checkmarkCircleOutline,
+      arrowBackOutline,
+      settingsOutline,
     });
   }
 
@@ -82,7 +85,6 @@ export class BusinessListPage implements OnInit, OnDestroy {
 
   /**
    * Refresca la lista cada vez que la página vuelve a ser visible
-   * (después de navegar de vuelta desde edición/configuración)
    */
   ionViewWillEnter() {
     this.loadMyBusinesses();
@@ -118,8 +120,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           business.isActive = newStatus;
-          // Success notification (could extend NotifyService with showSuccess)
-          console.log(
+          this.notify.showSuccess(
             `Negocio ${newStatus ? 'activado' : 'desactivado'} correctamente`
           );
         },
@@ -132,5 +133,10 @@ export class BusinessListPage implements OnInit, OnDestroy {
 
   protected trackByBusinessId(_: number, business: OwnerBusiness): string {
     return business.id;
+  }
+
+  // Método para obtener el color del badge según el estado
+  protected getStatusColor(isActive: boolean): string {
+    return isActive ? '#00E0FF' : '#7A8FA6';
   }
 }

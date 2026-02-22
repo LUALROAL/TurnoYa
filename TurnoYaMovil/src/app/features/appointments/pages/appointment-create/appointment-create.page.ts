@@ -36,7 +36,6 @@ import { AppointmentsService } from '../../services/appointments.service';
     CommonModule,
     ReactiveFormsModule,
     IonContent,
-    IonButton,
     IonIcon,
     IonInput,
     IonSelect,

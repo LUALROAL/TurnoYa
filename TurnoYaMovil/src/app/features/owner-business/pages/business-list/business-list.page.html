@@ -1,180 +1,248 @@
-<ion-content class="owner-bg" [fullscreen]="true">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div class="owner-wrap">
-    <!-- Header -->
-    <header class="owner-header card glass-panel">
-      <div>
-        <p class="header-overline">Panel de Control</p>
-        <h1>Mis Negocios</h1>
+  <div class="relative z-10 pb-20">
+    <!-- Header con navegación -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button routerLink="/home" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+            <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
+          </button>
+          <div>
+            <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+              <!-- &lt;  -->
+              PANEL DE CONTROL
+               <!-- /&gt; -->
+            </p>
+            <h1 class="text-2xl font-display font-bold">
+              <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+                Mis Negocios
+              </span>
+            </h1>
+          </div>
+        </div>
+
+        <!-- Indicador de estado -->
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-neon-primary rounded-full animate-ping"></span>
+          <span class="text-xs font-mono text-text-secondary">Owner Mode</span>
+        </div>
       </div>
-      <ion-button fill="clear" class="back-btn" routerLink="/home" aria-label="Volver a inicio">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
     </header>
 
-    <!-- Section header -->
-    <section class="section-head">
-      <h2>Gestiona tus Negocios</h2>
-      <p>Crea y administra los negocios que ofreces en TurnoYa</p>
-    </section>
-
-    <!-- Loading skeleton -->
-    @if (loading) {
-      <section class="cards-grid">
-        @for (i of [1, 2, 3]; track i) {
-          <article class="owner-card card skeleton"></article>
-        }
-      </section>
-    }
-
-    <!-- Empty state -->
-    @if (!loading && isEmpty) {
-      <article class="empty-state card glass-panel">
-        <ion-icon name="business-outline"></ion-icon>
-        <h3>Aún no tienes negocios</h3>
-        <p>
-          Crea tu primer negocio para comenzar a ofrecer servicios y gestionar
-          citas con tus clientes.
+    <div class="px-4 space-y-6 mt-4">
+      <!-- Título de sección mejorado -->
+      <div class="space-y-2">
+        <h2 class="text-2xl font-display font-bold text-text-primary">
+          Gestiona tus <span class="text-neon-primary">Negocios</span>
+        </h2>
+        <p class="text-text-secondary font-mono text-sm flex items-center gap-2">
+          <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
+          Crea y administra los negocios que ofreces en TurnoYa
+          <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
         </p>
-        <ion-button
-          [routerLink]="['/owner/businesses/create']"
-          class="button-primary"
-        >
-          <ion-icon slot="start" name="add-outline"></ion-icon>
-          Crear mi primer negocio
-        </ion-button>
-      </article>
-    }
+      </div>
 
-    <!-- Business list -->
-    @if (!loading && !isEmpty) {
-      <section class="cards-grid">
-        @for (business of businesses; track trackByBusinessId($index, business)) {
-          <article class="owner-card card">
-            <!-- Header with status -->
-            <div class="card-top">
-              <div>
-                <h3>{{ business.name }}</h3>
-                <p class="card-meta">
-                  <ion-icon name="business-outline"></ion-icon>
-                  {{ business.category }}
-                </p>
-              </div>
-              <span
-                class="status-badge"
-                [class.active]="business.isActive"
-                [class.inactive]="!business.isActive"
-              >
-                {{ business.isActive ? 'Activo' : 'Inactivo' }}
-              </span>
+      <!-- Loading skeleton -->
+      @if (loading) {
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="skeleton-card"></div>
+          }
+        </section>
+      }
+
+      <!-- Empty state mejorado -->
+      @if (!loading && isEmpty) {
+        <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
+          <div class="relative">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+              <ion-icon name="business-outline" class="text-5xl text-neon-primary"></ion-icon>
             </div>
+            <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes negocios</h3>
+            <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
+              Crea tu primer negocio para comenzar a ofrecer servicios y gestionar citas con tus clientes.
+            </p>
+            <button [routerLink]="['/owner/businesses/create']"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
+              <ion-icon name="add-outline"></ion-icon>
+              Crear mi primer negocio
+            </button>
+          </div>
+        </div>
+      }
 
-            <!-- Rating if exists -->
-            @if (business.averageRating > 0) {
-              <div class="rating-row">
-                <span class="rating-pill">
-                  <ion-icon name="star"></ion-icon>
-                  {{ business.averageRating.toFixed(1) }}
-                </span>
-                <span class="reviews-count">{{ business.totalReviews }} reseñas</span>
-              </div>
-            }
+      <!-- Business list -->
+      @if (!loading && !isEmpty) {
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (business of businesses; track trackByBusinessId($index, business)) {
+            <div class="relative group overflow-hidden rounded-2xl">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <!-- Info rows -->
-            <div class="info-rows">
-              <div class="info-item">
-                <ion-icon name="location-outline"></ion-icon>
-                <span>{{ business.city }}, {{ business.department }}</span>
-              </div>
-              @if (business.phone) {
-                <div class="info-item">
-                  <ion-icon name="call-outline"></ion-icon>
-                  <span>{{ business.phone }}</span>
+              <article class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
+
+                <!-- Cabecera con imagen de fondo sutil -->
+                <div class="relative h-32 overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-br from-neon-primary/20 to-neon-secondary/20"></div>
+                  <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300E0FF' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); background-repeat: repeat; opacity: 0.3;"></div>
+
+                  <!-- Status badge en la imagen -->
+                  <div class="absolute top-3 right-3">
+                    <span class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm"
+                          [class.bg-neon-primary/20]="business.isActive"
+                          [class.border-neon-primary/30]="business.isActive"
+                          [class.text-neon-primary]="business.isActive"
+                          [class.bg-text-tertiary/10]="!business.isActive"
+                          [class.border-text-tertiary/30]="!business.isActive"
+                          [class.text-text-tertiary]="!business.isActive">
+                      <span class="flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full"
+                              [class.bg-neon-primary]="business.isActive"
+                              [class.animate-ping]="business.isActive"
+                              [class.bg-text-tertiary]="!business.isActive"></span>
+                        {{ business.isActive ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </span>
+                  </div>
+
+                  <!-- Título sobre la imagen -->
+                  <div class="absolute bottom-3 left-3 right-3">
+                    <h3 class="text-xl font-display font-bold text-text-primary">{{ business.name }}</h3>
+                    <p class="text-sm text-text-secondary flex items-center gap-1">
+                      <ion-icon name="business-outline" class="text-neon-primary text-xs"></ion-icon>
+                      {{ business.category }}
+                    </p>
+                  </div>
                 </div>
-              }
-              @if (business.email) {
-                <div class="info-item">
-                  <ion-icon name="mail-outline"></ion-icon>
-                  <span>{{ business.email }}</span>
-                </div>
-              }
-            </div>
 
-            <!-- Actions -->
-            <div class="card-actions">
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/businesses', business.id]"
-              >
-                <ion-icon name="eye-outline"></ion-icon>
-                Ver
-              </button>
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/owner/businesses', business.id, 'edit']"
-              >
-                <ion-icon name="create-outline"></ion-icon>
-                Editar
-              </button>
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/owner/businesses', business.id, 'services']"
-              >
-                <ion-icon name="construct-outline"></ion-icon>
-                Servicios
-              </button>
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/owner/businesses', business.id, 'employees']"
-              >
-                <ion-icon name="people-outline"></ion-icon>
-                Empleados
-              </button>
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/owner/businesses', business.id, 'appointments']"
-              >
-                <ion-icon name="calendar-outline"></ion-icon>
-                Agenda
-              </button>
-              <button
-                type="button"
-                class="action-btn secondary"
-                [routerLink]="['/owner/businesses', business.id, 'settings']"
-              >
-                <ion-icon name="settings-outline"></ion-icon>
-                Configurar
-              </button>
-              <button
-                type="button"
-                class="action-btn"
-                [class.danger]="business.isActive"
-                (click)="toggleBusinessStatus(business, $event)"
-              >
-                <ion-icon name="toggle-outline"></ion-icon>
-                {{ business.isActive ? 'Desactivar' : 'Activar' }}
-              </button>
+                <!-- Contenido de la tarjeta -->
+                <div class="p-4 space-y-3">
+
+                  <!-- Rating si existe -->
+                  @if (business.averageRating > 0) {
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1 px-2 py-1 bg-neon-primary/10 rounded-full border border-neon-primary/20">
+                        <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
+                        <span class="text-xs font-mono text-neon-primary font-bold">{{ business.averageRating.toFixed(1) }}</span>
+                      </div>
+                      <span class="text-xs font-mono text-text-tertiary">{{ business.totalReviews }} reseñas</span>
+                    </div>
+                  }
+
+                  <!-- Info rows -->
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-sm text-text-secondary">
+                      <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                        <ion-icon name="location-outline" class="text-neon-primary text-sm"></ion-icon>
+                      </div>
+                      <span class="font-mono text-xs">{{ business.city }}, {{ business.department }}</span>
+                    </div>
+
+                    @if (business.phone) {
+                      <div class="flex items-center gap-2 text-sm text-text-secondary">
+                        <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                          <ion-icon name="call-outline" class="text-neon-primary text-sm"></ion-icon>
+                        </div>
+                        <span class="font-mono text-xs">{{ business.phone }}</span>
+                      </div>
+                    }
+
+                    @if (business.email) {
+                      <div class="flex items-center gap-2 text-sm text-text-secondary">
+                        <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                          <ion-icon name="mail-outline" class="text-neon-primary text-sm"></ion-icon>
+                        </div>
+                        <span class="font-mono text-xs">{{ business.email }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Actions grid mejorada -->
+                  <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button [routerLink]="['/businesses', business.id]"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="eye-outline" class="text-sm"></ion-icon>
+                      Ver
+                    </button>
+
+                    <button [routerLink]="['/owner/businesses', business.id, 'edit']"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="create-outline" class="text-sm"></ion-icon>
+                      Editar
+                    </button>
+
+                    <button [routerLink]="['/owner/businesses', business.id, 'services']"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="construct-outline" class="text-sm"></ion-icon>
+                      Servicios
+                    </button>
+
+                    <button [routerLink]="['/owner/businesses', business.id, 'employees']"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="people-outline" class="text-sm"></ion-icon>
+                      Empleados
+                    </button>
+
+                    <button [routerLink]="['/owner/businesses', business.id, 'appointments']"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="calendar-outline" class="text-sm"></ion-icon>
+                      Agenda
+                    </button>
+
+                    <button [routerLink]="['/owner/businesses', business.id, 'settings']"
+                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                      <ion-icon name="settings-outline" class="text-sm"></ion-icon>
+                      Configurar
+                    </button>
+                  </div>
+
+                  <!-- Botón de activar/desactivar -->
+                  <button (click)="toggleBusinessStatus(business, $event)"
+                          class="w-full mt-2 py-3 rounded-xl font-mono text-sm transition-all duration-300 flex items-center justify-center gap-2"
+                          [class.bg-gradient-to-r]="!business.isActive"
+                          [class.from-neon-primary]="!business.isActive"
+                          [class.to-neon-secondary]="!business.isActive"
+                          [class.text-bg-primary]="!business.isActive"
+                          [class.hover:shadow-neon]="!business.isActive"
+                          [class.bg-red-500/10]="business.isActive"
+                          [class.text-red-400]="business.isActive"
+                          [class.border]="business.isActive"
+                          [class.border-red-500/30]="business.isActive"
+                          [class.hover:bg-red-500/20]="business.isActive">
+                    <ion-icon [name]="business.isActive ? 'toggle-outline' : 'checkmark-circle-outline'"></ion-icon>
+                    {{ business.isActive ? 'Desactivar negocio' : 'Activar negocio' }}
+                  </button>
+                </div>
+              </article>
             </div>
-          </article>
-        }
-      </section>
-    }
-    <!-- Floating action button to create -->
-    @if (!loading && !isEmpty) {
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button [routerLink]="['/owner/businesses/create']">
-          <ion-icon name="add-outline"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-    }
+          }
+        </section>
+      }
+    </div>
   </div>
+
+  <!-- Floating action button mejorado -->
+  @if (!loading && !isEmpty) {
+    <div class="fixed bottom-6 right-6 z-30">
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+        <button [routerLink]="['/owner/businesses/create']"
+                class="relative w-14 h-14 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary flex items-center justify-center shadow-neon hover:scale-110 transition-transform duration-300">
+          <ion-icon name="add-outline" class="text-2xl text-bg-primary"></ion-icon>
+        </button>
+      </div>
+    </div>
+  }
 </ion-content>
