@@ -144,4 +144,18 @@ export class BusinessListPage implements OnInit, OnDestroy {
         },
       });
   }
+
+
+  // Agrega este método para obtener imágenes según la categoría
+protected getBusinessImage(category: string): string {
+  const images = {
+    'Peluquería': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=3274&auto=format&fit=crop',
+    'Bienestar': 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=3270&auto=format&fit=crop',
+    'Salud': 'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=3270&auto=format&fit=crop',
+    'Electrónica': 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=3301&auto=format&fit=crop',
+    'default': 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=3271&auto=format&fit=crop'
+  };
+
+  return images[category as keyof typeof images] || images.default;
+}
 }

@@ -169,3 +169,105 @@ ion-content {
   border-left: 2px solid rgba(0, 224, 255, 0.3);
   padding-left: 12px;
 }
+
+
+// Estilos adicionales para las nuevas tarjetas
+
+// Efecto de brillo en el badge verificado
+.verified-badge {
+  background: linear-gradient(135deg, rgba(0, 224, 255, 0.2), rgba(0, 245, 212, 0.2));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  animation: glow-pulse 2s infinite;
+}
+
+// Efecto para el botón de Google
+.google-button {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(0, 224, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:hover::before {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+// Efecto para la imagen con zoom suave
+.business-image {
+  transition: transform 0.7s ease;
+
+  .group:hover & {
+    transform: scale(1.1);
+  }
+}
+
+// Overlay degradado mejorado
+.image-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(3, 5, 10, 0.9) 0%,
+    rgba(3, 5, 10, 0.4) 50%,
+    transparent 100%
+  );
+}
+
+// Animación para el contador de reseñas
+.review-count {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Efecto de brillo en el botón reservar
+.reserve-button {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+  20%, 100% {
+    transform: translateX(100%) rotate(30deg);
+  }
+}
