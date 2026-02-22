@@ -17,9 +17,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-            <!-- &lt; -->
-             HOLA DE NUEVO
-            <!-- /&gt; -->
+            &lt; HOLA DE NUEVO /&gt;
           </p>
           <h1 class="text-2xl font-display font-bold">
             <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
@@ -184,7 +182,7 @@
         </div>
 
         <!-- Skeleton Loader -->
-        <div *ngIf="loadingRecommendations" class="space-y-3">
+        <div *ngIf="loadingRecommendations" class="space-y-4">
           <div *ngFor="let item of [1, 2, 3]" class="skeleton-card"></div>
         </div>
 
@@ -198,39 +196,73 @@
           </div>
         </div>
 
-        <!-- Lista de Recomendaciones -->
-        <div *ngIf="!loadingRecommendations && recommendedBusinesses.length > 0" class="space-y-3">
+        <!-- Lista de Recomendaciones con imágenes mejoradas -->
+        <div *ngIf="!loadingRecommendations && recommendedBusinesses.length > 0" class="space-y-4">
           <article *ngFor="let business of recommendedBusinesses; trackBy: trackByBusinessName"
                    class="group relative overflow-hidden rounded-2xl">
+
+            <!-- Efecto de glow en hover -->
             <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <div class="relative p-5 bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl hover:border-neon-primary/30 transition-all duration-300">
-              <div class="flex items-start justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-neon-primary/20 to-neon-secondary/20 flex items-center justify-center">
-                    <ion-icon name="business-outline" class="text-2xl text-neon-primary"></ion-icon>
-                  </div>
-                  <div>
-                    <h4 class="font-display font-semibold text-text-primary">{{ business.name }}</h4>
-                    <p class="text-xs font-mono text-text-tertiary flex items-center gap-2 mt-1">
-                      <span>{{ business.category }}</span>
-                      <span class="w-1 h-1 bg-neon-primary rounded-full"></span>
-                      <span>{{ business.distanceKm }} km</span>
-                    </p>
-                  </div>
+            <!-- Tarjeta principal -->
+            <div class="relative bg-bg-card/90 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
+
+              <!-- Imagen de fondo con overlay -->
+              <div class="relative h-48 overflow-hidden">
+                <!-- Imagen según categoría -->
+                <img
+                  [src]="getBusinessImage(business.category)"
+                  [alt]="business.name"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+
+                <!-- Overlay degradado -->
+                <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div>
+
+                <!-- Badge Verificado -->
+                <div class="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
+                  <ion-icon name="checkmark-circle" class="text-neon-primary text-sm"></ion-icon>
+                  <span class="text-xs font-mono text-text-primary">Verificado</span>
                 </div>
 
-                <!-- Rating -->
-                <div class="flex items-center gap-1 px-2 py-1 bg-neon-primary/10 rounded-full border border-neon-primary/20">
+                <!-- Rating en esquina superior derecha -->
+                <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
                   <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
-                  <span class="text-xs font-mono text-neon-primary font-bold">{{ business.rating }}</span>
+                  <span class="text-xs font-mono text-text-primary font-bold">{{ business.rating }}</span>
+                  <span class="text-xs text-text-tertiary">({{ business.reviewCount }})</span>
+                </div>
+
+                <!-- Información del negocio superpuesta -->
+                <div class="absolute bottom-3 left-3 right-3">
+                  <h4 class="text-xl font-display font-bold text-text-primary mb-1">{{ business.name }}</h4>
+                  <p class="text-sm text-text-secondary flex items-center gap-2">
+                    <span>{{ business.services }}</span>
+                    <span class="w-1 h-1 bg-neon-primary rounded-full"></span>
+                    <span>{{ business.distanceKm }} km</span>
+                  </p>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between mt-4">
-                <span class="text-lg font-display font-bold text-neon-secondary">{{ business.priceLabel }}</span>
-                <button class="px-4 py-2 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display text-sm font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
-                  Reservar
+              <!-- Parte inferior de la tarjeta -->
+              <div class="p-4">
+                <div class="flex items-center justify-between">
+                  <!-- Botón Google -->
+                  <button class="flex items-center gap-2 px-3 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
+                    <span class="text-lg font-bold text-neon-primary">G</span>
+                    <span class="text-xs font-mono text-text-secondary">Reserva con Google</span>
+                  </button>
+
+                  <!-- Próximo turno -->
+                  <div class="text-right">
+                    <p class="text-xs font-mono text-text-tertiary">Próximo Turno</p>
+                    <p class="text-sm font-display font-semibold text-neon-primary">{{ business.nextAvailable }}</p>
+                  </div>
+                </div>
+
+                <!-- Botón Reservar -->
+                <button class="w-full mt-4 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-xl text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                  <span>Reservar Visita</span>
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
                 </button>
               </div>
             </div>

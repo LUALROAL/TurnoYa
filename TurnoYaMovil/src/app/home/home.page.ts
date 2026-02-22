@@ -14,9 +14,12 @@ type QuickAccessItem = {
 type RecommendedBusiness = {
   name: string;
   category: string;
+  services: string;
   distanceKm: number;
   priceLabel: string;
   rating: number;
+  reviewCount: string;
+  nextAvailable: string;
 };
 
 @Component({
@@ -65,32 +68,44 @@ export class HomePage implements OnInit, OnDestroy {
 
   private readonly initialRecommendations: RecommendedBusiness[] = [
     {
+      name: 'Elite Spa & Wellness',
+      category: 'Bienestar',
+      services: 'Masaje • Facial • Sauna',
+      distanceKm: 1.2,
+      priceLabel: '$120 / visita',
+      rating: 4.9,
+      reviewCount: '2k',
+      nextAvailable: 'Hoy, 16:00',
+    },
+    {
       name: 'Luxe Barbershop',
       category: 'Peluquería',
-      distanceKm: 1.2,
+      services: 'Corte • Barba • Arreglo',
+      distanceKm: 0.8,
       priceLabel: '$30 / corte',
-      rating: 4.9,
+      rating: 4.8,
+      reviewCount: '1.5k',
+      nextAvailable: 'Hoy, 18:30',
     },
     {
       name: 'Zen Yoga Studio',
       category: 'Bienestar',
+      services: 'Yoga • Meditación • Pilates',
       distanceKm: 1.9,
       priceLabel: '$25 / clase',
       rating: 4.8,
+      reviewCount: '856',
+      nextAvailable: 'Mañana, 10:00',
     },
     {
       name: 'Pure Dental',
       category: 'Salud',
+      services: 'Limpieza • Blanqueamiento',
       distanceKm: 4.0,
       priceLabel: '$120 / visita',
       rating: 5.0,
-    },
-    {
-      name: 'Tech Repair',
-      category: 'Electrónica',
-      distanceKm: 2.3,
-      priceLabel: '$45 / reparación',
-      rating: 4.7,
+      reviewCount: '3.2k',
+      nextAvailable: 'Mañana, 9:30',
     },
   ];
 
@@ -128,5 +143,18 @@ export class HomePage implements OnInit, OnDestroy {
   protected getUserName(): string {
     const session = this.authSession.getSession();
     return session?.user?.firstName || 'Usuario';
+  }
+
+  // Método para obtener imágenes según categoría
+  protected getBusinessImage(category: string): string {
+    const images = {
+      'Peluquería': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=3274&auto=format&fit=crop',
+      'Bienestar': 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=3270&auto=format&fit=crop',
+      'Salud': 'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=3270&auto=format&fit=crop',
+      'Electrónica': 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=3301&auto=format&fit=crop',
+      'default': 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=3271&auto=format&fit=crop'
+    };
+
+    return images[category as keyof typeof images] || images.default;
   }
 }
