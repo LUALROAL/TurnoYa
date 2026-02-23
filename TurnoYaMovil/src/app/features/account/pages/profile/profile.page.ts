@@ -3,27 +3,29 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonButton,
   IonInput,
   IonItem,
   IonLabel,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
   IonSpinner,
-  IonSegment,
-  IonSegmentButton,
   IonAvatar,
-  IonText,
   IonSelect,
-  IonSelectOption,
-  IonBackButton,
-  IonButtons
-} from '@ionic/angular/standalone';
+  IonSelectOption, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  arrowBackOutline,
+  mailOutline,
+  personOutline,
+  callOutline,
+  calendarOutline,
+  lockClosedOutline,
+  saveOutline,
+  shieldOutline,
+  syncOutline,
+  checkmarkCircle,
+  ellipseOutline,
+  warningOutline
+} from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService, UserProfileDto } from '../../services/user.service';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -35,29 +37,18 @@ type Tab = 'profile' | 'security';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [
+  imports: [IonIcon,
     CommonModule,
     ReactiveFormsModule,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonButton,
     IonInput,
     IonItem,
     IonLabel,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
     IonSpinner,
-    IonSegment,
-    IonSegmentButton,
     IonAvatar,
     IonSelect,
     IonSelectOption,
-    IonBackButton,
-    IonButtons
   ],
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss']
@@ -81,6 +72,21 @@ export class ProfilePage implements OnInit, OnDestroy {
     private router: Router,
     private authSession: AuthSessionService
   ) {
+    addIcons({
+      arrowBackOutline,
+      mailOutline,
+      personOutline,
+      callOutline,
+      calendarOutline,
+      lockClosedOutline,
+      saveOutline,
+      shieldOutline,
+      syncOutline,
+      checkmarkCircle,
+      ellipseOutline,
+      warningOutline
+    });
+
     this.profileForm = this.createProfileForm();
     this.passwordForm = this.createPasswordForm();
   }
@@ -175,15 +181,16 @@ export class ProfilePage implements OnInit, OnDestroy {
     if (form.firstName !== this.profile()?.firstName) updateData.firstName = form.firstName;
     if (form.lastName !== this.profile()?.lastName) updateData.lastName = form.lastName;
     if (form.phoneNumber !== this.profile()?.phoneNumber) updateData.phoneNumber = form.phoneNumber;
+
     // Mapear género a valores válidos para la base de datos
     if (form.gender !== this.profile()?.gender) {
       let genderValue = form.gender;
-      // Si el valor es 'Masculino' o 'Femenino', mapear a 'M' o 'F'
       if (genderValue === 'Masculino') genderValue = 'M';
       else if (genderValue === 'Femenino') genderValue = 'F';
       else if (genderValue === 'Otro') genderValue = 'Other';
       updateData.gender = genderValue;
     }
+
     if (form.dateOfBirth !== this.profile()?.dateOfBirth) updateData.dateOfBirth = form.dateOfBirth;
 
     if (Object.keys(updateData).length === 0) {
