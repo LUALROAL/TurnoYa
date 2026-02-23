@@ -44,7 +44,7 @@ Use this checklist to mark each card as completed.
 - [x] Modulo perfil y cuenta (Priority: Medium, Points: 5, Depends: F-012)
 - [x] Editar datos personales (Priority: Medium, Points: 3, Depends: F-012)
 - [x] Cambiar contraseña (Priority: Medium, Points: 3, Depends: F-012)
-- [ ] Cerrar sesion (Priority: Medium, Points: 1, Depends: F-012)
+- [x] Cerrar sesion (Priority: Medium, Points: 1, Depends: F-012) - Implementado: Se agregó método `logout()` en el servicio de sesión y botón en el menú/perfil que limpia el token y redirige a login.
 - [x] Modulo admin usuarios (Priority: Low, Points: 5, Depends: F-014)
 
 ## EPIC 7 - Calidad y entrega

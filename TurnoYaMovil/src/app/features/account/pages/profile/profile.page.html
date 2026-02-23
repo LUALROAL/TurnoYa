@@ -368,5 +368,14 @@
         </div>
       }
     }
+    <!-- Botón cerrar sesión -->
+    <div class="flex justify-center mt-8">
+      <button type="button"
+              (click)="logout()"
+              class="w-full max-w-xs py-3 px-6 rounded-xl font-display font-semibold bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary shadow-lg hover:opacity-90 transition-all duration-300">
+        <ion-icon name="log-out-outline" class="text-xl mr-2"></ion-icon>
+        Cerrar sesión
+      </button>
+    </div>
   </div>
 </ion-content>

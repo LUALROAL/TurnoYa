@@ -276,4 +276,9 @@ export class ProfilePage implements OnInit, OnDestroy {
       this.router.navigate(['/home']);
     }
   }
+
+  protected logout(): void {
+    this.authSession.clearSession();
+    this.router.navigate(['/auth/login']);
+  }
 }
