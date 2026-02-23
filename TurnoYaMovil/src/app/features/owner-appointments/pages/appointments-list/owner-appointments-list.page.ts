@@ -12,6 +12,7 @@ import {
   checkmarkDoneOutline,
   closeCircleOutline,
   timeOutline,
+  constructOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -47,6 +48,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
       checkmarkDoneOutline,
       closeCircleOutline,
       timeOutline,
+      constructOutline,
     });
   }
 
@@ -135,6 +137,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           appointment.status = 'confirmed';
+          this.notify.showSuccess('Cita confirmada');
           this.setProcessing(appointment.id, false);
         },
         error: (error: unknown) => {
@@ -155,6 +158,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           appointment.status = 'completed';
+          this.notify.showSuccess('Cita completada');
           this.setProcessing(appointment.id, false);
         },
         error: (error: unknown) => {
@@ -181,6 +185,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           appointment.status = 'noshow';
+          this.notify.showSuccess('Cita marcada como no asistió');
           this.setProcessing(appointment.id, false);
         },
         error: (error: unknown) => {
@@ -193,7 +198,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
 
   protected cancelAppointment(appointment: AppointmentItem): void {
     if (this.isProcessing(appointment.id)) return;
-    const confirmed = confirm('¿Cancelar esta cita?');
+    const confirmed = confirm('¿Estás seguro de cancelar esta cita?');
 
     if (!confirmed) {
       return;
