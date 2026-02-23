@@ -30,10 +30,13 @@ Use this checklist to mark each card as completed.
 
 ## Mejoras en curso
 
-- [ ] Soporte a autocompletado de ciudades (para frontend)
-  - Descripción: Si el frontend requiere sugerencias de ciudades desde el backend (en vez de Google Places), exponer un endpoint `/api/cities/autocomplete?query=...` que devuelva ciudades sugeridas según el texto ingresado.
-  - Alternativa: Si se usa Google Places, no se requiere cambio backend.
-  - Estado: pendiente de análisis según decisión frontend.
+- [x] Soporte a autocompletado de ciudades (para frontend)
+  - Implementado endpoint /api/cities/autocomplete en backend que consulta OpenStreetMap Nominatim y filtra solo ciudades/municipios.
+  - El frontend puede consumir este endpoint para autocompletar ciudades sin problemas de CORS.
+
+- [x] Crear endpoint backend /api/cities/autocomplete (proxy Nominatim)
+- [x] Integrar frontend con endpoint backend para autocompletar ciudades *(prioriza ciudades, pero muestra municipios y pueblos también)*
+- [x] Actualizar checklist frontend/backend y tachar tareas completadas
 
 ## Calidad y entrega
 - [ ] Tests de servicios criticos (Priority: Medium, Points: 3)

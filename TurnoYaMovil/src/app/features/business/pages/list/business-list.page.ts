@@ -1,9 +1,11 @@
+
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
-import { Subject, debounceTime, takeUntil } from "rxjs";
-
+import { Subject, debounceTime, takeUntil, Observable, of } from "rxjs";
+import { CityService } from "../../../city/services/city.service";
+import type { CityAutocompleteResult } from "../../../city/services/city.service";
 import { BusinessListItem } from "../../models";
 import { BusinessService } from "../../services/business.service";
 
@@ -15,6 +17,15 @@ import { BusinessService } from "../../services/business.service";
   styleUrls: ["./business-list.page.scss"],
 })
 export class BusinessListPage implements OnInit, OnDestroy {
+  private readonly cityService = inject(CityService);
+  protected citySuggestions: CityAutocompleteResult[] = [];
+  protected showCitySuggestions = false;
+
+  protected hideCitySuggestionsWithDelay() {
+    setTimeout(() => {
+      this.showCitySuggestions = false;
+    }, 200);
+  }
   private readonly businessService = inject(BusinessService);
   private readonly destroy$ = new Subject<void>();
   private readonly filtersChange$ = new Subject<void>();
@@ -51,8 +62,31 @@ export class BusinessListPage implements OnInit, OnDestroy {
 
   protected onCityFilterChange(event: Event) {
     const target = event.target as HTMLInputElement;
-    this.cityFilter = target.value;
+    const value = target.value;
+    this.cityFilter = value;
     this.searching = true;
+    this.filtersChange$.next();
+    if (value.length >= 1) {
+      this.cityService.autocomplete(value).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (results: CityAutocompleteResult[]) => {
+          this.citySuggestions = results;
+          this.showCitySuggestions = true;
+        },
+        error: () => {
+          this.citySuggestions = [];
+          this.showCitySuggestions = false;
+        }
+      });
+    } else {
+      this.citySuggestions = [];
+      this.showCitySuggestions = false;
+    }
+  }
+
+  protected selectCitySuggestion(suggestion: CityAutocompleteResult) {
+    this.cityFilter = suggestion.name;
+    this.showCitySuggestions = false;
+    this.citySuggestions = [];
     this.filtersChange$.next();
   }
 
@@ -71,6 +105,8 @@ export class BusinessListPage implements OnInit, OnDestroy {
     this.searchQuery = "";
     this.cityFilter = "";
     this.selectedCategory = "";
+    this.citySuggestions = [];
+    this.showCitySuggestions = false;
     this.searching = false;
     this.loadBusinesses();
   }

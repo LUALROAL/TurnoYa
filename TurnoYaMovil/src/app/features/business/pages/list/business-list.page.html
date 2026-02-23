@@ -67,7 +67,7 @@
             </div>
           </div>
 
-          <!-- Filtro por ciudad -->
+          <!-- Filtro por ciudad con autocompletado -->
           <div class="relative">
             <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
             <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
@@ -77,9 +77,19 @@
                 placeholder="Filtrar por ciudad..."
                 [value]="cityFilter"
                 (input)="onCityFilterChange($event)"
+                (focus)="showCitySuggestions = citySuggestions.length > 0"
+                (blur)="hideCitySuggestionsWithDelay()"
+                autocomplete="off"
                 class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
               />
             </div>
+            <!-- Dropdown de sugerencias -->
+            <ul *ngIf="showCitySuggestions && citySuggestions.length > 0" class="absolute left-0 right-0 mt-1 z-30 bg-bg-card border border-neon-primary/20 rounded-xl shadow-lg max-h-60 overflow-auto">
+              <li *ngFor="let suggestion of citySuggestions" (mousedown)="selectCitySuggestion(suggestion)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10 text-text-primary">
+                <span class="font-semibold">{{ suggestion.name }}</span>
+                <span *ngIf="suggestion.state" class="text-xs text-text-secondary ml-2">{{ suggestion.state }}</span>
+              </li>
+            </ul>
           </div>
 
           <!-- Categorías con chips mejorados -->

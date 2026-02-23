@@ -18,6 +18,7 @@ using TurnoYa.Infrastructure.Services;
 using TurnoYa.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient();
 
 // Serilog basic configuration
 builder.Host.UseSerilog((ctx, cfg) => cfg

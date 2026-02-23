@@ -69,10 +69,10 @@ Use this checklist to mark each card as completed.
 
 ## CARs para autocompletar ciudades con OpenStreetMap
 
-- [ ] Paso 1: Integrar autocompletado de ciudades usando la API pública de OpenStreetMap Nominatim en el filtro de negocios.
+- [x] Paso 1: Integrar autocompletado de ciudades usando endpoint backend /api/cities/autocomplete (proxy Nominatim) en el filtro de negocios.
   - El usuario escribe parte del nombre de la ciudad y se muestran sugerencias en tiempo real.
   - No requiere API key ni registro para uso básico.
-  - Endpoint usado: https://nominatim.openstreetmap.org/search?country=Colombia&city={query}&format=json&addressdetails=1&limit=5
+  - Endpoint usado: /api/cities/autocomplete?query={texto}
 
 - [ ] Paso 2: Al seleccionar una ciudad, guardar el nombre y (opcional) las coordenadas para futuras funcionalidades (mapas, geolocalización, rutas, etc).
 
@@ -81,3 +81,5 @@ Use this checklist to mark each card as completed.
 - [ ] Paso 4: (Futuro) Implementar geocodificación inversa y rutas usando servicios compatibles con OSM (ej: Nominatim, OSRM).
 
 - [ ] Paso 5: (Futuro) Si se requiere cobertura global o funcionalidades avanzadas, migrar a Google Maps Platform y documentar el proceso.
+
+- [x] Integrar frontend con endpoint backend para autocompletar ciudades *(prioriza ciudades, pero muestra municipios y pueblos también)*
