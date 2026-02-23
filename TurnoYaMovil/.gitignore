@@ -65,6 +65,6 @@ yarn-error.log
 testem.log
 /typings
 
-# System files
-.DS_Store
-Thumbs.db
+# Angular environments (API keys, secrets)
+src/environments/environment.ts
+src/environments/environment.prod.ts

@@ -57,3 +57,27 @@ Use this checklist to mark each card as completed.
 - [ ] Agregar `distinctUntilChanged` en filtros para evitar consultas repetidas con el mismo valor
 - [ ] Definir umbral minimo de busqueda (ej. 2 caracteres) antes de consultar backend
 - [ ] Mostrar estado de "sin conexion" y opcion de reintento en listado de negocios
+
+## Mejoras en curso
+
+- [x] Autocompletar ciudades en filtro de negocios (frontend/backend)
+  - Nota: Actualmente se usa OpenStreetMap Nominatim para autocompletar ciudades y obtener coordenadas sin costo ni registro. Cuando se cuente con recursos o se requiera mayor cobertura global, se recomienda migrar a Google Maps Platform.
+  - Para mapas interactivos y geolocalización, se recomienda usar la librería open source Leaflet junto con OpenStreetMap. Si se requiere integración avanzada (direcciones, rutas, geocodificación inversa), existen servicios open source y comerciales compatibles con OSM.
+  - Descripción: Mejorar el filtro de ciudad en el listado de negocios para que sugiera ciudades a medida que el usuario escribe, usando autocompletado tipo Google Places o similar.
+  - Implementación: Se agregó el script de Google Maps JavaScript API con Places y la API key en index.html. El input de ciudad ahora muestra sugerencias de autocompletado y permite seleccionar una ciudad, actualizando el filtro y recargando los negocios.
+  - Estado: completado (frontend). Backend opcional pendiente.
+
+## CARs para autocompletar ciudades con OpenStreetMap
+
+- [ ] Paso 1: Integrar autocompletado de ciudades usando la API pública de OpenStreetMap Nominatim en el filtro de negocios.
+  - El usuario escribe parte del nombre de la ciudad y se muestran sugerencias en tiempo real.
+  - No requiere API key ni registro para uso básico.
+  - Endpoint usado: https://nominatim.openstreetmap.org/search?country=Colombia&city={query}&format=json&addressdetails=1&limit=5
+
+- [ ] Paso 2: Al seleccionar una ciudad, guardar el nombre y (opcional) las coordenadas para futuras funcionalidades (mapas, geolocalización, rutas, etc).
+
+- [ ] Paso 3: (Futuro) Integrar mapas interactivos usando Leaflet y OpenStreetMap para mostrar negocios y ubicaciones.
+
+- [ ] Paso 4: (Futuro) Implementar geocodificación inversa y rutas usando servicios compatibles con OSM (ej: Nominatim, OSRM).
+
+- [ ] Paso 5: (Futuro) Si se requiere cobertura global o funcionalidades avanzadas, migrar a Google Maps Platform y documentar el proceso.

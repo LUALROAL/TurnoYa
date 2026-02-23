@@ -28,6 +28,13 @@ Use this checklist to mark each card as completed.
 ## EPIC 5 - Citas y pagos
 - [ ] Endpoints de pagos (definir con negocio) (Priority: Medium, Points: 5)
 
+## Mejoras en curso
+
+- [ ] Soporte a autocompletado de ciudades (para frontend)
+  - Descripción: Si el frontend requiere sugerencias de ciudades desde el backend (en vez de Google Places), exponer un endpoint `/api/cities/autocomplete?query=...` que devuelva ciudades sugeridas según el texto ingresado.
+  - Alternativa: Si se usa Google Places, no se requiere cambio backend.
+  - Estado: pendiente de análisis según decisión frontend.
+
 ## Calidad y entrega
 - [ ] Tests de servicios criticos (Priority: Medium, Points: 3)
 - [ ] Logs estructurados y trazabilidad (Priority: Low, Points: 2)
