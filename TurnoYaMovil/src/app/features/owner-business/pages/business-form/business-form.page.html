@@ -225,14 +225,18 @@
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <ion-input
-                        id="department"
-                        formControlName="department"
-                        placeholder="Escribe un departamento"
-                        (ionInput)="onDepartmentInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
-                        [value]="businessForm.get('department')?.value"
-                        autocomplete="off"
-                      ></ion-input>
+                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                        <ion-icon name="location-outline" class="text-neon-primary text-xl"></ion-icon>
+                        <ion-input
+                          id="department"
+                          formControlName="department"
+                          placeholder="Ej: BOGOTÁ, D.C."
+                          (ionInput)="onDepartmentInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
+                          [value]="businessForm.get('department')?.value"
+                          autocomplete="off"
+                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                        ></ion-input>
+                      </div>
                       <ul *ngIf="departmentSuggestions.length" class="absolute z-50 bg-bg-card border border-neon-primary/20 rounded-xl mt-1 w-full max-h-48 overflow-auto">
                         <li *ngFor="let dept of departmentSuggestions" (click)="onDepartmentSelect(dept)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10">{{ dept }}</li>
                       </ul>
@@ -252,15 +256,19 @@
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <ion-input
-                        id="city"
-                        formControlName="city"
-                        placeholder="Escribe una ciudad"
-                        (ionInput)="onCityInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
+                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                        <ion-icon name="business-outline" class="text-neon-primary text-xl"></ion-icon>
+                        <ion-input
+                          id="city"
+                          formControlName="city"
+                          placeholder="Ej: BOGOTÁ"
+                          (ionInput)="onCityInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
                         [value]="businessForm.get('city')?.value"
-                        autocomplete="off"
-                        [disabled]="!businessForm.get('department')?.value"
-                      ></ion-input>
+                          autocomplete="off"
+                          [disabled]="!businessForm.get('department')?.value"
+                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                        ></ion-input>
+                      </div>
                       <ul *ngIf="citySuggestions.length" class="absolute z-50 bg-bg-card border border-neon-primary/20 rounded-xl mt-1 w-full max-h-48 overflow-auto">
                         <li *ngFor="let city of citySuggestions" (click)="onCitySelect(city.name)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10">{{ city.name }}</li>
                       </ul>

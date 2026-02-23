@@ -55,14 +55,22 @@ export class BusinessFormPage implements OnInit, OnDestroy {
 
     onDepartmentSelect(department: string) {
       this.selectedDepartment = department;
-      this.businessForm.patchValue({ department, city: '' });
       this.departmentSuggestions = [];
-      this.citySuggestions = [];
       const cityControl = this.businessForm.get('city');
       if (department) {
         cityControl?.enable();
+        // Si el departamento es Bogotá, auto-selecciona ciudad Bogotá
+        if (department.toLowerCase().includes('bogotá') || department.toLowerCase().includes('bogota')) {
+          this.businessForm.patchValue({ department, city: 'Bogotá' });
+          this.citySuggestions = [{ name: 'Bogotá' }];
+        } else {
+          this.businessForm.patchValue({ department, city: '' });
+          this.citySuggestions = [];
+        }
       } else {
         cityControl?.disable();
+        this.businessForm.patchValue({ department: '', city: '' });
+        this.citySuggestions = [];
       }
     }
 
