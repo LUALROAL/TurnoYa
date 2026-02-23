@@ -64,8 +64,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
     const target = event.target as HTMLInputElement;
     const value = target.value;
     this.cityFilter = value;
-    this.searching = true;
-    this.filtersChange$.next();
+    // No disparar búsqueda aquí, solo actualizar sugerencias
     if (value.length >= 1) {
       this.cityService.autocomplete(value).pipe(takeUntil(this.destroy$)).subscribe({
         next: (results: CityAutocompleteResult[]) => {
@@ -80,6 +79,8 @@ export class BusinessListPage implements OnInit, OnDestroy {
     } else {
       this.citySuggestions = [];
       this.showCitySuggestions = false;
+      // Si el usuario borra la ciudad, limpiar negocios
+      this.filtersChange$.next();
     }
   }
 
@@ -87,7 +88,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
     this.cityFilter = suggestion.name;
     this.showCitySuggestions = false;
     this.citySuggestions = [];
-    this.filtersChange$.next();
+    this.filtersChange$.next(); // Solo aquí se dispara la búsqueda
   }
 
   protected selectCategory(category: string) {
