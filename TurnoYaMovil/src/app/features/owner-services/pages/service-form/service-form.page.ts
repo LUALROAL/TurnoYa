@@ -24,7 +24,6 @@ import { OwnerServicesService } from '../../services/owner-services.service';
     CommonModule,
     ReactiveFormsModule,
     IonContent,
-    IonButton,
     IonIcon,
     IonInput,
     IonTextarea,

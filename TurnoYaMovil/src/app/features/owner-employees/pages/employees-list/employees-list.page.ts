@@ -29,7 +29,7 @@ import { OwnerEmployeesService } from '../../services/owner-employees.service';
 @Component({
   selector: 'app-employees-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, IonContent, IonButton, IonIcon, IonFab, IonFabButton],
+  imports: [CommonModule, RouterLink, IonContent, IonIcon],
   templateUrl: './employees-list.page.html',
   styleUrl: './employees-list.page.scss',
 })
@@ -96,6 +96,9 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           employee.isActive = newStatus;
+          this.notify.showSuccess(
+            `Empleado ${newStatus ? 'activado' : 'desactivado'} correctamente`
+          );
         },
         error: (error: unknown) => {
           console.error('Error al cambiar estado del empleado:', error);
@@ -106,7 +109,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
 
   protected deleteEmployee(employee: OwnerEmployee): void {
     const confirmed = confirm(
-      `¿Eliminar al empleado "${employee.firstName} ${employee.lastName}"?`
+      `¿Estás seguro de eliminar al empleado "${employee.firstName} ${employee.lastName}"? Esta acción no se puede deshacer.`
     );
 
     if (!confirmed) {
@@ -120,6 +123,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
         next: () => {
           this.employees = this.employees.filter(item => item.id !== employee.id);
           this.isEmpty = this.employees.length === 0;
+          this.notify.showSuccess('Empleado eliminado correctamente');
         },
         error: (error: unknown) => {
           console.error('Error al eliminar empleado:', error);
