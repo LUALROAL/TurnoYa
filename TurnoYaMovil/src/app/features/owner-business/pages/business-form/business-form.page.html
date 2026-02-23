@@ -218,62 +218,57 @@
 
                 <!-- Grid: Ciudad y Departamento -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Ciudad -->
+                  <!-- Departamento (Autocomplete) -->
                   <div class="space-y-2">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
-                      CIUDAD *
-                      <!-- /&gt; -->
-                    </label>
-                    <div class="relative">
-                      <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="city-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
-                          id="city"
-                          type="text"
-                          formControlName="city"
-                          placeholder="Ej: Bogotá"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
-                      </div>
-                    </div>
-                    @if (formControls['city'].touched && formControls['city'].invalid) {
-                      <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                        <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                        {{ getErrorMessage('city') }}
-                      </p>
-                    }
-                  </div>
-
-                  <!-- Departamento -->
-                  <div class="space-y-2">
-                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
                       DEPARTAMENTO *
-                      <!-- /&gt; -->
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <ion-select
+                      <ion-input
                         id="department"
                         formControlName="department"
-                        placeholder="Selecciona un departamento"
-                        interface="action-sheet"
-                        class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
-                        [class.border-red-500/50]="formControls['department'].touched && formControls['department'].invalid"
-                      >
-                        @for (dept of departments; track dept) {
-                          <ion-select-option [value]="dept" class="bg-bg-card text-text-primary">
-                            {{ dept }}
-                          </ion-select-option>
-                        }
-                      </ion-select>
+                        placeholder="Escribe un departamento"
+                        (ionInput)="onDepartmentInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
+                        [value]="businessForm.get('department')?.value"
+                        autocomplete="off"
+                      ></ion-input>
+                      <ul *ngIf="departmentSuggestions.length" class="absolute z-50 bg-bg-card border border-neon-primary/20 rounded-xl mt-1 w-full max-h-48 overflow-auto">
+                        <li *ngFor="let dept of departmentSuggestions" (click)="onDepartmentSelect(dept)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10">{{ dept }}</li>
+                      </ul>
                     </div>
                     @if (formControls['department'].touched && formControls['department'].invalid) {
                       <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
                         <ion-icon name="warning-outline" class="text-sm"></ion-icon>
                         {{ getErrorMessage('department') }}
+                      </p>
+                    }
+                  </div>
+
+                  <!-- Ciudad (Autocomplete) -->
+                  <div class="space-y-2">
+                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                      CIUDAD *
+                    </label>
+                    <div class="relative">
+                      <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                      <ion-input
+                        id="city"
+                        formControlName="city"
+                        placeholder="Escribe una ciudad"
+                        (ionInput)="onCityInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
+                        [value]="businessForm.get('city')?.value"
+                        autocomplete="off"
+                        [disabled]="!businessForm.get('department')?.value"
+                      ></ion-input>
+                      <ul *ngIf="citySuggestions.length" class="absolute z-50 bg-bg-card border border-neon-primary/20 rounded-xl mt-1 w-full max-h-48 overflow-auto">
+                        <li *ngFor="let city of citySuggestions" (click)="onCitySelect(city.name)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10">{{ city.name }}</li>
+                      </ul>
+                    </div>
+                    @if (formControls['city'].touched && formControls['city'].invalid) {
+                      <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                        <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                        {{ getErrorMessage('city') }}
                       </p>
                     }
                   </div>

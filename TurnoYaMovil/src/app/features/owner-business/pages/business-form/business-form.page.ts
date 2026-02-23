@@ -1,3 +1,5 @@
+import { CityService } from '../../../city/services/city.service';
+import type { CityAutocompleteResult } from '../../../city/services/city.service';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -37,6 +39,47 @@ import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
   styleUrl: './business-form.page.scss',
 })
 export class BusinessFormPage implements OnInit, OnDestroy {
+    private readonly cityService = inject(CityService);
+    departmentSuggestions: string[] = [];
+    citySuggestions: { name: string }[] = [];
+    selectedDepartment: string = '';
+
+    onDepartmentInput(query: string = '') {
+      this.cityService.searchDepartments(query)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (results: string[]) => this.departmentSuggestions = results,
+          error: () => this.departmentSuggestions = []
+        });
+    }
+
+    onDepartmentSelect(department: string) {
+      this.selectedDepartment = department;
+      this.businessForm.patchValue({ department, city: '' });
+      this.departmentSuggestions = [];
+      this.citySuggestions = [];
+      const cityControl = this.businessForm.get('city');
+      if (department) {
+        cityControl?.enable();
+      } else {
+        cityControl?.disable();
+      }
+    }
+
+    onCityInput(query: string = '') {
+      const department = this.businessForm.get('department')?.value;
+      this.cityService.searchCities(query, department)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (results: string[]) => this.citySuggestions = results.map((name: string) => ({ name })),
+          error: () => this.citySuggestions = []
+        });
+    }
+
+    onCitySelect(city: string) {
+      this.businessForm.patchValue({ city });
+      this.citySuggestions = [];
+    }
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -122,7 +165,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       description: ['', [Validators.maxLength(500)]],
       category: ['', Validators.required],
       address: ['', [Validators.required, Validators.minLength(5)]],
-      city: ['', Validators.required],
+      city: [{ value: '', disabled: true }, Validators.required],
       department: ['', Validators.required],
       phone: ['', [Validators.pattern(/^[0-9+\-() ]*$/)]],
       email: ['', [Validators.email]],
