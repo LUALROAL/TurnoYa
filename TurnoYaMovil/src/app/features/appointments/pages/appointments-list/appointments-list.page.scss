@@ -1,253 +1,43 @@
 :host {
   display: block;
+  height: 100%;
 }
 
-.appointments-bg {
-  --background: var(--color-bg);
+// Animaciones personalizadas
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
-.bg-orb {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
-  filter: blur(88px);
-  opacity: 0.25;
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 
-.orb-top {
-  top: -95px;
-  left: -70px;
+.animation-delay-1000 {
+  animation-delay: 1s;
 }
 
-.orb-bottom {
-  right: -80px;
-  bottom: -120px;
-}
-
-.appointments-wrap {
-  position: relative;
-  z-index: 1;
-  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4)
-    calc(var(--space-8) + env(safe-area-inset-bottom));
-  display: grid;
-  gap: var(--space-5);
-}
-
-.appointments-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
-}
-
-.back-btn {
-  --color: var(--color-text);
-  --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
-  --border-radius: 999px;
-}
-
-.glass-panel {
-  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.header-overline {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-}
-
-.appointments-header h1 {
-  margin: var(--space-1) 0 0;
-  font-family: var(--font-display-a);
-  font-size: 1.35rem;
-}
-
-.cards-grid {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.appointment-card {
-  padding: var(--space-4);
-  display: grid;
-  gap: var(--space-3);
-}
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-3);
-
-  h3 {
-    margin: 0;
-    font-size: 1.05rem;
-    font-family: var(--font-display-a);
-  }
-}
-
-.card-meta {
-  margin: var(--space-1) 0 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-
-  ion-icon {
-    font-size: 15px;
-  }
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-
-  &.success {
-    background: color-mix(in srgb, #34d399 18%, transparent);
-    color: #34d399;
-  }
-
-  &.info {
-    background: color-mix(in srgb, #60a5fa 18%, transparent);
-    color: #60a5fa;
-  }
-
-  &.warning {
-    background: color-mix(in srgb, #fbbf24 18%, transparent);
-    color: #fbbf24;
-  }
-
-  &.danger {
-    background: color-mix(in srgb, #f87171 18%, transparent);
-    color: #f87171;
-  }
-}
-
-.info-rows {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-
-  ion-icon {
-    font-size: 17px;
-  }
-}
-
-.notes {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-}
-
-.card-actions {
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-outline);
-}
-
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 9px 12px;
-  border-radius: var(--radius-button);
-  border: 1px solid var(--color-outline);
-  background: var(--color-surface-2);
-  color: var(--color-text);
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.15s ease;
-
-  ion-icon {
-    font-size: 16px;
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &.danger {
-    color: color-mix(in srgb, #ff4444 90%, var(--color-text));
-    border-color: color-mix(in srgb, #ff4444 30%, var(--color-outline));
-  }
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
-}
-
-.empty-state {
-  padding: var(--space-6) var(--space-4);
-  text-align: center;
-  display: grid;
-  gap: var(--space-3);
-  justify-items: center;
-
-  ion-icon {
-    font-size: 66px;
-    color: var(--color-text-muted);
-    opacity: 0.45;
-  }
-
-  h3 {
-    margin: 0;
-    font-size: 1.22rem;
-    font-family: var(--font-display-a);
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-text-muted);
-  }
-}
-
-.button-primary {
-  --background: var(--color-accent-1);
-  --color: #041016;
-  --border-radius: var(--radius-pill);
-}
-
-.skeleton {
-  min-height: 180px;
+// Skeleton loader mejorado
+.skeleton-card {
+  height: 280px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--color-surface-2) 70%, transparent) 25%,
-    color-mix(in srgb, var(--color-surface-2) 50%, transparent) 50%,
-    color-mix(in srgb, var(--color-surface-2) 70%, transparent) 75%
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
   );
   background-size: 200% 100%;
-  animation: loading 1.5s ease-in-out infinite;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
-@keyframes loading {
+@keyframes skeleton-loading {
   0% {
     background-position: 200% 0;
   }
@@ -256,13 +46,163 @@
   }
 }
 
-@media (min-width: 768px) {
-  .appointments-wrap {
-    max-width: 768px;
-    margin: 0 auto;
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+
+  &:hover {
+    background: #00F5D4;
+  }
+}
+
+// Ajustes para Ionic
+ion-content {
+  --background: transparent;
+}
+
+// Estilos para los badges de estado
+.status-pill {
+  &.success {
+    background: rgba(52, 211, 153, 0.1);
+    border-color: rgba(52, 211, 153, 0.3);
+    color: #34d399;
+
+    .dot {
+      background: #34d399;
+    }
   }
 
-  .cards-grid {
+  &.info {
+    background: rgba(96, 165, 250, 0.1);
+    border-color: rgba(96, 165, 250, 0.3);
+    color: #60a5fa;
+
+    .dot {
+      background: #60a5fa;
+    }
+  }
+
+  &.warning {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
+
+    .dot {
+      background: #fbbf24;
+    }
+  }
+
+  &.danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+
+    .dot {
+      background: #ef4444;
+    }
+  }
+}
+
+// Efecto de hover para las tarjetas
+.appointment-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Botón de cancelar con efecto especial
+.cancel-button {
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+    transform: scale(1.02);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Efecto de brillo para los iconos
+.icon-glow {
+  transition: all 0.3s ease;
+
+  .group:hover & {
+    filter: drop-shadow(0 0 8px #00E0FF);
+  }
+}
+
+// Punto animado para estados
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Grid responsiva
+.cards-grid {
+  display: grid;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Notas con estilo especial
+.notes-section {
+  background: rgba(18, 24, 38, 0.5);
+  border: 1px solid rgba(0, 224, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 12px;
+
+  p {
+    margin: 0;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #B0C4DE;
+  }
+}
+
+// Efecto de glow para el número de referencia
+.reference-number {
+  color: #FFFFFF;
+  font-family: 'Syne', sans-serif;
+  font-weight: bold;
+  font-size: 1.25rem;
+
+  .group:hover & {
+    text-shadow: 0 0 10px rgba(0, 224, 255, 0.5);
   }
 }

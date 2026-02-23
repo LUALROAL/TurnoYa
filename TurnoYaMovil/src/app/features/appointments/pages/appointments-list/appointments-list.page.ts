@@ -9,6 +9,7 @@ import {
   cashOutline,
   closeCircleOutline,
   timeOutline,
+  searchOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -33,7 +34,14 @@ export class AppointmentsListPage implements OnInit, OnDestroy {
   protected processingIds = new Set<string>();
 
   constructor() {
-    addIcons({ arrowBackOutline, calendarOutline, timeOutline, cashOutline, closeCircleOutline });
+    addIcons({
+      arrowBackOutline,
+      calendarOutline,
+      timeOutline,
+      cashOutline,
+      closeCircleOutline,
+      searchOutline
+    });
   }
 
   ngOnInit(): void {
@@ -90,7 +98,8 @@ export class AppointmentsListPage implements OnInit, OnDestroy {
 
   protected cancelAppointment(appointment: AppointmentItem): void {
     if (this.isProcessing(appointment.id)) return;
-    const confirmed = confirm('¿Cancelar esta cita?');
+
+    const confirmed = confirm('¿Estás seguro de cancelar esta cita?');
 
     if (!confirmed) {
       return;
@@ -105,7 +114,7 @@ export class AppointmentsListPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           appointment.status = 'cancelled';
-          this.notify.showSuccess('Cita cancelada');
+          this.notify.showSuccess('Cita cancelada correctamente');
           this.setProcessing(appointment.id, false);
         },
         error: (error: unknown) => {
