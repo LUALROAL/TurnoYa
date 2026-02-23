@@ -41,12 +41,7 @@ type Tab = 'profile' | 'security';
     CommonModule,
     ReactiveFormsModule,
     IonContent,
-    IonButton,
     IonInput,
-    IonItem,
-    IonLabel,
-    IonSpinner,
-    IonAvatar,
     IonSelect,
     IonSelectOption,
   ],
@@ -272,5 +267,13 @@ export class ProfilePage implements OnInit, OnDestroy {
     const confirmPassword = group.get('confirmPassword')?.value;
 
     return newPassword === confirmPassword ? null : { passwordsMismatch: true };
+  }
+
+  protected goBack(): void {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 }

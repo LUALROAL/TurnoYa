@@ -22,7 +22,7 @@ import { AppointmentsService } from '../../../appointments/services/appointments
 @Component({
   selector: 'app-owner-appointments-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, IonContent, IonButton, IonIcon],
+  imports: [CommonModule, RouterLink, IonContent, IonIcon],
   templateUrl: './owner-appointments-list.page.html',
   styleUrl: './owner-appointments-list.page.scss',
 })

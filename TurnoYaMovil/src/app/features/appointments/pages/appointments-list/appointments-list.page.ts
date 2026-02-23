@@ -19,7 +19,7 @@ import { AppointmentsService } from '../../services/appointments.service';
 @Component({
   selector: 'app-appointments-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, IonContent, IonButton, IonIcon],
+  imports: [CommonModule, RouterLink, IonContent, IonIcon],
   templateUrl: './appointments-list.page.html',
   styleUrl: './appointments-list.page.scss',
 })

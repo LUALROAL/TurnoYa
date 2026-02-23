@@ -14,7 +14,7 @@
   <!-- Header con navegación -->
   <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
     <div class="flex items-center gap-4">
-      <button routerLink="/home" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+      <button type="button" (click)="goBack()" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
         <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
       </button>
       <div>
