@@ -1,220 +1,319 @@
-<ion-content class="settings-bg">
-  <div class="bg-decoration">
-    <div class="bg-orb orb-top"></div>
-    <div class="bg-orb orb-bottom"></div>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div class="settings-wrap">
-    <!-- Header -->
-    <header class="settings-header glass-panel">
-      <ion-button fill="clear" (click)="onCancel()">
-        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
-      </ion-button>
-      <div>
-        <p class="header-overline">Configuración</p>
-        <h1>Ajustes del Negocio</h1>
+  <div class="relative z-10 pb-8">
+    <!-- Header con navegación -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <button (click)="onCancel()" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <ion-icon name="arrow-back" class="text-xl text-text-primary"></ion-icon>
+        </button>
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            CONFIGURACIÓN
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              Ajustes del Negocio
+            </span>
+          </h1>
+        </div>
       </div>
     </header>
 
-    <!-- Form -->
-    @if (loading) {
-      <article class="settings-card glass-panel skeleton">
-        <div class="skeleton-content"></div>
-      </article>
-    } @else {
-      <form [formGroup]="settingsForm" (ngSubmit)="onSave()">
-        <!-- Reservas -->
-        <section class="settings-section">
-          <div class="section-head">
-            <div class="section-icon">
-              <ion-icon name="calendar"></ion-icon>
-            </div>
-            <div>
-              <h2>Reservas</h2>
-              <p>Configura las reglas de reserva</p>
-            </div>
-          </div>
-
-          <div class="settings-card glass-panel">
-            <div class="form-field">
-              <label for="bookingAdvanceDays">
-                Días de anticipación máxima
-                <span class="field-hint">Máximo de días para reservar con anticipación</span>
-              </label>
-              <ion-input
-                id="bookingAdvanceDays"
-                type="number"
-                formControlName="bookingAdvanceDays"
-                placeholder="30"
-                min="1"
-                max="365"
-                [class.invalid]="formControls['bookingAdvanceDays'].touched && formControls['bookingAdvanceDays'].invalid"
-              ></ion-input>
-              @if (formControls['bookingAdvanceDays'].touched && formControls['bookingAdvanceDays'].invalid) {
-                <span class="error-msg">Ingresa un valor entre 1 y 365 días</span>
-              }
-            </div>
-
-            <div class="form-field">
-              <label for="defaultSlotDuration">
-                Duración de cita por defecto (minutos)
-                <span class="field-hint">Duración estándar de cada cita</span>
-              </label>
-              <ion-input
-                id="defaultSlotDuration"
-                type="number"
-                formControlName="defaultSlotDuration"
-                placeholder="30"
-                min="5"
-                max="480"
-                [class.invalid]="formControls['defaultSlotDuration'].touched && formControls['defaultSlotDuration'].invalid"
-              ></ion-input>
-              @if (formControls['defaultSlotDuration'].touched && formControls['defaultSlotDuration'].invalid) {
-                <span class="error-msg">Ingresa un valor entre 5 y 480 minutos</span>
-              }
-            </div>
-
-            <div class="form-field">
-              <label for="bufferTimeBetweenAppointments">
-                Tiempo de separación entre citas (minutos)
-                <span class="field-hint">Tiempo de descanso/preparación entre citas</span>
-              </label>
-              <ion-input
-                id="bufferTimeBetweenAppointments"
-                type="number"
-                formControlName="bufferTimeBetweenAppointments"
-                placeholder="0"
-                min="0"
-                max="120"
-                [class.invalid]="formControls['bufferTimeBetweenAppointments'].touched && formControls['bufferTimeBetweenAppointments'].invalid"
-              ></ion-input>
-              @if (formControls['bufferTimeBetweenAppointments'].touched && formControls['bufferTimeBetweenAppointments'].invalid) {
-                <span class="error-msg">Ingresa un valor entre 0 y 120 minutos</span>
-              }
-            </div>
-          </div>
-        </section>
-
-        <!-- Cancelaciones -->
-        <section class="settings-section">
-          <div class="section-head">
-            <div class="section-icon">
-              <ion-icon name="time"></ion-icon>
-            </div>
-            <div>
-              <h2>Cancelaciones</h2>
-              <p>Políticas de cancelación y no-show</p>
-            </div>
-          </div>
-
-          <div class="settings-card glass-panel">
-            <div class="form-field">
-              <label for="cancellationHours">
-                Horas mínimas para cancelar sin cargo
-                <span class="field-hint">Tiempo mínimo de anticipación para cancelaciones gratuitas</span>
-              </label>
-              <ion-input
-                id="cancellationHours"
-                type="number"
-                formControlName="cancellationHours"
-                placeholder="24"
-                min="0"
-                max="168"
-                [class.invalid]="formControls['cancellationHours'].touched && formControls['cancellationHours'].invalid"
-              ></ion-input>
-              @if (formControls['cancellationHours'].touched && formControls['cancellationHours'].invalid) {
-                <span class="error-msg">Ingresa un valor entre 0 y 168 horas</span>
-              }
-            </div>
-
-            <div class="form-field">
-              <label for="noShowPolicy">
-                Política de no-show
-                <span class="field-hint">Describe qué pasa si un cliente no se presenta</span>
-              </label>
-              <ion-textarea
-                id="noShowPolicy"
-                formControlName="noShowPolicy"
-                placeholder="Ej: Después de 3 no-shows, el cliente será bloqueado temporalmente..."
-                rows="4"
-              ></ion-textarea>
-            </div>
-          </div>
-        </section>
-
-        <!-- Pagos -->
-        <section class="settings-section">
-          <div class="section-head">
-            <div class="section-icon">
-              <ion-icon name="cash"></ion-icon>
-            </div>
-            <div>
-              <h2>Pagos</h2>
-              <p>Configura depósitos y adelantos</p>
-            </div>
-          </div>
-
-          <div class="settings-card glass-panel">
-            <div class="form-field checkbox-field">
-              <ion-checkbox formControlName="requiresDeposit"></ion-checkbox>
-              <label for="requiresDeposit">
-                Requiere depósito para reservar
-                <span class="field-hint">Solicitar pago adelantado al momento de la reserva</span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- Zona de peligro -->
-        <section class="settings-section danger-zone">
-          <div class="section-head">
-            <div class="section-icon danger-icon">
-              <ion-icon name="trash"></ion-icon>
-            </div>
-            <div>
-              <h2>Zona de peligro</h2>
-              <p>Eliminar este negocio y toda su información asociada</p>
-            </div>
-          </div>
-
-          <div class="settings-card glass-panel danger-card">
-            <p class="danger-text">
-              Esta acción es irreversible. Para mayor seguridad, se solicitará una confirmación adicional.
-            </p>
-            <ion-button
-              type="button"
-              color="danger"
-              fill="outline"
-              (click)="onDeleteBusiness()"
-              [disabled]="saving || deleting"
-            >
-              <ion-icon name="trash" slot="start"></ion-icon>
-              {{ deleting ? 'Eliminando...' : 'Eliminar negocio' }}
-            </ion-button>
-          </div>
-        </section>
-
-        <!-- Actions -->
-        <div class="form-actions">
-          <ion-button
-            type="button"
-            fill="outline"
-            expand="block"
-            (click)="onCancel()"
-            [disabled]="saving || deleting"
-          >
-            Cancelar
-          </ion-button>
-          <ion-button
-            type="submit"
-            expand="block"
-            [disabled]="settingsForm.invalid || saving || deleting"
-          >
-            <ion-icon name="save" slot="start"></ion-icon>
-            {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
-          </ion-button>
+    <div class="px-4 space-y-6 mt-4 max-w-3xl mx-auto">
+      @if (loading) {
+        <!-- Skeleton Loader -->
+        <div class="space-y-4">
+          <div class="skeleton-form-header"></div>
+          <div class="skeleton-form-section"></div>
+          <div class="skeleton-form-section"></div>
+          <div class="skeleton-form-section"></div>
         </div>
-      </form>
-    }
+      } @else {
+        <form [formGroup]="settingsForm" (ngSubmit)="onSave()" class="space-y-6">
+
+          <!-- Reservas -->
+          <section class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-neon-primary/10 flex items-center justify-center">
+                <ion-icon name="calendar" class="text-neon-primary text-xl"></ion-icon>
+              </div>
+              <div>
+                <h2 class="text-xl font-display font-semibold text-text-primary">Reservas</h2>
+                <p class="text-text-secondary font-mono text-sm">Configura las reglas de reserva</p>
+              </div>
+            </div>
+
+            <div class="relative group">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+
+              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+
+                <!-- Días de anticipación máxima -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    DÍAS DE ANTICIPACIÓN MÁXIMA
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input
+                        id="bookingAdvanceDays"
+                        type="number"
+                        formControlName="bookingAdvanceDays"
+                        placeholder="30"
+                        min="1"
+                        max="365"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                      ></ion-input>
+                    </div>
+                  </div>
+                  <p class="text-xs font-mono text-text-tertiary">Máximo de días para reservar con anticipación</p>
+                  @if (formControls['bookingAdvanceDays'].touched && formControls['bookingAdvanceDays'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      Ingresa un valor entre 1 y 365 días
+                    </p>
+                  }
+                </div>
+
+                <!-- Duración de cita por defecto -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    DURACIÓN DE CITA POR DEFECTO (MINUTOS)
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="time-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input
+                        id="defaultSlotDuration"
+                        type="number"
+                        formControlName="defaultSlotDuration"
+                        placeholder="30"
+                        min="5"
+                        max="480"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                      ></ion-input>
+                    </div>
+                  </div>
+                  <p class="text-xs font-mono text-text-tertiary">Duración estándar de cada cita</p>
+                  @if (formControls['defaultSlotDuration'].touched && formControls['defaultSlotDuration'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      Ingresa un valor entre 5 y 480 minutos
+                    </p>
+                  }
+                </div>
+
+                <!-- Tiempo de separación entre citas -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    TIEMPO DE SEPARACIÓN ENTRE CITAS (MINUTOS)
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="pause-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input
+                        id="bufferTimeBetweenAppointments"
+                        type="number"
+                        formControlName="bufferTimeBetweenAppointments"
+                        placeholder="0"
+                        min="0"
+                        max="120"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                      ></ion-input>
+                    </div>
+                  </div>
+                  <p class="text-xs font-mono text-text-tertiary">Tiempo de descanso/preparación entre citas</p>
+                  @if (formControls['bufferTimeBetweenAppointments'].touched && formControls['bufferTimeBetweenAppointments'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      Ingresa un valor entre 0 y 120 minutos
+                    </p>
+                  }
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Cancelaciones -->
+          <section class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-neon-primary/10 flex items-center justify-center">
+                <ion-icon name="time" class="text-neon-primary text-xl"></ion-icon>
+              </div>
+              <div>
+                <h2 class="text-xl font-display font-semibold text-text-primary">Cancelaciones</h2>
+                <p class="text-text-secondary font-mono text-sm">Políticas de cancelación y no-show</p>
+              </div>
+            </div>
+
+            <div class="relative group">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+
+              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+
+                <!-- Horas mínimas para cancelar sin cargo -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    HORAS MÍNIMAS PARA CANCELAR SIN CARGO
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="hourglass-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input
+                        id="cancellationHours"
+                        type="number"
+                        formControlName="cancellationHours"
+                        placeholder="24"
+                        min="0"
+                        max="168"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                      ></ion-input>
+                    </div>
+                  </div>
+                  <p class="text-xs font-mono text-text-tertiary">Tiempo mínimo de anticipación para cancelaciones gratuitas</p>
+                  @if (formControls['cancellationHours'].touched && formControls['cancellationHours'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      Ingresa un valor entre 0 y 168 horas
+                    </p>
+                  }
+                </div>
+
+                <!-- Política de no-show -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    POLÍTICA DE NO-SHOW
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                    <div class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="document-text-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
+                      <ion-textarea
+                        id="noShowPolicy"
+                        formControlName="noShowPolicy"
+                        placeholder="Ej: Después de 3 no-shows, el cliente será bloqueado temporalmente..."
+                        rows="4"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                      ></ion-textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Pagos -->
+          <section class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-neon-primary/10 flex items-center justify-center">
+                <ion-icon name="cash" class="text-neon-primary text-xl"></ion-icon>
+              </div>
+              <div>
+                <h2 class="text-xl font-display font-semibold text-text-primary">Pagos</h2>
+                <p class="text-text-secondary font-mono text-sm">Configura depósitos y adelantos</p>
+              </div>
+            </div>
+
+            <div class="relative group">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+
+              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6">
+                <label class="flex items-start gap-4 cursor-pointer group">
+                  <div class="relative flex-shrink-0 mt-1">
+                    <ion-checkbox formControlName="requiresDeposit" class="checkbox-neon"></ion-checkbox>
+                  </div>
+                  <div>
+                    <span class="block text-sm font-display font-semibold text-text-primary mb-1">Requiere depósito para reservar</span>
+                    <span class="text-xs font-mono text-text-tertiary">Solicitar pago adelantado al momento de la reserva</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- Zona de peligro -->
+          <section class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                <ion-icon name="trash" class="text-red-400 text-xl"></ion-icon>
+              </div>
+              <div>
+                <h2 class="text-xl font-display font-semibold text-text-primary">Zona de peligro</h2>
+                <p class="text-text-secondary font-mono text-sm">Eliminar este negocio y toda su información asociada</p>
+              </div>
+            </div>
+
+            <div class="relative group">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+
+              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-red-500/20 rounded-2xl shadow-2xl p-6 space-y-4">
+                <p class="text-text-secondary text-sm leading-relaxed">
+                  Esta acción es irreversible. Para mayor seguridad, se solicitará una confirmación adicional.
+                </p>
+
+                <button
+                  type="button"
+                  (click)="onDeleteBusiness()"
+                  [disabled]="saving || deleting"
+                  class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 font-mono text-sm hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-300 disabled:opacity-50"
+                >
+                  <ion-icon [name]="deleting ? 'sync-outline' : 'trash'" class="text-lg" [class.animate-spin]="deleting"></ion-icon>
+                  {{ deleting ? 'ELIMINANDO...' : 'ELIMINAR NEGOCIO' }}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Botones de acción -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4">
+            <!-- Botón Cancelar -->
+            <button
+              type="button"
+              (click)="onCancel()"
+              [disabled]="saving || deleting"
+              class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+
+            <!-- Botón Guardar -->
+            <button
+              type="submit"
+              [disabled]="settingsForm.invalid || saving || deleting"
+              class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
+
+              <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+                <ion-icon
+                  [name]="saving ? 'sync-outline' : 'save'"
+                  class="text-xl"
+                  [class.animate-spin]="saving"
+                ></ion-icon>
+                <span>{{ saving ? 'GUARDANDO...' : 'GUARDAR CAMBIOS' }}</span>
+              </div>
+            </button>
+          </div>
+        </form>
+      }
+    </div>
   </div>
 </ion-content>

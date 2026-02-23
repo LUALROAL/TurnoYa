@@ -1,255 +1,57 @@
 :host {
   display: block;
+  height: 100%;
 }
 
-// Background
-.settings-bg {
-  --background: var(--color-bg);
+// Animaciones personalizadas
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
-.bg-orb {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--color-accent-1) 16%, transparent);
-  filter: blur(88px);
-  opacity: 0.25;
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 
-.orb-top {
-  top: -95px;
-  left: -70px;
+.animation-delay-1000 {
+  animation-delay: 1s;
 }
 
-.orb-bottom {
-  right: -80px;
-  bottom: -120px;
+// Skeleton loaders
+.skeleton-form-header {
+  height: 80px;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
-// Main container
-.settings-wrap {
-  position: relative;
-  z-index: 1;
-  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-4)
-    calc(var(--space-8) + env(safe-area-inset-bottom));
-  display: grid;
-  gap: var(--space-5);
-  max-width: 768px;
-  margin: 0 auto;
+.skeleton-form-section {
+  height: 300px;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
-// Header
-.settings-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-color: color-mix(in srgb, var(--color-accent-1) 18%, var(--color-outline));
-
-  ion-button {
-    --color: var(--color-text);
-    --background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
-    --border-radius: 999px;
-  }
-}
-
-.glass-panel {
-  background: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.header-overline {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-}
-
-.settings-header h1 {
-  margin: var(--space-1) 0 0;
-  font-family: var(--font-display-a);
-  font-size: 1.4rem;
-}
-
-// Form sections
-.settings-section {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.section-head {
-  display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
-
-  .section-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--color-accent-1) 12%, transparent);
-    color: var(--color-accent-1);
-
-    ion-icon {
-      font-size: 22px;
-    }
-  }
-
-  h2 {
-    margin: 0;
-    font-family: var(--font-display-a);
-    font-size: 1.25rem;
-    line-height: 1.2;
-  }
-
-  p {
-    margin: var(--space-1) 0 0;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-  }
-}
-
-.danger-zone {
-  .danger-icon {
-    background: color-mix(in srgb, #ff4444 14%, transparent);
-    color: color-mix(in srgb, #ff4444 90%, var(--color-text));
-  }
-
-  .danger-card {
-    border: 1px solid color-mix(in srgb, #ff4444 28%, var(--color-outline));
-  }
-
-  .danger-text {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    line-height: 1.45;
-  }
-}
-
-// Settings card
-.settings-card {
-  padding: var(--space-4);
-  display: grid;
-  gap: var(--space-4);
-}
-
-// Form fields
-.form-field {
-  display: grid;
-  gap: var(--space-2);
-
-  label {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color-text);
-    display: grid;
-    gap: 4px;
-  }
-
-  .field-hint {
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: var(--color-text-muted);
-    line-height: 1.4;
-  }
-
-  ion-input,
-  ion-textarea {
-    --background: var(--color-surface-2);
-    --border-radius: var(--radius-input);
-    --padding-start: var(--space-3);
-    --padding-end: var(--space-3);
-    --padding-top: var(--space-2);
-    --padding-bottom: var(--space-2);
-    --color: var(--color-text);
-    --placeholder-color: var(--color-text-muted);
-    font-size: 0.95rem;
-
-    &.invalid {
-      --border-color: color-mix(in srgb, #ff4444 70%, transparent);
-    }
-  }
-
-  ion-textarea {
-    --padding-top: var(--space-3);
-    --padding-bottom: var(--space-3);
-  }
-
-  .error-msg {
-    font-size: 0.8rem;
-    color: color-mix(in srgb, #ff4444 90%, var(--color-text));
-    margin-top: -4px;
-  }
-}
-
-// Checkbox field
-.checkbox-field {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: var(--space-3);
-
-  ion-checkbox {
-    margin-top: 2px;
-    --size: 24px;
-    --checkbox-background-checked: var(--color-accent-1);
-    --border-color: var(--color-outline);
-    --border-radius: 6px;
-  }
-
-  label {
-    flex: 1;
-  }
-}
-
-// Form actions
-.form-actions {
-  display: flex;
-  gap: var(--space-3);
-  padding-top: var(--space-3);
-
-  ion-button {
-    flex: 1;
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-}
-
-// Skeleton
-.skeleton {
-  min-height: 400px;
-  position: relative;
-  overflow: hidden;
-
-  .skeleton-content {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-surface-2) 70%, transparent) 25%,
-      color-mix(in srgb, var(--color-surface-2) 50%, transparent) 50%,
-      color-mix(in srgb, var(--color-surface-2) 70%, transparent) 75%
-    );
-    background-size: 200% 100%;
-    animation: loading 1.5s ease-in-out infinite;
-  }
-}
-
-@keyframes loading {
+@keyframes skeleton-loading {
   0% {
     background-position: 200% 0;
   }
@@ -258,13 +60,149 @@
   }
 }
 
-// Responsive
-@media (max-width: 640px) {
-  .form-actions {
-    flex-direction: column;
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
 
-    ion-button {
-      width: 100%;
-    }
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+
+  &:hover {
+    background: #00F5D4;
   }
+}
+
+// Ajustes para Ionic
+ion-content {
+  --background: transparent;
+}
+
+// Estilo para el input nativo
+.input-native {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: #FFFFFF;
+  --placeholder-color: rgba(112, 134, 160, 0.5);
+  --placeholder-opacity: 1;
+  --caret-color: #00E0FF;
+}
+
+// Efecto de brillo para los inputs
+.input-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 224, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.group:focus-within .input-glow {
+  opacity: 1;
+}
+
+// Estilo para el checkbox personalizado
+.checkbox-neon {
+  --size: 24px;
+  --background-checked: linear-gradient(135deg, #00E0FF, #00F5D4);
+  --border-color-checked: transparent;
+  --checkmark-color: #03050A;
+  --border-color: rgba(0, 224, 255, 0.3);
+  --border-radius: 6px;
+
+  &::part(container) {
+    border-width: 2px;
+    transition: all 0.3s ease;
+  }
+
+  &:checked::part(container) {
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
+  }
+}
+
+// Zona de peligro
+.danger-zone {
+  .section-icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .danger-card {
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+}
+
+// Botón de eliminar con efecto especial
+.delete-button {
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+// Efecto de brillo para el botón de guardar
+.save-button {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+  20%, 100% {
+    transform: translateX(100%) rotate(30deg);
+  }
+}
+
+// Tooltips de ayuda
+.field-hint {
+  font-size: 0.7rem;
+  color: rgba(112, 134, 160, 0.8);
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 2px;
+}
+
+// Mensajes de error
+.error-message {
+  color: #ef4444;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
