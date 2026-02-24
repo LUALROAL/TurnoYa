@@ -89,6 +89,12 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   isCustomCategory = false;
   customCategoryValue = '';
 
+  // Nuevas propiedades para el snackbar de confirmación
+  showDeleteSnackbar = false;
+  deleteSnackbarMessage = '¿Estás seguro de eliminar esta imagen?';
+  pendingDeleteImageId: string | null = null;
+  pendingDeleteImageIndex: number | null = null;
+
   constructor() {
     addIcons({
       arrowBack,
@@ -317,21 +323,32 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   }
 
   /**
-   * Eliminar imagen seleccionada
+   * Eliminar imagen seleccionada (modificada para cerrar snackbar si está abierto)
    */
   removeSelectedImage(index: number) {
     URL.revokeObjectURL(this.imagePreviews[index]);
     this.selectedImages.splice(index, 1);
     this.imagePreviews.splice(index, 1);
+
+    // Si el snackbar está abierto con este índice, cerrarlo
+    if (this.pendingDeleteImageIndex === index) {
+      this.cancelDelete();
+    }
   }
 
   /**
-   * Eliminar imagen existente
-   */
+* Eliminar imagen existente (modificada para cerrar snackbar si está abierto)
+*/
   removeExistingImage(imageId: string) {
     this.existingImages = this.existingImages.filter(img => img.id !== imageId);
-    // Nota: La eliminación real en el backend requeriría un endpoint específico
-    // Por ahora, solo la removemos de la lista local
+
+    // Si el snackbar está abierto con este ID, cerrarlo
+    if (this.pendingDeleteImageId === imageId) {
+      this.cancelDelete();
+    }
+
+    // Mostrar notificación opcional
+    this.notify.showSuccess('Imagen eliminada correctamente');
   }
 
   /**
@@ -599,7 +616,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     cityControl?.enable();
 
     if (department.toLowerCase().includes('bogotá') ||
-        department.toLowerCase().includes('bogota')) {
+      department.toLowerCase().includes('bogota')) {
       this.businessForm.patchValue({ city: 'Bogotá' });
       this.citySuggestions = [];
     } else {
@@ -654,4 +671,49 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       this.citySuggestions = [];
     }, 200);
   }
+
+  /**
+  * Mostrar snackbar de confirmación para eliminar imagen existente
+  */
+  showDeleteConfirmation(imageId: string) {
+    this.pendingDeleteImageId = imageId;
+    this.pendingDeleteImageIndex = null;
+    this.deleteSnackbarMessage = '¿Estás seguro de reemplazar esta imagen?';
+    this.showDeleteSnackbar = true;
+  }
+
+  /**
+   * Mostrar snackbar de confirmación para eliminar nueva imagen
+   */
+  showNewImageDeleteConfirmation(index: number) {
+    this.pendingDeleteImageIndex = index;
+    this.pendingDeleteImageId = null;
+    this.deleteSnackbarMessage = '¿Estás seguro de reemplazar esta imagen?';
+    this.showDeleteSnackbar = true;
+  }
+
+  /**
+ * Confirmar eliminación
+ */
+  confirmDelete() {
+    if (this.pendingDeleteImageId) {
+      // Eliminar imagen existente
+      this.removeExistingImage(this.pendingDeleteImageId);
+    } else if (this.pendingDeleteImageIndex !== null) {
+      // Eliminar nueva imagen
+      this.removeSelectedImage(this.pendingDeleteImageIndex);
+    }
+
+    this.cancelDelete();
+  }
+
+  /**
+  * Cancelar eliminación
+  */
+  cancelDelete() {
+    this.showDeleteSnackbar = false;
+    this.pendingDeleteImageId = null;
+    this.pendingDeleteImageIndex = null;
+  }
+
 }

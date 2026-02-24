@@ -370,3 +370,134 @@ input {
 .image-glow {
   animation: imageGlow 2s infinite;
 }
+
+
+// Estilos mejorados para el snackbar
+.fixed.bottom-4 {
+  animation: slideUp 0.3s ease-out;
+
+  .bg-bg-card\/95 {
+    box-shadow: 0 0 30px rgba(0, 224, 255, 0.15);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0 40px rgba(0, 224, 255, 0.25);
+    }
+  }
+
+  // Línea divisoria con efecto de glow
+  .border-t {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00E0FF, transparent);
+      animation: scanLine 2s infinite;
+    }
+  }
+
+  // Botón de eliminar con efecto especial
+  .bg-gradient-to-r.from-red-500 {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  // Botón de cancelar con efecto de borde
+  .bg-bg-tertiary\/50 {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 2px;
+      background: linear-gradient(135deg, #00E0FF, #00F5D4);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+  }
+}
+
+// Animación para la línea escaneada
+@keyframes scanLine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Animación para el glow del snackbar
+.bg-gradient-glow {
+  animation: glowPulse 2s infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+// Estilo para el botón de eliminar en hover
+.group\/image {
+  button.bg-red-500\/90 {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+  }
+}
