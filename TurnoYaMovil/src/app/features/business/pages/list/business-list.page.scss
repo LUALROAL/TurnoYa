@@ -1,12 +1,4 @@
 // Forzar menú de categorías por encima de todo
-.category-dropdown-zfix {
-  z-index: 99999 !important;
-  position: absolute !important;
-  width: 100% !important;
-  left: 0;
-  right: auto;
-  max-width: 100%;
-}
 
 :host {
   display: block;

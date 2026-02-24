@@ -31,8 +31,7 @@
       </div>
     </header>
 
-      <div class="px-4 space-y-6 mt-4"
-        [ngStyle]="showCategorySuggestions && filteredCategories.length > 0 ? {'padding-bottom': '260px'} : {}">
+      <div class="px-4 space-y-6 mt-4">
       <!-- Título de sección mejorado -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
@@ -46,7 +45,7 @@
       </div>
 
       <!-- Panel de filtros mejorado -->
-      <div class="relative group mb-64">
+      <div class="relative z-20 group">
         <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
 
         <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-5 space-y-4">
@@ -128,7 +127,7 @@
 
               <!-- Menú desplegable de categorías (estilo futurista) -->
               <div *ngIf="showCategorySuggestions && filteredCategories.length > 0"
-                   class="absolute category-dropdown-zfix w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
+                   class="absolute z-[9999] w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
                 <!-- Efecto de glow -->
                 <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
 
