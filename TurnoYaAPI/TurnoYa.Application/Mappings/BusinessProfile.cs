@@ -54,7 +54,11 @@ public class BusinessProfile : Profile
             .ForMember(dest => dest.Employees, opt => opt.MapFrom(src => src.Employees))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
-        CreateMap<BusinessImage, BusinessImageDto>();
+        CreateMap<BusinessImage, BusinessImageDto>()
+            .ForMember(dest => dest.ImageBase64, opt => opt.MapFrom(src =>
+                src.ImageData != null && src.ImageData.Length > 0
+                    ? $"data:image/jpeg;base64,{Convert.ToBase64String(src.ImageData)}"
+                    : null));
 
         // BusinessSettings → BusinessSettingsDto
         CreateMap<BusinessSettings, BusinessSettingsDto>()

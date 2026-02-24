@@ -37,6 +37,8 @@ import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateBusinessRequest, UpdateBusinessRequest, BusinessImage } from '../../models';
 import { AppPhoto, PhotoService } from '../../services/photo.service';
 
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
 @Component({
   selector: 'app-business-form',
   standalone: true,
@@ -44,15 +46,10 @@ import { AppPhoto, PhotoService } from '../../services/photo.service';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    IonContent,
-    IonIcon,
-    IonInput,
-    IonTextarea,
-    IonCheckbox,
-    IonModal,
   ],
   templateUrl: './business-form.page.html',
   styleUrls: ['./business-form.page.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class BusinessFormPage implements OnInit, OnDestroy {
   private readonly cityService = inject(CityService);
@@ -188,6 +185,11 @@ export class BusinessFormPage implements OnInit, OnDestroy {
             this.categories.push(business.category);
           }
 
+          // Si hay departamento, habilitar ciudad ANTES del patchValue
+          if (business.department) {
+            this.businessForm.get('city')?.enable();
+          }
+
           // Si la categoría ya está en la lista, seleccionarla directamente y NO mostrar campo personalizado
           const showCustom = !this.categories.map(c => c.toLowerCase()).includes(categoryLower) && categoryLower !== 'otro';
 
@@ -206,13 +208,10 @@ export class BusinessFormPage implements OnInit, OnDestroy {
             isActive: business.isActive,
           });
 
+          this.businessForm.get('city')?.updateValueAndValidity();
+
           this.isCustomCategory = showCustom;
           this.customCategoryValue = showCustom ? business.category : '';
-
-          // Habilitar ciudad si hay departamento
-          if (business.department) {
-            this.businessForm.get('city')?.enable();
-          }
 
           this.loading = false;
         },

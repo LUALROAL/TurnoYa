@@ -30,6 +30,7 @@ export interface OwnerBusiness {
 export interface BusinessImage {
   id: string;
   imagePath: string;
+  imageBase64?: string;
   createdAt: string;
 }
 
