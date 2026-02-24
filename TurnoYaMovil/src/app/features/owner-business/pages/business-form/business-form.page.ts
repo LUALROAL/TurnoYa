@@ -311,7 +311,14 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (!control || !control.touched) return '';
 
     if (control.hasError('required')) {
-      return 'Este campo es requerido';
+      switch (fieldName) {
+        case 'name': return 'El nombre es obligatorio';
+        case 'category': return 'La categoría es obligatoria';
+        case 'address': return 'La dirección es obligatoria';
+        case 'department': return 'El departamento es obligatorio';
+        case 'city': return 'La ciudad es obligatoria';
+        default: return 'Este campo es requerido';
+      }
     }
     if (control.hasError('minlength')) {
       const minLength = control.getError('minlength').requiredLength;
@@ -327,8 +334,8 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (control.hasError('pattern')) {
       if (fieldName === 'phone') return 'Teléfono no válido';
       if (fieldName === 'website') return 'URL no válida';
+      return 'Formato no válido';
     }
-
     return '';
   }
 
