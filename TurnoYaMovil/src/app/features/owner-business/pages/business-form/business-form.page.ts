@@ -147,10 +147,26 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (business) => {
+
+          // Si la categoría ya está en la lista, seleccionarla directamente
+          const categoryLower = business.category?.toLowerCase() || '';
+          const categoriesLower = this.categories.map(c => c.toLowerCase());
+          const isCustom = !!(business.category &&
+            !categoriesLower.includes(categoryLower) &&
+            categoryLower !== 'otro');
+
+          // Si la categoría no está en la lista y no es personalizada, agregarla ANTES de hacer patchValue
+          if (!categoriesLower.includes(categoryLower) && business.category) {
+            this.categories.push(business.category);
+          }
+
+          // Si la categoría ya está en la lista, seleccionarla directamente y NO mostrar campo personalizado
+          const showCustom = !this.categories.map(c => c.toLowerCase()).includes(categoryLower) && categoryLower !== 'otro';
+
           this.businessForm.patchValue({
             name: business.name,
             description: business.description || '',
-            category: business.category,
+            category: showCustom ? 'Otro' : business.category,
             address: business.address,
             city: business.city,
             department: business.department,
@@ -161,6 +177,9 @@ export class BusinessFormPage implements OnInit, OnDestroy {
             longitude: business.longitude?.toString() || '',
             isActive: business.isActive,
           });
+
+          this.isCustomCategory = showCustom;
+          this.customCategoryValue = showCustom ? business.category : '';
 
           // Habilitar ciudad si hay departamento
           if (business.department) {
@@ -200,6 +219,10 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (this.isCustomCategory && this.customCategoryValue.trim()) {
       categoryValue = this.customCategoryValue.trim();
     }
+    let websiteValue = formValue.website?.trim() || undefined;
+    if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
+      websiteValue = 'https://' + websiteValue;
+    }
     const request: CreateBusinessRequest = {
       name: formValue.name?.trim(),
       description: formValue.description?.trim() || undefined,
@@ -209,7 +232,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       department: formValue.department?.trim(),
       phone: formValue.phone?.trim() || undefined,
       email: formValue.email?.trim() || undefined,
-      website: formValue.website?.trim() || undefined,
+      website: websiteValue,
       latitude: formValue.latitude ? parseFloat(formValue.latitude) : undefined,
       longitude: formValue.longitude ? parseFloat(formValue.longitude) : undefined,
     };
@@ -239,6 +262,10 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (this.isCustomCategory && this.customCategoryValue.trim()) {
       categoryValue = this.customCategoryValue.trim();
     }
+    let websiteValue = formValue.website?.trim() || undefined;
+    if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
+      websiteValue = 'https://' + websiteValue;
+    }
     const request: UpdateBusinessRequest = {
       name: formValue.name?.trim() || undefined,
       description: formValue.description?.trim() || undefined,
@@ -248,7 +275,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       department: formValue.department?.trim() || undefined,
       phone: formValue.phone?.trim() || undefined,
       email: formValue.email?.trim() || undefined,
-      website: formValue.website?.trim() || undefined,
+      website: websiteValue,
       latitude: formValue.latitude ? parseFloat(formValue.latitude) : undefined,
       longitude: formValue.longitude ? parseFloat(formValue.longitude) : undefined,
       isActive: formValue.isActive,
@@ -313,16 +340,18 @@ export class BusinessFormPage implements OnInit, OnDestroy {
 
   onCategoryInput(value: string = ''): void {
     this.showCategorySuggestions = true;
-
+    this.isCustomCategory = false;
     if (!value) {
       this.categorySuggestions = [...this.categories];
       return;
     }
-
     const searchTerm = value.toLowerCase();
     this.categorySuggestions = this.categories.filter(cat =>
       cat.toLowerCase().includes(searchTerm)
     );
+    if (searchTerm === 'otro' || searchTerm === 'otros') {
+      this.isCustomCategory = true;
+    }
   }
 
   onCategoryFocus(): void {
@@ -334,6 +363,11 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     this.businessForm.patchValue({ category });
     this.categorySuggestions = [];
     this.showCategorySuggestions = false;
+    if (category.toLowerCase() === 'otro' || category.toLowerCase() === 'otros') {
+      this.isCustomCategory = true;
+    } else {
+      this.isCustomCategory = false;
+    }
   }
 
   // ===== MÉTODOS PARA AUTOCOMPLETE DE DEPARTAMENTO =====

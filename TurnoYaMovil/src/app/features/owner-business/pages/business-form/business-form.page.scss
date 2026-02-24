@@ -1,6 +1,6 @@
 .category-suggestions-menu {
-  max-height: 250px;
-  // overflow-y: auto;
+  max-height: 220px !important;
+  overflow-y: auto;
 }
 :host {
   display: block;
