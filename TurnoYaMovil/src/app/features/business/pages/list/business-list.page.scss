@@ -1,3 +1,13 @@
+// Forzar menú de categorías por encima de todo
+.category-dropdown-zfix {
+  z-index: 99999 !important;
+  position: absolute !important;
+  width: 100% !important;
+  left: 0;
+  right: auto;
+  max-width: 100%;
+}
+
 :host {
   display: block;
   height: 100%;
@@ -14,12 +24,27 @@
   50% { opacity: 0.6; }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animation-delay-2000 {
   animation-delay: 2s;
 }
 
 .animation-delay-1000 {
   animation-delay: 1s;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
 }
 
 // Skeleton loader mejorado
@@ -64,6 +89,29 @@
 
   &:hover {
     background: #00F5D4;
+  }
+}
+
+// Scrollbar personalizado para menús desplegables
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #00E0FF #0A0E17;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #0A0E17;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #00E0FF;
+    border-radius: 4px;
+
+    &:hover {
+      background: #00F5D4;
+    }
   }
 }
 
@@ -170,10 +218,7 @@ ion-content {
   padding-left: 12px;
 }
 
-
 // Estilos adicionales para las nuevas tarjetas
-
-// Efecto de brillo en el badge verificado
 .verified-badge {
   background: linear-gradient(135deg, rgba(0, 224, 255, 0.2), rgba(0, 245, 212, 0.2));
   backdrop-filter: blur(8px);
@@ -269,5 +314,55 @@ ion-content {
   }
   20%, 100% {
     transform: translateX(100%) rotate(30deg);
+  }
+}
+
+// Estilo para los inputs de autocomplete
+input {
+  background: transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: rgba(112, 134, 160, 0.5);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// Efecto de hover para los items del menú
+.menu-item {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 224, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover {
+    background: rgba(0, 224, 255, 0.1);
+
+    .item-icon {
+      filter: drop-shadow(0 0 5px #00E0FF);
+      opacity: 1;
+    }
   }
 }
