@@ -126,16 +126,21 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   private initForm() {
     this.businessForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(500)]],
-      category: ['', Validators.required],
-      address: ['', [Validators.required, Validators.minLength(5)]],
-      city: [{ value: '', disabled: true }, Validators.required],
-      department: ['', Validators.required],
-      phone: ['', [Validators.pattern(/^[0-9+\-() ]*$/)]],
+      description: ['', [Validators.maxLength(1000)]],
+      category: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      address: ['', [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(200),
+        Validators.pattern(/^(?=.*[0-9])(?=.*[a-zA-Z]).{5,200}$/)
+      ]],
+      city: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      department: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      phone: ['', [Validators.pattern(/^[0-9]{7,15}$/)]],
       email: ['', [Validators.email]],
-      website: ['', [Validators.pattern(/^(https?:\/\/)?.{1,}$/i)]],
-      latitude: [''],
-      longitude: [''],
+      website: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+      latitude: [null, [Validators.min(-90), Validators.max(90)]],
+      longitude: [null, [Validators.min(-180), Validators.max(180)]],
       isActive: [true],
     });
   }
@@ -328,13 +333,22 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       const maxLength = control.getError('maxlength').requiredLength;
       return `Máximo ${maxLength} caracteres`;
     }
+    if (control.hasError('pattern')) {
+      if (fieldName === 'phone') return 'El teléfono debe contener entre 7 y 15 dígitos';
+      if (fieldName === 'website') return 'El sitio web debe comenzar con http:// o https://';
+      if (fieldName === 'address') return 'La dirección debe contener letras y números (ej: Calle 45 #12-34)';
+      return 'Formato no válido';
+    }
     if (control.hasError('email')) {
       return 'Email no válido';
     }
-    if (control.hasError('pattern')) {
-      if (fieldName === 'phone') return 'Teléfono no válido';
-      if (fieldName === 'website') return 'URL no válida';
-      return 'Formato no válido';
+    if (control.hasError('min')) {
+      if (fieldName === 'latitude') return 'La latitud debe estar entre -90 y 90';
+      if (fieldName === 'longitude') return 'La longitud debe estar entre -180 y 180';
+    }
+    if (control.hasError('max')) {
+      if (fieldName === 'latitude') return 'La latitud debe estar entre -90 y 90';
+      if (fieldName === 'longitude') return 'La longitud debe estar entre -180 y 180';
     }
     return '';
   }
