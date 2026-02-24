@@ -246,31 +246,32 @@ public class BusinessController : ControllerBase
             business.UpdatedAt = DateTime.UtcNow;
             var updatedBusiness = await _businessRepository.UpdateAsync(business);
 
-            // Procesar imágenes nuevas si existen
+            // Eliminar imágenes anteriores
+            var oldImages = _context.BusinessImages.Where(img => img.BusinessId == updatedBusiness.Id).ToList();
+            if (oldImages.Count > 0)
+            {
+                _context.BusinessImages.RemoveRange(oldImages);
+                await _context.SaveChangesAsync();
+            }
+
+            // Procesar imágenes nuevas si existen (guardar en ImageData, no en disco ni rutas)
             if (images != null && images.Count > 0)
             {
                 var imageEntities = new List<BusinessImage>();
-                var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "businesses", updatedBusiness.Id.ToString());
-                Directory.CreateDirectory(uploadsRoot);
                 foreach (var file in images)
                 {
                     if (file.Length > 0)
                     {
-                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-                        if (ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp")
-                            continue; // O lanzar error
-                        var fileName = $"{Guid.NewGuid()}{ext}";
-                        var filePath = Path.Combine(uploadsRoot, fileName);
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        using (var ms = new MemoryStream())
                         {
-                            await file.CopyToAsync(stream);
+                            await file.CopyToAsync(ms);
+                            imageEntities.Add(new BusinessImage
+                            {
+                                BusinessId = updatedBusiness.Id,
+                                ImageData = ms.ToArray(),
+                                CreatedAt = DateTime.UtcNow
+                            });
                         }
-                        imageEntities.Add(new BusinessImage
-                        {
-                            BusinessId = updatedBusiness.Id,
-                            ImagePath = $"/uploads/businesses/{updatedBusiness.Id}/{fileName}",
-                            CreatedAt = DateTime.UtcNow
-                        });
                     }
                 }
                 if (imageEntities.Count > 0)
