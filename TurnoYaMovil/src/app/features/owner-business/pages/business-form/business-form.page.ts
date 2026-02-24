@@ -112,26 +112,28 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.businessId = this.route.snapshot.paramMap.get('id') || '';
-    this.isEditMode = !!this.businessId;
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.businessId = params.get('id') || '';
+      this.isEditMode = !!this.businessId;
 
-    // Load categories from backend
-    this.businessService.getCategories().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        // Always add 'Otro' option at the end if not present
-        if (!this.categories.some(cat => cat.toLowerCase() === 'otro' || cat.toLowerCase() === 'otros')) {
-          this.categories.push('Otro');
+      // Load categories from backend
+      this.businessService.getCategories().pipe(takeUntil(this.destroy$)).subscribe({
+        next: (categories) => {
+          this.categories = categories;
+          // Always add 'Otro' option at the end if not present
+          if (!this.categories.some(cat => cat.toLowerCase() === 'otro' || cat.toLowerCase() === 'otros')) {
+            this.categories.push('Otro');
+          }
+        },
+        error: () => {
+          this.categories = ['Otro'];
         }
-      },
-      error: () => {
-        this.categories = ['Otro'];
+      });
+
+      if (this.isEditMode) {
+        this.loadBusiness();
       }
     });
-
-    if (this.isEditMode) {
-      this.loadBusiness();
-    }
   }
 
   ngOnDestroy() {
