@@ -1,7 +1,7 @@
 import { CityService } from '../../../city/services/city.service';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import {
@@ -29,6 +29,7 @@ import {
   mailOutline
 } from 'ionicons/icons';
 import { OwnerBusinessService } from '../../services/owner-business.service';
+import { BusinessService } from '../../../business/services/business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
 
@@ -38,12 +39,11 @@ import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     IonContent,
     IonIcon,
     IonInput,
     IonTextarea,
-    IonSelect,
-    IonSelectOption,
     IonCheckbox,
   ],
   templateUrl: './business-form.page.html',
@@ -56,6 +56,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly notify = inject(NotifyService);
+    private readonly businessService = inject(BusinessService);
   private readonly destroy$ = new Subject<void>();
 
   businessForm!: FormGroup;
@@ -71,18 +72,11 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   showCategorySuggestions = false;
   selectedDepartment: string = '';
 
-  categories = [
-    'Salón de Belleza',
-    'Peluquería',
-    'Spa',
-    'Estética',
-    'Masajes',
-    'Consultoría',
-    'Taller Automotriz',
-    'Dentista',
-    'Médico',
-    'Otros',
-  ];
+  categories: string[] = [];
+
+  // New properties for custom category support
+  isCustomCategory = false;
+  customCategoryValue = '';
 
   constructor() {
     addIcons({
@@ -104,6 +98,20 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('id') || '';
     this.isEditMode = !!this.businessId;
+
+    // Load categories from backend
+    this.businessService.getCategories().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        // Always add 'Otro' option at the end if not present
+        if (!this.categories.some(cat => cat.toLowerCase() === 'otro' || cat.toLowerCase() === 'otros')) {
+          this.categories.push('Otro');
+        }
+      },
+      error: () => {
+        this.categories = ['Otro'];
+      }
+    });
 
     if (this.isEditMode) {
       this.loadBusiness();
@@ -188,10 +196,14 @@ export class BusinessFormPage implements OnInit, OnDestroy {
 
   private createBusiness() {
     const formValue = this.businessForm.value;
+    let categoryValue = formValue.category?.trim();
+    if (this.isCustomCategory && this.customCategoryValue.trim()) {
+      categoryValue = this.customCategoryValue.trim();
+    }
     const request: CreateBusinessRequest = {
       name: formValue.name?.trim(),
       description: formValue.description?.trim() || undefined,
-      category: formValue.category?.trim(),
+      category: categoryValue,
       address: formValue.address?.trim(),
       city: formValue.city?.trim(),
       department: formValue.department?.trim(),
@@ -208,6 +220,8 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.notify.showSuccess('Negocio creado correctamente');
+          this.isCustomCategory = false;
+          this.customCategoryValue = '';
           this.saving = false;
           this.router.navigate(['/owner/businesses']);
         },
@@ -221,10 +235,14 @@ export class BusinessFormPage implements OnInit, OnDestroy {
 
   private updateBusiness() {
     const formValue = this.businessForm.value;
+    let categoryValue = formValue.category?.trim();
+    if (this.isCustomCategory && this.customCategoryValue.trim()) {
+      categoryValue = this.customCategoryValue.trim();
+    }
     const request: UpdateBusinessRequest = {
       name: formValue.name?.trim() || undefined,
       description: formValue.description?.trim() || undefined,
-      category: formValue.category?.trim() || undefined,
+      category: categoryValue || undefined,
       address: formValue.address?.trim() || undefined,
       city: formValue.city?.trim() || undefined,
       department: formValue.department?.trim() || undefined,

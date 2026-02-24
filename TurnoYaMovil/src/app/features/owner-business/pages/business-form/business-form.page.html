@@ -158,6 +158,21 @@
                         {{ getErrorMessage('category') }}
                       </p>
                     }
+                    <!-- Custom category input -->
+                    @if (isCustomCategory) {
+                      <div class="mt-2">
+                        <label class="block text-xs font-mono text-neon-primary tracking-wider mb-1">
+                          Escribe tu categoría personalizada
+                        </label>
+                        <input
+                          type="text"
+                          [(ngModel)]="customCategoryValue"
+                          name="customCategoryValue"
+                          placeholder="Ej: Barbería, Veterinaria, etc."
+                          class="w-full bg-bg-secondary/50 border border-neon-primary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                        />
+                      </div>
+                    }
                   </div>
 
                   <!-- Sitio Web -->
