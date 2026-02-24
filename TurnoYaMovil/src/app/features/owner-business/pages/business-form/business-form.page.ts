@@ -1,5 +1,4 @@
 import { CityService } from '../../../city/services/city.service';
-import type { CityAutocompleteResult } from '../../../city/services/city.service';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,7 +15,19 @@ import {
   IonCheckbox,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, save } from 'ionicons/icons';
+import {
+  arrowBack,
+  save,
+  syncOutline,
+  warningOutline,
+  businessOutline,
+  documentTextOutline,
+  globeOutline,
+  locationOutline,
+  mapOutline,
+  callOutline,
+  mailOutline
+} from 'ionicons/icons';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
@@ -39,55 +50,7 @@ import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
   styleUrl: './business-form.page.scss',
 })
 export class BusinessFormPage implements OnInit, OnDestroy {
-    private readonly cityService = inject(CityService);
-    departmentSuggestions: string[] = [];
-    citySuggestions: { name: string }[] = [];
-    selectedDepartment: string = '';
-
-    onDepartmentInput(query: string = '') {
-      this.cityService.searchDepartments(query)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (results: string[]) => this.departmentSuggestions = results,
-          error: () => this.departmentSuggestions = []
-        });
-    }
-
-    onDepartmentSelect(department: string) {
-      this.selectedDepartment = department;
-      this.departmentSuggestions = [];
-      const cityControl = this.businessForm.get('city');
-      if (department) {
-        cityControl?.enable();
-        // Si el departamento es Bogotá, auto-selecciona ciudad Bogotá
-        if (department.toLowerCase().includes('bogotá') || department.toLowerCase().includes('bogota')) {
-          this.businessForm.patchValue({ department, city: 'Bogotá' });
-          this.citySuggestions = [{ name: 'Bogotá' }];
-        } else {
-          this.businessForm.patchValue({ department, city: '' });
-          this.citySuggestions = [];
-        }
-      } else {
-        cityControl?.disable();
-        this.businessForm.patchValue({ department: '', city: '' });
-        this.citySuggestions = [];
-      }
-    }
-
-    onCityInput(query: string = '') {
-      const department = this.businessForm.get('department')?.value;
-      this.cityService.searchCities(query, department)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (results: string[]) => this.citySuggestions = results.map((name: string) => ({ name })),
-          error: () => this.citySuggestions = []
-        });
-    }
-
-    onCitySelect(city: string) {
-      this.businessForm.patchValue({ city });
-      this.citySuggestions = [];
-    }
+  private readonly cityService = inject(CityService);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -100,6 +63,13 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   isEditMode = false;
   loading = false;
   saving = false;
+
+  // Autocomplete suggestions
+  departmentSuggestions: string[] = [];
+  citySuggestions: { name: string }[] = [];
+  categorySuggestions: string[] = [];
+  showCategorySuggestions = false;
+  selectedDepartment: string = '';
 
   categories = [
     'Salón de Belleza',
@@ -114,42 +84,20 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     'Otros',
   ];
 
-  departments = [
-    'Amazonas',
-    'Antioquia',
-    'Arauca',
-    'Atlántico',
-    'Bolívar',
-    'Boyacá',
-    'Caldas',
-    'Caquetá',
-    'Casanare',
-    'Cauca',
-    'Cesar',
-    'Chocó',
-    'Córdoba',
-    'Cundinamarca',
-    'Guainía',
-    'Guaviare',
-    'Huila',
-    'La Guajira',
-    'Magdalena',
-    'Meta',
-    'Nariño',
-    'Norte de Santander',
-    'Putumayo',
-    'Quindío',
-    'Risaralda',
-    'Santander',
-    'Sucre',
-    'Tolima',
-    'Valle del Cauca',
-    'Vaupés',
-    'Vichada',
-  ];
-
   constructor() {
-    addIcons({ arrowBack, save });
+    addIcons({
+      arrowBack,
+      save,
+      syncOutline,
+      warningOutline,
+      businessOutline,
+      documentTextOutline,
+      globeOutline,
+      locationOutline,
+      mapOutline,
+      callOutline,
+      mailOutline
+    });
     this.initForm();
   }
 
@@ -205,6 +153,12 @@ export class BusinessFormPage implements OnInit, OnDestroy {
             longitude: business.longitude?.toString() || '',
             isActive: business.isActive,
           });
+
+          // Habilitar ciudad si hay departamento
+          if (business.department) {
+            this.businessForm.get('city')?.enable();
+          }
+
           this.loading = false;
         },
         error: (error) => {
@@ -253,7 +207,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          console.log('Negocio creado correctamente');
+          this.notify.showSuccess('Negocio creado correctamente');
           this.saving = false;
           this.router.navigate(['/owner/businesses']);
         },
@@ -287,7 +241,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          console.log('Negocio actualizado correctamente');
+          this.notify.showSuccess('Negocio actualizado correctamente');
           this.saving = false;
           this.router.navigate(['/owner/businesses']);
         },
@@ -335,5 +289,115 @@ export class BusinessFormPage implements OnInit, OnDestroy {
 
   compareValues(a: any, b: any): boolean {
     return a === b;
+  }
+
+  // ===== MÉTODOS PARA AUTOCOMPLETE DE CATEGORÍA =====
+
+  onCategoryInput(value: string = ''): void {
+    this.showCategorySuggestions = true;
+
+    if (!value) {
+      this.categorySuggestions = [...this.categories];
+      return;
+    }
+
+    const searchTerm = value.toLowerCase();
+    this.categorySuggestions = this.categories.filter(cat =>
+      cat.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  onCategoryFocus(): void {
+    this.showCategorySuggestions = true;
+    this.categorySuggestions = [...this.categories];
+  }
+
+  onCategorySelect(category: string): void {
+    this.businessForm.patchValue({ category });
+    this.categorySuggestions = [];
+    this.showCategorySuggestions = false;
+  }
+
+  // ===== MÉTODOS PARA AUTOCOMPLETE DE DEPARTAMENTO =====
+
+  onDepartmentInput(value: string = ''): void {
+    if (value.length >= 2) {
+      this.cityService.searchDepartments(value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (results: string[]) => {
+            this.departmentSuggestions = results;
+          },
+          error: () => {
+            this.departmentSuggestions = [];
+          }
+        });
+    } else {
+      this.departmentSuggestions = [];
+    }
+  }
+
+  onDepartmentSelect(department: string): void {
+    this.businessForm.patchValue({ department });
+    this.departmentSuggestions = [];
+
+    const cityControl = this.businessForm.get('city');
+    cityControl?.enable();
+
+    if (department.toLowerCase().includes('bogotá') ||
+        department.toLowerCase().includes('bogota')) {
+      this.businessForm.patchValue({ city: 'Bogotá' });
+      this.citySuggestions = [];
+    } else {
+      this.businessForm.patchValue({ city: '' });
+      this.citySuggestions = [];
+    }
+  }
+
+  // ===== MÉTODOS PARA AUTOCOMPLETE DE CIUDAD =====
+
+  onCityInput(value: string = ''): void {
+    const department = this.businessForm.get('department')?.value;
+
+    if (value.length >= 2 && department) {
+      this.cityService.searchCities(value, department)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (results: string[]) => {
+            this.citySuggestions = results.map(name => ({ name }));
+          },
+          error: () => {
+            this.citySuggestions = [];
+          }
+        });
+    } else {
+      this.citySuggestions = [];
+    }
+  }
+
+  onCitySelect(city: string): void {
+    this.businessForm.patchValue({ city });
+    this.citySuggestions = [];
+  }
+
+  // ===== MÉTODO PARA CERRAR MENÚS =====
+
+  onClickOutside(): void {
+    setTimeout(() => {
+      // Detecta el elemento activo
+      const active = document.activeElement as HTMLElement | null;
+      const catInput = document.getElementById('category');
+      const catMenu = document.querySelector('.category-suggestions-menu');
+      // Si el foco está en el input de categoría o en el menú, no cerrar
+      if (active === catInput || (catMenu && catMenu.contains(active))) {
+        // No cerrar menú de categorías
+      } else {
+        this.showCategorySuggestions = false;
+        this.categorySuggestions = [];
+      }
+      // Siempre cerrar sugerencias de ciudad y departamento
+      this.departmentSuggestions = [];
+      this.citySuggestions = [];
+    }, 200);
   }
 }

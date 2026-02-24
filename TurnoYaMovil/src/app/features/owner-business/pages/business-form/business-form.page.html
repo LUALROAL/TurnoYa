@@ -20,9 +20,7 @@
         </button>
         <div>
           <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-            <!-- &lt;  -->
             {{ isEditMode ? 'EDITAR NEGOCIO' : 'NUEVO NEGOCIO' }}
-             <!-- /&gt; -->
           </p>
           <h1 class="text-2xl font-display font-bold">
             <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
@@ -43,7 +41,7 @@
           <div class="skeleton-form-section"></div>
         </div>
       } @else {
-        <form [formGroup]="businessForm" (ngSubmit)="onSave()" class="space-y-6">
+        <form [formGroup]="businessForm" (ngSubmit)="onSave()" class="space-y-6" (click)="onClickOutside()">
 
           <!-- Información Básica -->
           <section class="space-y-3">
@@ -61,9 +59,7 @@
                 <!-- Nombre del Negocio -->
                 <div class="space-y-2">
                   <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    <!-- &lt; -->
-                     NOMBRE DEL NEGOCIO *
-                    <!-- /&gt; -->
+                    NOMBRE DEL NEGOCIO *
                   </label>
                   <div class="relative">
                     <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -89,9 +85,7 @@
                 <!-- Descripción -->
                 <div class="space-y-2">
                   <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    <!-- &lt; -->
-                     DESCRIPCIÓN (opcional)
-                    <!-- /&gt; -->
+                    DESCRIPCIÓN (opcional)
                   </label>
                   <div class="relative">
                     <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -110,34 +104,54 @@
 
                 <!-- Grid: Categoría y Sitio Web -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Categoría -->
-                  <div class="space-y-2">
+                  <!-- Categoría (Autocomplete personalizado) -->
+                  <div class="space-y-2 relative">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
-                       CATEGORÍA *
-                      <!-- /&gt; -->
+                      CATEGORÍA *
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+
+                      <!-- Input con icono -->
                       <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="business-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-select
+                        <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                        <input
                           id="category"
+                          type="text"
                           formControlName="category"
-                          [compareWith]="compareValues"
+                          (input)="onCategoryInput($any($event.target).value)"
+                          (focus)="onCategoryFocus()"
                           placeholder="Selecciona una categoría"
-                          interface="action-sheet"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                          [class.border-red-500/50]="formControls['category'].touched && formControls['category'].invalid"
-                        >
-                          @for (cat of categories; track cat) {
-                            <ion-select-option [value]="cat" class="bg-bg-card text-text-primary">
-                              {{ cat }}
-                            </ion-select-option>
-                          }
-                        </ion-select>
+                          autocomplete="off"
+                          class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                        />
                       </div>
+
+                      <!-- Menú desplegable de categorías (estilo futurista) -->
+                      @if (showCategorySuggestions && categorySuggestions.length) {
+                        <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn category-suggestions-menu">
+                          <!-- Efecto de glow -->
+                          <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
+
+                          <!-- Lista de sugerencias -->
+                          <div class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                            @for (cat of categorySuggestions; track cat) {
+                              <button
+                                type="button"
+                                (click)="onCategorySelect(cat)"
+                                class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group"
+                              >
+                                <div class="flex items-center gap-3">
+                                  <ion-icon name="business-outline" class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                                  <span class="text-text-primary font-mono text-sm">{{ cat }}</span>
+                                </div>
+                              </button>
+                            }
+                          </div>
+                        </div>
+                      }
                     </div>
+
                     @if (formControls['category'].touched && formControls['category'].invalid) {
                       <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
                         <ion-icon name="warning-outline" class="text-sm"></ion-icon>
@@ -149,9 +163,7 @@
                   <!-- Sitio Web -->
                   <div class="space-y-2">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
-                       SITIO WEB (opcional)
-                      <!-- /&gt; -->
+                      SITIO WEB (opcional)
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -194,9 +206,7 @@
                 <!-- Dirección -->
                 <div class="space-y-2">
                   <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    <!-- &lt; -->
                     DIRECCIÓN *
-                    <!-- /&gt; -->
                   </label>
                   <div class="relative">
                     <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -219,31 +229,56 @@
                   }
                 </div>
 
-                <!-- Grid: Ciudad y Departamento -->
+                <!-- Grid: Departamento y Ciudad con Autocomplete Mejorado -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <!-- Departamento (Autocomplete) -->
-                  <div class="space-y-2">
+                  <div class="space-y-2 relative">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
                       DEPARTAMENTO *
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+
+                      <!-- Input con icono -->
                       <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="location-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
+                        <ion-icon name="location-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                        <input
                           id="department"
+                          type="text"
                           formControlName="department"
-                          placeholder="Ej: BOGOTÁ, D.C."
-                          (ionInput)="onDepartmentInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
-                          [value]="businessForm.get('department')?.value"
+                          (input)="onDepartmentInput($any($event.target).value)"
+                          placeholder="Ej: Cundinamarca"
                           autocomplete="off"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
+                          class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
+                        />
                       </div>
-                      <ul *ngIf="departmentSuggestions.length" class="absolute z-50 bg-bg-card border border-neon-primary/20 rounded-xl mt-1 w-full max-h-48 overflow-auto">
-                        <li *ngFor="let dept of departmentSuggestions" (click)="onDepartmentSelect(dept)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10">{{ dept }}</li>
-                      </ul>
+
+                      <!-- Menú desplegable de sugerencias (estilo futurista) -->
+                      @if (departmentSuggestions.length) {
+                        <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
+                          <!-- Efecto de glow -->
+                          <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
+
+                          <!-- Lista de sugerencias -->
+                          <div class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                            @for (dept of departmentSuggestions; track dept) {
+                              <button
+                                type="button"
+                                (click)="onDepartmentSelect(dept)"
+                                class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group"
+                              >
+                                <div class="flex items-center gap-3">
+                                  <ion-icon name="location-outline" class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                                  <span class="text-text-primary font-mono text-sm">{{ dept }}</span>
+                                </div>
+                              </button>
+                            }
+                          </div>
+                        </div>
+                      }
                     </div>
+
+                    <!-- Mensajes de error -->
                     @if (formControls['department'].touched && formControls['department'].invalid) {
                       <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
                         <ion-icon name="warning-outline" class="text-sm"></ion-icon>
@@ -253,29 +288,55 @@
                   </div>
 
                   <!-- Ciudad (Autocomplete) -->
-                  <div class="space-y-2">
+                  <div class="space-y-2 relative">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
                       CIUDAD *
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="business-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
+
+                      <!-- Input con icono -->
+                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
+                           [class.opacity-50]="!businessForm.get('department')?.value">
+                        <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                        <input
                           id="city"
-                          formControlName="city"
-                          placeholder="Ej: BOGOTÁ"
-                          (ionInput)="onCityInput(typeof $event.target.value === 'string' ? $event.target.value : '')"
-                        [value]="businessForm.get('city')?.value"
+                          type="text"
+                          [formControlName]="'city'"
+                          (input)="onCityInput($any($event.target).value)"
+                          placeholder="Ej: Bogotá"
                           autocomplete="off"
                           [disabled]="!businessForm.get('department')?.value"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
+                          class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body disabled:opacity-50"
+                        />
                       </div>
-                      <ul *ngIf="citySuggestions.length" class="absolute z-50 bg-bg-card border border-neon-primary/20 rounded-xl mt-1 w-full max-h-48 overflow-auto">
-                        <li *ngFor="let city of citySuggestions" (click)="onCitySelect(city.name)" class="px-4 py-2 cursor-pointer hover:bg-neon-primary/10">{{ city.name }}</li>
-                      </ul>
+
+                      <!-- Menú desplegable de sugerencias (estilo futurista) -->
+                      @if (citySuggestions.length) {
+                        <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
+                          <!-- Efecto de glow -->
+                          <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
+
+                          <!-- Lista de sugerencias -->
+                          <div class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                            @for (city of citySuggestions; track city.name) {
+                              <button
+                                type="button"
+                                (click)="onCitySelect(city.name)"
+                                class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group"
+                              >
+                                <div class="flex items-center gap-3">
+                                  <ion-icon name="business-outline" class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                                  <span class="text-text-primary font-mono text-sm">{{ city.name }}</span>
+                                </div>
+                              </button>
+                            }
+                          </div>
+                        </div>
+                      }
                     </div>
+
+                    <!-- Mensajes de error -->
                     @if (formControls['city'].touched && formControls['city'].invalid) {
                       <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
                         <ion-icon name="warning-outline" class="text-sm"></ion-icon>
@@ -290,9 +351,7 @@
                   <!-- Latitud -->
                   <div class="space-y-2">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
                       LATITUD (opcional)
-                      <!-- /&gt; -->
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -313,9 +372,7 @@
                   <!-- Longitud -->
                   <div class="space-y-2">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
                       LONGITUD (opcional)
-                      <!-- /&gt; -->
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -355,9 +412,7 @@
                   <!-- Teléfono -->
                   <div class="space-y-2">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
                       TELÉFONO (opcional)
-                      <!-- /&gt; -->
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
@@ -383,9 +438,7 @@
                   <!-- Email -->
                   <div class="space-y-2">
                     <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      <!-- &lt; -->
                       EMAIL (opcional)
-                      <!-- /&gt; -->
                     </label>
                     <div class="relative">
                       <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>

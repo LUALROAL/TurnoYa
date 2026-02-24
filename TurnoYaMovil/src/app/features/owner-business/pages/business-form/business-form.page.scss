@@ -14,12 +14,36 @@
   50% { opacity: 0.6; }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+  20%, 100% {
+    transform: translateX(100%) rotate(30deg);
+  }
+}
+
 .animation-delay-2000 {
   animation-delay: 2s;
 }
 
 .animation-delay-1000 {
   animation-delay: 1s;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
 }
 
 // Skeleton loaders
@@ -79,28 +103,32 @@
   }
 }
 
+// Scrollbar personalizado para menús desplegables
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #00E0FF #0A0E17;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #0A0E17;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #00E0FF;
+    border-radius: 4px;
+
+    &:hover {
+      background: #00F5D4;
+    }
+  }
+}
+
 // Ajustes para Ionic
 ion-content {
   --background: transparent;
-}
-
-// Estilo para los selects de Ionic
-ion-select::part(icon) {
-  color: #00E0FF;
-  opacity: 1;
-}
-
-ion-select::part(text) {
-  color: #FFFFFF;
-}
-
-ion-select.ios::part(icon) {
-  color: #00E0FF;
-}
-
-// Estilo para el placeholder
-ion-select::part(placeholder) {
-  color: rgba(112, 134, 160, 0.5);
 }
 
 // Estilo para el textarea
@@ -146,43 +174,11 @@ ion-textarea {
 
   &::part(container) {
     border-width: 2px;
-  }
-}
-
-// Estilo para los items de action sheet
-::ng-deep .action-sheet {
-  --background: #1A1F2F;
-  --backdrop-opacity: 0.8;
-
-  .action-sheet-title {
-    color: #00E0FF;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    border-bottom: 1px solid rgba(0, 224, 255, 0.2);
+    transition: all 0.3s ease;
   }
 
-  .action-sheet-button {
-    color: #FFFFFF;
-    font-family: 'Outfit', sans-serif;
-
-    &.selected {
-      color: #00E0FF;
-      font-weight: bold;
-    }
-  }
-
-  .action-sheet-cancel {
-    background: rgba(0, 224, 255, 0.1);
-    color: #00E0FF;
-  }
-}
-
-// Efecto hover para las opciones del select
-.select-option {
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(0, 224, 255, 0.1);
+  &:checked::part(container) {
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
   }
 }
 
@@ -195,16 +191,6 @@ ion-textarea {
 .invalid-field {
   border-color: #ef4444 !important;
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-}
-
-// Tooltip de validación
-.validation-tooltip {
-  position: absolute;
-  bottom: -20px;
-  left: 0;
-  font-size: 0.7rem;
-  color: #ef4444;
-  font-family: 'JetBrains Mono', monospace;
 }
 
 // Efecto de brillo para el botón de guardar
@@ -230,15 +216,6 @@ ion-textarea {
   }
 }
 
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) rotate(30deg);
-  }
-  20%, 100% {
-    transform: translateX(100%) rotate(30deg);
-  }
-}
-
 // Grid responsiva
 .form-grid-2 {
   display: grid;
@@ -247,5 +224,55 @@ ion-textarea {
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
+  }
+}
+
+// Estilo para los inputs de autocomplete
+input {
+  background: transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: rgba(112, 134, 160, 0.5);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// Efecto de hover para los items del menú
+.menu-item {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 224, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover {
+    background: rgba(0, 224, 255, 0.1);
+
+    .item-icon {
+      filter: drop-shadow(0 0 5px #00E0FF);
+      opacity: 1;
+    }
   }
 }
