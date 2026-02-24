@@ -21,6 +21,16 @@ export interface OwnerBusiness {
   createdAt: string;
   ownerId: string;
   ownerName: string;
+  images?: BusinessImage[];
+}
+
+/**
+ * Business image model
+ */
+export interface BusinessImage {
+  id: string;
+  imagePath: string;
+  createdAt: string;
 }
 
 /**
@@ -58,4 +68,21 @@ export interface UpdateBusinessRequest {
   latitude?: number;
   longitude?: number;
   isActive?: boolean;
+}
+
+/**
+ * Business settings model
+ */
+export interface BusinessSettings {
+  id?: string;
+  businessId: string;
+  allowOnlineBooking: boolean;
+  requireConfirmation: boolean;
+  maxAdvanceBookingDays: number;
+  minAdvanceBookingHours: number;
+  cancellationPolicy: string;
+  timeSlotDuration: number;
+  workingHours?: any;
+  createdAt?: string;
+  updatedAt?: string;
 }

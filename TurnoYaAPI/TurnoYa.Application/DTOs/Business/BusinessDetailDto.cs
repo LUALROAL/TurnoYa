@@ -32,4 +32,7 @@ public class BusinessDetailDto
     // Services and Employees
     public List<ServiceDto> Services { get; set; } = new();
     public List<EmployeeDto> Employees { get; set; } = new();
+
+    // Imágenes asociadas
+    public List<BusinessImageDto> Images { get; set; } = new();
 }

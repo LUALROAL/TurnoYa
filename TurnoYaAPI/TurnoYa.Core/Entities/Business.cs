@@ -31,4 +31,5 @@ public class Business : BaseEntity
     public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public ICollection<BusinessImage> Images { get; set; } = new List<BusinessImage>();
 }

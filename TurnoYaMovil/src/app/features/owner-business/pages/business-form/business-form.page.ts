@@ -6,13 +6,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import {
   IonContent,
-  IonButton,
   IonIcon,
   IonInput,
   IonTextarea,
-  IonSelect,
-  IonSelectOption,
   IonCheckbox,
+  IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -26,12 +24,18 @@ import {
   locationOutline,
   mapOutline,
   callOutline,
-  mailOutline
+  mailOutline,
+  cameraOutline,
+  imageOutline,
+  closeOutline,
+  trashOutline,
+  expandOutline
 } from 'ionicons/icons';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { BusinessService } from '../../../business/services/business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
-import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
+import { CreateBusinessRequest, UpdateBusinessRequest, BusinessImage } from '../../models';
+import { AppPhoto, PhotoService } from '../../services/photo.service';
 
 @Component({
   selector: 'app-business-form',
@@ -45,9 +49,10 @@ import { CreateBusinessRequest, UpdateBusinessRequest } from '../../models';
     IonInput,
     IonTextarea,
     IonCheckbox,
+    IonModal,
   ],
   templateUrl: './business-form.page.html',
-  styleUrl: './business-form.page.scss',
+  styleUrls: ['./business-form.page.scss'],
 })
 export class BusinessFormPage implements OnInit, OnDestroy {
   private readonly cityService = inject(CityService);
@@ -56,7 +61,8 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly notify = inject(NotifyService);
-    private readonly businessService = inject(BusinessService);
+  private readonly businessService = inject(BusinessService);
+  private readonly photoService = inject(PhotoService);
   private readonly destroy$ = new Subject<void>();
 
   businessForm!: FormGroup;
@@ -64,6 +70,12 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   isEditMode = false;
   loading = false;
   saving = false;
+
+  // Imágenes
+  selectedImages: File[] = [];
+  existingImages: BusinessImage[] = [];
+  imagePreviews: string[] = [];
+  selectedImageForPreview: string | null = null;
 
   // Autocomplete suggestions
   departmentSuggestions: string[] = [];
@@ -90,7 +102,12 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       locationOutline,
       mapOutline,
       callOutline,
-      mailOutline
+      mailOutline,
+      cameraOutline,
+      imageOutline,
+      closeOutline,
+      trashOutline,
+      expandOutline
     });
     this.initForm();
   }
@@ -119,6 +136,8 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // Limpiar previews
+    this.imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -152,6 +171,10 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (business) => {
+          // Guardar imágenes existentes
+          if (business.images && business.images.length > 0) {
+            this.existingImages = business.images;
+          }
 
           // Si la categoría ya está en la lista, seleccionarla directamente
           const categoryLower = business.category?.toLowerCase() || '';
@@ -202,6 +225,128 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       });
   }
 
+  // ===== MÉTODOS PARA MANEJO DE IMÁGENES =====
+
+  /**
+   * Tomar foto con la cámara
+   */
+  async takePhoto() {
+    try {
+      const photo = await this.photoService.takePhoto();
+      await this.addPhotoToSelection(photo);
+    } catch (error) {
+      console.error('Error al tomar foto:', error);
+      this.notify.showError('No se pudo tomar la foto');
+    }
+  }
+
+  /**
+   * Seleccionar foto de la galería
+   */
+  async selectFromGallery() {
+    try {
+      const photos = await this.photoService.selectImages();
+      for (const photo of photos) {
+        await this.addPhotoToSelection(photo);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar imágenes:', error);
+      this.notify.showError('No se pudieron seleccionar las imágenes');
+    }
+  }
+
+  /**
+   * Añadir foto a la selección
+   */
+  private async addPhotoToSelection(photo: AppPhoto) {
+    try {
+      // Convertir a File
+      let file: File;
+
+      if (photo.base64String) {
+        file = this.base64ToFile(photo.base64String, `photo_${Date.now()}.jpg`, 'image/jpeg');
+      } else if (photo.webPath) {
+        const response = await fetch(photo.webPath);
+        const blob = await response.blob();
+        file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      } else {
+        throw new Error('Formato de imagen no soportado');
+      }
+
+      this.selectedImages.push(file);
+
+      // Crear preview
+      if (photo.webPath) {
+        this.imagePreviews.push(photo.webPath);
+      } else if (photo.base64String) {
+        this.imagePreviews.push(photo.base64String);
+      }
+    } catch (error) {
+      console.error('Error al procesar imagen:', error);
+      this.notify.showError('Error al procesar la imagen');
+    }
+  }
+
+  /**
+   * Convertir base64 a File
+   */
+  private base64ToFile(base64: string, filename: string, mimeType: string): File {
+    // Si es una URL de datos (data:image/jpeg;base64,...)
+    if (base64.startsWith('data:')) {
+      const arr = base64.split(',');
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mimeType });
+    }
+
+    // Si es base64 puro
+    const bstr = atob(base64);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mimeType });
+  }
+
+  /**
+   * Eliminar imagen seleccionada
+   */
+  removeSelectedImage(index: number) {
+    URL.revokeObjectURL(this.imagePreviews[index]);
+    this.selectedImages.splice(index, 1);
+    this.imagePreviews.splice(index, 1);
+  }
+
+  /**
+   * Eliminar imagen existente
+   */
+  removeExistingImage(imageId: string) {
+    this.existingImages = this.existingImages.filter(img => img.id !== imageId);
+    // Nota: La eliminación real en el backend requeriría un endpoint específico
+    // Por ahora, solo la removemos de la lista local
+  }
+
+  /**
+   * Abrir preview de imagen
+   */
+  openImagePreview(imagePath: string) {
+    this.selectedImageForPreview = imagePath;
+  }
+
+  /**
+   * Cerrar preview
+   */
+  closePreview() {
+    this.selectedImageForPreview = null;
+  }
+
+  // ===== MÉTODOS PARA GUARDAR =====
+
   onSave() {
     if (this.businessForm.invalid) {
       this.businessForm.markAllAsTouched();
@@ -228,6 +373,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
       websiteValue = 'https://' + websiteValue;
     }
+
     const request: CreateBusinessRequest = {
       name: formValue.name?.trim(),
       description: formValue.description?.trim() || undefined,
@@ -242,23 +388,41 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       longitude: formValue.longitude ? parseFloat(formValue.longitude) : undefined,
     };
 
-    this.ownerBusinessService
-      .create(request)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.notify.showSuccess('Negocio creado correctamente');
-          this.isCustomCategory = false;
-          this.customCategoryValue = '';
-          this.saving = false;
-          this.router.navigate(['/owner/businesses']);
-        },
-        error: (error) => {
-          console.error('Error al crear negocio:', error);
-          this.notify.showError('Error al crear el negocio');
-          this.saving = false;
-        },
-      });
+    // Si hay imágenes, usar el método con imágenes
+    if (this.selectedImages.length > 0) {
+      this.ownerBusinessService
+        .createWithImages(request, this.selectedImages)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.notify.showSuccess('Negocio creado correctamente');
+            this.cleanup();
+            this.router.navigate(['/owner/businesses']);
+          },
+          error: (error) => {
+            console.error('Error al crear negocio:', error);
+            this.notify.showError(error.error?.message || 'Error al crear el negocio');
+            this.saving = false;
+          },
+        });
+    } else {
+      // Sin imágenes, usar método legacy
+      this.ownerBusinessService
+        .create(request)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.notify.showSuccess('Negocio creado correctamente');
+            this.cleanup();
+            this.router.navigate(['/owner/businesses']);
+          },
+          error: (error) => {
+            console.error('Error al crear negocio:', error);
+            this.notify.showError(error.error?.message || 'Error al crear el negocio');
+            this.saving = false;
+          },
+        });
+    }
   }
 
   private updateBusiness() {
@@ -271,6 +435,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
       websiteValue = 'https://' + websiteValue;
     }
+
     const request: UpdateBusinessRequest = {
       name: formValue.name?.trim() || undefined,
       description: formValue.description?.trim() || undefined,
@@ -286,24 +451,55 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       isActive: formValue.isActive,
     };
 
-    this.ownerBusinessService
-      .update(this.businessId, request)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.notify.showSuccess('Negocio actualizado correctamente');
-          this.saving = false;
-          this.router.navigate(['/owner/businesses']);
-        },
-        error: (error) => {
-          console.error('Error al actualizar negocio:', error);
-          this.notify.showError('Error al actualizar el negocio');
-          this.saving = false;
-        },
-      });
+    // Si hay nuevas imágenes, usar el método con imágenes
+    if (this.selectedImages.length > 0) {
+      this.ownerBusinessService
+        .updateWithImages(this.businessId, request, this.selectedImages)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.notify.showSuccess('Negocio actualizado correctamente');
+            this.cleanup();
+            this.router.navigate(['/owner/businesses']);
+          },
+          error: (error) => {
+            console.error('Error al actualizar negocio:', error);
+            this.notify.showError(error.error?.message || 'Error al actualizar el negocio');
+            this.saving = false;
+          },
+        });
+    } else {
+      // Sin nuevas imágenes, usar método legacy
+      this.ownerBusinessService
+        .update(this.businessId, request)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.notify.showSuccess('Negocio actualizado correctamente');
+            this.cleanup();
+            this.router.navigate(['/owner/businesses']);
+          },
+          error: (error) => {
+            console.error('Error al actualizar negocio:', error);
+            this.notify.showError(error.error?.message || 'Error al actualizar el negocio');
+            this.saving = false;
+          },
+        });
+    }
+  }
+
+  private cleanup() {
+    this.isCustomCategory = false;
+    this.customCategoryValue = '';
+    this.saving = false;
+    // Limpiar previews
+    this.imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
+    this.selectedImages = [];
+    this.imagePreviews = [];
   }
 
   onCancel() {
+    this.cleanup();
     this.router.navigate(['/owner/businesses']);
   }
 

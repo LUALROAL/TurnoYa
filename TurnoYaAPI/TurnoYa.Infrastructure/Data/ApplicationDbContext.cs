@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<AppointmentStatusHistory> AppointmentStatusHistory => Set<AppointmentStatusHistory>();
     public DbSet<BusinessSettings> BusinessSettings => Set<BusinessSettings>();
     public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<BusinessImage> BusinessImages => Set<BusinessImage>();
     public DbSet<WompiTransaction> WompiTransactions => Set<WompiTransaction>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
@@ -34,6 +35,7 @@ public class ApplicationDbContext : DbContext
             e.Property(p => p.AverageRating).HasPrecision(3,2);
             e.Property(p => p.Latitude).HasPrecision(10,7);
             e.Property(p => p.Longitude).HasPrecision(10,7);
+            e.HasMany(b => b.Images).WithOne(img => img.Business).HasForeignKey(img => img.BusinessId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Service>(e =>

@@ -38,6 +38,15 @@
   }
 }
 
+@keyframes imageGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 224, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.6);
+  }
+}
+
 .animation-delay-2000 {
   animation-delay: 2s;
 }
@@ -279,4 +288,85 @@ input {
       opacity: 1;
     }
   }
+}
+
+// Estilos para la sección de imágenes
+.group\/image {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(135deg, #00E0FF, #00F5D4);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Estilos para el modal de preview
+.preview-modal {
+  --height: 100%;
+  --width: 100%;
+  --border-radius: 0;
+
+  &::part(content) {
+    background: rgba(3, 5, 10, 0.95);
+    backdrop-filter: blur(10px);
+  }
+}
+
+.preview-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  position: relative;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+}
+
+.preview-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 224, 255, 0.2);
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00E0FF;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(0, 224, 255, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.5);
+  }
+}
+
+.image-glow {
+  animation: imageGlow 2s infinite;
 }

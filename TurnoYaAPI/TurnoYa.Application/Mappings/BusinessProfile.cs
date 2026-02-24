@@ -51,7 +51,10 @@ public class BusinessProfile : Profile
         CreateMap<Business, BusinessDetailDto>()
             .ForMember(dest => dest.Owner, opt => opt.MapFrom(src => src.Owner))
             .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services))
-            .ForMember(dest => dest.Employees, opt => opt.MapFrom(src => src.Employees));
+            .ForMember(dest => dest.Employees, opt => opt.MapFrom(src => src.Employees))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
+
+        CreateMap<BusinessImage, BusinessImageDto>();
 
         // BusinessSettings → BusinessSettingsDto
         CreateMap<BusinessSettings, BusinessSettingsDto>()

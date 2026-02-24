@@ -53,11 +53,12 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PaymentMethod")
-                        .HasColumnType("int");
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReferenceNumber")
                         .IsRequired()
@@ -72,8 +73,9 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(10, 2)
@@ -237,6 +239,31 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("TurnoYa.Core.Entities.BusinessImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("BusinessImages");
                 });
 
             modelBuilder.Entity("TurnoYa.Core.Entities.BusinessSettings", b =>
@@ -713,6 +740,17 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("TurnoYa.Core.Entities.BusinessImage", b =>
+                {
+                    b.HasOne("TurnoYa.Core.Entities.Business", "Business")
+                        .WithMany("Images")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("TurnoYa.Core.Entities.BusinessSettings", b =>
                 {
                     b.HasOne("TurnoYa.Core.Entities.Business", "Business")
@@ -817,6 +855,8 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("Employees");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Reviews");
 

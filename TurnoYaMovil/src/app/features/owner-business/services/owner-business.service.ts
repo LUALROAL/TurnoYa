@@ -9,9 +9,6 @@ import {
   BusinessSettings,
 } from '../models';
 
-/**
- * Service for managing business ownership operations
- */
 @Injectable({
   providedIn: 'root',
 })
@@ -48,14 +45,60 @@ export class OwnerBusinessService {
   }
 
   /**
-   * Create a new business (OwnerId extracted from JWT in backend)
+   * Create a new business with images
+   */
+  createWithImages(business: CreateBusinessRequest, images: File[]): Observable<OwnerBusiness> {
+    const formData = new FormData();
+
+    // Añadir todos los campos del negocio
+    Object.entries(business).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Añadir imágenes
+    images.forEach(image => {
+      formData.append('images', image, image.name);
+    });
+
+    return this.api.post<OwnerBusiness>('/api/business', formData);
+  }
+
+  /**
+   * Update an existing business with images
+   */
+  updateWithImages(
+    id: string,
+    business: UpdateBusinessRequest,
+    images: File[]
+  ): Observable<OwnerBusiness> {
+    const formData = new FormData();
+
+    // Añadir todos los campos del negocio
+    Object.entries(business).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Añadir nuevas imágenes
+    images.forEach(image => {
+      formData.append('images', image, image.name);
+    });
+
+    return this.api.put<OwnerBusiness>(`/api/business/${id}`, formData);
+  }
+
+  /**
+   * Legacy create method (sin imágenes)
    */
   create(business: CreateBusinessRequest): Observable<OwnerBusiness> {
     return this.api.post<OwnerBusiness>('/api/business', business);
   }
 
   /**
-   * Update an existing business (ownership verified in backend)
+   * Legacy update method (sin imágenes)
    */
   update(
     id: string,
@@ -65,7 +108,7 @@ export class OwnerBusinessService {
   }
 
   /**
-   * Delete a business (ownership verified in backend)
+   * Delete a business
    */
   delete(id: string): Observable<void> {
     return this.api.delete<void>(`/api/business/${id}`);
@@ -79,14 +122,14 @@ export class OwnerBusinessService {
   }
 
   /**
-   * Get business settings/configuration
+   * Get business settings
    */
   getSettings(businessId: string): Observable<BusinessSettings> {
     return this.api.get<BusinessSettings>(`/api/business/${businessId}/settings`);
   }
 
   /**
-   * Update business settings/configuration (ownership verified in backend)
+   * Update business settings
    */
   updateSettings(
     businessId: string,

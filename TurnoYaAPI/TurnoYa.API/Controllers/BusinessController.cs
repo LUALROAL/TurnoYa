@@ -1,3 +1,4 @@
+
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace TurnoYa.API.Controllers;
 [Route("api/[controller]")]
 public class BusinessController : ControllerBase
 {
+
     private readonly IBusinessRepository _businessRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<BusinessController> _logger;
@@ -139,25 +141,54 @@ public class BusinessController : ControllerBase
     [Authorize]
     [ProducesResponseType(typeof(BusinessDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BusinessDto>> Create([FromBody] CreateBusinessDto dto)
+    [RequestSizeLimit(10_000_000)] // 10 MB
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<BusinessDto>> Create([
+        FromForm] CreateBusinessDto dto,
+        [FromForm] List<IFormFile>? images)
     {
         try
         {
             // Obtener el OwnerId del usuario autenticado (del JWT)
             var ownerIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
                             ?? User.FindFirst("sub")?.Value;
-            
             if (string.IsNullOrEmpty(ownerIdClaim) || !Guid.TryParse(ownerIdClaim, out var ownerId))
-            {
                 return Unauthorized(new { message = "No se pudo obtener el ID del usuario autenticado" });
-            }
 
             var business = _mapper.Map<Business>(dto);
             business.OwnerId = ownerId;
 
+            // Guardar primero el negocio para obtener el ID
             var createdBusiness = await _businessRepository.AddAsync(business);
-            var businessDto = _mapper.Map<BusinessDto>(createdBusiness);
 
+            // Procesar imágenes si existen
+            if (images != null && images.Count > 0)
+            {
+                var imageEntities = new List<BusinessImage>();
+                foreach (var file in images)
+                {
+                    if (file.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            await file.CopyToAsync(ms);
+                            imageEntities.Add(new BusinessImage
+                            {
+                                BusinessId = createdBusiness.Id,
+                                ImageData = ms.ToArray(),
+                                CreatedAt = DateTime.UtcNow
+                            });
+                        }
+                    }
+                }
+                if (imageEntities.Count > 0)
+                {
+                    _context.BusinessImages.AddRange(imageEntities);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            var businessDto = _mapper.Map<BusinessDto>(createdBusiness);
             return CreatedAtAction(nameof(GetById), new { id = createdBusiness.Id }, businessDto);
         }
         catch (DbUpdateException dbEx)
@@ -178,8 +209,8 @@ public class BusinessController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al crear negocio");
-            return StatusCode(500, new { message = "Error interno del servidor" });
+            _logger.LogError(ex, $"Error al crear negocio: {ex}");
+            return StatusCode(500, new { message = $"Error interno del servidor: {ex.Message}" });
         }
     }
 
@@ -191,7 +222,9 @@ public class BusinessController : ControllerBase
     [ProducesResponseType(typeof(BusinessDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<BusinessDto>> Update(Guid id, [FromBody] UpdateBusinessDto dto)
+    [RequestSizeLimit(10_000_000)]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<BusinessDto>> Update(Guid id, [FromForm] UpdateBusinessDto dto, [FromForm] List<IFormFile>? images)
     {
         try
         {
@@ -201,22 +234,53 @@ public class BusinessController : ControllerBase
 
             // Verificar que el usuario sea el dueño del negocio
             var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                           ?? User.FindFirst("sub")?.Value;
-            
+                            ?? User.FindFirst("sub")?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
             {
                 return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
             }
-            
             if (business.OwnerId != userId)
                 return Forbid();
 
             _mapper.Map(dto, business);
             business.UpdatedAt = DateTime.UtcNow;
-
             var updatedBusiness = await _businessRepository.UpdateAsync(business);
-            var businessDto = _mapper.Map<BusinessDto>(updatedBusiness);
 
+            // Procesar imágenes nuevas si existen
+            if (images != null && images.Count > 0)
+            {
+                var imageEntities = new List<BusinessImage>();
+                var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "businesses", updatedBusiness.Id.ToString());
+                Directory.CreateDirectory(uploadsRoot);
+                foreach (var file in images)
+                {
+                    if (file.Length > 0)
+                    {
+                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                        if (ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp")
+                            continue; // O lanzar error
+                        var fileName = $"{Guid.NewGuid()}{ext}";
+                        var filePath = Path.Combine(uploadsRoot, fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+                        imageEntities.Add(new BusinessImage
+                        {
+                            BusinessId = updatedBusiness.Id,
+                            ImagePath = $"/uploads/businesses/{updatedBusiness.Id}/{fileName}",
+                            CreatedAt = DateTime.UtcNow
+                        });
+                    }
+                }
+                if (imageEntities.Count > 0)
+                {
+                    _context.BusinessImages.AddRange(imageEntities);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            var businessDto = _mapper.Map<BusinessDto>(updatedBusiness);
             return Ok(businessDto);
         }
         catch (Exception ex)
