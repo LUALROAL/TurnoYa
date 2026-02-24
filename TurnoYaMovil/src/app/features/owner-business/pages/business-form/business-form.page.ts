@@ -12,6 +12,7 @@ import {
   IonCheckbox,
   IonModal
 } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   arrowBack,
@@ -46,6 +47,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    IonicModule,
   ],
   templateUrl: './business-form.page.html',
   styleUrls: ['./business-form.page.scss'],
@@ -451,40 +453,22 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     };
 
     // Si hay nuevas imágenes, usar el método con imágenes
-    if (this.selectedImages.length > 0) {
-      this.ownerBusinessService
-        .updateWithImages(this.businessId, request, this.selectedImages)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.notify.showSuccess('Negocio actualizado correctamente');
-            this.cleanup();
-            this.router.navigate(['/owner/businesses']);
-          },
-          error: (error) => {
-            console.error('Error al actualizar negocio:', error);
-            this.notify.showError(error.error?.message || 'Error al actualizar el negocio');
-            this.saving = false;
-          },
-        });
-    } else {
-      // Sin nuevas imágenes, usar método legacy
-      this.ownerBusinessService
-        .update(this.businessId, request)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.notify.showSuccess('Negocio actualizado correctamente');
-            this.cleanup();
-            this.router.navigate(['/owner/businesses']);
-          },
-          error: (error) => {
-            console.error('Error al actualizar negocio:', error);
-            this.notify.showError(error.error?.message || 'Error al actualizar el negocio');
-            this.saving = false;
-          },
-        });
-    }
+    // Siempre usar FormData (multipart/form-data) para cumplir con el backend
+    this.ownerBusinessService
+      .updateWithImages(this.businessId, request, this.selectedImages)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notify.showSuccess('Negocio actualizado correctamente');
+          this.cleanup();
+          this.router.navigate(['/owner/businesses']);
+        },
+        error: (error) => {
+          console.error('Error al actualizar negocio:', error);
+          this.notify.showError(error.error?.message || 'Error al actualizar el negocio');
+          this.saving = false;
+        },
+      });
   }
 
   private cleanup() {

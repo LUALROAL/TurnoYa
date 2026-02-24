@@ -124,10 +124,10 @@
                     <div
                       class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
                       <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                      <input id="category" type="text" formControlName="category"
-                        (input)="onCategoryInput($any($event.target).value)" (focus)="onCategoryFocus()"
+                      <ion-input id="category" type="text" formControlName="category"
+                        (ionInput)="onCategoryInput($any($event.target).value)" (ionFocus)="onCategoryFocus()"
                         placeholder="Selecciona una categoría" autocomplete="off"
-                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
+                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
                     </div>
 
                     <!-- Menú desplegable de categorías (estilo futurista) -->
@@ -221,22 +221,24 @@
             <div
               class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
 
-              <!-- Botones para agregar imágenes -->
-              <div class="flex flex-col sm:flex-row gap-3">
-                <button type="button" (click)="takePhoto()"
-                  class="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 group">
-                  <ion-icon name="camera-outline"
-                    class="text-neon-primary text-xl group-hover:scale-110 transition-transform"></ion-icon>
-                  <span class="font-mono text-sm">Tomar Foto</span>
-                </button>
+              <!-- Botones para agregar imágenes (solo si no hay ninguna imagen existente ni seleccionada) -->
+              @if ((existingImages.length === 0) && (selectedImages.length === 0)) {
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button type="button" (click)="takePhoto()"
+                    class="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 group">
+                    <ion-icon name="camera-outline"
+                      class="text-neon-primary text-xl group-hover:scale-110 transition-transform"></ion-icon>
+                    <span class="font-mono text-sm">Tomar Foto</span>
+                  </button>
 
-                <button type="button" (click)="selectFromGallery()"
-                  class="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 group">
-                  <ion-icon name="image-outline"
-                    class="text-neon-primary text-xl group-hover:scale-110 transition-transform"></ion-icon>
-                  <span class="font-mono text-sm">Desde Galería</span>
-                </button>
-              </div>
+                  <button type="button" (click)="selectFromGallery()"
+                    class="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 group">
+                    <ion-icon name="image-outline"
+                      class="text-neon-primary text-xl group-hover:scale-110 transition-transform"></ion-icon>
+                    <span class="font-mono text-sm">Desde Galería</span>
+                  </button>
+                </div>
+              }
 
               <!-- Imágenes existentes (solo en edición) -->
               @if (isEditMode && existingImages.length > 0) {
@@ -361,10 +363,10 @@
                     <div
                       class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
                       <ion-icon name="location-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                      <input id="department" type="text" formControlName="department"
-                        (input)="onDepartmentInput($any($event.target).value)" placeholder="Ej: Cundinamarca"
+                      <ion-input id="department" type="text" formControlName="department"
+                        (ionInput)="onDepartmentInput($any($event.target).value)" placeholder="Ej: Cundinamarca"
                         autocomplete="off"
-                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
+                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
                     </div>
 
                     <!-- Menú desplegable de sugerencias (estilo futurista) -->
@@ -415,10 +417,10 @@
                       class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
                       [class.opacity-50]="!businessForm.get('department')?.value">
                       <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                      <input id="city" type="text" [formControlName]="'city'"
-                        (input)="onCityInput($any($event.target).value)" placeholder="Ej: Bogotá" autocomplete="off"
+                      <ion-input id="city" type="text" [formControlName]="'city'"
+                        (ionInput)="onCityInput($any($event.target).value)" placeholder="Ej: Bogotá" autocomplete="off"
                         [disabled]="!businessForm.get('department')?.value"
-                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body disabled:opacity-50" />
+                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body disabled:opacity-50"></ion-input>
                     </div>
 
                     <!-- Menú desplegable de sugerencias (estilo futurista) -->
