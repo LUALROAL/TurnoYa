@@ -160,7 +160,8 @@
                     }
                     <!-- Custom category input -->
                     @if (isCustomCategory) {
-                      <div class="mt-2">
+                      <div class="mt-2 relative group">
+                        <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur input-glow"></div>
                         <label class="block text-xs font-mono text-neon-primary tracking-wider mb-1">
                           Escribe tu categoría personalizada
                         </label>
