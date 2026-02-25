@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TurnoYa.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TurnoYa.Infrastructure.Data;
 namespace TurnoYa.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260225033540_AddBusinessScheduleModel")]
+    partial class AddBusinessScheduleModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -488,96 +491,6 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeBreakTime", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<Guid>("WorkingDayId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkingDayId");
-
-                    b.ToTable("EmployeeBreakTimes");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeSchedule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AppointmentDuration")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(30);
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique();
-
-                    b.ToTable("EmployeeSchedules");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeTimeBlock", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<Guid>("WorkingDayId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkingDayId");
-
-                    b.ToTable("EmployeeTimeBlocks");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeWorkingDay", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("EmployeeScheduleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsOpen")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeScheduleId");
-
-                    b.ToTable("EmployeeWorkingDays");
-                });
-
             modelBuilder.Entity("TurnoYa.Core.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1005,50 +918,6 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeBreakTime", b =>
-                {
-                    b.HasOne("TurnoYa.Core.Entities.EmployeeWorkingDay", "WorkingDay")
-                        .WithMany("BreakTimes")
-                        .HasForeignKey("WorkingDayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("WorkingDay");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeSchedule", b =>
-                {
-                    b.HasOne("TurnoYa.Core.Entities.Employee", "Employee")
-                        .WithOne()
-                        .HasForeignKey("TurnoYa.Core.Entities.EmployeeSchedule", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeTimeBlock", b =>
-                {
-                    b.HasOne("TurnoYa.Core.Entities.EmployeeWorkingDay", "WorkingDay")
-                        .WithMany("TimeBlocks")
-                        .HasForeignKey("WorkingDayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("WorkingDay");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeWorkingDay", b =>
-                {
-                    b.HasOne("TurnoYa.Core.Entities.EmployeeSchedule", "EmployeeSchedule")
-                        .WithMany("WorkingDays")
-                        .HasForeignKey("EmployeeScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EmployeeSchedule");
-                });
-
             modelBuilder.Entity("TurnoYa.Core.Entities.RefreshToken", b =>
                 {
                     b.HasOne("TurnoYa.Core.Entities.User", "User")
@@ -1148,18 +1017,6 @@ namespace TurnoYa.Infrastructure.Data.Migrations
             modelBuilder.Entity("TurnoYa.Core.Entities.Employee", b =>
                 {
                     b.Navigation("Appointments");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeSchedule", b =>
-                {
-                    b.Navigation("WorkingDays");
-                });
-
-            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeWorkingDay", b =>
-                {
-                    b.Navigation("BreakTimes");
-
-                    b.Navigation("TimeBlocks");
                 });
 
             modelBuilder.Entity("TurnoYa.Core.Entities.Service", b =>

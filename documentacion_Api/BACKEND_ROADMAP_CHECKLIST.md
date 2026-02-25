@@ -1,3 +1,12 @@
+#
+## EPIC 6 - Horarios de Atención
+- [ ] Modelo de datos para horarios de atención (Priority: High, Points: 5)
+- [ ] Migración EF Core para horarios (Priority: High, Points: 3)
+- [ ] Endpoints CRUD de horarios de negocio (Priority: High, Points: 5)
+- [ ] Endpoint para consultar slots disponibles (Priority: High, Points: 5)
+- [ ] Validaciones de solapamiento y pertenencia (Priority: High, Points: 3)
+- [ ] Seguridad: solo dueño puede modificar (Priority: High, Points: 2)
+- [ ] Tests de endpoints de horarios (Priority: Medium, Points: 3)
 # TurnoYa Backend - Roadmap Checklist
 
 Use this checklist to mark each card as completed.

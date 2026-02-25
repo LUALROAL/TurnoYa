@@ -19,8 +19,107 @@ public class ApplicationDbContext : DbContext
     public DbSet<WompiTransaction> WompiTransactions => Set<WompiTransaction>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
+    // Horarios de empleados
+    public DbSet<EmployeeSchedule> EmployeeSchedules => Set<EmployeeSchedule>();
+    public DbSet<EmployeeWorkingDay> EmployeeWorkingDays => Set<EmployeeWorkingDay>();
+    public DbSet<EmployeeTimeBlock> EmployeeTimeBlocks => Set<EmployeeTimeBlock>();
+    public DbSet<EmployeeBreakTime> EmployeeBreakTimes => Set<EmployeeBreakTime>();
+
+    // Horarios de atención
+    public DbSet<BusinessSchedule> BusinessSchedules => Set<BusinessSchedule>();
+    public DbSet<BusinessWorkingDay> BusinessWorkingDays => Set<BusinessWorkingDay>();
+    public DbSet<BusinessTimeBlock> BusinessTimeBlocks => Set<BusinessTimeBlock>();
+    public DbSet<BusinessBreakTime> BusinessBreakTimes => Set<BusinessBreakTime>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Horarios de empleados
+        modelBuilder.Entity<EmployeeSchedule>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasOne(x => x.Employee)
+                .WithOne()
+                .HasForeignKey<EmployeeSchedule>(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.Property(x => x.AppointmentDuration).HasDefaultValue(30);
+            e.HasMany(x => x.WorkingDays)
+                .WithOne(x => x.EmployeeSchedule)
+                .HasForeignKey(x => x.EmployeeScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<EmployeeWorkingDay>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.DayOfWeek).IsRequired();
+            e.Property(x => x.IsOpen).HasDefaultValue(false);
+            e.HasMany(x => x.TimeBlocks)
+                .WithOne(x => x.WorkingDay)
+                .HasForeignKey(x => x.WorkingDayId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(x => x.BreakTimes)
+                .WithOne(x => x.WorkingDay)
+                .HasForeignKey(x => x.WorkingDayId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<EmployeeTimeBlock>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.StartTime).IsRequired();
+            e.Property(x => x.EndTime).IsRequired();
+        });
+
+        modelBuilder.Entity<EmployeeBreakTime>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.StartTime).IsRequired();
+            e.Property(x => x.EndTime).IsRequired();
+        });
+        // Horarios de atención
+        modelBuilder.Entity<BusinessSchedule>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasOne(x => x.Business)
+                .WithOne()
+                .HasForeignKey<BusinessSchedule>(x => x.BusinessId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.Property(x => x.AppointmentDuration).HasDefaultValue(30);
+            e.HasMany(x => x.WorkingDays)
+                .WithOne(x => x.BusinessSchedule)
+                .HasForeignKey(x => x.BusinessScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BusinessWorkingDay>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.DayOfWeek).IsRequired();
+            e.Property(x => x.IsOpen).HasDefaultValue(false);
+            e.HasMany(x => x.TimeBlocks)
+                .WithOne(x => x.WorkingDay)
+                .HasForeignKey(x => x.WorkingDayId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(x => x.BreakTimes)
+                .WithOne(x => x.WorkingDay)
+                .HasForeignKey(x => x.WorkingDayId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BusinessTimeBlock>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.StartTime).IsRequired();
+            e.Property(x => x.EndTime).IsRequired();
+        });
+
+        modelBuilder.Entity<BusinessBreakTime>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.StartTime).IsRequired();
+            e.Property(x => x.EndTime).IsRequired();
+        });
+
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<User>(e =>

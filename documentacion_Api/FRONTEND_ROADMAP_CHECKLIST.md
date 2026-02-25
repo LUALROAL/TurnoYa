@@ -1,3 +1,12 @@
+#
+## EPIC 8 - Configuración de Horarios
+- [ ] Página de configuración de horarios en Owner Business (Priority: High, Points: 5)
+- [ ] UI para seleccionar días laborales y horarios (Priority: High, Points: 3)
+- [ ] UI para definir bloques y descansos (Priority: High, Points: 3)
+- [ ] Validaciones de solapamiento y UX amigable (Priority: High, Points: 2)
+- [ ] Integración con endpoints backend (Priority: High, Points: 3)
+- [ ] Mostrar horarios disponibles al cliente (Priority: High, Points: 3)
+- [ ] Tests de UI y flujos de horarios (Priority: Medium, Points: 2)
 # TurnoYa Frontend - Roadmap Checklist
 
 Use this checklist to mark each card as completed.
