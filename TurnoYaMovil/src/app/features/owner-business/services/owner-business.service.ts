@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthSessionService } from '../../../core/services/auth-session.service';
 import {
@@ -151,8 +151,20 @@ export class OwnerBusinessService {
 /**
  * Obtiene el horario de un negocio
  */
-getSchedule(businessId: string): Observable<WorkingHoursDto> {
-  return this.api.get<WorkingHoursDto>(`/api/BusinessSchedule/GetByBusiness/${businessId}`);
+// getSchedule(businessId: string): Observable<WorkingHoursDto> {
+//   return this.api.get<WorkingHoursDto>(`/api/BusinessSchedule/GetByBusiness/${businessId}`);
+// }
+
+getSchedule(businessId: string): Observable<WorkingHoursDto | null> {
+  return this.api.get<WorkingHoursDto>(`/api/BusinessSchedule/GetByBusiness/${businessId}`)
+    .pipe(
+      catchError(error => {
+        if (error.status === 404) {
+          return of(null); // Devuelve null cuando no existe (sin error)
+        }
+        return throwError(() => error); // Re-lanza otros errores (500, etc.)
+      })
+    );
 }
 
 /**

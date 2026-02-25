@@ -31,6 +31,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       const status = error.status;
       const message = resolveErrorMessage(error);
 
+      // Si es 404, solo relanzamos el error sin mostrar notificación
+      if (status === 404) {
+        return throwError(() => error);
+      }
+
+      // Manejo de 401 con refresh token (solo si no es endpoint público)
       if (status === 401 && !isPublicEndpoint(req.url)) {
         if (!session.hasValidSession()) {
           session.clearSession();
@@ -69,6 +75,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         );
       }
 
+      // Notificaciones para otros códigos de error
       if (status === 0) {
         void notify.showError("No se pudo conectar con el servidor.");
       } else if (status === 400) {

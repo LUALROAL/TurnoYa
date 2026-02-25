@@ -178,47 +178,84 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       });
   }
 
+  // private loadSchedule() {
+  //   this.loadingSchedule = true;
+  //   this.ownerBusinessService
+  //     .getSchedule(this.businessId)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (schedule) => {
+  //         if (schedule) {
+  //           // Normalizar: convertir null a string vacío
+  //           const normalized: any = {};
+  //           for (const day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']) {
+  //             const dayData = schedule[day as keyof WorkingHoursDto] as DayScheduleDto;
+  //             normalized[day] = {
+  //               isOpen: dayData.isOpen,
+  //               openTime: dayData.openTime || '',
+  //               closeTime: dayData.closeTime || '',
+  //               breakStartTime: dayData.breakStartTime || '',
+  //               breakEndTime: dayData.breakEndTime || ''
+  //             };
+  //           }
+  //           this.scheduleForm.patchValue(normalized);
+  //           this.scheduleExists = true;
+  //         } else {
+  //           // Si no hay horario, permitir crear uno nuevo
+  //           this.scheduleExists = false;
+  //           this.resetScheduleForm();
+  //         }
+  //         this.loadingSchedule = false;
+  //       },
+  //       error: (error) => {
+  //         if (error.status === 404) {
+  //           this.scheduleExists = false;
+  //           this.resetScheduleForm();
+  //         } else {
+  //           console.error('Error al cargar horarios:', error);
+  //           this.notify.showError('Error al cargar los horarios del negocio');
+  //         }
+  //         this.loadingSchedule = false;
+  //       },
+  //     });
+  // }
+
   private loadSchedule() {
-    this.loadingSchedule = true;
-    this.ownerBusinessService
-      .getSchedule(this.businessId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (schedule) => {
-          if (schedule) {
-            // Normalizar: convertir null a string vacío
-            const normalized: any = {};
-            for (const day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']) {
-              const dayData = schedule[day as keyof WorkingHoursDto] as DayScheduleDto;
-              normalized[day] = {
-                isOpen: dayData.isOpen,
-                openTime: dayData.openTime || '',
-                closeTime: dayData.closeTime || '',
-                breakStartTime: dayData.breakStartTime || '',
-                breakEndTime: dayData.breakEndTime || ''
-              };
-            }
-            this.scheduleForm.patchValue(normalized);
-            this.scheduleExists = true;
-          } else {
-            // Si no hay horario, permitir crear uno nuevo
-            this.scheduleExists = false;
-            this.resetScheduleForm();
+  this.loadingSchedule = true;
+  this.ownerBusinessService
+    .getSchedule(this.businessId)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (schedule) => {
+        if (schedule) {
+          // Hay horario guardado
+          const normalized: any = {};
+          for (const day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']) {
+            const dayData = schedule[day as keyof WorkingHoursDto] as DayScheduleDto;
+            normalized[day] = {
+              isOpen: dayData.isOpen,
+              openTime: dayData.openTime || '',
+              closeTime: dayData.closeTime || '',
+              breakStartTime: dayData.breakStartTime || '',
+              breakEndTime: dayData.breakEndTime || ''
+            };
           }
-          this.loadingSchedule = false;
-        },
-        error: (error) => {
-          if (error.status === 404) {
-            this.scheduleExists = false;
-            this.resetScheduleForm();
-          } else {
-            console.error('Error al cargar horarios:', error);
-            this.notify.showError('Error al cargar los horarios del negocio');
-          }
-          this.loadingSchedule = false;
-        },
-      });
-  }
+          this.scheduleForm.patchValue(normalized);
+          this.scheduleExists = true;
+        } else {
+          // No existe horario
+          this.scheduleExists = false;
+          this.resetScheduleForm();
+        }
+        this.loadingSchedule = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar horarios:', error);
+        this.notify.showError('Error al cargar los horarios del negocio');
+        this.loadingSchedule = false;
+      },
+    });
+}
 
   private resetScheduleForm() {
     const defaultWeekday = {

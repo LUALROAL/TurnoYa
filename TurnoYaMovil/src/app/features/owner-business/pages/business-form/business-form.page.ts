@@ -89,6 +89,8 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   pendingDeleteImageId: string | null = null;
   pendingDeleteImageIndex: number | null = null;
 
+  private closeTimeout: any;
+
   constructor() {
     addIcons({
       arrowBack,
@@ -137,6 +139,9 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+    }
     // Limpiar previews
     this.imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
     this.destroy$.next();
@@ -560,6 +565,11 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   // ===== MÉTODOS PARA AUTOCOMPLETE DE CATEGORÍA =====
 
   onCategoryInput(value: string = ''): void {
+    // Cancelar cierre pendiente
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+      this.closeTimeout = null;
+    }
     this.showCategorySuggestions = true;
     this.isCustomCategory = false;
     if (!value) {
@@ -575,10 +585,14 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     }
   }
 
-  onCategoryFocus(): void {
-    this.showCategorySuggestions = true;
-    this.categorySuggestions = [...this.categories];
+ onCategoryFocus(): void {
+  if (this.closeTimeout) {
+    clearTimeout(this.closeTimeout);
+    this.closeTimeout = null;
   }
+  this.showCategorySuggestions = true;
+  this.categorySuggestions = [...this.categories];
+}
 
   onCategorySelect(category: string): void {
     this.businessForm.patchValue({ category });
@@ -656,23 +670,24 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   // ===== MÉTODO PARA CERRAR MENÚS =====
 
   onClickOutside(): void {
-    setTimeout(() => {
-      // Detecta el elemento activo
-      const active = document.activeElement as HTMLElement | null;
-      const catInput = document.getElementById('category');
-      const catMenu = document.querySelector('.category-suggestions-menu');
-      // Si el foco está en el input de categoría o en el menú, no cerrar
-      if (active === catInput || (catMenu && catMenu.contains(active))) {
-        // No cerrar menú de categorías
-      } else {
-        this.showCategorySuggestions = false;
-        this.categorySuggestions = [];
-      }
-      // Siempre cerrar sugerencias de ciudad y departamento
-      this.departmentSuggestions = [];
-      this.citySuggestions = [];
-    }, 200);
+  if (this.closeTimeout) {
+    clearTimeout(this.closeTimeout);
   }
+  this.closeTimeout = setTimeout(() => {
+    const active = document.activeElement as HTMLElement | null;
+    const catInput = document.getElementById('category');
+    const catMenu = document.querySelector('.category-suggestions-menu');
+
+    if (active === catInput || (catMenu && catMenu.contains(active))) {
+      return; // No cerrar
+    }
+    this.showCategorySuggestions = false;
+    this.categorySuggestions = [];
+    this.departmentSuggestions = [];
+    this.citySuggestions = [];
+    this.closeTimeout = null;
+  }, 200);
+}
 
   /**
   * Mostrar snackbar de confirmación para eliminar imagen existente
