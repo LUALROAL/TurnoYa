@@ -28,6 +28,11 @@ namespace TurnoYaAPI.Controllers
         /// Busca departamentos que coincidan con el texto ingresado (autocomplete).
         /// </summary>
         [HttpGet("search-departments")]
+        /// <summary>
+        /// Busca departamentos que coincidan con el texto ingresado (autocomplete).
+        /// </summary>
+        /// <param name="query">Texto para filtrar departamentos</param>
+        /// <returns>Lista de departamentos coincidentes</returns>
         public async Task<IActionResult> SearchDepartments([FromQuery] string query)
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "colombia_cities.json");
@@ -51,6 +56,12 @@ namespace TurnoYaAPI.Controllers
         /// Busca ciudades que coincidan con el texto ingresado, opcionalmente filtrando por departamento (autocomplete).
         /// </summary>
         [HttpGet("search-cities")]
+        /// <summary>
+        /// Busca ciudades que coincidan con el texto ingresado, opcionalmente filtrando por departamento (autocomplete).
+        /// </summary>
+        /// <param name="department">Departamento para filtrar</param>
+        /// <param name="query">Texto para filtrar ciudades</param>
+        /// <returns>Lista de ciudades coincidentes</returns>
         public async Task<IActionResult> SearchCities([FromQuery] string? department, [FromQuery] string query = "")
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "colombia_cities.json");
@@ -81,6 +92,11 @@ namespace TurnoYaAPI.Controllers
         }
 
         [HttpGet("by-department")]
+        /// <summary>
+        /// Obtiene todas las ciudades de un departamento específico.
+        /// </summary>
+        /// <param name="department">Nombre del departamento</param>
+        /// <returns>Lista de ciudades del departamento</returns>
         public async Task<IActionResult> GetCitiesByDepartment([FromQuery] string department)
         {
             if (string.IsNullOrWhiteSpace(department))
@@ -101,6 +117,12 @@ namespace TurnoYaAPI.Controllers
         }
 
         [HttpGet("autocomplete")]
+        /// <summary>
+        /// Autocompleta ciudades usando OpenStreetMap, filtrando por query y departamento.
+        /// </summary>
+        /// <param name="query">Texto para filtrar ciudades</param>
+        /// <param name="department">Departamento para filtrar</param>
+        /// <returns>Lista de ciudades sugeridas</returns>
         public async Task<IActionResult> Autocomplete([FromQuery] string? query, [FromQuery] string? department = null)
         {
             // Validación: se requiere al menos query o department
