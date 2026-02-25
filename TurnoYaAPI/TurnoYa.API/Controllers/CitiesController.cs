@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace TurnoYaAPI.Controllers
 {
+    /// <summary>
+    /// Controlador para gestión de ciudades y departamentos (autocomplete y búsqueda)
+    /// </summary>
     [ApiController]
     [Route("api/cities")]
     public class CitiesController : ControllerBase

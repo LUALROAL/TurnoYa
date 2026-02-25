@@ -4,6 +4,9 @@ using TurnoYa.Application.DTOs.Business;
 
 namespace TurnoYa.API.Controllers;
 
+/// <summary>
+/// Controlador para gestión de horarios de negocio
+/// </summary>
 [ApiController]
 [Route("api/[controller]/[action]")]
 public class BusinessScheduleController : ControllerBase
@@ -15,7 +18,11 @@ public class BusinessScheduleController : ControllerBase
         _service = service;
     }
 
-    // GET: api/BusinessSchedule/GetByBusiness/{businessId}
+    /// <summary>
+    /// Obtiene el horario de trabajo de un negocio por su ID
+    /// </summary>
+    /// <param name="businessId">ID del negocio</param>
+    /// <returns>Horario de trabajo</returns>
     [HttpGet("{businessId}")]
     public async Task<ActionResult<WorkingHoursDto>> GetByBusiness(Guid businessId)
     {
@@ -26,7 +33,11 @@ public class BusinessScheduleController : ControllerBase
         return Ok(schedule);
     }
 
-    // POST: api/BusinessSchedule/Create
+    /// <summary>
+    /// Crea un nuevo horario de trabajo para un negocio
+    /// </summary>
+    /// <param name="businessId">ID del negocio</param>
+    /// <param name="dto">Datos del horario</param>
     [HttpPost]
     public async Task<ActionResult> Create(Guid businessId, [FromBody] WorkingHoursDto dto)
     {
@@ -34,7 +45,11 @@ public class BusinessScheduleController : ControllerBase
         return CreatedAtAction(nameof(GetByBusiness), new { businessId }, dto);
     }
 
-    // PUT: api/BusinessSchedule/Update/{businessId}
+    /// <summary>
+    /// Actualiza el horario de trabajo de un negocio
+    /// </summary>
+    /// <param name="businessId">ID del negocio</param>
+    /// <param name="dto">Datos del horario</param>
     [HttpPut("{businessId}")]
     public async Task<ActionResult> Update(Guid businessId, [FromBody] WorkingHoursDto dto)
     {
@@ -42,7 +57,10 @@ public class BusinessScheduleController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/BusinessSchedule/Delete/{businessId}
+    /// <summary>
+    /// Elimina el horario de trabajo de un negocio
+    /// </summary>
+    /// <param name="businessId">ID del negocio</param>
     [HttpDelete("{businessId}")]
     public async Task<ActionResult> Delete(Guid businessId)
     {

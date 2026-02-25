@@ -6,7 +6,7 @@ using TurnoYa.Application.Interfaces;
 namespace TurnoYa.API.Controllers;
 
 /// <summary>
-/// Controlador de autenticación
+/// Controlador para autenticación de usuarios (registro, login, recuperación, etc.)
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]

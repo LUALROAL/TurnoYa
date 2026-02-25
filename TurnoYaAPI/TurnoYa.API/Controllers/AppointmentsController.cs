@@ -13,7 +13,7 @@ using TurnoYa.Core.Entities;
 namespace TurnoYaAPI.Controllers
 {
     /// <summary>
-    /// Endpoints para gestionar citas: creación, consulta y estados.
+    /// Controlador para gestión de citas: creación, consulta y estados.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]

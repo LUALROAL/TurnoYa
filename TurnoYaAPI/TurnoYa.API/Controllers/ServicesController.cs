@@ -9,7 +9,7 @@ using TurnoYa.Infrastructure.Data;
 namespace TurnoYa.API.Controllers;
 
 /// <summary>
-/// Controlador para gestión de servicios
+/// Controlador para gestión de servicios (alta, baja, edición, consulta)
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]

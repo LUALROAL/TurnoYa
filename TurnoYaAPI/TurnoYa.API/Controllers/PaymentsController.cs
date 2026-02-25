@@ -6,6 +6,9 @@ using TurnoYa.Application.Interfaces;
 
 namespace TurnoYaAPI.Controllers;
 
+/// <summary>
+/// Controlador para gestión de pagos y transacciones (Wompi)
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class PaymentsController : ControllerBase
