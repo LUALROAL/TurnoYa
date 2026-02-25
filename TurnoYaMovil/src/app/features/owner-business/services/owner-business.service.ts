@@ -8,6 +8,7 @@ import {
   UpdateBusinessRequest,
   BusinessSettings,
 } from '../models';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -118,7 +119,13 @@ export class OwnerBusinessService {
    * Toggle business active status
    */
   toggleActive(id: string, isActive: boolean): Observable<OwnerBusiness> {
-    return this.update(id, { isActive });
+    // Usar FormData para cumplir con el backend (multipart/form-data)
+    const formData = new FormData();
+    formData.append('isActive', isActive.toString());
+    return this.api.put<OwnerBusiness>(
+      `/api/business/${id}`,
+      formData
+    );
   }
 
   /**
