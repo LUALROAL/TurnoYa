@@ -28,24 +28,38 @@ namespace TurnoYa.Application.Services
         private static WorkingHoursDto MapToDto(BusinessSchedule schedule)
         {
             var dto = new WorkingHoursDto();
+
+            // Inicializar todos los días con valores por defecto (cerrado)
+            var defaultDay = new DayScheduleDto { IsOpen = false };
+            dto.Monday = defaultDay;
+            dto.Tuesday = defaultDay;
+            dto.Wednesday = defaultDay;
+            dto.Thursday = defaultDay;
+            dto.Friday = defaultDay;
+            dto.Saturday = defaultDay;
+            dto.Sunday = defaultDay;
+
             foreach (var wd in schedule.WorkingDays)
             {
                 var dayDto = new DayScheduleDto
                 {
                     IsOpen = wd.IsOpen
                 };
+
                 var block = wd.TimeBlocks?.FirstOrDefault();
                 if (block != null)
                 {
-                    dayDto.OpenTime = block.StartTime.ToString("hh:mm");
-                    dayDto.CloseTime = block.EndTime.ToString("hh:mm");
+                    dayDto.OpenTime = block.StartTime.ToString(@"hh\:mm");
+                    dayDto.CloseTime = block.EndTime.ToString(@"hh\:mm");
                 }
+
                 var breakTime = wd.BreakTimes?.FirstOrDefault();
                 if (breakTime != null)
                 {
-                    dayDto.BreakStartTime = breakTime.StartTime.ToString("hh:mm");
-                    dayDto.BreakEndTime = breakTime.EndTime.ToString("hh:mm");
+                    dayDto.BreakStartTime = breakTime.StartTime.ToString(@"hh\:mm");
+                    dayDto.BreakEndTime = breakTime.EndTime.ToString(@"hh\:mm");
                 }
+
                 switch (wd.DayOfWeek)
                 {
                     case 0: dto.Monday = dayDto; break;

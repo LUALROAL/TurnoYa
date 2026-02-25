@@ -151,14 +151,14 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   }
 
   private createDayGroup(): FormGroup {
-    return this.fb.group({
-      isOpen: [true],
-      openTime: ['09:00', [Validators.required, Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-      closeTime: ['18:00', [Validators.required, Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-      breakStartTime: ['13:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-      breakEndTime: ['14:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-    });
-  }
+  return this.fb.group({
+    isOpen: [true],
+    openTime: ['09:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
+    closeTime: ['18:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
+    breakStartTime: ['13:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
+    breakEndTime: ['14:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
+  });
+}
 
   private loadSettings() {
     this.loadingSettings = true;
@@ -341,6 +341,7 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
         this.notify.showSuccess('Horarios guardados correctamente');
         this.scheduleExists = true;
         this.savingSchedule = false;
+         this.router.navigate(['/owner/businesses']);
       },
       error: (error) => {
         console.error('Error al guardar horarios:', error);
