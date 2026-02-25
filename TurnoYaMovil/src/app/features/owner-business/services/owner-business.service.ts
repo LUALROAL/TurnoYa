@@ -9,6 +9,7 @@ import {
   BusinessSettings,
 } from '../models';
 import { HttpHeaders } from '@angular/common/http';
+import { WorkingHoursDto } from '../models/business-schedule.models';
 
 @Injectable({
   providedIn: 'root',
@@ -144,4 +145,34 @@ export class OwnerBusinessService {
   ): Observable<BusinessSettings> {
     return this.api.put<BusinessSettings>(`/api/business/${businessId}/settings`, settings);
   }
+
+  // ===== MÉTODOS PARA HORARIOS DE ATENCIÓN =====
+
+/**
+ * Obtiene el horario de un negocio
+ */
+getSchedule(businessId: string): Observable<WorkingHoursDto> {
+  return this.api.get<WorkingHoursDto>(`/api/BusinessSchedule/GetByBusiness/${businessId}`);
+}
+
+/**
+ * Crea el horario de un negocio
+ */
+createSchedule(businessId: string, schedule: WorkingHoursDto): Observable<void> {
+  return this.api.post<void>(`/api/BusinessSchedule/Create?businessId=${businessId}`, schedule);
+}
+
+/**
+ * Actualiza el horario de un negocio
+ */
+updateSchedule(businessId: string, schedule: WorkingHoursDto): Observable<void> {
+  return this.api.put<void>(`/api/BusinessSchedule/Update/${businessId}`, schedule);
+}
+
+/**
+ * Elimina el horario de un negocio (si aplica)
+ */
+deleteSchedule(businessId: string): Observable<void> {
+  return this.api.delete<void>(`/api/BusinessSchedule/Delete/${businessId}`);
+}
 }

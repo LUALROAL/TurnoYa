@@ -266,27 +266,28 @@
               }
 
               <!-- Nuevas imágenes seleccionadas -->
-              @if (selectedImages.length > 0) {
-              <div>
-                <label class="block text-xs font-mono text-neon-primary tracking-wider mb-3">
-                  NUEVAS IMÁGENES ({{ selectedImages.length }})
-                </label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  @for (preview of imagePreviews; track preview; let i = $index) {
-                  <div class="relative group/image">
-                    <div
-                      class="aspect-square rounded-xl overflow-hidden border border-neon-primary/20 bg-bg-secondary/50">
-                      <img [src]="preview" alt="Preview" class="w-full h-full object-cover">
+                @if (selectedImages.length > 0) {
+                <div>
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider mb-3">
+                    NUEVO LOGO
+                     <!-- ({{ selectedImages.length }}) -->
+                  </label>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    @for (preview of imagePreviews; track preview; let i = $index) {
+                    <div class="relative group/image">
+                      <div
+                        class="aspect-square rounded-xl overflow-hidden border border-neon-primary/20 bg-bg-secondary/50">
+                        <img [src]="preview" alt="Preview" class="w-full h-full object-cover">
+                      </div>
+                      <button type="button" (click)="showNewImageDeleteConfirmation(i)"
+                        class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500/90 border border-red-500/30 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-all duration-300 hover:bg-red-600">
+                        <ion-icon name="close-outline" class="text-white text-sm"></ion-icon>
+                      </button>
                     </div>
-                    <button type="button" (click)="showNewImageDeleteConfirmation(i)"
-                      class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500/90 border border-red-500/30 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-all duration-300 hover:bg-red-600">
-                      <ion-icon name="close-outline" class="text-white text-sm"></ion-icon>
-                    </button>
+                    }
                   </div>
-                  }
                 </div>
-              </div>
-              }
+                }
 
               <!-- Mensaje cuando no hay imágenes -->
               @if ((!isEditMode || existingImages.length === 0) && selectedImages.length === 0) {

@@ -1,17 +1,10 @@
+
 import { CityService } from '../../../city/services/city.service';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  IonContent,
-  IonIcon,
-  IonInput,
-  IonTextarea,
-  IonCheckbox,
-  IonModal
-} from '@ionic/angular/standalone';
 import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -35,8 +28,9 @@ import {
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { BusinessService } from '../../../business/services/business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
-import { CreateBusinessRequest, UpdateBusinessRequest, BusinessImage } from '../../models';
+import { CreateBusinessRequest, UpdateBusinessRequest, BusinessImage, OwnerBusiness } from '../../models';
 import { AppPhoto, PhotoService } from '../../services/photo.service';
+
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -414,10 +408,10 @@ export class BusinessFormPage implements OnInit, OnDestroy {
         .createWithImages(request, this.selectedImages)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: () => {
+          next: (createdBusiness: OwnerBusiness) => {
             this.notify.showSuccess('Negocio creado correctamente');
             this.cleanup();
-            this.router.navigate(['/owner/businesses']);
+            this.router.navigate(['/owner/businesses', createdBusiness.id, 'settings'], { queryParams: { tab: 'schedule' } });
           },
           error: (error) => {
             console.error('Error al crear negocio:', error);
@@ -480,7 +474,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
         next: () => {
           this.notify.showSuccess('Negocio actualizado correctamente');
           this.cleanup();
-          this.router.navigate(['/owner/businesses']);
+          this.router.navigate(['/owner/businesses', this.businessId, 'settings'], { queryParams: { tab: 'schedule' } });
         },
         error: (error) => {
           console.error('Error al actualizar negocio:', error);

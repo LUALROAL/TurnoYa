@@ -22,6 +22,59 @@
   animation-delay: 1s;
 }
 
+// Segment personalizado
+.schedule-segment {
+  --background: rgba(10, 14, 23, 0.8);
+  --background-checked: linear-gradient(135deg, #00E0FF, #00F5D4);
+  --indicator-color: transparent;
+  --color: #7A8FA6;
+  --color-checked: #03050A;
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+
+  ion-segment-button {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    --border-radius: 10px;
+    --border-width: 0;
+    --indicator-height: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+
+    &::part(indicator) {
+      display: none;
+    }
+
+    ion-icon {
+      font-size: 18px;
+      margin-right: 6px;
+    }
+  }
+}
+
+// Input de tipo time con estilo neón
+.input-neon {
+  --background: rgba(26, 31, 47, 0.5);
+  --border-color: rgba(0, 224, 255, 0.2);
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: #00E0FF;
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.3);
+  }
+}
+
 // Skeleton loaders
 .skeleton-form-header {
   height: 80px;
@@ -206,3 +259,5 @@ ion-content {
   align-items: center;
   gap: 4px;
 }
+
+
