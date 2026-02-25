@@ -328,12 +328,15 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
     }
     console.log('Enviando schedule:', JSON.stringify(cleanedSchedule, null, 2));
 
-    // Si no existe horario, crear; si existe, actualizar
-    const request = this.scheduleExists
-      ? this.ownerBusinessService.updateSchedule(this.businessId, cleanedSchedule)
-      : this.ownerBusinessService.createSchedule(this.businessId, cleanedSchedule);
+    // Si no existe horario, crear (POST); si existe, actualizar (PUT)
+    let request$;
+    if (this.scheduleExists) {
+      request$ = this.ownerBusinessService.updateSchedule(this.businessId, cleanedSchedule);
+    } else {
+      request$ = this.ownerBusinessService.createSchedule(this.businessId, cleanedSchedule);
+    }
 
-    request.pipe(takeUntil(this.destroy$)).subscribe({
+    request$.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.notify.showSuccess('Horarios guardados correctamente');
         this.scheduleExists = true;
