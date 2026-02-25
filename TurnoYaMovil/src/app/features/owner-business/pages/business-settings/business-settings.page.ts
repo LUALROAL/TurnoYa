@@ -320,6 +320,7 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
         next: () => {
           this.notify.showSuccess('Configuración guardada correctamente');
           this.savingSettings = false;
+          this.router.navigate(['/owner/businesses']);
         },
         error: (error) => {
           console.error('Error al guardar configuración:', error);
