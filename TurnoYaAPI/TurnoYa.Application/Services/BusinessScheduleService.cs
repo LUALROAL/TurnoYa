@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TurnoYa.Core.Entities;
@@ -11,25 +12,59 @@ namespace TurnoYa.Application.Services
     public class BusinessScheduleService : IBusinessScheduleService
     {
         private readonly IBusinessScheduleRepository _repository;
+
         public BusinessScheduleService(IBusinessScheduleRepository repository)
         {
             _repository = repository;
         }
+
         public async Task<WorkingHoursDto?> GetByBusinessIdAsync(Guid businessId)
         {
             var schedule = await _repository.GetByBusinessIdAsync(businessId);
             if (schedule == null)
                 return null;
-            // Mapear entidades a DTO
+
             return MapToDto(schedule);
         }
 
-        // Mapea BusinessSchedule a WorkingHoursDto
+        public async Task CreateAsync(Guid businessId, WorkingHoursDto dto)
+        {
+            var schedule = new BusinessSchedule
+            {
+                Id = Guid.NewGuid(),
+                BusinessId = businessId
+            };
+            schedule.WorkingDays = MapWorkingDays(dto, schedule);
+            await _repository.AddAsync(schedule);
+        }
+
+        public async Task UpdateAsync(Guid businessId, WorkingHoursDto dto)
+        {
+            var existing = await _repository.GetByBusinessIdAsync(businessId);
+            if (existing == null)
+                throw new Exception("No existe horario para el negocio");
+
+            // Eliminar el horario existente (en cascada elimina días, bloques y descansos)
+            await _repository.DeleteAsync(existing);
+
+            // Crear uno nuevo con los datos actualizados
+            await CreateAsync(businessId, dto);
+        }
+
+        public async Task DeleteAsync(Guid businessId)
+        {
+            var schedule = await _repository.GetByBusinessIdAsync(businessId);
+            if (schedule != null)
+                await _repository.DeleteAsync(schedule);
+        }
+
+        // ===== MÉTODOS PRIVADOS DE MAPEO =====
+
         private static WorkingHoursDto MapToDto(BusinessSchedule schedule)
         {
             var dto = new WorkingHoursDto();
 
-            // Inicializar todos los días con valores por defecto (cerrado)
+            // Inicializar todos los días como cerrados por defecto
             var defaultDay = new DayScheduleDto { IsOpen = false };
             dto.Monday = defaultDay;
             dto.Tuesday = defaultDay;
@@ -71,34 +106,11 @@ namespace TurnoYa.Application.Services
                     case 6: dto.Sunday = dayDto; break;
                 }
             }
+
             return dto;
         }
-        public async Task CreateAsync(Guid businessId, WorkingHoursDto dto)
-        {
-            var schedule = new BusinessSchedule
-            {
-                Id = Guid.NewGuid(),
-                BusinessId = businessId,
-                Business = null!,
-                WorkingDays = MapWorkingDays(dto)
-            };
-            await _repository.AddAsync(schedule);
-        }
-        public async Task UpdateAsync(Guid businessId, WorkingHoursDto dto)
-        {
-            var existing = await _repository.GetByBusinessIdAsync(businessId);
-            if (existing == null)
-                throw new Exception("No existe horario para el negocio");
 
-            // Borra días existentes (simplificado, puedes mejorar lógica de merge)
-            existing.WorkingDays.Clear();
-            foreach (var wd in MapWorkingDays(dto))
-                existing.WorkingDays.Add(wd);
-            await _repository.UpdateAsync(existing);
-        }
-
-        // Mapea WorkingHoursDto a lista de BusinessWorkingDay
-        private static List<BusinessWorkingDay> MapWorkingDays(WorkingHoursDto dto)
+        private static List<BusinessWorkingDay> MapWorkingDays(WorkingHoursDto dto, BusinessSchedule schedule)
         {
             var days = new List<BusinessWorkingDay>();
             var dayDtos = new[]
@@ -111,6 +123,7 @@ namespace TurnoYa.Application.Services
                 (5, dto.Saturday),
                 (6, dto.Sunday)
             };
+
             foreach (var (dayOfWeek, dayDto) in dayDtos)
             {
                 var workingDay = new BusinessWorkingDay
@@ -118,10 +131,11 @@ namespace TurnoYa.Application.Services
                     Id = Guid.NewGuid(),
                     DayOfWeek = dayOfWeek,
                     IsOpen = dayDto.IsOpen,
-                    BusinessSchedule = null!,
+                    BusinessSchedule = schedule,
                     TimeBlocks = new List<BusinessTimeBlock>(),
                     BreakTimes = new List<BusinessBreakTime>()
                 };
+
                 if (dayDto.IsOpen && !string.IsNullOrEmpty(dayDto.OpenTime) && !string.IsNullOrEmpty(dayDto.CloseTime))
                 {
                     workingDay.TimeBlocks.Add(new BusinessTimeBlock
@@ -129,9 +143,10 @@ namespace TurnoYa.Application.Services
                         Id = Guid.NewGuid(),
                         StartTime = TimeSpan.Parse(dayDto.OpenTime),
                         EndTime = TimeSpan.Parse(dayDto.CloseTime),
-                        WorkingDay = null!
+                        WorkingDay = workingDay
                     });
                 }
+
                 if (!string.IsNullOrEmpty(dayDto.BreakStartTime) && !string.IsNullOrEmpty(dayDto.BreakEndTime))
                 {
                     workingDay.BreakTimes.Add(new BusinessBreakTime
@@ -139,18 +154,14 @@ namespace TurnoYa.Application.Services
                         Id = Guid.NewGuid(),
                         StartTime = TimeSpan.Parse(dayDto.BreakStartTime),
                         EndTime = TimeSpan.Parse(dayDto.BreakEndTime),
-                        WorkingDay = null!
+                        WorkingDay = workingDay
                     });
                 }
+
                 days.Add(workingDay);
             }
+
             return days;
-        }
-        public async Task DeleteAsync(Guid businessId)
-        {
-            var schedule = await _repository.GetByBusinessIdAsync(businessId);
-            if (schedule != null)
-                await _repository.DeleteAsync(schedule);
         }
     }
 }
