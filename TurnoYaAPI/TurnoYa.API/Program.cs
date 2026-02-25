@@ -10,6 +10,7 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using TurnoYa.Application.Interfaces;
+using TurnoYa.Application.Services;
 using TurnoYa.Application.Validators;
 using TurnoYa.Core.Entities;
 using TurnoYa.Core.Interfaces;
@@ -73,16 +74,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 // Repositories
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
+builder.Services.AddScoped<IBusinessScheduleRepository, BusinessScheduleRepository>();
 
 // Application Services
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddHttpClient<IWompiService, WompiService>();
+builder.Services.AddScoped<IBusinessScheduleService, BusinessScheduleService>();
 
 // Authentication & JWT
 builder.Services.AddAuthentication(options =>
