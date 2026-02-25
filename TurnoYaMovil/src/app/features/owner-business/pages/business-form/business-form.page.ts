@@ -383,16 +383,20 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (this.isCustomCategory && this.customCategoryValue.trim()) {
       categoryValue = this.customCategoryValue.trim();
     }
+    // Mayúsculas
+    const nameUpper = formValue.name?.trim().toUpperCase();
+    const categoryUpper = categoryValue?.toUpperCase();
+    const addressUpper = formValue.address?.trim().toUpperCase();
     let websiteValue = formValue.website?.trim() || undefined;
     if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
       websiteValue = 'https://' + websiteValue;
     }
 
     const request: CreateBusinessRequest = {
-      name: formValue.name?.trim(),
+      name: nameUpper,
       description: formValue.description?.trim() || undefined,
-      category: categoryValue,
-      address: formValue.address?.trim(),
+      category: categoryUpper,
+      address: addressUpper,
       city: formValue.city?.trim(),
       department: formValue.department?.trim(),
       phone: formValue.phone?.trim() || undefined,
@@ -445,16 +449,20 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     if (this.isCustomCategory && this.customCategoryValue.trim()) {
       categoryValue = this.customCategoryValue.trim();
     }
+    // Mayúsculas
+    const nameUpper = formValue.name?.trim().toUpperCase();
+    const categoryUpper = categoryValue?.toUpperCase();
+    const addressUpper = formValue.address?.trim().toUpperCase();
     let websiteValue = formValue.website?.trim() || undefined;
     if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
       websiteValue = 'https://' + websiteValue;
     }
 
     const request: UpdateBusinessRequest = {
-      name: formValue.name?.trim() || undefined,
+      name: nameUpper || undefined,
       description: formValue.description?.trim() || undefined,
-      category: categoryValue || undefined,
-      address: formValue.address?.trim() || undefined,
+      category: categoryUpper || undefined,
+      address: addressUpper || undefined,
       city: formValue.city?.trim() || undefined,
       department: formValue.department?.trim() || undefined,
       phone: formValue.phone?.trim() || undefined,
