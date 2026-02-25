@@ -390,7 +390,7 @@
             class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50">
             Cancelar
           </button>
-          <button type="submit" [disabled]="scheduleForm.invalid || savingSchedule"
+          <button type="submit" [disabled]="!businessId || scheduleForm.invalid || savingSchedule"
             class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50">
             <div
               class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300">

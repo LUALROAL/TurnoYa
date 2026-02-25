@@ -200,6 +200,10 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
             }
             this.scheduleForm.patchValue(normalized);
             this.scheduleExists = true;
+          } else {
+            // Si no hay horario, permitir crear uno nuevo
+            this.scheduleExists = false;
+            this.resetScheduleForm();
           }
           this.loadingSchedule = false;
         },
@@ -290,6 +294,10 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
 
   // Guardar horarios
   onSaveSchedule() {
+    if (!this.businessId) {
+      this.notify.showError('No se encontró el ID del negocio.');
+      return;
+    }
     if (this.scheduleForm.invalid) {
       this.scheduleForm.markAllAsTouched();
       this.notify.showError('Por favor, completa todos los horarios correctamente');
@@ -320,6 +328,7 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
     }
     console.log('Enviando schedule:', JSON.stringify(cleanedSchedule, null, 2));
 
+    // Si no existe horario, crear; si existe, actualizar
     const request = this.scheduleExists
       ? this.ownerBusinessService.updateSchedule(this.businessId, cleanedSchedule)
       : this.ownerBusinessService.createSchedule(this.businessId, cleanedSchedule);
