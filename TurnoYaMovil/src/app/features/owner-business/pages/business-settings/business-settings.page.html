@@ -35,12 +35,12 @@
     <div class="px-4 mt-4">
       <ion-segment [value]="selectedTab" (ionChange)="onSegmentChange($event)" class="schedule-segment">
         <ion-segment-button value="general">
-          <ion-icon name="business-outline"></ion-icon>
-          <ion-label>General</ion-label>
+          <ion-icon name="business-outline" class="text-neon-primary text-xl"></ion-icon>
+          <ion-label class="text-text-tertiary">General</ion-label>
         </ion-segment-button>
         <ion-segment-button value="schedule">
-          <ion-icon name="time-outline"></ion-icon>
-          <ion-label>Horarios</ion-label>
+          <ion-icon name="time-outline" class="text-neon-primary text-xl"></ion-icon>
+          <ion-label class="text-text-tertiary">Horarios</ion-label>
         </ion-segment-button>
       </ion-segment>
     </div>
