@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TurnoYa.Core.Entities;
@@ -11,65 +12,89 @@ namespace TurnoYa.Application.Services
     public class EmployeeScheduleService : IEmployeeScheduleService
     {
         private readonly IEmployeeScheduleRepository _repository;
+
         public EmployeeScheduleService(IEmployeeScheduleRepository repository)
         {
             _repository = repository;
         }
+
         public async Task<WorkingHoursDto?> GetByEmployeeIdAsync(Guid employeeId)
         {
             var schedule = await _repository.GetByEmployeeIdAsync(employeeId);
             if (schedule == null)
                 return null;
+
             return MapToDto(schedule);
         }
+
         public async Task CreateAsync(Guid employeeId, WorkingHoursDto dto)
         {
             var schedule = new EmployeeSchedule
             {
                 Id = Guid.NewGuid(),
-                EmployeeId = employeeId,
-                Employee = null!,
-                WorkingDays = MapWorkingDays(dto)
+                EmployeeId = employeeId
             };
+            schedule.WorkingDays = MapWorkingDays(dto, schedule);
             await _repository.AddAsync(schedule);
         }
+
         public async Task UpdateAsync(Guid employeeId, WorkingHoursDto dto)
         {
             var existing = await _repository.GetByEmployeeIdAsync(employeeId);
             if (existing == null)
                 throw new Exception("No existe horario para el empleado");
-            existing.WorkingDays.Clear();
-            foreach (var wd in MapWorkingDays(dto))
-                existing.WorkingDays.Add(wd);
-            await _repository.UpdateAsync(existing);
+
+            // Eliminar el horario existente (en cascada elimina días, bloques y descansos)
+            await _repository.DeleteAsync(existing);
+
+            // Crear uno nuevo con los datos actualizados
+            await CreateAsync(employeeId, dto);
         }
+
         public async Task DeleteAsync(Guid employeeId)
         {
             var schedule = await _repository.GetByEmployeeIdAsync(employeeId);
             if (schedule != null)
                 await _repository.DeleteAsync(schedule);
         }
+
+        // ===== MÉTODOS PRIVADOS DE MAPEO =====
+
         private static WorkingHoursDto MapToDto(EmployeeSchedule schedule)
         {
             var dto = new WorkingHoursDto();
+
+            // Inicializar todos los días como cerrados por defecto
+            var defaultDay = new DayScheduleDto { IsOpen = false };
+            dto.Monday = defaultDay;
+            dto.Tuesday = defaultDay;
+            dto.Wednesday = defaultDay;
+            dto.Thursday = defaultDay;
+            dto.Friday = defaultDay;
+            dto.Saturday = defaultDay;
+            dto.Sunday = defaultDay;
+
             foreach (var wd in schedule.WorkingDays)
             {
                 var dayDto = new DayScheduleDto
                 {
                     IsOpen = wd.IsOpen
                 };
+
                 var block = wd.TimeBlocks?.FirstOrDefault();
                 if (block != null)
                 {
-                    dayDto.OpenTime = block.StartTime.ToString("hh:mm");
-                    dayDto.CloseTime = block.EndTime.ToString("hh:mm");
+                    dayDto.OpenTime = block.StartTime.ToString(@"hh\:mm");
+                    dayDto.CloseTime = block.EndTime.ToString(@"hh\:mm");
                 }
+
                 var breakTime = wd.BreakTimes?.FirstOrDefault();
                 if (breakTime != null)
                 {
-                    dayDto.BreakStartTime = breakTime.StartTime.ToString("hh:mm");
-                    dayDto.BreakEndTime = breakTime.EndTime.ToString("hh:mm");
+                    dayDto.BreakStartTime = breakTime.StartTime.ToString(@"hh\:mm");
+                    dayDto.BreakEndTime = breakTime.EndTime.ToString(@"hh\:mm");
                 }
+
                 switch (wd.DayOfWeek)
                 {
                     case 0: dto.Monday = dayDto; break;
@@ -81,9 +106,11 @@ namespace TurnoYa.Application.Services
                     case 6: dto.Sunday = dayDto; break;
                 }
             }
+
             return dto;
         }
-        private static List<EmployeeWorkingDay> MapWorkingDays(WorkingHoursDto dto)
+
+        private static List<EmployeeWorkingDay> MapWorkingDays(WorkingHoursDto dto, EmployeeSchedule schedule)
         {
             var days = new List<EmployeeWorkingDay>();
             var dayDtos = new[]
@@ -96,6 +123,7 @@ namespace TurnoYa.Application.Services
                 (5, dto.Saturday),
                 (6, dto.Sunday)
             };
+
             foreach (var (dayOfWeek, dayDto) in dayDtos)
             {
                 var workingDay = new EmployeeWorkingDay
@@ -103,32 +131,36 @@ namespace TurnoYa.Application.Services
                     Id = Guid.NewGuid(),
                     DayOfWeek = dayOfWeek,
                     IsOpen = dayDto.IsOpen,
-                    EmployeeSchedule = null!,
+                    EmployeeSchedule = schedule,
                     TimeBlocks = new List<EmployeeTimeBlock>(),
                     BreakTimes = new List<EmployeeBreakTime>()
                 };
+
                 if (dayDto.IsOpen && !string.IsNullOrEmpty(dayDto.OpenTime) && !string.IsNullOrEmpty(dayDto.CloseTime))
                 {
                     workingDay.TimeBlocks.Add(new EmployeeTimeBlock
                     {
                         Id = Guid.NewGuid(),
-                        StartTime = TimeSpan.Parse(dayDto.OpenTime),
-                        EndTime = TimeSpan.Parse(dayDto.CloseTime),
-                        WorkingDay = null!
+                        StartTime = TimeSpan.ParseExact(dayDto.OpenTime, @"hh\:mm", null),
+                        EndTime = TimeSpan.ParseExact(dayDto.CloseTime, @"hh\:mm", null),
+                        WorkingDay = workingDay
                     });
                 }
+
                 if (!string.IsNullOrEmpty(dayDto.BreakStartTime) && !string.IsNullOrEmpty(dayDto.BreakEndTime))
                 {
                     workingDay.BreakTimes.Add(new EmployeeBreakTime
                     {
                         Id = Guid.NewGuid(),
-                        StartTime = TimeSpan.Parse(dayDto.BreakStartTime),
-                        EndTime = TimeSpan.Parse(dayDto.BreakEndTime),
-                        WorkingDay = null!
+                        StartTime = TimeSpan.ParseExact(dayDto.BreakStartTime, @"hh\:mm", null),
+                        EndTime = TimeSpan.ParseExact(dayDto.BreakEndTime, @"hh\:mm", null),
+                        WorkingDay = workingDay
                     });
                 }
+
                 days.Add(workingDay);
             }
+
             return days;
         }
     }

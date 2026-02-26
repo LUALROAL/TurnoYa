@@ -17,6 +17,7 @@ namespace TurnoYa.Infrastructure.Repositories
         public async Task<EmployeeSchedule?> GetByEmployeeIdAsync(Guid employeeId)
         {
             return await _context.EmployeeSchedules
+                .AsNoTracking() // Opcional
                 .Include(s => s.WorkingDays)
                     .ThenInclude(wd => wd.TimeBlocks)
                 .Include(s => s.WorkingDays)
