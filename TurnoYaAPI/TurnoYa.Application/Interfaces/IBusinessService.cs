@@ -15,7 +15,8 @@ namespace TurnoYa.Application.Interfaces
         Task<IEnumerable<BusinessListDto>> GetByCategoryAsync(string category);
         Task<BusinessDetailDto> AddAsync(CreateBusinessDto businessDto, Guid ownerId, List<byte[]>? images = null);
         Task<BusinessDetailDto> UpdateAsync(Guid id, UpdateBusinessDto businessDto, Guid userId, List<byte[]>? images = null);
-        Task<bool> DeleteAsync(Guid id);
+        Task DeleteAsync(Guid id, Guid ownerId);
+        //Task<bool> DeleteAsync(Guid id , Guid ownerId);
         Task<IEnumerable<string>> GetCategoriesAsync();
         Task<BusinessSettingsDto?> GetSettingsAsync(Guid businessId);
         Task<BusinessSettingsDto?> UpdateSettingsAsync(Guid businessId, BusinessSettingsDto dto, Guid userId);

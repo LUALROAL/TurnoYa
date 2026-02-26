@@ -180,12 +180,17 @@ namespace TurnoYa.Infrastructure.Services
             return _mapper.Map<BusinessSettingsDto>(business.Settings);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, Guid ownerId)
         {
-            var exists = await _businessRepository.ExistsAsync(id);
-            if (!exists) return false;
+            var business = await _businessRepository.GetByIdAsync(id);
+
+            if (business == null)
+                throw new KeyNotFoundException();
+
+            if (business.OwnerId != ownerId)
+                throw new UnauthorizedAccessException();
+
             await _businessRepository.DeleteAsync(id);
-            return true;
         }
     }
 }

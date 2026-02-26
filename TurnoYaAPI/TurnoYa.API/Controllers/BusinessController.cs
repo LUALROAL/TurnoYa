@@ -313,10 +313,34 @@ public class BusinessController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        // TODO: Obtener OwnerId del usuario autenticado y pasar a servicio
-        throw new NotImplementedException("Mover lógica de eliminación a BusinessService");
-    }
+        var ownerIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        if (string.IsNullOrEmpty(ownerIdString))
+        {
+            return StatusCode(403, new { message = "No se pudo identificar el usuario" });
+        }
+
+        var ownerId = Guid.Parse(ownerIdString);
+
+        try
+        {
+            await _businessService.DeleteAsync(id, ownerId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { message = "Negocio no encontrado" });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid("No autorizado para eliminar este negocio");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar negocio");
+            return StatusCode(500, new { message = "Error interno al eliminar negocio" });
+        }
+    }
     /// <summary>
     /// Obtiene la configuración de un negocio
     /// </summary>
