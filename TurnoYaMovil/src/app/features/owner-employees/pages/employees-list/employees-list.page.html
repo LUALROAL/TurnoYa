@@ -2,12 +2,11 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
-
-    <div class="absolute inset-0" style="background-image:
-      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;">
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
+    <div class="absolute inset-0"
+      style="background-image: linear-gradient(rgba(0,224,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.03) 1px, transparent 1px); background-size:40px 40px;">
     </div>
   </div>
 
@@ -16,7 +15,8 @@
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <button [routerLink]="['/owner/businesses']" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <button [routerLink]="['/owner/businesses']"
+            class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
             <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
           </button>
           <div>
@@ -34,7 +34,7 @@
     </header>
 
     <div class="px-4 space-y-6 mt-4">
-      <!-- Título de sección mejorado -->
+      <!-- Título de sección -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
           Tu <span class="text-neon-primary">equipo</span> de trabajo
@@ -48,166 +48,175 @@
 
       <!-- Loading skeleton -->
       @if (loading) {
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          @for (i of [1, 2, 3, 4]; track i) {
-            <div class="skeleton-card"></div>
-          }
-        </section>
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-card"></div>
+        }
+      </section>
       }
 
-      <!-- Empty state mejorado -->
+      <!-- Empty state -->
       @if (!loading && isEmpty) {
-        <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
-          <div class="relative">
-            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-              <ion-icon name="people-outline" class="text-5xl text-neon-primary"></ion-icon>
-            </div>
-            <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes empleados</h3>
-            <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
-              Agrega tu equipo para asignar citas y disponibilidad.
-            </p>
-            <button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
-              <ion-icon name="add-outline"></ion-icon>
-              Crear empleado
-            </button>
+      <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
+        <div class="relative">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+            <ion-icon name="people-outline" class="text-5xl text-neon-primary"></ion-icon>
           </div>
+          <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes empleados</h3>
+          <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
+            Agrega tu equipo para asignar citas y disponibilidad.
+          </p>
+          <button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
+            <ion-icon name="add-outline"></ion-icon>
+            Crear empleado
+          </button>
         </div>
+      </div>
       }
 
       <!-- Lista de empleados -->
       @if (!loading && !isEmpty) {
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          @for (employee of employees; track trackByEmployeeId($index, employee)) {
-            <div class="relative group overflow-hidden rounded-2xl">
-              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (employee of employees; track trackByEmployeeId($index, employee)) {
+        <div class="relative group overflow-hidden rounded-2xl">
+          <div
+            class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          </div>
 
-              <article class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
+          <article
+            class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
 
-                <!-- Cabecera con avatar y gradiente (AJUSTADA LA POSICIÓN) -->
-                <div class="relative h-20 overflow-hidden bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20">
-                  <!-- SVG con comillas SIMPLES para evitar errores -->
-                  <!-- <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%220%200%2040%2040%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22%2300E0FF%22%20fill-opacity%3D%220.1%22%20fill-rule%3D%22evenodd%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%2210%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'); background-repeat: repeat;"></div> -->
+            <!-- Cabecera con avatar -->
+            <div class="relative h-20 overflow-hidden bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20">
+              <!-- Avatar -->
+              <div
+                class="absolute left-4 w-16 h-16 rounded-xl bg-gradient-to-br from-neon-primary to-neon-secondary flex items-center justify-center shadow-lg border-2 border-bg-primary overflow-hidden avatar-glow">
+                @if (employee.profilePictureUrl) {
+                <img [src]="employee.profilePictureUrl" [alt]="employee.firstName" class="w-full h-full object-cover">
+                } @else {
+                <span class="text-2xl font-display font-bold text-bg-primary">
+                  {{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}
+                </span>
+                }
+              </div>
 
-                  <!-- Avatar: Foto si existe, si no iniciales (REPOSICIONADO) -->
-                  <div class="absolute left-4  w-16 h-16 rounded-xl bg-gradient-to-br from-neon-primary to-neon-secondary flex items-center justify-center shadow-lg border-2 border-bg-primary overflow-hidden">
-                    @if (employee.profilePictureUrl) {
-                      <img [src]="employee.profilePictureUrl" [alt]="employee.firstName" class="w-full h-full object-cover">
-                    } @else {
-                      <span class="text-2xl font-display font-bold text-bg-primary">
-                        {{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}
-                      </span>
-                    }
-                  </div>
-
-                  <!-- Status badge -->
-                  <div class="absolute top-4 right-3">
-                    <span class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm flex items-center gap-1"
-                          [class.bg-neon-primary/20]="employee.isActive"
-                          [class.border-neon-primary/30]="employee.isActive"
-                          [class.text-neon-primary]="employee.isActive"
-                          [class.bg-text-tertiary/10]="!employee.isActive"
-                          [class.border-text-tertiary/30]="!employee.isActive"
-                          [class.text-text-tertiary]="!employee.isActive">
-                      <span class="w-1.5 h-1.5 rounded-full"
-                            [class.bg-neon-primary]="employee.isActive"
-                            [class.animate-ping]="employee.isActive"
-                            [class.bg-text-tertiary]="!employee.isActive"></span>
-                      {{ employee.isActive ? 'Activo' : 'Inactivo' }}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Contenido de la tarjeta (AJUSTADO EL PADDING SUPERIOR) -->
-                <div class="pt-12 p-4 space-y-3">
-
-                  <!-- Nombre y cargo -->
-                  <div>
-                    <h3 class="text-xl font-display font-bold text-text-primary">
-                      {{ employee.firstName }} {{ employee.lastName }}
-                    </h3>
-                    @if (employee.position) {
-                      <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
-                        <ion-icon name="person-outline" class="text-neon-primary text-xs"></ion-icon>
-                        {{ employee.position }}
-                      </p>
-                    }
-                  </div>
-
-                  <!-- Bio (si existe) -->
-                  @if (employee.bio) {
-                    <p class="text-text-secondary text-sm leading-relaxed border-l-2 border-neon-primary/30 pl-3">
-                      {{ employee.bio }}
-                    </p>
-                  }
-
-                  <!-- Información de contacto -->
-                  <div class="space-y-2 pt-2">
-                    @if (employee.phone) {
-                      <div class="flex items-center gap-2 text-sm text-text-secondary hover:text-neon-primary transition-colors">
-                        <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-                          <ion-icon name="call-outline" class="text-neon-primary text-sm"></ion-icon>
-                        </div>
-                        <span class="font-mono text-xs">{{ employee.phone }}</span>
-                      </div>
-                    }
-
-                    @if (employee.email) {
-                      <div class="flex items-center gap-2 text-sm text-text-secondary hover:text-neon-primary transition-colors">
-                        <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-                          <ion-icon name="mail-outline" class="text-neon-primary text-sm"></ion-icon>
-                        </div>
-                        <span class="font-mono text-xs">{{ employee.email }}</span>
-                      </div>
-                    }
-                  </div>
-
-                  <!-- Botones de acción -->
-                  <div class="grid grid-cols-3 gap-2 pt-4 border-t border-neon-primary/10">
-                    <button [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'edit']"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="create-outline" class="text-sm"></ion-icon>
-                      Editar
-                    </button>
-
-                    <button (click)="toggleEmployeeStatus(employee)"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono transition-all duration-300"
-                            [class.text-neon-primary]="!employee.isActive"
-                            [class.hover:border-neon-primary/50]="!employee.isActive"
-                            [class.hover:text-neon-primary]="!employee.isActive"
-                            [class.text-red-400]="employee.isActive"
-                            [class.hover:border-red-500/50]="employee.isActive"
-                            [class.hover:text-red-400]="employee.isActive">
-                      <ion-icon [name]="employee.isActive ? 'close-circle-outline' : 'checkmark-circle-outline'" class="text-sm"></ion-icon>
-                      {{ employee.isActive ? 'Desactivar' : 'Activar' }}
-                    </button>
-
-                    <button (click)="deleteEmployee(employee)"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300">
-                      <ion-icon name="trash-outline" class="text-sm"></ion-icon>
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              </article>
+              <!-- Status badge -->
+              <div class="absolute top-4 right-3">
+                <span
+                  class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm flex items-center gap-1 status-badge"
+                  [class.bg-neon-primary/20]="employee.isActive" [class.border-neon-primary/30]="employee.isActive"
+                  [class.text-neon-primary]="employee.isActive" [class.bg-text-tertiary/10]="!employee.isActive"
+                  [class.border-text-tertiary/30]="!employee.isActive" [class.text-text-tertiary]="!employee.isActive">
+                  <span class="w-1.5 h-1.5 rounded-full" [class.bg-neon-primary]="employee.isActive"
+                    [class.animate-ping]="employee.isActive" [class.bg-text-tertiary]="!employee.isActive"></span>
+                  {{ employee.isActive ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
             </div>
-          }
-        </section>
+
+            <!-- Contenido de la tarjeta -->
+            <div class="pt-12 p-4 space-y-3">
+              <!-- Nombre y cargo -->
+              <div>
+                <h3 class="text-xl font-display font-bold text-text-primary">
+                  {{ employee.firstName }} {{ employee.lastName }}
+                </h3>
+                @if (employee.position) {
+                <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
+                  <ion-icon name="person-outline" class="text-neon-primary text-xs"></ion-icon>
+                  {{ employee.position }}
+                </p>
+                }
+              </div>
+
+              <!-- Bio -->
+              @if (employee.bio) {
+              <p class="text-text-secondary text-sm leading-relaxed border-l-2 border-neon-primary/30 pl-3">
+                {{ employee.bio }}
+              </p>
+              }
+
+              <!-- Contacto -->
+              <div class="space-y-2 pt-2">
+                @if (employee.phone) {
+                <div
+                  class="flex items-center gap-2 text-sm text-text-secondary hover:text-neon-primary transition-colors">
+                  <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                    <ion-icon name="call-outline" class="text-neon-primary text-sm"></ion-icon>
+                  </div>
+                  <span class="font-mono text-xs">{{ employee.phone }}</span>
+                </div>
+                }
+                @if (employee.email) {
+                <div
+                  class="flex items-center gap-2 text-sm text-text-secondary hover:text-neon-primary transition-colors">
+                  <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                    <ion-icon name="mail-outline" class="text-neon-primary text-sm"></ion-icon>
+                  </div>
+                  <span class="font-mono text-xs">{{ employee.email }}</span>
+                </div>
+                }
+              </div>
+
+              <!-- Botones de acción (estilo mejorado) -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-4 border-t border-neon-primary/10">
+                <!-- Horarios -->
+                <button [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'schedule']"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                  <ion-icon name="time-outline" class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">Horarios</span>
+                </button>
+
+                <!-- Editar -->
+                <button [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'edit']"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                  <ion-icon name="create-outline" class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">Editar</span>
+                </button>
+
+                <!-- Activar/Desactivar -->
+                <button (click)="toggleEmployeeStatus(employee)"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border rounded-lg text-xs font-mono transition-all duration-300"
+                  [class.border-neon-primary/20]="!employee.isActive" [class.text-text-secondary]="!employee.isActive"
+                  [class.hover:border-neon-primary/50]="!employee.isActive"
+                  [class.hover:text-neon-primary]="!employee.isActive" [class.border-red-500/20]="employee.isActive"
+                  [class.text-red-400]="employee.isActive" [class.hover:border-red-500/50]="employee.isActive"
+                  [class.hover:text-red-400]="employee.isActive" [class.hover:bg-red-500/10]="employee.isActive">
+                  <ion-icon [name]="employee.isActive ? 'close-circle-outline' : 'checkmark-circle-outline'"
+                    class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">{{ employee.isActive ? 'Desactivar' : 'Activar' }}</span>
+                </button>
+
+                <!-- Eliminar -->
+                <button (click)="deleteEmployee(employee)"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300">
+                  <ion-icon name="trash-outline" class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">Eliminar</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+        }
+      </section>
       }
     </div>
   </div>
 
-  <!-- Floating action button mejorado -->
+  <!-- Floating action button -->
   @if (!loading && !isEmpty) {
-    <div class="fixed bottom-6 right-6 z-30">
-      <div class="relative group">
-        <div class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
-        <button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']"
-                class="relative w-14 h-14 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary flex items-center justify-center shadow-neon hover:scale-110 transition-transform duration-300">
-          <ion-icon name="add-outline" class="text-2xl text-bg-primary"></ion-icon>
-        </button>
+  <div class="fixed bottom-6 right-6 z-30">
+    <div class="relative group">
+      <div
+        class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur">
       </div>
+      <button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']"
+        class="relative w-14 h-14 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary flex items-center justify-center shadow-neon hover:scale-110 transition-transform duration-300">
+        <ion-icon name="add-outline" class="text-2xl text-bg-primary"></ion-icon>
+      </button>
     </div>
+  </div>
   }
 </ion-content>

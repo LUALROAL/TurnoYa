@@ -1,0 +1,102 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+// Skeleton loaders
+.skeleton-form-header {
+  height: 80px;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
+}
+
+.skeleton-form-section {
+  height: 300px;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 31, 47, 0.5) 25%,
+    rgba(0, 224, 255, 0.1) 50%,
+    rgba(26, 31, 47, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+  &:hover {
+    background: #00F5D4;
+  }
+}
+
+ion-content {
+  --background: transparent;
+}
+
+// Estilo para inputs tipo time
+.input-neon {
+  --background: rgba(26, 31, 47, 0.5);
+  --border-color: rgba(0, 224, 255, 0.2);
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: #00E0FF;
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.3);
+  }
+}
+
+// Checkbox neón (reutilizado)
+.checkbox-neon {
+  --size: 20px;
+  --background-checked: linear-gradient(135deg, #00E0FF, #00F5D4);
+  --border-color-checked: transparent;
+  --checkmark-color: #03050A;
+  --border-color: rgba(0, 224, 255, 0.3);
+  --border-radius: 4px;
+
+  &::part(container) {
+    border-width: 2px;
+    transition: all 0.3s ease;
+  }
+
+  &:checked::part(container) {
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
+  }
+}

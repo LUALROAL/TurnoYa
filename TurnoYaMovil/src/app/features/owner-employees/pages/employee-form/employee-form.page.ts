@@ -200,9 +200,11 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       .create(this.businessId, request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (createdEmployee) => {
           this.saving = false;
-          this.router.navigate(['/owner/businesses', this.businessId, 'employees']);
+          // Redirigir a configuración de horarios del empleado recién creado
+          this.router.navigate(['/owner/businesses', this.businessId, 'employees', createdEmployee.id, 'schedule']);
+          this.notify.showSuccess('Empleado creado correctamente');
         },
         error: (error: unknown) => {
           console.error('Error al crear empleado:', error);
@@ -233,6 +235,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
         next: () => {
           this.saving = false;
           this.router.navigate(['/owner/businesses', this.businessId, 'employees']);
+          this.notify.showSuccess('Empleado actualizado correctamente');
         },
         error: (error: unknown) => {
           console.error('Error al actualizar empleado:', error);

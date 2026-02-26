@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import {
   CreateEmployeeRequest,
   OwnerEmployee,
   UpdateEmployeeRequest,
 } from '../models';
+import { WorkingHoursDto } from '../models/employee-schedule.models';
 
 @Injectable({
   providedIn: 'root',
@@ -40,5 +41,49 @@ export class OwnerEmployeesService {
 
   delete(employeeId: string): Observable<void> {
     return this.api.delete<void>(`/api/employees/${employeeId}`);
+  }
+
+  // ===== MÉTODOS PARA HORARIOS DE EMPLEADO =====
+
+  /**
+   * Obtiene el horario de un empleado
+   */
+  getEmployeeSchedule(employeeId: string): Observable<WorkingHoursDto | null> {
+    return this.api
+      .get<WorkingHoursDto>(`/api/EmployeeSchedule/GetByEmployee/${employeeId}`)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 404) {
+            return of(null); // No existe horario, retornamos null (sin error)
+          }
+          return throwError(() => error);
+        })
+      );
+  }
+
+  /**
+   * Crea el horario para un empleado
+   */
+  createEmployeeSchedule(
+    employeeId: string,
+    schedule: WorkingHoursDto
+  ): Observable<void> {
+    return this.api.post<void>(
+      `/api/EmployeeSchedule/Create?employeeId=${employeeId}`,
+      schedule
+    );
+  }
+
+  /**
+   * Actualiza el horario de un empleado
+   */
+  updateEmployeeSchedule(
+    employeeId: string,
+    schedule: WorkingHoursDto
+  ): Observable<void> {
+    return this.api.put<void>(
+      `/api/EmployeeSchedule/Update/${employeeId}`,
+      schedule
+    );
   }
 }

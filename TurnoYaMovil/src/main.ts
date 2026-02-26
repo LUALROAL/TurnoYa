@@ -111,6 +111,11 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'owner/businesses/:businessId/employees/:employeeId/schedule',
+    loadComponent: () => import('./app/features/owner-employees/pages/employee-schedule/employee-schedule.page').then(m => m.EmployeeSchedulePage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'admin/users',
     loadComponent: () => import('./app/features/admin/pages/admin-users/admin-users.page').then(m => m.AdminUsersPage),
     canActivate: [adminGuard],

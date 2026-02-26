@@ -2,10 +2,7 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
-  IonButton,
   IonContent,
-  IonFab,
-  IonFabButton,
   IonIcon,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -20,6 +17,7 @@ import {
   personOutline,
   peopleOutline,
   trashOutline,
+  timeOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -31,7 +29,7 @@ import { OwnerEmployeesService } from '../../services/owner-employees.service';
   standalone: true,
   imports: [CommonModule, RouterLink, IonContent, IonIcon],
   templateUrl: './employees-list.page.html',
-  styleUrl: './employees-list.page.scss',
+  styleUrls: ['./employees-list.page.scss'],
 })
 export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -56,6 +54,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       mailOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
+      timeOutline,
     });
   }
 
