@@ -103,17 +103,18 @@ namespace TurnoYa.Infrastructure.Services
             business.UpdatedAt = DateTime.UtcNow;
             var updatedBusiness = await _businessRepository.UpdateAsync(business);
 
-            // Eliminar imágenes anteriores
-            var oldImages = _context.BusinessImages.Where(img => img.BusinessId == updatedBusiness.Id).ToList();
-            if (oldImages.Count > 0)
-            {
-                _context.BusinessImages.RemoveRange(oldImages);
-                await _context.SaveChangesAsync();
-            }
-
-            // Guardar nuevas imágenes
+            // Solo eliminar y reemplazar imágenes si se suben nuevas
             if (images != null && images.Count > 0)
             {
+                // Eliminar imágenes anteriores
+                var oldImages = _context.BusinessImages.Where(img => img.BusinessId == updatedBusiness.Id).ToList();
+                if (oldImages.Count > 0)
+                {
+                    _context.BusinessImages.RemoveRange(oldImages);
+                    await _context.SaveChangesAsync();
+                }
+
+                // Guardar nuevas imágenes
                 var imageEntities = images.Select(img => new BusinessImage
                 {
                     BusinessId = updatedBusiness.Id,
