@@ -9,6 +9,7 @@ export interface OwnerEmployee {
   position?: string;
   bio?: string;
   profilePictureUrl?: string;
+  photoBase64?: string; // Nueva propiedad
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -22,6 +23,7 @@ export interface CreateEmployeeRequest {
   position?: string;
   bio?: string;
   profilePictureUrl?: string;
+  photoBase64?: string; // Opcional, si se envía desde el frontend
   isActive?: boolean;
 }
 
@@ -33,5 +35,6 @@ export interface UpdateEmployeeRequest {
   position?: string;
   bio?: string;
   profilePictureUrl?: string;
+  photoBase64?: string;
   isActive?: boolean;
 }

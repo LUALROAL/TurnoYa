@@ -2,7 +2,9 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
 
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
@@ -15,7 +17,8 @@
     <!-- Header con navegación -->
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="flex items-center gap-4">
-        <button (click)="onCancel()" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+        <button (click)="onCancel()"
+          class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
           <ion-icon name="arrow-back" class="text-xl text-text-primary"></ion-icon>
         </button>
         <div>
@@ -33,280 +36,376 @@
 
     <div class="px-4 space-y-6 mt-4 max-w-3xl mx-auto">
       @if (loading) {
-        <!-- Skeleton Loader -->
-        <div class="space-y-4">
-          <div class="skeleton-form-header"></div>
-          <div class="skeleton-form-section"></div>
-          <div class="skeleton-form-section"></div>
-        </div>
+      <!-- Skeleton Loader -->
+      <div class="space-y-4">
+        <div class="skeleton-form-header"></div>
+        <div class="skeleton-form-section"></div>
+        <div class="skeleton-form-section"></div>
+      </div>
       } @else {
-        <form [formGroup]="employeeForm" (ngSubmit)="onSave()" class="space-y-6">
+      <form [formGroup]="employeeForm" (ngSubmit)="onSave()" class="space-y-6">
 
-          <!-- Información básica -->
-          <section class="space-y-3">
-            <div class="flex items-center gap-2">
-              <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
-              <h2 class="text-xl font-display font-semibold text-text-primary">Información básica</h2>
+        <!-- Información básica -->
+        <section class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
+            <h2 class="text-xl font-display font-semibold text-text-primary">Información básica</h2>
+          </div>
+          <p class="text-text-secondary font-mono text-sm ml-3">Datos de perfil del colaborador</p>
+
+          <div class="relative group">
+            <div
+              class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
             </div>
-            <p class="text-text-secondary font-mono text-sm ml-3">Datos de perfil del colaborador</p>
 
-            <div class="relative group">
-              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+            <div
+              class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
 
-              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
-
-                <!-- Grid: Nombres y Apellidos -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Nombres -->
-                  <div class="space-y-2">
-                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      NOMBRES *
-                    </label>
-                    <div class="relative">
-                      <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
-                          id="firstName"
-                          type="text"
-                          formControlName="firstName"
-                          placeholder="Ej: Laura"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
-                      </div>
-                    </div>
-                    @if (formControls['firstName'].touched && formControls['firstName'].invalid) {
-                      <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                        <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                        {{ getErrorMessage('firstName') }}
-                      </p>
-                    }
-                  </div>
-
-                  <!-- Apellidos -->
-                  <div class="space-y-2">
-                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      APELLIDOS *
-                    </label>
-                    <div class="relative">
-                      <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
-                          id="lastName"
-                          type="text"
-                          formControlName="lastName"
-                          placeholder="Ej: Gómez"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
-                      </div>
-                    </div>
-                    @if (formControls['lastName'].touched && formControls['lastName'].invalid) {
-                      <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                        <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                        {{ getErrorMessage('lastName') }}
-                      </p>
-                    }
-                  </div>
-                </div>
-
-                <!-- Cargo -->
+              <!-- Grid: Nombres y Apellidos -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Nombres -->
                 <div class="space-y-2">
                   <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    CARGO <span class="text-text-tertiary">(opcional)</span>
+                    NOMBRES *
                   </label>
                   <div class="relative">
-                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                      <ion-icon name="briefcase-outline" class="text-neon-primary text-xl"></ion-icon>
-                      <ion-input
-                        id="position"
-                        type="text"
-                        formControlName="position"
-                        placeholder="Ej: Estilista senior"
-                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                      ></ion-input>
+                    <div
+                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                    </div>
+                    <div
+                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input id="firstName" type="text" formControlName="firstName" placeholder="Ej: Laura"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
                     </div>
                   </div>
-                </div>
-
-                <!-- Biografía -->
-                <div class="space-y-2">
-                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    BIOGRAFÍA <span class="text-text-tertiary">(opcional)</span>
-                  </label>
-                  <div class="relative">
-                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                    <div class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                      <ion-icon name="document-text-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
-                      <ion-textarea
-                        id="bio"
-                        formControlName="bio"
-                        placeholder="Experiencia, especialidades y enfoque de atención"
-                        rows="4"
-                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                      ></ion-textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Contacto y perfil -->
-          <section class="space-y-3">
-            <div class="flex items-center gap-2">
-              <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
-              <h2 class="text-xl font-display font-semibold text-text-primary">Contacto y perfil</h2>
-            </div>
-            <p class="text-text-secondary font-mono text-sm ml-3">Canales de contacto opcionales</p>
-
-            <div class="relative group">
-              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
-
-              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
-
-                <!-- Grid: Teléfono y Email -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Teléfono -->
-                  <div class="space-y-2">
-                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      TELÉFONO <span class="text-text-tertiary">(opcional)</span>
-                    </label>
-                    <div class="relative">
-                      <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="call-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
-                          id="phone"
-                          type="tel"
-                          formControlName="phone"
-                          placeholder="Ej: +57 300 111 2233"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
-                      </div>
-                    </div>
-                    @if (formControls['phone'].touched && formControls['phone'].invalid) {
-                      <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                        <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                        {{ getErrorMessage('phone') }}
-                      </p>
-                    }
-                  </div>
-
-                  <!-- Email -->
-                  <div class="space-y-2">
-                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                      EMAIL <span class="text-text-tertiary">(opcional)</span>
-                    </label>
-                    <div class="relative">
-                      <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                      <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                        <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
-                        <ion-input
-                          id="email"
-                          type="email"
-                          formControlName="email"
-                          placeholder="empleado@negocio.com"
-                          class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                        ></ion-input>
-                      </div>
-                    </div>
-                    @if (formControls['email'].touched && formControls['email'].invalid) {
-                      <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                        <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                        {{ getErrorMessage('email') }}
-                      </p>
-                    }
-                  </div>
-                </div>
-
-                <!-- Foto de perfil URL -->
-                <div class="space-y-2">
-                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    FOTO DE PERFIL (URL) <span class="text-text-tertiary">(opcional)</span>
-                  </label>
-                  <div class="relative">
-                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                    <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                      <ion-icon name="image-outline" class="text-neon-primary text-xl"></ion-icon>
-                      <ion-input
-                        id="profilePictureUrl"
-                        type="url"
-                        formControlName="profilePictureUrl"
-                        placeholder="https://..."
-                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                      ></ion-input>
-                    </div>
-                  </div>
-                  @if (formControls['profilePictureUrl'].touched && formControls['profilePictureUrl'].invalid) {
-                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                      {{ getErrorMessage('profilePictureUrl') }}
-                    </p>
+                  @if (formControls['firstName'].touched && formControls['firstName'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    {{ getErrorMessage('firstName') }}
+                  </p>
                   }
                 </div>
 
-                <!-- Estado (solo en edición) -->
-                @if (isEditMode) {
-                  <div class="border-t border-neon-primary/10 pt-4">
-                    <label class="flex items-start gap-4 cursor-pointer group">
-                      <div class="relative flex-shrink-0 mt-1">
-                        <input
-                          type="checkbox"
-                          formControlName="isActive"
-                          class="checkbox-neon"
-                        />
-                      </div>
-                      <div>
-                        <span class="block text-sm font-display font-semibold text-text-primary mb-1">Empleado activo</span>
-                        <span class="text-xs font-mono text-text-tertiary">Disponible para asignación de citas</span>
-                      </div>
-                    </label>
+                <!-- Apellidos -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    APELLIDOS *
+                  </label>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                    </div>
+                    <div
+                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input id="lastName" type="text" formControlName="lastName" placeholder="Ej: Gómez"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                    </div>
                   </div>
-                }
+                  @if (formControls['lastName'].touched && formControls['lastName'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    {{ getErrorMessage('lastName') }}
+                  </p>
+                  }
+                </div>
+              </div>
+
+              <!-- Cargo -->
+              <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  CARGO <span class="text-text-tertiary">(opcional)</span>
+                </label>
+                <div class="relative">
+                  <div
+                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                  </div>
+                  <div
+                    class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                    <ion-icon name="briefcase-outline" class="text-neon-primary text-xl"></ion-icon>
+                    <ion-input id="position" type="text" formControlName="position" placeholder="Ej: Estilista senior"
+                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Biografía -->
+              <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  BIOGRAFÍA <span class="text-text-tertiary">(opcional)</span>
+                </label>
+                <div class="relative">
+                  <div
+                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                  </div>
+                  <div
+                    class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                    <ion-icon name="document-text-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
+                    <ion-textarea id="bio" formControlName="bio"
+                      placeholder="Experiencia, especialidades y enfoque de atención" rows="4"
+                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-textarea>
+                  </div>
+                </div>
               </div>
             </div>
-          </section>
-
-          <!-- Campos obligatorios -->
-          <p class="text-xs font-mono text-text-tertiary mt-2">
-            * Campos obligatorios
-          </p>
-
-          <!-- Botones de acción -->
-          <div class="flex flex-col sm:flex-row gap-3 pt-4">
-            <!-- Botón Cancelar -->
-            <button
-              type="button"
-              (click)="onCancel()"
-              [disabled]="saving"
-              class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50"
-            >
-              Cancelar
-            </button>
-
-            <!-- Botón Guardar -->
-            <button
-              type="submit"
-              [disabled]="employeeForm.invalid || saving"
-              class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50"
-            >
-              <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
-
-              <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
-                <ion-icon
-                  [name]="saving ? 'sync-outline' : 'save'"
-                  class="text-xl"
-                  [class.animate-spin]="saving"
-                ></ion-icon>
-                <span>{{ saving ? 'GUARDANDO...' : (isEditMode ? 'ACTUALIZAR EMPLEADO' : 'CREAR EMPLEADO') }}</span>
-              </div>
-            </button>
           </div>
-        </form>
+        </section>
+
+        <!-- Contacto y perfil -->
+        <section class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
+            <h2 class="text-xl font-display font-semibold text-text-primary">Contacto y perfil</h2>
+          </div>
+          <p class="text-text-secondary font-mono text-sm ml-3">Canales de contacto opcionales</p>
+
+          <div class="relative group">
+            <div
+              class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+            </div>
+
+            <div
+              class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+
+              <!-- Grid: Teléfono y Email -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Teléfono -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    TELÉFONO <span class="text-text-tertiary">(opcional)</span>
+                  </label>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                    </div>
+                    <div
+                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="call-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input id="phone" type="tel" formControlName="phone" placeholder="Ej: +57 300 111 2233"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                    </div>
+                  </div>
+                  @if (formControls['phone'].touched && formControls['phone'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    {{ getErrorMessage('phone') }}
+                  </p>
+                  }
+                </div>
+
+                <!-- Email -->
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    EMAIL <span class="text-text-tertiary">(opcional)</span>
+                  </label>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                    </div>
+                    <div
+                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                      <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
+                      <ion-input id="email" type="email" formControlName="email" placeholder="empleado@negocio.com"
+                        class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                    </div>
+                  </div>
+                  @if (formControls['email'].touched && formControls['email'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    {{ getErrorMessage('email') }}
+                  </p>
+                  }
+                </div>
+              </div>
+
+              <!-- Foto de perfil URL -->
+              <!-- <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  FOTO DE PERFIL (URL) <span class="text-text-tertiary">(opcional)</span>
+                </label>
+                <div class="relative">
+                  <div
+                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                  </div>
+                  <div
+                    class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                    <ion-icon name="image-outline" class="text-neon-primary text-xl"></ion-icon>
+                    <ion-input id="profilePictureUrl" type="url" formControlName="profilePictureUrl"
+                      placeholder="https://..."
+                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                  </div>
+                </div>
+                @if (formControls['profilePictureUrl'].touched && formControls['profilePictureUrl'].invalid) {
+                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                  {{ getErrorMessage('profilePictureUrl') }}
+                </p>
+                }
+              </div> -->
+
+              <!-- Estado (solo en edición) -->
+              @if (isEditMode) {
+              <div class="border-t border-neon-primary/10 pt-4">
+                <label class="flex items-start gap-4 cursor-pointer group">
+                  <div class="relative flex-shrink-0 mt-1">
+                    <input type="checkbox" formControlName="isActive" class="checkbox-neon" />
+                  </div>
+                  <div>
+                    <span class="block text-sm font-display font-semibold text-text-primary mb-1">Empleado activo</span>
+                    <span class="text-xs font-mono text-text-tertiary">Disponible para asignación de citas</span>
+                  </div>
+                </label>
+              </div>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Sección de Foto de Perfil -->
+        <section class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
+            <h2 class="text-xl font-display font-semibold text-text-primary">Foto de Perfil</h2>
+          </div>
+          <p class="text-text-secondary font-mono text-sm ml-3">Foto del empleado (opcional)</p>
+
+          <div class="relative group">
+            <div
+              class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+            </div>
+
+            <div
+              class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+
+              <!-- Botones para agregar foto (solo si no hay foto existente ni seleccionada) -->
+              @if (!existingPhotoBase64 && !photoPreview) {
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button type="button" (click)="takePhoto()"
+                  class="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 group">
+                  <ion-icon name="camera-outline"
+                    class="text-neon-primary text-xl group-hover:scale-110 transition-transform"></ion-icon>
+                  <span class="font-mono text-sm">Tomar Foto</span>
+                </button>
+                <button type="button" (click)="selectFromGallery()"
+                  class="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 group">
+                  <ion-icon name="image-outline"
+                    class="text-neon-primary text-xl group-hover:scale-110 transition-transform"></ion-icon>
+                  <span class="font-mono text-sm">Desde Galería</span>
+                </button>
+              </div>
+              }
+
+              <!-- Foto existente (solo en edición) -->
+              @if (isEditMode && existingPhotoBase64) {
+              <div>
+                <label class="block text-xs font-mono text-neon-primary tracking-wider mb-3">
+                  FOTO ACTUAL
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  <div class="relative group/image">
+                    <div
+                      class="aspect-square rounded-xl overflow-hidden border border-neon-primary/20 bg-bg-secondary/50">
+                      <img [src]="'data:image/jpeg;base64,' + existingPhotoBase64" alt="Foto empleado"
+                        class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-300"
+                        (click)="openImagePreview('data:image/jpeg;base64,' + existingPhotoBase64)" />
+                    </div>
+                    <button type="button" (click)="removePhoto()"
+                      class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500/90 border border-red-500/30 flex items-center justify-center opacity-100 transition-all duration-300 hover:bg-red-600">
+                      <ion-icon name="trash-outline" class="text-white text-sm"></ion-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+
+              <!-- Nueva foto seleccionada -->
+              @if (photoPreview) {
+              <div>
+                <label class="block text-xs font-mono text-neon-primary tracking-wider mb-3">
+                  NUEVA FOTO
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  <div class="relative group/image">
+                    <div
+                      class="aspect-square rounded-xl overflow-hidden border border-neon-primary/20 bg-bg-secondary/50">
+                      <img [src]="photoPreview" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+                    <button type="button" (click)="removePhoto()"
+                      class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500/90 border border-red-500/30 flex items-center justify-center opacity-100 transition-all duration-300 hover:bg-red-600">
+                      <ion-icon name="close-outline" class="text-white text-sm"></ion-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+
+              <!-- Mensaje cuando no hay foto -->
+              @if ((!isEditMode || !existingPhotoBase64) && !photoPreview) {
+              <div class="text-center py-8">
+                <div
+                  class="w-20 h-20 mx-auto rounded-full bg-bg-tertiary/30 border border-neon-primary/20 flex items-center justify-center mb-4">
+                  <ion-icon name="person-outline" class="text-4xl text-neon-primary/50"></ion-icon>
+                </div>
+                <p class="text-text-secondary font-mono text-sm">
+                  No hay foto seleccionada
+                </p>
+                <p class="text-text-tertiary font-mono text-xs mt-1">
+                  La foto ayuda a identificar al empleado
+                </p>
+              </div>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Campos obligatorios -->
+        <p class="text-xs font-mono text-text-tertiary mt-2">
+          * Campos obligatorios
+        </p>
+
+        <!-- Botones de acción -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-4">
+          <!-- Botón Cancelar -->
+          <button type="button" (click)="onCancel()" [disabled]="saving"
+            class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50">
+            Cancelar
+          </button>
+
+          <!-- Botón Guardar -->
+          <button type="submit" [disabled]="employeeForm.invalid || saving"
+            class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+            <div
+              class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300">
+            </div>
+
+            <div
+              class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+              <ion-icon [name]="saving ? 'sync-outline' : 'save'" class="text-xl"
+                [class.animate-spin]="saving"></ion-icon>
+              <span>{{ saving ? 'GUARDANDO...' : (isEditMode ? 'ACTUALIZAR EMPLEADO' : 'CREAR EMPLEADO') }}</span>
+            </div>
+          </button>
+        </div>
+      </form>
       }
     </div>
   </div>
+
+  <!-- Modal para previsualizar imagen -->
+  <ion-modal [isOpen]="!!selectedImageForPreview" (didDismiss)="closePreview()" class="preview-modal">
+    <ng-template>
+      <div class="preview-image-container">
+        <button class="preview-close-btn" (click)="closePreview()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+        @if (selectedImageForPreview) {
+          <img [src]="selectedImageForPreview" alt="Preview" class="image-glow">
+        }
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

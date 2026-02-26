@@ -24,19 +24,47 @@ export class OwnerEmployeesService {
 
   create(
     businessId: string,
-    request: CreateEmployeeRequest
+    request: CreateEmployeeRequest,
+    photoFile?: File
   ): Observable<OwnerEmployee> {
+    const formData = new FormData();
+
+    // Añadir campos del request
+    Object.entries(request).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Añadir foto si existe
+    if (photoFile) {
+      formData.append('photo', photoFile, photoFile.name);
+    }
+
     return this.api.post<OwnerEmployee>(
       `/api/employees/business/${businessId}`,
-      request
+      formData
     );
   }
 
   update(
     employeeId: string,
-    request: UpdateEmployeeRequest
+    request: UpdateEmployeeRequest,
+    photoFile?: File
   ): Observable<OwnerEmployee> {
-    return this.api.put<OwnerEmployee>(`/api/employees/${employeeId}`, request);
+    const formData = new FormData();
+
+    Object.entries(request).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    if (photoFile) {
+      formData.append('photo', photoFile, photoFile.name);
+    }
+
+    return this.api.put<OwnerEmployee>(`/api/employees/${employeeId}`, formData);
   }
 
   delete(employeeId: string): Observable<void> {
@@ -54,7 +82,7 @@ export class OwnerEmployeesService {
       .pipe(
         catchError((error) => {
           if (error.status === 404) {
-            return of(null); // No existe horario, retornamos null (sin error)
+            return of(null);
           }
           return throwError(() => error);
         })

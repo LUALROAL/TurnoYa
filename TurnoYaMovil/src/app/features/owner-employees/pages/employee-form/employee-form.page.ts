@@ -9,6 +9,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateEmployeeRequest, UpdateEmployeeRequest } from '../../models';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
+import { AppPhoto } from 'src/app/features/owner-business/services/photo.service';
+import { PhotoService } from 'src/app/features/owner-business/services/photo.service';
+ // 👈 Importar desde core
 
 @Component({
   selector: 'app-employee-form',
@@ -27,6 +30,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly ownerEmployeesService = inject(OwnerEmployeesService);
   private readonly notify = inject(NotifyService);
+  private readonly photoService = inject(PhotoService) as PhotoService; // 👈 Inyectar PhotoService tipado
   private readonly destroy$ = new Subject<void>();
 
   employeeForm!: FormGroup;
@@ -35,6 +39,12 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
   isEditMode = false;
   loading = false;
   saving = false;
+
+  selectedPhotoFile: File | null = null;
+  photoPreview: string | null = null;
+  existingPhotoBase64: string | null = null;
+
+  selectedImageForPreview: string | null = null; // 👈 Para el modal de preview
 
   constructor() {
     addIcons({ arrowBack, save });
@@ -62,16 +72,17 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  protected onCancel(): void {
+  // ===== MÉTODOS PÚBLICOS =====
+
+  onCancel(): void {
     if (this.businessId) {
       this.router.navigate(['/owner/businesses', this.businessId, 'employees']);
       return;
     }
-
     this.router.navigate(['/owner/businesses']);
   }
 
-  protected onSave(): void {
+  onSave(): void {
     if (this.employeeForm.invalid) {
       this.employeeForm.markAllAsTouched();
       this.notify.showError('Por favor valida los campos obligatorios del empleado');
@@ -122,6 +133,94 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     return 'Valor inválido';
   }
 
+  // ===== MÉTODOS DE FOTO =====
+
+  async takePhoto() {
+    try {
+      const photo = await this.photoService.takePhoto();
+      await this.addPhotoToSelection(photo);
+    } catch (error) {
+      console.error('Error al tomar foto:', error);
+      this.notify.showError('No se pudo tomar la foto');
+    }
+  }
+
+  async selectFromGallery() {
+    try {
+      const photos = await this.photoService.selectImages();
+      if (photos.length > 0) {
+        await this.addPhotoToSelection(photos[0]);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar imagen:', error);
+      this.notify.showError('No se pudo seleccionar la imagen');
+    }
+  }
+
+  private async addPhotoToSelection(photo: AppPhoto) {
+    try {
+      let file: File;
+      if (photo.base64String) {
+        file = this.base64ToFile(photo.base64String, `photo_${Date.now()}.jpg`, 'image/jpeg');
+      } else if (photo.webPath) {
+        const response = await fetch(photo.webPath);
+        const blob = await response.blob();
+        file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      } else {
+        throw new Error('Formato de imagen no soportado');
+      }
+      this.selectedPhotoFile = file;
+      if (photo.webPath) {
+        this.photoPreview = photo.webPath;
+      } else if (photo.base64String) {
+        this.photoPreview = photo.base64String;
+      }
+      // Opcionalmente, eliminar la foto existente si se reemplaza
+      this.existingPhotoBase64 = null;
+    } catch (error) {
+      console.error('Error al procesar imagen:', error);
+      this.notify.showError('Error al procesar la imagen');
+    }
+  }
+
+  removePhoto() {
+    this.selectedPhotoFile = null;
+    this.photoPreview = null;
+    this.existingPhotoBase64 = null;
+  }
+
+  private base64ToFile(base64: string, filename: string, mimeType: string): File {
+    if (base64.startsWith('data:')) {
+      const arr = base64.split(',');
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mimeType });
+    }
+    const bstr = atob(base64);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mimeType });
+  }
+
+  // ===== PREVIEW DE IMAGEN =====
+
+  openImagePreview(imagePath: string) {
+    this.selectedImageForPreview = imagePath;
+  }
+
+  closePreview() {
+    this.selectedImageForPreview = null;
+  }
+
+  // ===== MÉTODOS PRIVADOS =====
+
   private initForm(): void {
     this.employeeForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
@@ -137,14 +236,13 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
 
   private loadEmployee(): void {
     this.loading = true;
-
     this.ownerEmployeesService
       .getById(this.employeeId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: employee => {
           const nameFallback = this.splitFullName(employee.fullName);
-
+          this.existingPhotoBase64 = employee.photoBase64 || null;
           this.employeeForm.patchValue({
             firstName: employee.firstName?.trim() || nameFallback.firstName,
             lastName: employee.lastName?.trim() || nameFallback.lastName,
@@ -197,12 +295,11 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     };
 
     this.ownerEmployeesService
-      .create(this.businessId, request)
+      .create(this.businessId, request, this.selectedPhotoFile || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (createdEmployee) => {
           this.saving = false;
-          // Redirigir a configuración de horarios del empleado recién creado
           this.router.navigate(['/owner/businesses', this.businessId, 'employees', createdEmployee.id, 'schedule']);
           this.notify.showSuccess('Empleado creado correctamente');
         },
@@ -229,7 +326,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     };
 
     this.ownerEmployeesService
-      .update(this.employeeId, request)
+      .update(this.employeeId, request, this.selectedPhotoFile || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
