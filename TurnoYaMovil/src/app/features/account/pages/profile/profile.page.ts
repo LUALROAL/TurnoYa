@@ -122,32 +122,33 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   private loadProfile(): void {
-    if (!this.authSession.hasValidSession()) {
-      this.loading.set(false);
-      return;
-    }
-
-    this.loading.set(true);
-    this.userService
-      .getProfile()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (profile) => {
-          this.profile.set(profile);
-          this.populateProfileForm(profile);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error al cargar perfil:', err);
-          if (err?.status === 401) {
-            this.loading.set(false);
-            return;
-          }
-          this.notify.showError('No se pudo cargar el perfil');
-          this.loading.set(false);
-        }
-      });
+  if (!this.authSession.hasValidSession()) {
+    this.loading.set(false);
+    return;
   }
+
+  this.loading.set(true);
+  this.userService
+    .getProfile()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (profile) => {
+        this.profile.set(profile);
+        this.populateProfileForm(profile);
+        this.existingPhotoBase64 = profile.photoBase64 || null; // 👈 NUEVA LÍNEA
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error al cargar perfil:', err);
+        if (err?.status === 401) {
+          this.loading.set(false);
+          return;
+        }
+        this.notify.showError('No se pudo cargar el perfil');
+        this.loading.set(false);
+      }
+    });
+}
 
   private createProfileForm(): FormGroup {
     return this.fb.group({
