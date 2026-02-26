@@ -186,9 +186,9 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     const formValue = this.employeeForm.value;
 
     const request: CreateEmployeeRequest = {
-      firstName: formValue.firstName?.trim(),
-      lastName: formValue.lastName?.trim(),
-      position: formValue.position?.trim() || undefined,
+      firstName: formValue.firstName?.trim().toUpperCase(),
+      lastName: formValue.lastName?.trim().toUpperCase(),
+      position: formValue.position?.trim().toUpperCase() || undefined,
       phone: formValue.phone?.trim() || undefined,
       email: formValue.email?.trim() || undefined,
       profilePictureUrl: formValue.profilePictureUrl?.trim() || undefined,
@@ -216,9 +216,9 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     const formValue = this.employeeForm.value;
 
     const request: UpdateEmployeeRequest = {
-      firstName: formValue.firstName?.trim() || undefined,
-      lastName: formValue.lastName?.trim() || undefined,
-      position: formValue.position?.trim() || undefined,
+      firstName: formValue.firstName?.trim().toUpperCase() || undefined,
+      lastName: formValue.lastName?.trim().toUpperCase() || undefined,
+      position: formValue.position?.trim().toUpperCase() || undefined,
       phone: formValue.phone?.trim() || undefined,
       email: formValue.email?.trim() || undefined,
       profilePictureUrl: formValue.profilePictureUrl?.trim() || undefined,
