@@ -41,7 +41,8 @@ public class BusinessProfile : Profile
         // Business → BusinessDto
         CreateMap<Business, BusinessDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => 
-                src.Owner != null ? $"{src.Owner.FirstName} {src.Owner.LastName}" : string.Empty));
+                src.Owner != null ? $"{src.Owner.FirstName} {src.Owner.LastName}" : string.Empty))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
         // Business → BusinessListDto
         CreateMap<Business, BusinessListDto>()

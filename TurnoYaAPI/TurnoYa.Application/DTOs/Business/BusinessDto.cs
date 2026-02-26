@@ -25,4 +25,6 @@ public class BusinessDto
     // Owner info
     public Guid OwnerId { get; set; }
     public string OwnerName { get; set; } = string.Empty;
+    // Imágenes asociadas
+    public List<BusinessImageDto> Images { get; set; } = new();
 }

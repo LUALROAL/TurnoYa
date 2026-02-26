@@ -86,7 +86,7 @@
                 <div class="relative h-32 overflow-hidden bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20">
                   <!-- Imagen de fondo (logo) si existe -->
                   @if (business.images && business.images.length > 0) {
-                    <img [src]="business.images[0].imagePath" alt="Logo" class="absolute inset-0 w-full h-full object-cover">
+                    <img [src]="business.images[0].imageBase64" alt="Logo" class="absolute inset-0 w-full h-full object-cover">
                     <!-- Overlay oscuro para mejorar legibilidad del texto -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
                   } @else {

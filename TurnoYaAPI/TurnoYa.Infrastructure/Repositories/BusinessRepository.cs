@@ -39,6 +39,7 @@ public class BusinessRepository : IBusinessRepository
     {
         return await _context.Businesses
             .Where(b => b.OwnerId == ownerId)
+            .Include(b => b.Images)
             .ToListAsync();
     }
 
