@@ -1,54 +1,37 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TurnoYa.Application.DTOs.Employee;
-using TurnoYa.Core.Entities;
-using TurnoYa.Infrastructure.Data;
+using TurnoYa.Application.Interfaces;
+using System.Security.Claims;
 
 namespace TurnoYa.API.Controllers;
 
-/// <summary>
-/// Controlador para gestión de empleados (alta, baja, edición, consulta)
-/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class EmployeesController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IEmployeeService _employeeService;
     private readonly IMapper _mapper;
     private readonly ILogger<EmployeesController> _logger;
 
     public EmployeesController(
-        ApplicationDbContext context,
+        IEmployeeService employeeService,
         IMapper mapper,
         ILogger<EmployeesController> logger)
     {
-        _context = context;
+        _employeeService = employeeService;
         _mapper = mapper;
         _logger = logger;
     }
 
-    /// <summary>
-    /// Obtiene todos los empleados de un negocio
-    /// </summary>
     [HttpGet("business/{businessId}")]
-    [ProducesResponseType(typeof(IEnumerable<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetBusinessEmployees(Guid businessId)
     {
         try
         {
-            var business = await _context.Businesses.FindAsync(businessId);
-            if (business == null)
-                return NotFound(new { message = "Negocio no encontrado" });
-
-            var employees = await _context.Employees
-                .Where(e => e.BusinessId == businessId)
-                .ToListAsync();
-
-            var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
-            return Ok(employeeDtos);
+            var employees = await _employeeService.GetByBusinessIdAsync(businessId);
+            return Ok(employees);
         }
         catch (Exception ex)
         {
@@ -57,22 +40,15 @@ public class EmployeesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Obtiene un empleado por ID
-    /// </summary>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<EmployeeDto>> GetById(Guid id)
     {
         try
         {
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _employeeService.GetByIdAsync(id);
             if (employee == null)
                 return NotFound(new { message = "Empleado no encontrado" });
-
-            var employeeDto = _mapper.Map<EmployeeDto>(employee);
-            return Ok(employeeDto);
+            return Ok(employee);
         }
         catch (Exception ex)
         {
@@ -81,50 +57,34 @@ public class EmployeesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Crea un nuevo empleado para un negocio
-    /// </summary>
     [HttpPost("business/{businessId}")]
     [Authorize]
-    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<EmployeeDto>> Create(Guid businessId, CreateEmployeeDto dto)
+    public async Task<ActionResult<EmployeeDto>> Create(Guid businessId, [FromForm] CreateEmployeeDto dto, [FromForm] IFormFile? photo)
     {
         try
         {
-            var business = await _context.Businesses.FindAsync(businessId);
-            if (business == null)
-                return NotFound(new { message = "Negocio no encontrado" });
-
-            // Verificar que el usuario sea el dueño del negocio
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                           ?? User.FindFirst("sub")?.Value;
-            
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-            {
                 return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
+
+            byte[]? photoData = null;
+            if (photo != null)
+            {
+                using var ms = new MemoryStream();
+                await photo.CopyToAsync(ms);
+                photoData = ms.ToArray();
             }
-            
-            if (business.OwnerId != userId)
-                return Forbid();
 
-            var employee = _mapper.Map<Employee>(dto);
-            employee.BusinessId = businessId;
-            employee.UserId = userId;
-            employee.Name = $"{dto.FirstName} {dto.LastName}".Trim();
-            employee.Position = dto.Position;
-            employee.Bio = dto.Bio;
-            employee.PhotoUrl = dto.ProfilePictureUrl;
-            employee.CreatedAt = DateTime.UtcNow;
-            employee.UpdatedAt = DateTime.UtcNow;
-
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
-
-            var employeeDto = _mapper.Map<EmployeeDto>(employee);
-            return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employeeDto);
+            var created = await _employeeService.CreateAsync(businessId, userId, dto, photoData);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
         }
         catch (Exception ex)
         {
@@ -133,61 +93,34 @@ public class EmployeesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Actualiza un empleado
-    /// </summary>
     [HttpPut("{id}")]
     [Authorize]
-    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<EmployeeDto>> Update(Guid id, UpdateEmployeeDto dto)
+    public async Task<ActionResult<EmployeeDto>> Update(Guid id, [FromForm] UpdateEmployeeDto dto, [FromForm] IFormFile? photo)
     {
         try
         {
-            var employee = await _context.Employees
-                .Include(e => e.Business)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (employee == null)
-                return NotFound(new { message = "Empleado no encontrado" });
-
-            // Verificar que el usuario sea el dueño del negocio
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                           ?? User.FindFirst("sub")?.Value;
-            
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-            {
                 return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
-            }
-            
-            if (employee.Business?.OwnerId != userId)
-                return Forbid();
 
-            if (dto.FirstName != null || dto.LastName != null)
+            byte[]? photoData = null;
+            if (photo != null)
             {
-                var currentNames = (employee.Name ?? string.Empty).Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                var currentFirstName = currentNames.Length > 0 ? currentNames[0] : string.Empty;
-                var currentLastName = currentNames.Length > 1 ? currentNames[1] : string.Empty;
-
-                var firstName = dto.FirstName ?? currentFirstName;
-                var lastName = dto.LastName ?? currentLastName;
-
-                employee.Name = $"{firstName} {lastName}".Trim();
+                using var ms = new MemoryStream();
+                await photo.CopyToAsync(ms);
+                photoData = ms.ToArray();
             }
 
-            if (dto.Phone != null) employee.Phone = dto.Phone;
-            if (dto.Email != null) employee.Email = dto.Email;
-            if (dto.Position != null) employee.Position = dto.Position;
-            if (dto.Bio != null) employee.Bio = dto.Bio;
-            if (dto.ProfilePictureUrl != null) employee.PhotoUrl = dto.ProfilePictureUrl;
-            if (dto.IsActive.HasValue) employee.IsActive = dto.IsActive.Value;
-            employee.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-
-            var employeeDto = _mapper.Map<EmployeeDto>(employee);
-            return Ok(employeeDto);
+            var updated = await _employeeService.UpdateAsync(id, userId, dto, photoData);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
         }
         catch (Exception ex)
         {
@@ -196,41 +129,26 @@ public class EmployeesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Elimina un empleado
-    /// </summary>
     [HttpDelete("{id}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
-            var employee = await _context.Employees
-                .Include(e => e.Business)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (employee == null)
-                return NotFound(new { message = "Empleado no encontrado" });
-
-            // Verificar que el usuario sea el dueño del negocio
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                           ?? User.FindFirst("sub")?.Value;
-            
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-            {
                 return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
-            }
-            
-            if (employee.Business?.OwnerId != userId)
-                return Forbid();
 
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
-
+            await _employeeService.DeleteAsync(id, userId);
             return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
         }
         catch (Exception ex)
         {

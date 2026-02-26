@@ -1,16 +1,36 @@
-namespace TurnoYa.Application.DTOs.Employee;
+using System.ComponentModel.DataAnnotations;
 
-/// <summary>
-/// DTO para actualizar un empleado
-/// </summary>
-public class UpdateEmployeeDto
+namespace TurnoYa.Application.DTOs.Employee
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Phone { get; set; }
-    public string? Email { get; set; }
-    public string? Position { get; set; }
-    public string? Bio { get; set; }
-    public string? ProfilePictureUrl { get; set; }
-    public bool? IsActive { get; set; }
+    public class UpdateEmployeeDto
+    {
+        [StringLength(100)]
+        public string? FirstName { get; set; }
+
+        [StringLength(100)]
+        public string? LastName { get; set; }
+
+        [Phone]
+        [StringLength(20)]
+        public string? Phone { get; set; }
+
+        [EmailAddress]
+        [StringLength(256)]
+        public string? Email { get; set; }
+
+        [StringLength(100)]
+        public string? Position { get; set; }
+
+        [StringLength(500)]
+        public string? Bio { get; set; }
+
+        [Url]
+        [StringLength(512)]
+        public string? ProfilePictureUrl { get; set; }
+
+        // Para recibir la imagen como base64
+        public string? PhotoBase64 { get; set; }
+
+        public bool? IsActive { get; set; }
+    }
 }

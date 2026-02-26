@@ -76,6 +76,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 builder.Services.AddScoped<IBusinessScheduleRepository, BusinessScheduleRepository>();
 builder.Services.AddScoped<IEmployeeScheduleRepository, EmployeeScheduleRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 // Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -88,6 +89,8 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddHttpClient<IWompiService, WompiService>();
 builder.Services.AddScoped<IBusinessScheduleService, BusinessScheduleService>();
 builder.Services.AddScoped<IEmployeeScheduleService, EmployeeScheduleService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 // Registro de IBusinessService
 builder.Services.AddScoped<IBusinessService, BusinessService>();
