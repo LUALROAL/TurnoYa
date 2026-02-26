@@ -241,30 +241,26 @@
               </div>
               }
 
-              <!-- Imágenes existentes (solo en edición) -->
-              <!-- Imágenes existentes (solo en edición) -->
+              <!-- Mostrar logo actual en edición si existe -->
               @if (isEditMode && existingImages.length > 0) {
-              <div>
-                <label class="block text-xs font-mono text-neon-primary tracking-wider mb-3">
-                  LOGO ACTUAL
-                </label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  @for (image of existingImages; track image.id) {
-                  <div class="relative group/image">
-                    <div
-                      class="aspect-square rounded-xl overflow-hidden border border-neon-primary/20 bg-bg-secondary/50">
-                      <img [src]="image.imageBase64 || image.imagePath" alt="Business image"
-                        class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-300"
-                        (click)="openImagePreview(image.imageBase64 || image.imagePath)" />
+                <div>
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider mb-3">
+                    LOGO ACTUAL
+                  </label>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div class="relative group/image">
+                      <div class="aspect-square rounded-xl overflow-hidden border border-neon-primary/20 bg-bg-secondary/50">
+                        <img [src]="existingImages[0].imageBase64 || existingImages[0].imagePath" alt="Business image"
+                          class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-300"
+                          (click)="openImagePreview(existingImages[0].imageBase64 || existingImages[0].imagePath)" />
+                      </div>
+                      <button type="button" (click)="showDeleteConfirmation(existingImages[0].id)"
+                        class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500/90 border border-red-500/30 flex items-center justify-center opacity-100 transition-all duration-300 hover:bg-red-600">
+                        <ion-icon name="trash-outline" class="text-white text-sm"></ion-icon>
+                      </button>
                     </div>
-                    <button type="button" (click)="showDeleteConfirmation(image.id)"
-                      class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500/90 border border-red-500/30 flex items-center justify-center opacity-100 transition-all duration-300 hover:bg-red-600">
-                      <ion-icon name="trash-outline" class="text-white text-sm"></ion-icon>
-                    </button>
                   </div>
-                  }
                 </div>
-              </div>
               }
 
               <!-- Nuevas imágenes seleccionadas -->
