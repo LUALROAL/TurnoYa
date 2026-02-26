@@ -89,6 +89,9 @@ builder.Services.AddHttpClient<IWompiService, WompiService>();
 builder.Services.AddScoped<IBusinessScheduleService, BusinessScheduleService>();
 builder.Services.AddScoped<IEmployeeScheduleService, EmployeeScheduleService>();
 
+// Registro de IBusinessService
+builder.Services.AddScoped<IBusinessService, BusinessService>();
+
 // Authentication & JWT
 builder.Services.AddAuthentication(options =>
 {
