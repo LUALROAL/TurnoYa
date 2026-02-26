@@ -20,7 +20,8 @@ public interface IUserService
     /// <param name="userId">ID del usuario autenticado</param>
     /// <param name="updateDto">Datos a actualizar</param>
     /// <returns>Perfil actualizado</returns>
-    Task<UserProfileDto> UpdateUserProfileAsync(string userId, UpdateUserProfileDto updateDto);
+    //Task<UserProfileDto> UpdateUserProfileAsync(string userId, UpdateUserProfileDto updateDto);
+    Task<UserProfileDto> UpdateUserProfileAsync(string userId, UpdateUserProfileDto updateDto, byte[]? photoData = null);
 
     /// <summary>
     /// Cambia la contraseña del usuario

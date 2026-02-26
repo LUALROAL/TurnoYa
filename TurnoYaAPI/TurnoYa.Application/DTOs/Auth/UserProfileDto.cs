@@ -22,4 +22,5 @@ public class UserProfileDto
     public decimal AverageRating { get; set; }
     public int CompletedAppointments { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string? PhotoBase64 { get; set; } // 👈 NUEVO
 }

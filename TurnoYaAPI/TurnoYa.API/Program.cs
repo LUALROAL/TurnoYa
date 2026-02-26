@@ -77,6 +77,7 @@ builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 builder.Services.AddScoped<IBusinessScheduleRepository, BusinessScheduleRepository>();
 builder.Services.AddScoped<IEmployeeScheduleRepository, EmployeeScheduleRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();

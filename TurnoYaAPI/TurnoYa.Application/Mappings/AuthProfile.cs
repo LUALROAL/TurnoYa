@@ -52,6 +52,10 @@ public class AuthProfile : Profile
         CreateMap<User, UserManageDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
+        CreateMap<User, UserProfileDto>()
+    .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+    .ForMember(dest => dest.PhotoBase64, opt => opt.MapFrom(src => src.PhotoData != null ? Convert.ToBase64String(src.PhotoData) : null));
+
         // User → AuthResponseDto (no se usa directamente, solo UserDto)
         // Se construye manualmente en el servicio
     }

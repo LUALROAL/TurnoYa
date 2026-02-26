@@ -112,18 +112,27 @@ public class UsersController : ControllerBase
     /// <param name="updateDto">Datos a actualizar</param>
     /// <returns>Perfil actualizado</returns>
     [HttpPut("me")]
+    [Consumes("multipart/form-data")] // 👈 IMPORTANTE
     [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UserProfileDto>> UpdateProfile([FromBody] UpdateUserProfileDto updateDto)
+    public async Task<ActionResult<UserProfileDto>> UpdateProfile(
+    [FromForm] UpdateUserProfileDto updateDto,
+    IFormFile? photo) // 👈 Parámetro para la imagen
     {
         try
         {
             var userId = GetUserId();
-            _logger.LogInformation("Intentando actualizar perfil para userId: {UserId}", userId);
-            var updatedProfile = await _userService.UpdateUserProfileAsync(userId, updateDto);
+            byte[]? photoData = null;
+            if (photo != null)
+            {
+                using var ms = new MemoryStream();
+                await photo.CopyToAsync(ms);
+                photoData = ms.ToArray();
+            }
+            var updatedProfile = await _userService.UpdateUserProfileAsync(userId, updateDto, photoData);
             return Ok(updatedProfile);
         }
         catch (UnauthorizedAccessException ex)

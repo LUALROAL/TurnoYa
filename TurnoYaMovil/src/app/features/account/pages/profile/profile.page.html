@@ -2,7 +2,9 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
 
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
@@ -14,7 +16,8 @@
   <!-- Header con navegación -->
   <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
     <div class="flex items-center gap-4">
-      <button type="button" (click)="goBack()" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+      <button type="button" (click)="goBack()"
+        class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
         <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
       </button>
       <div>
@@ -33,346 +36,371 @@
   <div class="relative z-10 px-4 pb-8 max-w-3xl mx-auto">
     <!-- Loading State -->
     @if (loading()) {
-      <div class="flex flex-col items-center justify-center min-h-[300px] space-y-4">
-        <div class="w-16 h-16 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary animate-pulse"></div>
-        <div class="skeleton-text"></div>
-        <div class="skeleton-text"></div>
-      </div>
+    <div class="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+      <div class="w-16 h-16 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary animate-pulse"></div>
+      <div class="skeleton-text"></div>
+      <div class="skeleton-text"></div>
+    </div>
     }
 
     <!-- Profile Content -->
     @if (!loading()) {
-      <!-- Tab Navigation -->
-      <div class="flex gap-2 p-1 mt-4 rounded-2xl bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10">
-        <button (click)="activeTab = 'profile'"
-                class="flex-1 py-3 px-4 rounded-xl font-mono text-sm transition-all duration-300"
-                [class.bg-gradient-to-r]="activeTab === 'profile'"
-                [class.from-neon-primary]="activeTab === 'profile'"
-                [class.to-neon-secondary]="activeTab === 'profile'"
-                [class.text-bg-primary]="activeTab === 'profile'"
-                [class.text-text-secondary]="activeTab !== 'profile'"
-                [class.hover:text-text-primary]="activeTab !== 'profile'">
-          Información Personal
-        </button>
-        <button (click)="activeTab = 'security'"
-                class="flex-1 py-3 px-4 rounded-xl font-mono text-sm transition-all duration-300"
-                [class.bg-gradient-to-r]="activeTab === 'security'"
-                [class.from-neon-primary]="activeTab === 'security'"
-                [class.to-neon-secondary]="activeTab === 'security'"
-                [class.text-bg-primary]="activeTab === 'security'"
-                [class.text-text-secondary]="activeTab !== 'security'"
-                [class.hover:text-text-primary]="activeTab !== 'security'">
-          Seguridad
-        </button>
+    <!-- Tab Navigation -->
+    <div class="flex gap-2 p-1 mt-4 rounded-2xl bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10">
+      <button (click)="activeTab = 'profile'"
+        class="flex-1 py-3 px-4 rounded-xl font-mono text-sm transition-all duration-300"
+        [class.bg-gradient-to-r]="activeTab === 'profile'" [class.from-neon-primary]="activeTab === 'profile'"
+        [class.to-neon-secondary]="activeTab === 'profile'" [class.text-bg-primary]="activeTab === 'profile'"
+        [class.text-text-secondary]="activeTab !== 'profile'" [class.hover:text-text-primary]="activeTab !== 'profile'">
+        Información Personal
+      </button>
+      <button (click)="activeTab = 'security'"
+        class="flex-1 py-3 px-4 rounded-xl font-mono text-sm transition-all duration-300"
+        [class.bg-gradient-to-r]="activeTab === 'security'" [class.from-neon-primary]="activeTab === 'security'"
+        [class.to-neon-secondary]="activeTab === 'security'" [class.text-bg-primary]="activeTab === 'security'"
+        [class.text-text-secondary]="activeTab !== 'security'"
+        [class.hover:text-text-primary]="activeTab !== 'security'">
+        Seguridad
+      </button>
+    </div>
+
+    <!-- Profile Tab -->
+    @if (activeTab === 'profile') {
+    <div class="relative group mt-6">
+      <div
+        class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
       </div>
 
-      <!-- Profile Tab -->
-      @if (activeTab === 'profile') {
-        <div class="relative group mt-6">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+      <div
+        class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-6">
 
-          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-6">
+        <!-- Avatar -->
+        <!-- Foto de perfil con opciones -->
+        <div class="flex flex-col items-center">
+          <div class="relative mb-4">
+            <div
+              class="absolute inset-0 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary blur-xl opacity-50">
+            </div>
+            <div
+              class="relative w-24 h-24 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary flex items-center justify-center shadow-lg border-2 border-bg-primary overflow-hidden">
+              @if (photoPreview) {
+              <img [src]="photoPreview" alt="Foto de perfil" class="w-full h-full object-cover" />
+              } @else if (existingPhotoBase64) {
+              <img [src]="'data:image/jpeg;base64,' + existingPhotoBase64" alt="Foto de perfil"
+                class="w-full h-full object-cover" />
+              } @else {
+              <span class="text-2xl font-display font-bold text-bg-primary">{{ profile()?.firstName?.charAt(0) }}{{
+                profile()?.lastName?.charAt(0) }}</span>
+              }
+            </div>
+            @if (!photoPreview && !existingPhotoBase64) {
+            <button type="button" (click)="takePhoto()"
+              class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-neon-primary flex items-center justify-center text-bg-primary hover:scale-110 transition-transform">
+              <ion-icon name="camera-outline"></ion-icon>
+            </button>
+            }
+          </div>
 
-            <!-- Avatar -->
-            <div class="flex flex-col items-center">
-              <div class="relative mb-4">
-                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary blur-xl opacity-50"></div>
-                <div class="relative w-24 h-24 rounded-full bg-gradient-to-r from-neon-primary to-neon-secondary flex items-center justify-center shadow-lg border-2 border-bg-primary overflow-hidden">
-                  <img [src]="profile()?.photoUrl || 'assets/default-avatar.png'"
-                       alt="Foto de perfil"
-                       class="w-full h-full object-cover" />
-                </div>
+          <!-- Botones de acción para foto (cuando hay foto) -->
+          @if (photoPreview || existingPhotoBase64) {
+          <div class="flex gap-2 mt-2">
+            <button type="button" (click)="selectFromGallery()"
+              class="px-3 py-1 rounded-lg bg-bg-tertiary/50 border border-neon-primary/20 text-xs font-mono text-text-secondary hover:border-neon-primary/50 transition-all">
+              Cambiar
+            </button>
+            <button type="button" (click)="removePhoto()"
+              class="px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-xs font-mono text-red-400 hover:bg-red-500/30 transition-all">
+              Eliminar
+            </button>
+          </div>
+          } @else {
+          <p class="text-xs font-mono text-text-tertiary mt-2">Toca para agregar foto</p>
+          }
+        </div>
+
+        <form [formGroup]="profileForm" class="space-y-4">
+
+          <!-- Email (Read-only) -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              EMAIL
+            </label>
+            <div class="relative">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl">
+                <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
+                <span class="text-text-primary font-mono text-sm">{{ profile()?.email }}</span>
               </div>
             </div>
-
-            <form [formGroup]="profileForm" class="space-y-4">
-
-              <!-- Email (Read-only) -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  EMAIL
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl">
-                    <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <span class="text-text-primary font-mono text-sm">{{ profile()?.email }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- First Name -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  NOMBRE *
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="firstName"
-                      type="text"
-                      placeholder="Tu nombre"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Last Name -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  APELLIDO *
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="lastName"
-                      type="text"
-                      placeholder="Tu apellido"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Phone -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  TELÉFONO
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="call-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="phoneNumber"
-                      type="tel"
-                      placeholder="Tu teléfono"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Gender -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  GÉNERO
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <ion-select
-                    formControlName="gender"
-                    placeholder="Seleccionar"
-                    interface="action-sheet"
-                    class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
-                  >
-                    <ion-select-option value="" class="bg-bg-card text-text-primary">No especificar</ion-select-option>
-                    <ion-select-option value="M" class="bg-bg-card text-text-primary">Masculino</ion-select-option>
-                    <ion-select-option value="F" class="bg-bg-card text-text-primary">Femenino</ion-select-option>
-                    <ion-select-option value="Other" class="bg-bg-card text-text-primary">Otro</ion-select-option>
-                  </ion-select>
-                </div>
-              </div>
-
-              <!-- Date of Birth -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  FECHA DE NACIMIENTO
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="dateOfBirth"
-                      type="date"
-                      class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Profile Stats -->
-              <div class="mt-6 p-4 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
-                <div class="grid grid-cols-2 gap-4">
-                  <div class="text-center">
-                    <p class="text-3xl font-display font-bold text-neon-primary">{{ profile()?.completedAppointments || 0 }}</p>
-                    <p class="text-xs font-mono text-text-secondary">Citas Completadas</p>
-                  </div>
-                  <div class="text-center">
-                    <p class="text-3xl font-display font-bold text-neon-secondary">{{ profile()?.averageRating?.toFixed(1) || '0.0' }}</p>
-                    <p class="text-xs font-mono text-text-secondary">Calificación</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Update Button -->
-              <button
-                type="button"
-                (click)="onUpdateProfile()"
-                [disabled]="updatingProfile() || !profileForm.valid"
-                class="relative w-full group overflow-hidden rounded-xl disabled:opacity-50 mt-6"
-              >
-                <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
-
-                <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
-                  @if (updatingProfile()) {
-                    <ion-icon name="sync-outline" class="text-xl animate-spin"></ion-icon>
-                    <span>ACTUALIZANDO...</span>
-                  } @else {
-                    <ion-icon name="save-outline" class="text-xl"></ion-icon>
-                    <span>ACTUALIZAR PERFIL</span>
-                  }
-                </div>
-              </button>
-            </form>
           </div>
-        </div>
-      }
 
-      <!-- Security Tab -->
-      @if (activeTab === 'security') {
-        <div class="relative group mt-6">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
-
-          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-6">
-
-            <form [formGroup]="passwordForm" class="space-y-4">
-
-              <!-- Current Password -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  CONTRASEÑA ACTUAL *
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="currentPassword"
-                      type="password"
-                      placeholder="Contraseña actual"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
+          <!-- First Name -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              NOMBRE *
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
               </div>
-
-              <!-- New Password -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  CONTRASEÑA NUEVA *
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="newPassword"
-                      type="password"
-                      placeholder="Contraseña nueva"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="firstName" type="text" placeholder="Tu nombre"
+                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
               </div>
-
-              <!-- Confirm Password -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  CONFIRMAR CONTRASEÑA *
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                  <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input
-                      formControlName="confirmPassword"
-                      type="password"
-                      placeholder="Confirma la contraseña"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                    ></ion-input>
-                  </div>
-                </div>
-                @if (passwordForm.errors?.['passwordsMismatch'] && passwordForm.get('confirmPassword')?.touched) {
-                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                    Las contraseñas no coinciden
-                  </p>
-                }
-              </div>
-
-              <!-- Password Requirements -->
-              <div class="mt-4 p-4 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
-                <p class="text-xs font-mono text-neon-primary mb-2">REQUISITOS:</p>
-                <ul class="space-y-1">
-                  <li class="flex items-center gap-2 text-xs font-mono"
-                      [class.text-neon-secondary]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8"
-                      [class.text-text-tertiary]="(passwordForm.get('newPassword')?.value?.length || 0) < 8">
-                    <ion-icon [name]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8 ? 'checkmark-circle' : 'ellipse-outline'"
-                              class="text-sm"></ion-icon>
-                    Mínimo 8 caracteres
-                  </li>
-                  <li class="flex items-center gap-2 text-xs font-mono"
-                      [class.text-neon-secondary]="hasUpperCase()"
-                      [class.text-text-tertiary]="!hasUpperCase()">
-                    <ion-icon [name]="hasUpperCase() ? 'checkmark-circle' : 'ellipse-outline'"
-                              class="text-sm"></ion-icon>
-                    Una mayúscula
-                  </li>
-                  <li class="flex items-center gap-2 text-xs font-mono"
-                      [class.text-neon-secondary]="hasLowerCase()"
-                      [class.text-text-tertiary]="!hasLowerCase()">
-                    <ion-icon [name]="hasLowerCase() ? 'checkmark-circle' : 'ellipse-outline'"
-                              class="text-sm"></ion-icon>
-                    Una minúscula
-                  </li>
-                  <li class="flex items-center gap-2 text-xs font-mono"
-                      [class.text-neon-secondary]="hasDigit()"
-                      [class.text-text-tertiary]="!hasDigit()">
-                    <ion-icon [name]="hasDigit() ? 'checkmark-circle' : 'ellipse-outline'"
-                              class="text-sm"></ion-icon>
-                    Un dígito
-                  </li>
-                </ul>
-              </div>
-
-              <!-- Change Password Button -->
-              <button
-                type="button"
-                (click)="onChangePassword()"
-                [disabled]="changingPassword() || !passwordForm.valid || passwordForm.errors?.['passwordsMismatch']"
-                class="relative w-full group overflow-hidden rounded-xl disabled:opacity-50 mt-6"
-              >
-                <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
-
-                <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
-                  @if (changingPassword()) {
-                    <ion-icon name="sync-outline" class="text-xl animate-spin"></ion-icon>
-                    <span>CAMBIANDO...</span>
-                  } @else {
-                    <ion-icon name="shield-outline" class="text-xl"></ion-icon>
-                    <span>CAMBIAR CONTRASEÑA</span>
-                  }
-                </div>
-              </button>
-            </form>
+            </div>
           </div>
-        </div>
-      }
+
+          <!-- Last Name -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              APELLIDO *
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="lastName" type="text" placeholder="Tu apellido"
+                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              TELÉFONO
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="call-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="phoneNumber" type="tel" placeholder="Tu teléfono"
+                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              GÉNERO
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <ion-select formControlName="gender" placeholder="Seleccionar" interface="action-sheet"
+                class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-select-option value="" class="bg-bg-card text-text-primary">No especificar</ion-select-option>
+                <ion-select-option value="M" class="bg-bg-card text-text-primary">Masculino</ion-select-option>
+                <ion-select-option value="F" class="bg-bg-card text-text-primary">Femenino</ion-select-option>
+                <ion-select-option value="Other" class="bg-bg-card text-text-primary">Otro</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              FECHA DE NACIMIENTO
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="dateOfBirth" type="date"
+                  class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"></ion-input>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Stats -->
+          <div class="mt-6 p-4 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center">
+                <p class="text-3xl font-display font-bold text-neon-primary">{{ profile()?.completedAppointments || 0 }}
+                </p>
+                <p class="text-xs font-mono text-text-secondary">Citas Completadas</p>
+              </div>
+              <div class="text-center">
+                <p class="text-3xl font-display font-bold text-neon-secondary">{{ profile()?.averageRating?.toFixed(1)
+                  || '0.0' }}</p>
+                <p class="text-xs font-mono text-text-secondary">Calificación</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Update Button -->
+          <button type="button" (click)="onUpdateProfile()" [disabled]="updatingProfile() || !profileForm.valid"
+            class="relative w-full group overflow-hidden rounded-xl disabled:opacity-50 mt-6">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+            <div
+              class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300">
+            </div>
+
+            <div
+              class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+              @if (updatingProfile()) {
+              <ion-icon name="sync-outline" class="text-xl animate-spin"></ion-icon>
+              <span>ACTUALIZANDO...</span>
+              } @else {
+              <ion-icon name="save-outline" class="text-xl"></ion-icon>
+              <span>ACTUALIZAR PERFIL</span>
+              }
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+    }
+
+    <!-- Security Tab -->
+    @if (activeTab === 'security') {
+    <div class="relative group mt-6">
+      <div
+        class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+      </div>
+
+      <div
+        class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-6">
+
+        <form [formGroup]="passwordForm" class="space-y-4">
+
+          <!-- Current Password -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              CONTRASEÑA ACTUAL *
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="currentPassword" type="password" placeholder="Contraseña actual"
+                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+              </div>
+            </div>
+          </div>
+
+          <!-- New Password -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              CONTRASEÑA NUEVA *
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="newPassword" type="password" placeholder="Contraseña nueva"
+                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">
+              CONFIRMAR CONTRASEÑA *
+            </label>
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
+                <ion-input formControlName="confirmPassword" type="password" placeholder="Confirma la contraseña"
+                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+              </div>
+            </div>
+            @if (passwordForm.errors?.['passwordsMismatch'] && passwordForm.get('confirmPassword')?.touched) {
+            <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+              <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+              Las contraseñas no coinciden
+            </p>
+            }
+          </div>
+
+          <!-- Password Requirements -->
+          <div class="mt-4 p-4 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
+            <p class="text-xs font-mono text-neon-primary mb-2">REQUISITOS:</p>
+            <ul class="space-y-1">
+              <li class="flex items-center gap-2 text-xs font-mono"
+                [class.text-neon-secondary]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8"
+                [class.text-text-tertiary]="(passwordForm.get('newPassword')?.value?.length || 0) < 8">
+                <ion-icon
+                  [name]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8 ? 'checkmark-circle' : 'ellipse-outline'"
+                  class="text-sm"></ion-icon>
+                Mínimo 8 caracteres
+              </li>
+              <li class="flex items-center gap-2 text-xs font-mono" [class.text-neon-secondary]="hasUpperCase()"
+                [class.text-text-tertiary]="!hasUpperCase()">
+                <ion-icon [name]="hasUpperCase() ? 'checkmark-circle' : 'ellipse-outline'" class="text-sm"></ion-icon>
+                Una mayúscula
+              </li>
+              <li class="flex items-center gap-2 text-xs font-mono" [class.text-neon-secondary]="hasLowerCase()"
+                [class.text-text-tertiary]="!hasLowerCase()">
+                <ion-icon [name]="hasLowerCase() ? 'checkmark-circle' : 'ellipse-outline'" class="text-sm"></ion-icon>
+                Una minúscula
+              </li>
+              <li class="flex items-center gap-2 text-xs font-mono" [class.text-neon-secondary]="hasDigit()"
+                [class.text-text-tertiary]="!hasDigit()">
+                <ion-icon [name]="hasDigit() ? 'checkmark-circle' : 'ellipse-outline'" class="text-sm"></ion-icon>
+                Un dígito
+              </li>
+            </ul>
+          </div>
+
+          <!-- Change Password Button -->
+          <button type="button" (click)="onChangePassword()"
+            [disabled]="changingPassword() || !passwordForm.valid || passwordForm.errors?.['passwordsMismatch']"
+            class="relative w-full group overflow-hidden rounded-xl disabled:opacity-50 mt-6">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+            <div
+              class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300">
+            </div>
+
+            <div
+              class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+              @if (changingPassword()) {
+              <ion-icon name="sync-outline" class="text-xl animate-spin"></ion-icon>
+              <span>CAMBIANDO...</span>
+              } @else {
+              <ion-icon name="shield-outline" class="text-xl"></ion-icon>
+              <span>CAMBIAR CONTRASEÑA</span>
+              }
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+    }
     }
     <!-- Botón cerrar sesión -->
     <div class="flex justify-center mt-8">
-      <button type="button"
-              (click)="logout()"
-              class="w-full max-w-xs py-3 px-6 rounded-xl font-display font-semibold bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary shadow-lg hover:opacity-90 transition-all duration-300">
+      <button type="button" (click)="logout()"
+        class="w-full max-w-xs py-3 px-6 rounded-xl font-display font-semibold bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary shadow-lg hover:opacity-90 transition-all duration-300">
         <ion-icon name="log-out-outline" class="text-xl mr-2"></ion-icon>
         Cerrar sesión
       </button>

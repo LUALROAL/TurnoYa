@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -10,7 +10,8 @@ import {
   IonSpinner,
   IonAvatar,
   IonSelect,
-  IonSelectOption, IonIcon } from '@ionic/angular/standalone';
+  IonSelectOption, IonIcon
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -24,13 +25,19 @@ import {
   syncOutline,
   checkmarkCircle,
   ellipseOutline,
-  warningOutline
+  warningOutline,
+  cameraOutline,
+  closeOutline,
+  imageOutline,
+  trashOutline
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
-import { UserService, UserProfileDto } from '../../services/user.service';
+import { UserService, } from '../../services/user.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { Router } from '@angular/router';
 import { AuthSessionService } from '../../../../core/services/auth-session.service';
+import { AppPhoto, PhotoService } from 'src/app/features/owner-business/services/photo.service';
+import { UserProfileDto, UpdateUserProfileDto } from '../../models/user-profile.model';
 
 type Tab = 'profile' | 'security';
 
@@ -59,7 +66,11 @@ export class ProfilePage implements OnInit, OnDestroy {
   protected passwordForm: FormGroup;
 
   private destroy$ = new Subject<void>();
-
+  // Propiedades
+  private readonly photoService = inject(PhotoService);
+  selectedPhotoFile: File | null = null;
+  photoPreview: string | null = null;
+  existingPhotoBase64: string | null = null;
   constructor(
     private userService: UserService,
     private notify: NotifyService,
@@ -79,7 +90,11 @@ export class ProfilePage implements OnInit, OnDestroy {
       syncOutline,
       checkmarkCircle,
       ellipseOutline,
-      warningOutline
+      warningOutline,
+      cameraOutline,
+      imageOutline,
+      closeOutline,
+      trashOutline
     });
 
     this.profileForm = this.createProfileForm();
@@ -163,52 +178,55 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   protected onUpdateProfile(): void {
-    if (!this.profileForm.valid) {
-      this.notify.showError('Por favor completa todos los campos requeridos');
-      return;
-    }
-
-    this.updatingProfile.set(true);
-    const updateData: any = {};
-    const form = this.profileForm.getRawValue();
-
-    // Solo incluir cambios
-    if (form.firstName !== this.profile()?.firstName) updateData.firstName = form.firstName;
-    if (form.lastName !== this.profile()?.lastName) updateData.lastName = form.lastName;
-    if (form.phoneNumber !== this.profile()?.phoneNumber) updateData.phoneNumber = form.phoneNumber;
-
-    // Mapear género a valores válidos para la base de datos
-    if (form.gender !== this.profile()?.gender) {
-      let genderValue = form.gender;
-      if (genderValue === 'Masculino') genderValue = 'M';
-      else if (genderValue === 'Femenino') genderValue = 'F';
-      else if (genderValue === 'Otro') genderValue = 'Other';
-      updateData.gender = genderValue;
-    }
-
-    if (form.dateOfBirth !== this.profile()?.dateOfBirth) updateData.dateOfBirth = form.dateOfBirth;
-
-    if (Object.keys(updateData).length === 0) {
-      this.updatingProfile.set(false);
-      return;
-    }
-
-    this.userService
-      .updateProfile(updateData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (updated) => {
-          this.profile.set(updated);
-          this.notify.showSuccess('Perfil actualizado correctamente');
-          this.updatingProfile.set(false);
-        },
-        error: (err) => {
-          console.error('Error al actualizar perfil:', err);
-          this.notify.showError(err.error?.detail || 'Error al actualizar el perfil');
-          this.updatingProfile.set(false);
-        }
-      });
+  if (!this.profileForm.valid) {
+    this.notify.showError('Por favor completa todos los campos requeridos');
+    return;
   }
+
+  this.updatingProfile.set(true);
+  const updateData: UpdateUserProfileDto = {};
+  const form = this.profileForm.getRawValue();
+
+  if (form.firstName !== this.profile()?.firstName) updateData.firstName = form.firstName;
+  if (form.lastName !== this.profile()?.lastName) updateData.lastName = form.lastName;
+  if (form.phoneNumber !== this.profile()?.phoneNumber) updateData.phoneNumber = form.phoneNumber;
+
+  // Mapear género
+  if (form.gender !== this.profile()?.gender) {
+    let genderValue = form.gender;
+    if (genderValue === 'Masculino') genderValue = 'M';
+    else if (genderValue === 'Femenino') genderValue = 'F';
+    else if (genderValue === 'Otro') genderValue = 'Other';
+    updateData.gender = genderValue;
+  }
+
+  if (form.dateOfBirth !== this.profile()?.dateOfBirth) updateData.dateOfBirth = form.dateOfBirth;
+
+  // Si no hay cambios y no hay foto nueva, no hacer nada
+  if (Object.keys(updateData).length === 0 && !this.selectedPhotoFile) {
+    this.updatingProfile.set(false);
+    return;
+  }
+
+  // Usar el método con foto
+  this.userService.updateProfileWithPhoto(updateData, this.selectedPhotoFile || undefined)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (updated) => {
+        this.profile.set(updated);
+        this.existingPhotoBase64 = updated.photoBase64 || null;
+        this.selectedPhotoFile = null;
+        this.photoPreview = null;
+        this.notify.showSuccess('Perfil actualizado correctamente');
+        this.updatingProfile.set(false);
+      },
+      error: (err) => {
+        console.error('Error al actualizar perfil:', err);
+        this.notify.showError(err.error?.detail || 'Error al actualizar el perfil');
+        this.updatingProfile.set(false);
+      }
+    });
+}
 
   protected onChangePassword(): void {
     if (!this.passwordForm.valid) {
@@ -281,4 +299,71 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.authSession.clearSession();
     this.router.navigate(['/auth/login']);
   }
+
+  // Métodos para foto
+async takePhoto() {
+  try {
+    const photo = await this.photoService.takePhoto();
+    await this.addPhotoToSelection(photo);
+  } catch (error) {
+    console.error('Error al tomar foto:', error);
+    this.notify.showError('No se pudo tomar la foto');
+  }
+}
+
+async selectFromGallery() {
+  try {
+    const photos = await this.photoService.selectImages();
+    if (photos.length > 0) {
+      await this.addPhotoToSelection(photos[0]);
+    }
+  } catch (error) {
+    console.error('Error al seleccionar imagen:', error);
+    this.notify.showError('No se pudo seleccionar la imagen');
+  }
+}
+
+private async addPhotoToSelection(photo: AppPhoto) {
+  try {
+    let file: File;
+    if (photo.base64String) {
+      file = this.base64ToFile(photo.base64String, `photo_${Date.now()}.jpg`, 'image/jpeg');
+    } else if (photo.webPath) {
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+    } else {
+      throw new Error('Formato de imagen no soportado');
+    }
+    this.selectedPhotoFile = file;
+    this.photoPreview = photo.webPath || photo.base64String || null;
+    this.existingPhotoBase64 = null; // Reemplazar foto existente
+  } catch (error) {
+    console.error('Error al procesar imagen:', error);
+    this.notify.showError('Error al procesar la imagen');
+  }
+}
+
+removePhoto() {
+  this.selectedPhotoFile = null;
+  this.photoPreview = null;
+  this.existingPhotoBase64 = null;
+}
+
+private base64ToFile(base64: string, filename: string, mimeType: string): File {
+  if (base64.startsWith('data:')) {
+    const arr = base64.split(',');
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mimeType });
+  }
+  const bstr = atob(base64);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+  return new File([u8arr], filename, { type: mimeType });
+}
+
 }
