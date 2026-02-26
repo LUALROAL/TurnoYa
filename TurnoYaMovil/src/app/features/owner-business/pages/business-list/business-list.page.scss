@@ -22,7 +22,7 @@
   animation-delay: 1s;
 }
 
-// Skeleton loader mejorado
+// Skeleton loader
 .skeleton-card {
   height: 380px;
   background: linear-gradient(
@@ -51,15 +51,12 @@
   width: 4px;
   height: 4px;
 }
-
 ::-webkit-scrollbar-track {
   background: #0A0E17;
 }
-
 ::-webkit-scrollbar-thumb {
   background: #00E0FF;
   border-radius: 4px;
-
   &:hover {
     background: #00F5D4;
   }
@@ -70,116 +67,4 @@ ion-content {
   --background: transparent;
 }
 
-// Efectos para las tarjetas
-.business-card {
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
-// Badge de estado animado
-.status-badge {
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
-    transform: rotate(30deg);
-    animation: shine 3s infinite;
-  }
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) rotate(30deg);
-  }
-  20%, 100% {
-    transform: translateX(100%) rotate(30deg);
-  }
-}
-
-// Efecto para los botones de acción
-.action-button {
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(0, 224, 255, 0.2) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  &:hover::after {
-    opacity: 1;
-  }
-}
-
-// Efecto para el FAB
-.fab-button {
-  animation: float 3s ease-in-out infinite;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(135deg, #00E0FF, #00F5D4);
-    border-radius: 999px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
-  }
-
-  &:hover::before {
-    opacity: 0.5;
-  }
-}
-
-// Patrón de fondo para las tarjetas
-.bg-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300E0FF' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat;
-  opacity: 0.3;
-}
-
-// Grid responsiva
-.business-grid {
-  display: grid;
-  gap: 1rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-// Efecto de brillo en hover para los items de info
-.info-item {
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateX(5px);
-
-    ion-icon {
-      filter: drop-shadow(0 0 5px #00E0FF);
-    }
-  }
-}
+// Estilos para las tarjetas (opcionales, pero ya se usan clases de Tailwind)

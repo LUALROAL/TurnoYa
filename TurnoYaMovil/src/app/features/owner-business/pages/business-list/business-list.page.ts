@@ -3,10 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
   IonContent,
-  IonButton,
   IonIcon,
-  IonFab,
-  IonFabButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -83,9 +80,6 @@ export class BusinessListPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Refresca la lista cada vez que la página vuelve a ser visible
-   */
   ionViewWillEnter() {
     this.loadMyBusinesses();
   }
@@ -133,10 +127,5 @@ export class BusinessListPage implements OnInit, OnDestroy {
 
   protected trackByBusinessId(_: number, business: OwnerBusiness): string {
     return business.id;
-  }
-
-  // Método para obtener el color del badge según el estado
-  protected getStatusColor(isActive: boolean): string {
-    return isActive ? '#00E0FF' : '#7A8FA6';
   }
 }

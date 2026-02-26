@@ -3,12 +3,7 @@
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
     <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
-
-    <div class="absolute inset-0" style="background-image:
-      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;">
-    </div>
+    <div class="absolute inset-0" style="background-image: linear-gradient(rgba(0,224,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.03) 1px, transparent 1px); background-size:40px 40px;"></div>
   </div>
 
   <div class="relative z-10 pb-20">
@@ -20,11 +15,7 @@
             <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
           </button>
           <div>
-            <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-              <!-- &lt;  -->
-              PANEL DE CONTROL
-               <!-- /&gt; -->
-            </p>
+            <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">PANEL DE CONTROL</p>
             <h1 class="text-2xl font-display font-bold">
               <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
                 Mis Negocios
@@ -32,8 +23,6 @@
             </h1>
           </div>
         </div>
-
-        <!-- Indicador de estado -->
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 bg-neon-primary rounded-full animate-ping"></span>
           <span class="text-xs font-mono text-text-secondary">Owner Mode</span>
@@ -42,7 +31,7 @@
     </header>
 
     <div class="px-4 space-y-6 mt-4">
-      <!-- Título de sección mejorado -->
+      <!-- Título de sección -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
           Gestiona tus <span class="text-neon-primary">Negocios</span>
@@ -63,7 +52,7 @@
         </section>
       }
 
-      <!-- Empty state mejorado -->
+      <!-- Empty state -->
       @if (!loading && isEmpty) {
         <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
           <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
@@ -84,7 +73,7 @@
         </div>
       }
 
-      <!-- Business list -->
+      <!-- Lista de negocios -->
       @if (!loading && !isEmpty) {
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (business of businesses; track trackByBusinessId($index, business)) {
@@ -93,13 +82,20 @@
 
               <article class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
 
-                <!-- Cabecera con imagen de fondo sutil -->
-                <div class="relative h-32 overflow-hidden">
-                  <div class="absolute inset-0 bg-gradient-to-br from-neon-primary/20 to-neon-secondary/20"></div>
-                  <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300E0FF' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); background-repeat: repeat; opacity: 0.3;"></div>
+                <!-- Cabecera con imagen o gradiente -->
+                <div class="relative h-32 overflow-hidden bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20">
+                  <!-- Imagen de fondo (logo) si existe -->
+                  @if (business.images && business.images.length > 0) {
+                    <img [src]="business.images[0].imagePath" alt="Logo" class="absolute inset-0 w-full h-full object-cover">
+                    <!-- Overlay oscuro para mejorar legibilidad del texto -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+                  } @else {
+                    <!-- Patrón de fondo cuando no hay logo -->
+                    <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%2300E0FF\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); background-repeat: repeat; opacity: 0.3;"></div>
+                  }
 
-                  <!-- Status badge en la imagen -->
-                  <div class="absolute top-3 right-3">
+                  <!-- Status badge -->
+                  <div class="absolute top-3 right-3 z-10">
                     <span class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm flex items-center gap-1"
                           [class.bg-neon-primary/20]="business.isActive"
                           [class.border-neon-primary/30]="business.isActive"
@@ -117,8 +113,8 @@
                     </span>
                   </div>
 
-                  <!-- Título sobre la imagen -->
-                  <div class="absolute bottom-3 left-3 right-3">
+                  <!-- Título del negocio -->
+                  <div class="absolute bottom-3 left-3 right-3 z-10">
                     <h3 class="text-xl font-display font-bold text-text-primary">{{ business.name }}</h3>
                     <p class="text-sm text-text-secondary flex items-center gap-1">
                       <ion-icon name="business-outline" class="text-neon-primary text-xs"></ion-icon>
@@ -127,10 +123,9 @@
                   </div>
                 </div>
 
-                <!-- Contenido de la tarjeta -->
+                <!-- Contenido de la tarjeta (resto igual) -->
                 <div class="p-4 space-y-3">
-
-                  <!-- Rating si existe -->
+                  <!-- Rating -->
                   @if (business.averageRating > 0) {
                     <div class="flex items-center gap-2">
                       <div class="flex items-center gap-1 px-2 py-1 bg-neon-primary/10 rounded-full border border-neon-primary/20">
@@ -141,7 +136,7 @@
                     </div>
                   }
 
-                  <!-- Info rows -->
+                  <!-- Información de contacto -->
                   <div class="space-y-2">
                     <div class="flex items-center gap-2 text-sm text-text-secondary">
                       <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
@@ -149,7 +144,6 @@
                       </div>
                       <span class="font-mono text-xs">{{ business.city }}, {{ business.department }}</span>
                     </div>
-
                     @if (business.phone) {
                       <div class="flex items-center gap-2 text-sm text-text-secondary">
                         <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
@@ -158,7 +152,6 @@
                         <span class="font-mono text-xs">{{ business.phone }}</span>
                       </div>
                     }
-
                     @if (business.email) {
                       <div class="flex items-center gap-2 text-sm text-text-secondary">
                         <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
@@ -169,46 +162,35 @@
                     }
                   </div>
 
-                  <!-- Actions grid mejorada -->
+                  <!-- Botones de acción -->
                   <div class="grid grid-cols-2 gap-2 pt-2">
                     <button [routerLink]="['/businesses', business.id]"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="eye-outline" class="text-sm"></ion-icon>
-                      Ver
+                      <ion-icon name="eye-outline" class="text-sm"></ion-icon> Ver
                     </button>
-
                     <button [routerLink]="['/owner/businesses', business.id, 'edit']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="create-outline" class="text-sm"></ion-icon>
-                      Editar
+                      <ion-icon name="create-outline" class="text-sm"></ion-icon> Editar
                     </button>
-
                     <button [routerLink]="['/owner/businesses', business.id, 'services']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="construct-outline" class="text-sm"></ion-icon>
-                      Servicios
+                      <ion-icon name="construct-outline" class="text-sm"></ion-icon> Servicios
                     </button>
-
                     <button [routerLink]="['/owner/businesses', business.id, 'employees']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="people-outline" class="text-sm"></ion-icon>
-                      Empleados
+                      <ion-icon name="people-outline" class="text-sm"></ion-icon> Empleados
                     </button>
-
                     <button [routerLink]="['/owner/businesses', business.id, 'appointments']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="calendar-outline" class="text-sm"></ion-icon>
-                      Agenda
+                      <ion-icon name="calendar-outline" class="text-sm"></ion-icon> Agenda
                     </button>
-
                     <button [routerLink]="['/owner/businesses', business.id, 'settings']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="settings-outline" class="text-sm"></ion-icon>
-                      Configurar
+                      <ion-icon name="settings-outline" class="text-sm"></ion-icon> Configurar
                     </button>
                   </div>
 
-                  <!-- Botón de activar/desactivar -->
+                  <!-- Botón activar/desactivar -->
                   <button (click)="toggleBusinessStatus(business, $event)"
                           class="w-full mt-2 py-3 rounded-xl font-mono text-sm transition-all duration-300 flex items-center justify-center gap-2"
                           [class.bg-gradient-to-r]="!business.isActive"
@@ -233,7 +215,7 @@
     </div>
   </div>
 
-  <!-- Floating action button mejorado -->
+  <!-- FAB -->
   @if (!loading && !isEmpty) {
     <div class="fixed bottom-6 right-6 z-30">
       <div class="relative group">
