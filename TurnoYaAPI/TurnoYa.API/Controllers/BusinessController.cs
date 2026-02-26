@@ -365,7 +365,26 @@ public class BusinessController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<BusinessSettingsDto>> UpdateSettings(Guid id, BusinessSettingsDto dto)
     {
-        // TODO: Mover lógica de actualización de settings a BusinessService
-        throw new NotImplementedException("Mover lógica de actualización de settings a BusinessService");
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null)
+            return Forbid();
+
+        var userId = Guid.Parse(userIdClaim.Value);
+
+        try
+        {
+            var result = await _businessService.UpdateSettingsAsync(id, dto, userId);
+
+            if (result == null)
+                return NotFound(new { message = "Negocio no encontrado" });
+
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid("No autorizado para modificar este negocio");
+        }
     }
+
 }
