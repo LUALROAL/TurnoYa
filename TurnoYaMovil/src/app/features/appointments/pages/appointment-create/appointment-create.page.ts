@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, LOCALE_ID } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonButton,
   IonContent,
   IonIcon,
   IonInput,
   IonSelect,
   IonSelectOption,
   IonTextarea,
+  IonSpinner,
+  IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -20,30 +21,41 @@ import {
   timeOutline,
   warningOutline,
   chatbubbleOutline,
-  syncOutline
+  syncOutline,
+  chevronBackOutline,
+  chevronForwardOutline,
+  closeOutline
 } from 'ionicons/icons';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil, catchError, map } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from '../../../business/models';
 import { BusinessService } from '../../../business/services/business.service';
 import { CreateAppointmentRequest } from '../../models';
 import { AppointmentsService } from '../../services/appointments.service';
+import { AvailabilityResponse } from '../../models/availability.models';
+
+// Registrar locale español (si no está ya registrado globalmente)
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-appointment-create',
   standalone: true,
   imports: [
+    IonSpinner,
     CommonModule,
     ReactiveFormsModule,
     IonContent,
     IonIcon,
-    IonInput,
     IonSelect,
     IonSelectOption,
     IonTextarea,
+    IonModal
   ],
   templateUrl: './appointment-create.page.html',
-  styleUrl: './appointment-create.page.scss',
+  styleUrls: ['./appointment-create.page.scss'],
+  providers: [{ provide: LOCALE_ID, useValue: 'es' }] // Forzar locale español en este componente
 })
 export class AppointmentCreatePage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -62,6 +74,20 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected employees: BusinessEmployeeItem[] = [];
   protected appointmentForm: FormGroup;
 
+  // Disponibilidad (horas)
+  protected availableSlots: string[] = [];
+  protected loadingSlots = false;
+
+  // Calendario
+  protected isCalendarOpen = false;
+  protected currentMonth: Date = new Date();
+  protected calendarDays: { day: number; date: Date; isCurrentMonth: boolean; isSelectable: boolean }[] = [];
+  protected weekDays = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+  // Días disponibles (con al menos un horario)
+  protected availableDaysSet: Set<string> = new Set();
+  protected loadingDays = false;
+
   constructor() {
     addIcons({
       arrowBack,
@@ -71,7 +97,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       save,
       warningOutline,
       chatbubbleOutline,
-      syncOutline
+      syncOutline,
+      chevronBackOutline,
+      chevronForwardOutline,
+      closeOutline
     });
 
     this.appointmentForm = this.fb.group({
@@ -81,30 +110,41 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       scheduledTime: ['', Validators.required],
       notes: ['', [Validators.maxLength(500)]],
     });
+
+    this.generateCalendar();
   }
 
   ngOnInit(): void {
-  this.businessId = this.route.snapshot.paramMap.get('id') || '';
-  // Leer query params
-  this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
-    const preselectedService = params.get('serviceId');
-    const preselectedEmployee = params.get('employeeId');
-    if (preselectedService) {
-      this.appointmentForm.patchValue({ serviceId: preselectedService });
-    }
-    if (preselectedEmployee) {
-      this.appointmentForm.patchValue({ employeeId: preselectedEmployee });
-    }
-  });
+    this.businessId = this.route.snapshot.paramMap.get('id') || '';
 
-  if (!this.businessId) {
-    this.notify.showError('No se encontró el negocio');
-    this.router.navigate(['/businesses']);
-    return;
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const preselectedService = params.get('serviceId');
+      const preselectedEmployee = params.get('employeeId');
+      if (preselectedService) {
+        this.appointmentForm.patchValue({ serviceId: preselectedService });
+      }
+      if (preselectedEmployee) {
+        this.appointmentForm.patchValue({ employeeId: preselectedEmployee });
+      }
+    });
+
+    if (!this.businessId) {
+      this.notify.showError('No se encontró el negocio');
+      this.router.navigate(['/businesses']);
+      return;
+    }
+
+    this.appointmentForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        switchMap(() => this.loadAvailability())
+      )
+      .subscribe();
+
+    this.loadBusiness();
   }
-
-  this.loadBusiness();
-}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -162,10 +202,169 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     return this.appointmentForm.controls;
   }
 
-  // Método para obtener la fecha mínima (hoy)
   protected getMinDate(): string {
     const today = new Date();
     return today.toISOString().split('T')[0];
+  }
+
+  protected selectTime(time: string): void {
+    this.appointmentForm.patchValue({ scheduledTime: time });
+  }
+
+  // ========== MÉTODOS DEL CALENDARIO ==========
+  protected openCalendar(): void {
+    this.isCalendarOpen = true;
+    // Si los días aún no se han cargado (por ejemplo, si se abrió antes de que termine la carga), forzar recarga
+    if (!this.loadingDays && this.availableDaysSet.size === 0) {
+      this.loadAvailableDays();
+    }
+  }
+
+  protected closeCalendar(): void {
+    this.isCalendarOpen = false;
+  }
+
+  protected prevMonth(): void {
+    this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
+    this.generateCalendar();
+    this.loadAvailableDays();
+  }
+
+  protected nextMonth(): void {
+    this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
+    this.generateCalendar();
+    this.loadAvailableDays();
+  }
+
+  protected selectDate(day: number, monthOffset: number = 0): void {
+    const selectedDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + monthOffset, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) return;
+
+    const year = selectedDate.getFullYear();
+    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+    const dayStr = day.toString().padStart(2, '0');
+    const dateStr = `${year}-${month}-${dayStr}`;
+
+    this.appointmentForm.patchValue({ scheduledDate: dateStr });
+    this.closeCalendar();
+  }
+
+  protected formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  protected isSelectedDate(day: number, monthOffset: number = 0): boolean {
+    const selected = this.appointmentForm.get('scheduledDate')?.value;
+    if (!selected) return false;
+
+    const [year, month, dayStr] = selected.split('-').map(Number);
+    const date = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + monthOffset, day);
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+  }
+
+  private generateCalendar(): void {
+    const year = this.currentMonth.getFullYear();
+    const month = this.currentMonth.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    const startDay = firstDayOfMonth.getDay(); // 0 = Domingo, 1 = Lunes, ...
+    const startOffset = startDay === 0 ? 6 : startDay - 1; // para que empiece en Lunes
+
+    const daysInMonth = lastDayOfMonth.getDate();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tempDays: { day: number; date: Date; isCurrentMonth: boolean; isSelectable: boolean }[] = [];
+
+    // Días del mes anterior
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    for (let i = startOffset - 1; i >= 0; i--) {
+      const day = prevMonthLastDay - i;
+      const date = new Date(year, month - 1, day);
+      tempDays.push({
+        day,
+        date,
+        isCurrentMonth: false,
+        isSelectable: date >= today && this.availableDaysSet.has(this.formatDate(date))
+      });
+    }
+
+    // Días del mes actual
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      tempDays.push({
+        day,
+        date,
+        isCurrentMonth: true,
+        isSelectable: date >= today && this.availableDaysSet.has(this.formatDate(date))
+      });
+    }
+
+    // Completar hasta 42
+    const remaining = 42 - tempDays.length;
+    for (let day = 1; day <= remaining; day++) {
+      const date = new Date(year, month + 1, day);
+      tempDays.push({
+        day,
+        date,
+        isCurrentMonth: false,
+        isSelectable: date >= today && this.availableDaysSet.has(this.formatDate(date))
+      });
+    }
+
+    this.calendarDays = tempDays;
+  }
+
+  private loadAvailableDays(): void {
+    const serviceId = this.appointmentForm.get('serviceId')?.value;
+    const employeeId = this.appointmentForm.get('employeeId')?.value;
+
+    console.log('loadAvailableDays called', { serviceId, employeeId, businessId: this.businessId });
+
+    if (!serviceId) {
+      console.log('No serviceId, clearing days');
+      this.availableDaysSet.clear();
+      this.generateCalendar();
+      return;
+    }
+
+    const year = this.currentMonth.getFullYear();
+    const month = this.currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const from = firstDay.toISOString().split('T')[0];
+    const to = lastDay.toISOString().split('T')[0];
+
+    console.log('Fetching available days from', from, 'to', to);
+
+    this.loadingDays = true;
+
+    this.appointmentsService
+      .getAvailableDays(this.businessId, serviceId, from, to, employeeId || undefined)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (days) => {
+          console.log('Received available days:', days);
+          this.availableDaysSet = new Set(days);
+          this.generateCalendar();
+          this.loadingDays = false;
+        },
+        error: (err) => {
+          console.error('Error al cargar días disponibles', err);
+          this.availableDaysSet.clear();
+          this.generateCalendar();
+          this.loadingDays = false;
+        }
+      });
   }
 
   private loadBusiness(): void {
@@ -181,9 +380,14 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.employees = business.employees.filter(employee => employee.isActive);
           this.loading = false;
 
+          // Auto‑seleccionar si solo hay un servicio
           if (this.services.length === 1) {
             this.appointmentForm.patchValue({ serviceId: this.services[0].id });
           }
+
+          // Pre‑cargar los días disponibles para el mes actual
+          // (esto se ejecutará si hay un servicio seleccionado, ya sea por queryParam o auto‑selección)
+          this.loadAvailableDays();
         },
         error: (error: unknown) => {
           console.error('Error al cargar negocio:', error);
@@ -192,5 +396,44 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.router.navigate(['/businesses']);
         },
       });
+  }
+
+  private loadAvailability(): Observable<void> {
+    const serviceId = this.appointmentForm.get('serviceId')?.value;
+    const date = this.appointmentForm.get('scheduledDate')?.value;
+    const employeeId = this.appointmentForm.get('employeeId')?.value;
+
+    if (!serviceId || !date) {
+      this.availableSlots = [];
+      this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+      return of(undefined);
+    }
+
+    this.loadingSlots = true;
+    this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+
+    return this.appointmentsService
+      .getAvailability(this.businessId, serviceId, date, employeeId || undefined)
+      .pipe(
+        takeUntil(this.destroy$),
+        map((response: AvailabilityResponse) => {
+          this.availableSlots = response.availableSlots;
+          if (this.availableSlots.length === 0) {
+            this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+            this.appointmentForm.patchValue({ scheduledTime: '' });
+          } else {
+            this.appointmentForm.get('scheduledTime')?.enable({ emitEvent: false });
+          }
+          this.loadingSlots = false;
+          return undefined;
+        }),
+        catchError((error) => {
+          console.error('Error al cargar disponibilidad:', error);
+          this.availableSlots = [];
+          this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+          this.loadingSlots = false;
+          return of(undefined);
+        })
+      );
   }
 }

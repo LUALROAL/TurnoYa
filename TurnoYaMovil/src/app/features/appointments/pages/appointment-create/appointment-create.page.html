@@ -5,7 +5,6 @@
     <div
       class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
     </div>
-
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
@@ -23,9 +22,7 @@
         </button>
         <div>
           <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-            <!-- &lt;  -->
             AGENDAR CITA
-            <!-- /&gt; -->
           </p>
           <h1 class="text-2xl font-display font-bold">
             <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
@@ -38,7 +35,6 @@
 
     <div class="px-4 space-y-4 mt-4">
       @if (loading) {
-      <!-- Skeleton Loader -->
       <div class="space-y-4">
         <div class="skeleton-form"></div>
       </div>
@@ -89,9 +85,7 @@
             <!-- Campo: Profesional -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                <!-- &lt; -->
                 PROFESIONAL (opcional)
-                <!-- /&gt; -->
               </label>
               <div class="relative">
                 <div
@@ -110,67 +104,75 @@
               </div>
             </div>
 
-            <!-- Grid: Fecha y Hora -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- Fecha -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  <!-- &lt; -->
-                  FECHA *
-                  <!-- /&gt; -->
-                </label>
-                <div class="relative">
-                  <div
-                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                  </div>
-                  <div
-                    class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input id="scheduledDate" type="date" formControlName="scheduledDate"
-                      class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"></ion-input>
-                  </div>
+            <!-- Fecha (selector personalizado) -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                FECHA *
+              </label>
+              <div class="relative cursor-pointer" (click)="openCalendar()">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300"></div>
+                <div
+                  class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
+                  <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
+                  <span class="flex-1 text-text-primary font-body">
+                    {{ (appointmentForm.get('scheduledDate')?.value | date:'dd/MM/yyyy') || 'Seleccionar fecha' }}
+                  </span>
+                  <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg"></ion-icon>
                 </div>
-                @if (formControls['scheduledDate'].touched && formControls['scheduledDate'].invalid) {
-                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                  Selecciona una fecha
-                </p>
-                }
               </div>
+              @if (formControls['scheduledDate'].touched && formControls['scheduledDate'].invalid) {
+              <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                Selecciona una fecha
+              </p>
+              }
+            </div>
 
-              <!-- Hora -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  <!-- &lt; -->
-                  HORA *
-                  <!-- /&gt; -->
-                </label>
-                <div class="relative">
-                  <div
-                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                  </div>
-                  <div
-                    class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="time-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input id="scheduledTime" type="time" formControlName="scheduledTime"
-                      class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"></ion-input>
-                  </div>
-                </div>
-                @if (formControls['scheduledTime'].touched && formControls['scheduledTime'].invalid) {
-                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                  Selecciona una hora
+            <!-- Hora (selector de botones) -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                HORA *
+              </label>
+
+              @if (loadingSlots) {
+              <div class="flex items-center justify-center py-6">
+                <ion-spinner name="crescent" class="text-neon-primary w-8 h-8"></ion-spinner>
+              </div>
+              }
+
+              @if (!loadingSlots && availableSlots.length === 0 && formControls['scheduledDate']?.value &&
+              formControls['serviceId']?.value) {
+              <div class="text-center py-6">
+                <p class="text-text-secondary font-mono text-sm">
+                  No hay horarios disponibles para esta fecha
                 </p>
+              </div>
+              }
+
+              @if (!loadingSlots && availableSlots.length > 0) {
+              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
+                @for (slot of availableSlots; track slot) {
+                <button type="button" (click)="selectTime(slot)"
+                  class="time-slot-btn py-3 px-2 rounded-xl border font-mono text-sm transition-all duration-300"
+                  [class.selected]="appointmentForm.get('scheduledTime')?.value === slot">
+                  {{ slot }}
+                </button>
                 }
               </div>
+              }
+
+              @if (formControls['scheduledTime'].touched && formControls['scheduledTime'].invalid && !loadingSlots) {
+              <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                Debes seleccionar una hora
+              </p>
+              }
             </div>
 
             <!-- Campo: Notas -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                <!-- &lt; -->
                 NOTAS (opcional)
-                <!-- /&gt; -->
               </label>
               <div class="relative">
                 <div
@@ -181,7 +183,8 @@
                   <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
                   <ion-textarea id="notes" formControlName="notes" rows="4"
                     placeholder="Ej: Prefiero corte clásico y barba"
-                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-textarea>
+                    class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body">
+                  </ion-textarea>
                 </div>
               </div>
               @if (formControls['notes'].touched && formControls['notes'].invalid) {
@@ -192,7 +195,6 @@
               }
             </div>
 
-            <!-- Indicador de campos obligatorios -->
             <p class="text-xs font-mono text-text-tertiary mt-2">
               * Campos obligatorios
             </p>
@@ -201,13 +203,10 @@
 
         <!-- Botones de acción -->
         <div class="flex flex-col sm:flex-row gap-3 pt-2">
-          <!-- Botón Cancelar -->
           <button type="button" (click)="onCancel()" [disabled]="saving"
             class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50">
             Cancelar
           </button>
-
-          <!-- Botón Agendar -->
           <button type="submit" [disabled]="appointmentForm.invalid || saving"
             class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50">
             <div
@@ -216,7 +215,6 @@
             <div
               class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300">
             </div>
-
             <div
               class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
               <ion-icon [name]="saving ? 'sync-outline' : 'save'" class="text-xl"
@@ -229,4 +227,68 @@
       }
     </div>
   </div>
+
+  <!-- Modal del calendario -->
+  <ion-modal [isOpen]="isCalendarOpen" (didDismiss)="closeCalendar()" class="calendar-modal">
+    <ng-template>
+      <div class="calendar-container p-5">
+        <!-- Cabecera -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-display font-semibold text-text-primary">Seleccionar fecha</h3>
+          <button (click)="closeCalendar()" class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+            <ion-icon name="close-outline" class="text-text-primary"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Navegación de meses -->
+        <div class="flex items-center justify-between mb-4">
+          <button (click)="prevMonth()" class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+            <ion-icon name="chevron-back-outline" class="text-neon-primary"></ion-icon>
+          </button>
+          <span class="text-text-primary font-display font-semibold">
+            {{ currentMonth | date:'MMMM yyyy':'':'es' | titlecase }}
+          </span>
+          <button (click)="nextMonth()" class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+            <ion-icon name="chevron-forward-outline" class="text-neon-primary"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+          @for (day of weekDays; track $index) {
+            <div class="text-center text-xs font-mono text-neon-primary">{{ day }}</div>
+          }
+        </div>
+
+        <!-- Indicador de carga -->
+        @if (loadingDays) {
+          <div class="flex justify-center py-4">
+            <ion-spinner name="crescent" class="text-neon-primary w-6 h-6"></ion-spinner>
+          </div>
+        }
+
+        <!-- Grid de días -->
+        @if (!loadingDays) {
+          <div class="grid grid-cols-7 gap-1">
+            @for (day of calendarDays; track $index) {
+              <button
+                type="button"
+                [disabled]="!day.isSelectable"
+                (click)="selectDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
+                class="calendar-day aspect-square rounded-lg font-mono text-sm transition-all duration-300 relative"
+                [class.selected]="isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
+                [class.other-month]="!day.isCurrentMonth"
+                [class.disabled]="!day.isSelectable"
+              >
+                {{ day.day }}
+                @if (availableDaysSet.has(formatDate(day.date))) {
+                  <span class="availability-dot"></span>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

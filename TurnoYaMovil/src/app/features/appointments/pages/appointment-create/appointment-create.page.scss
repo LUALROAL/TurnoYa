@@ -5,13 +5,27 @@
 
 // Animaciones personalizadas
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .animation-delay-2000 {
@@ -25,12 +39,10 @@
 // Skeleton loader
 .skeleton-form {
   height: 600px;
-  background: linear-gradient(
-    90deg,
-    rgba(26, 31, 47, 0.5) 25%,
-    rgba(0, 224, 255, 0.1) 50%,
-    rgba(26, 31, 47, 0.5) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 16px;
@@ -41,6 +53,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -171,9 +184,12 @@ ion-textarea {
 
 // Animación para el botón de guardar
 @keyframes save-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(0, 224, 255, 0.3);
   }
+
   50% {
     box-shadow: 0 0 40px rgba(0, 224, 255, 0.6);
   }
@@ -222,5 +238,174 @@ ion-textarea {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.9rem;
     animation: pulse 1.5s infinite;
+  }
+}
+
+// Botones de selección de hora
+.time-slot-btn {
+  background: rgba(26, 31, 47, 0.5); // bg-bg-secondary/50
+  border-color: rgba(0, 224, 255, 0.2);
+  color: #B0C4DE; // text-text-secondary
+
+  &:hover:not(:disabled) {
+    border-color: rgba(0, 224, 255, 0.5);
+    color: #FFFFFF;
+    background: rgba(0, 224, 255, 0.1);
+  }
+
+  &.selected {
+    background: linear-gradient(135deg, #00E0FF, #00F5D4);
+    border-color: transparent;
+    color: #03050A; // text-bg-primary
+    font-weight: 600;
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+// Ajuste para el grid en móviles
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+// ==================== CALENDARIO MEJORADO ====================
+.calendar-modal {
+  --height: auto;
+  --width: 90%;
+  --max-width: 400px;
+  --max-height: 90vh;
+  --border-radius: 24px;
+
+  &::part(content) {
+    background: transparent;
+  }
+}
+
+.calendar-container {
+  background: #1A1F2F;
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 0 40px rgba(0, 224, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+// Título del mes
+.calendar-container .text-text-primary.font-display.font-semibold {
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+}
+
+// Días de la semana (cabecera)
+.calendar-container .grid-cols-7.gap-1.mb-2 {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+
+  > div {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #00E0FF;
+    text-align: center;
+    padding: 8px 0;
+    border-bottom: 2px solid rgba(0, 224, 255, 0.3);
+    background: rgba(0, 224, 255, 0.05);
+    border-radius: 4px 4px 0 0;
+  }
+}
+
+// Grid de días
+.calendar-container .grid-cols-7.gap-1:last-child {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  background: rgba(26, 31, 47, 0.6);
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  color: #B0C4DE;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  font-size: 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s ease;
+  position: relative;
+  padding: 4px 0;
+  margin: 0;
+
+  &:hover:not(:disabled) {
+    border-color: rgba(0, 224, 255, 0.5);
+    background: rgba(0, 224, 255, 0.1);
+    color: #FFFFFF;
+  }
+
+  &.selected {
+    background: linear-gradient(135deg, #00E0FF, #00F5D4);
+    border-color: transparent;
+    color: #03050A;
+    font-weight: 600;
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
+  }
+
+  &.other-month {
+    opacity: 0.4;
+  }
+
+  &.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.availability-dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: #00E0FF;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00E0FF;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// Indicador de carga
+.calendar-container ion-spinner {
+  --color: #00E0FF;
+  width: 24px;
+  height: 24px;
+}
+
+// Responsive: ajustes para móviles pequeños
+@media (max-width: 360px) {
+  .calendar-container {
+    padding: 16px;
+  }
+
+  .calendar-day {
+    font-size: 0.75rem;
+  }
+
+  .calendar-container .grid-cols-7.gap-1.mb-2 > div {
+    font-size: 0.7rem;
+    padding: 4px 0;
   }
 }
