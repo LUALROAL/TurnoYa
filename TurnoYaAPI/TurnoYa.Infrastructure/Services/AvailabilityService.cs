@@ -1,214 +1,224 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using TurnoYa.Application.DTOs.Appointment;
-using TurnoYa.Application.DTOs.Business;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TurnoYa.Application.DTOs.Availability;
 using TurnoYa.Application.Interfaces;
+using TurnoYa.Core.Entities;
+using TurnoYa.Core.Interfaces;
 using TurnoYa.Infrastructure.Data;
 
-namespace TurnoYa.Infrastructure.Services;
-
-/// <summary>
-/// Servicio para calcular disponibilidad de citas
-/// </summary>
-public class AvailabilityService : IAvailabilityService
+namespace TurnoYa.Infrastructure.Services
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<AvailabilityService> _logger;
-
-    public AvailabilityService(
-        ApplicationDbContext context,
-        ILogger<AvailabilityService> logger)
+    public class AvailabilityService : IAvailabilityService
     {
-        _context = context;
-        _logger = logger;
-    }
+        private readonly IBusinessScheduleRepository _businessScheduleRepository;
+        private readonly IEmployeeScheduleRepository _employeeScheduleRepository;
+        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly ApplicationDbContext _context; // Para acceder a servicios y configuraciones
 
-    public async Task<IEnumerable<TimeSlotDto>> GetAvailableSlotsAsync(AvailabilityQueryDto query)
-    {
-        try
+        public AvailabilityService(
+            IBusinessScheduleRepository businessScheduleRepository,
+            IEmployeeScheduleRepository employeeScheduleRepository,
+            IAppointmentRepository appointmentRepository,
+            ApplicationDbContext context)
         {
-            // Validar que el negocio existe
-            var business = await _context.Businesses
-                .Include(b => b.Settings)
-                .FirstOrDefaultAsync(b => b.Id == query.BusinessId);
+            _businessScheduleRepository = businessScheduleRepository;
+            _employeeScheduleRepository = employeeScheduleRepository;
+            _appointmentRepository = appointmentRepository;
+            _context = context;
+        }
 
-            if (business == null)
-                return Array.Empty<TimeSlotDto>();
-
-            // Validar que el servicio existe y pertenece al negocio
-            var service = await _context.Services
-                .FirstOrDefaultAsync(s => s.Id == query.ServiceId && s.BusinessId == query.BusinessId);
-
+        public async Task<AvailabilityResponseDto> GetAvailableSlotsAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime date)
+        {
+            // 1. Obtener el servicio para conocer su duración
+            var service = await _context.Services.FindAsync(serviceId);
             if (service == null)
-                return Array.Empty<TimeSlotDto>();
+                throw new Exception("Servicio no encontrado");
 
-            // Si se especifica un empleado, validar que existe
-            if (query.EmployeeId.HasValue)
+            // 2. Obtener la configuración del negocio (para buffer y otras reglas)
+            var businessSettings = await _context.BusinessSettings
+                .FirstOrDefaultAsync(bs => bs.BusinessId == businessId);
+            int bufferTime = businessSettings?.BufferTime ?? 0; // minutos entre citas
+
+            // 3. Determinar qué horario usar (negocio o empleado)
+            List<TimeRange> workingRanges = new List<TimeRange>();
+            if (employeeId.HasValue)
             {
-                var employee = await _context.Employees
-                    .FirstOrDefaultAsync(e => e.Id == query.EmployeeId.Value && e.BusinessId == query.BusinessId);
-
-                if (employee == null)
-                    return Array.Empty<TimeSlotDto>();
+                // Usar horario del empleado
+                var employeeSchedule = await _employeeScheduleRepository.GetByEmployeeIdAsync(employeeId.Value);
+                if (employeeSchedule == null)
+                    throw new Exception("El empleado no tiene horario configurado");
+                workingRanges = GetWorkingRangesForDate(employeeSchedule, date);
+            }
+            else
+            {
+                // Usar horario del negocio
+                var businessSchedule = await _businessScheduleRepository.GetByBusinessIdAsync(businessId);
+                if (businessSchedule == null)
+                    throw new Exception("El negocio no tiene horario configurado");
+                workingRanges = GetWorkingRangesForDate(businessSchedule, date);
             }
 
-            // Obtener configuración del negocio
-            var settings = business.Settings ?? new Core.Entities.BusinessSettings
+            if (!workingRanges.Any())
+                return new AvailabilityResponseDto { Date = date.ToString("yyyy-MM-dd"), AvailableSlots = new List<string>() };
+
+            // 4. Obtener citas ya agendadas para ese día (servicio o empleado)
+            var startOfDay = date.Date;
+            var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+            var appointments = await _appointmentRepository.GetByBusinessIdAsync(businessId, startOfDay, endOfDay);
+            if (employeeId.HasValue)
             {
-                SlotDuration = 30,
-                BufferTime = 0,
-                MaxAdvanceBookingDays = 90,
-                MinAdvanceBookingMinutes = 60
-            };
-
-            // Validar que la fecha esté dentro del rango permitido
-            var now = DateTime.UtcNow;
-            var minDate = now.AddMinutes(settings.MinAdvanceBookingMinutes);
-            var maxDate = now.AddDays(settings.MaxAdvanceBookingDays);
-
-            if (query.Date.Date < minDate.Date || query.Date.Date > maxDate.Date)
-                return Array.Empty<TimeSlotDto>();
-
-            // Obtener horarios de trabajo del día de la semana
-            var dayOfWeek = query.Date.DayOfWeek;
-            var workingHours = GetWorkingHoursForDay(business.Settings?.WorkingHours, dayOfWeek);
-
-            if (workingHours == null || !workingHours.IsOpen)
-                return Array.Empty<TimeSlotDto>();
-
-            // Obtener citas existentes para ese día
-            var existingAppointments = await _context.Appointments
-                .Where(a => a.BusinessId == query.BusinessId
-                    && a.ScheduledDate.Date == query.Date.Date
-                    && (a.Status == Core.Entities.AppointmentStatus.Pending || a.Status == Core.Entities.AppointmentStatus.Confirmed)
-                    && (!query.EmployeeId.HasValue || a.EmployeeId == query.EmployeeId.Value))
-                .ToListAsync();
-
-            // Generar slots de tiempo
-            var slots = GenerateTimeSlots(
-                query.Date,
-                workingHours,
-                service.Duration,
-                settings.BufferTime,
-                existingAppointments,
-                now);
-
-            return slots;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al calcular disponibilidad");
-            return Array.Empty<TimeSlotDto>();
-        }
-    }
-
-    private DayScheduleDto? GetWorkingHoursForDay(string? workingHoursJson, DayOfWeek dayOfWeek)
-    {
-        if (string.IsNullOrEmpty(workingHoursJson))
-        {
-            // Horario por defecto: Lunes a Viernes 9am-6pm
-            if (dayOfWeek >= DayOfWeek.Monday && dayOfWeek <= DayOfWeek.Friday)
+                appointments = appointments.Where(a => a.EmployeeId == employeeId.Value).ToList();
+            }
+            else
             {
-                return new DayScheduleDto
+                // Si no hay empleado, considerar todas las citas del negocio? Depende de la lógica.
+                // Podría ser que el servicio no requiera empleado, entonces las citas de cualquier empleado afectan.
+                // Asumimos que si no hay empleado, las citas de todos los empleados (para ese servicio) afectan.
+                appointments = appointments.Where(a => a.ServiceId == serviceId).ToList();
+            }
+
+            // 5. Generar slots disponibles
+            var availableSlots = new List<string>();
+            int slotDuration = service.Duration;
+            foreach (var range in workingRanges)
+            {
+                var current = range.Start;
+                while (current.AddMinutes(slotDuration) <= range.End)
                 {
-                    IsOpen = true,
-                    OpenTime = "09:00",
-                    CloseTime = "18:00"
-                };
-            }
-            return new DayScheduleDto { IsOpen = false };
-        }
-
-        try
-        {
-            var workingHours = JsonSerializer.Deserialize<WorkingHoursDto>(workingHoursJson);
-            if (workingHours == null) return null;
-
-            return dayOfWeek switch
-            {
-                DayOfWeek.Monday => workingHours.Monday,
-                DayOfWeek.Tuesday => workingHours.Tuesday,
-                DayOfWeek.Wednesday => workingHours.Wednesday,
-                DayOfWeek.Thursday => workingHours.Thursday,
-                DayOfWeek.Friday => workingHours.Friday,
-                DayOfWeek.Saturday => workingHours.Saturday,
-                DayOfWeek.Sunday => workingHours.Sunday,
-                _ => null
-            };
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    private List<TimeSlotDto> GenerateTimeSlots(
-        DateTime date,
-        DayScheduleDto workingHours,
-        int serviceDuration,
-        int bufferTime,
-        List<Core.Entities.Appointment> existingAppointments,
-        DateTime now)
-    {
-        var slots = new List<TimeSlotDto>();
-
-        // Parsear horarios de apertura y cierre
-        if (!TimeSpan.TryParse(workingHours.OpenTime, out var openTime) ||
-            !TimeSpan.TryParse(workingHours.CloseTime, out var closeTime))
-        {
-            return slots;
-        }
-
-        var currentSlot = date.Date.Add(openTime);
-        var endOfDay = date.Date.Add(closeTime);
-
-        while (currentSlot.Add(TimeSpan.FromMinutes(serviceDuration)) <= endOfDay)
-        {
-            var slotEnd = currentSlot.Add(TimeSpan.FromMinutes(serviceDuration));
-
-            // Verificar si el slot está en el pasado
-            if (currentSlot < now)
-            {
-                currentSlot = currentSlot.Add(TimeSpan.FromMinutes(serviceDuration + bufferTime));
-                continue;
-            }
-
-            // Verificar si hay descanso/almuerzo
-            var isDuringBreak = false;
-            if (!string.IsNullOrEmpty(workingHours.BreakStartTime) &&
-                !string.IsNullOrEmpty(workingHours.BreakEndTime))
-            {
-                if (TimeSpan.TryParse(workingHours.BreakStartTime, out var breakStart) &&
-                    TimeSpan.TryParse(workingHours.BreakEndTime, out var breakEnd))
-                {
-                    var slotTime = currentSlot.TimeOfDay;
-                    if (slotTime >= breakStart && slotTime < breakEnd)
+                    var slotStart = current;
+                    var slotEnd = current.AddMinutes(slotDuration);
+                    // Verificar si el slot está libre (sin conflicto con citas existentes)
+                    bool isFree = !appointments.Any(a =>
+                        a.Status != AppointmentStatus.Cancelled && a.Status != AppointmentStatus.Completed &&
+                        slotStart < a.EndDate && slotEnd > a.ScheduledDate);
+                    if (isFree)
                     {
-                        isDuringBreak = true;
+                        availableSlots.Add(slotStart.ToString("HH:mm"));
                     }
+                    // Avanzar según duración + buffer
+                    current = current.AddMinutes(slotDuration + bufferTime);
                 }
             }
 
-            // Verificar si hay conflicto con citas existentes
-            var hasConflict = existingAppointments.Any(a =>
-                (currentSlot >= a.ScheduledDate && currentSlot < a.EndDate) ||
-                (slotEnd > a.ScheduledDate && slotEnd <= a.EndDate) ||
-                (currentSlot <= a.ScheduledDate && slotEnd >= a.EndDate));
-
-            var isAvailable = !isDuringBreak && !hasConflict;
-
-            slots.Add(new TimeSlotDto
+            return new AvailabilityResponseDto
             {
-                StartTime = currentSlot,
-                EndTime = slotEnd,
-                IsAvailable = isAvailable,
-                Reason = isDuringBreak ? "Horario de descanso" : (hasConflict ? "Ocupado" : null)
-            });
-
-            currentSlot = currentSlot.Add(TimeSpan.FromMinutes(serviceDuration + bufferTime));
+                Date = date.ToString("yyyy-MM-dd"),
+                AvailableSlots = availableSlots
+            };
         }
 
-        return slots;
+        private List<TimeRange> GetWorkingRangesForDate(BusinessSchedule schedule, DateTime date)
+        {
+            // Implementar lógica para obtener los rangos de trabajo de un día específico
+            // Considerando múltiples bloques de tiempo y descansos.
+            // Por simplicidad, asumimos un solo bloque por día (el primero) y aplicamos descansos.
+            // Esto debería mejorarse para soportar múltiples bloques.
+            var dayOfWeek = (int)date.DayOfWeek; // 0=Sunday? Depende de la cultura. Ajustar según tu BD.
+            // En tu BD, DayOfWeek va de 0=Lunes a 6=Domingo según veo en el código.
+            // Convertir: .NET DayOfWeek: 0=Sunday, 1=Monday... 6=Saturday. Necesitas mapear.
+            int mappedDay;
+            switch (date.DayOfWeek)
+            {
+                case DayOfWeek.Monday: mappedDay = 0; break;
+                case DayOfWeek.Tuesday: mappedDay = 1; break;
+                case DayOfWeek.Wednesday: mappedDay = 2; break;
+                case DayOfWeek.Thursday: mappedDay = 3; break;
+                case DayOfWeek.Friday: mappedDay = 4; break;
+                case DayOfWeek.Saturday: mappedDay = 5; break;
+                case DayOfWeek.Sunday: mappedDay = 6; break;
+                default: mappedDay = 0; break;
+            }
+
+            var workingDay = schedule.WorkingDays.FirstOrDefault(wd => wd.DayOfWeek == mappedDay);
+            if (workingDay == null || !workingDay.IsOpen)
+                return new List<TimeRange>();
+
+            var ranges = new List<TimeRange>();
+            // Por cada bloque de tiempo en el día
+            foreach (var block in workingDay.TimeBlocks)
+            {
+                var start = date.Date.Add(block.StartTime);
+                var end = date.Date.Add(block.EndTime);
+
+                // Aplicar descansos (breaks) que interrumpen el bloque
+                var breaks = workingDay.BreakTimes.Where(b => b.StartTime >= block.StartTime && b.EndTime <= block.EndTime)
+                                                   .OrderBy(b => b.StartTime);
+                var currentStart = start;
+                foreach (var br in breaks)
+                {
+                    var breakStart = date.Date.Add(br.StartTime);
+                    var breakEnd = date.Date.Add(br.EndTime);
+                    if (currentStart < breakStart)
+                    {
+                        ranges.Add(new TimeRange { Start = currentStart, End = breakStart });
+                    }
+                    currentStart = breakEnd;
+                }
+                if (currentStart < end)
+                {
+                    ranges.Add(new TimeRange { Start = currentStart, End = end });
+                }
+            }
+            return ranges;
+        }
+
+        private List<TimeRange> GetWorkingRangesForDate(EmployeeSchedule schedule, DateTime date)
+        {
+            // Similar a BusinessSchedule pero con EmployeeWorkingDay
+            var dayOfWeek = MapearDia(date.DayOfWeek);
+            var workingDay = schedule.WorkingDays.FirstOrDefault(wd => wd.DayOfWeek == dayOfWeek);
+            if (workingDay == null || !workingDay.IsOpen)
+                return new List<TimeRange>();
+
+            var ranges = new List<TimeRange>();
+            foreach (var block in workingDay.TimeBlocks)
+            {
+                var start = date.Date.Add(block.StartTime);
+                var end = date.Date.Add(block.EndTime);
+                var breaks = workingDay.BreakTimes.Where(b => b.StartTime >= block.StartTime && b.EndTime <= block.EndTime)
+                                                   .OrderBy(b => b.StartTime);
+                var currentStart = start;
+                foreach (var br in breaks)
+                {
+                    var breakStart = date.Date.Add(br.StartTime);
+                    var breakEnd = date.Date.Add(br.EndTime);
+                    if (currentStart < breakStart)
+                    {
+                        ranges.Add(new TimeRange { Start = currentStart, End = breakStart });
+                    }
+                    currentStart = breakEnd;
+                }
+                if (currentStart < end)
+                {
+                    ranges.Add(new TimeRange { Start = currentStart, End = end });
+                }
+            }
+            return ranges;
+        }
+
+        private int MapearDia(DayOfWeek day)
+        {
+            // Mapeo según tu BD (0=Lunes...6=Domingo)
+            switch (day)
+            {
+                case DayOfWeek.Monday: return 0;
+                case DayOfWeek.Tuesday: return 1;
+                case DayOfWeek.Wednesday: return 2;
+                case DayOfWeek.Thursday: return 3;
+                case DayOfWeek.Friday: return 4;
+                case DayOfWeek.Saturday: return 5;
+                case DayOfWeek.Sunday: return 6;
+                default: return 0;
+            }
+        }
+
+        private class TimeRange
+        {
+            public DateTime Start { get; set; }
+            public DateTime End { get; set; }
+        }
     }
 }

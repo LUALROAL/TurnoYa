@@ -1,14 +1,20 @@
-using TurnoYa.Application.DTOs.Appointment;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TurnoYa.Application.DTOs.Availability;
 
-namespace TurnoYa.Application.Interfaces;
-
-/// <summary>
-/// Servicio para calcular disponibilidad de citas
-/// </summary>
-public interface IAvailabilityService
+namespace TurnoYa.Application.Interfaces
 {
-    /// <summary>
-    /// Obtiene los slots de tiempo disponibles para un servicio en una fecha específica
-    /// </summary>
-    Task<IEnumerable<TimeSlotDto>> GetAvailableSlotsAsync(AvailabilityQueryDto query);
+    public interface IAvailabilityService
+    {
+        /// <summary>
+        /// Obtiene los horarios disponibles para una fecha, servicio y opcionalmente empleado.
+        /// </summary>
+        /// <param name="businessId">ID del negocio</param>
+        /// <param name="serviceId">ID del servicio</param>
+        /// <param name="employeeId">ID del empleado (opcional)</param>
+        /// <param name="date">Fecha en formato YYYY-MM-DD</param>
+        /// <returns>Lista de horarios disponibles en formato HH:mm</returns>
+        Task<AvailabilityResponseDto> GetAvailableSlotsAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime date);
+    }
 }
