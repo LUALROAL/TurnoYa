@@ -10,8 +10,7 @@ import {
   IonSpinner,
   IonAvatar,
   IonSelect,
-  IonSelectOption, IonIcon
-} from '@ionic/angular/standalone';
+  IonSelectOption, IonIcon, IonBadge } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -44,7 +43,7 @@ type Tab = 'profile' | 'security';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [IonIcon,
+  imports: [IonBadge, IonIcon,
     CommonModule,
     ReactiveFormsModule,
     IonContent,
@@ -71,6 +70,8 @@ export class ProfilePage implements OnInit, OnDestroy {
   selectedPhotoFile: File | null = null;
   photoPreview: string | null = null;
   existingPhotoBase64: string | null = null;
+    // Guardamos la referencia de la función para poder eliminarla correctamente
+  private refreshHandler = () => this.loadProfile();
   constructor(
     private userService: UserService,
     private notify: NotifyService,
@@ -101,6 +102,23 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.passwordForm = this.createPasswordForm();
   }
 
+  /**
+   * Devuelve la etiqueta del rol en español
+   */
+  getRoleLabel(role: string | undefined): string {
+    switch (role) {
+      case 'Admin':
+        return 'Administrador';
+      case 'OwnerBusiness':
+      case 'Owner':
+        return 'Dueño';
+      case 'Customer':
+        return 'Cliente';
+      default:
+        return role ?? '';
+    }
+  }
+
   ngOnInit(): void {
     if (!this.authSession.hasValidSession()) {
       this.router.navigate(['/auth/login'], {
@@ -110,11 +128,23 @@ export class ProfilePage implements OnInit, OnDestroy {
     }
 
     this.loadProfile();
+
+    // Suscribirse al evento global para refrescar el perfil
+    window.addEventListener('refreshUserProfile', () => {
+      this.loadProfile();
+    });
+
+      this.loadProfile();
+    window.addEventListener('refreshUserProfile', this.refreshHandler);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    window.removeEventListener('refreshUserProfile', this.refreshHandler);
+    window.removeEventListener('refreshUserProfile', () => {
+      this.loadProfile();
+    });
   }
 
   protected onTabChange(value: any): void {

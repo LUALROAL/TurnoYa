@@ -2,7 +2,9 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
 
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
@@ -13,14 +15,12 @@
 
   <div class="relative z-10 pb-8">
     <!-- Header mejorado con efecto glass -->
+    <!-- Header mejorado con efecto glass -->
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="flex items-center justify-between">
+        <!-- Saludo -->
         <div>
-          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-            <!-- &lt;  -->
-            HOLA DE NUEVO
-            <!-- /&gt; -->
-          </p>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">HOLA DE NUEVO</p>
           <h1 class="text-2xl font-display font-bold">
             <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
               {{ getUserName() }}
@@ -28,13 +28,24 @@
           </h1>
         </div>
 
-        <!-- Botón de notificaciones con indicador -->
-        <div class="relative">
-          <button class="relative w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
-            <ion-icon name="notifications-outline" class="text-xl text-text-primary"></ion-icon>
-            <span class="absolute -top-1 -right-1 w-3 h-3 bg-neon-primary rounded-full animate-ping"></span>
-            <span class="absolute -top-1 -right-1 w-3 h-3 bg-neon-primary rounded-full"></span>
-          </button>
+        <!-- Área derecha: notificaciones + badge -->
+        <div class="flex items-center gap-3">
+          <!-- Botón de notificaciones -->
+          <div class="relative">
+            <button
+              class="relative w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+              <ion-icon name="notifications-outline" class="text-xl text-text-primary"></ion-icon>
+              <span class="absolute -top-1 -right-1 w-3 h-3 bg-neon-primary rounded-full animate-ping"></span>
+              <span class="absolute -top-1 -right-1 w-3 h-3 bg-neon-primary rounded-full"></span>
+            </button>
+          </div>
+
+          <!-- Badge de rol mejorado -->
+          <span
+            class="px-3 py-1.5 text-xs font-mono rounded-full border border-neon-primary/30 bg-neon-primary/10 backdrop-blur-sm text-neon-primary shadow-neon inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-neon-primary rounded-full animate-pulse"></span>
+            {{ getRoleLabel(userRole) }}
+          </span>
         </div>
       </div>
     </header>
@@ -50,15 +61,16 @@
 
         <!-- Buscador futurista -->
         <div class="relative group">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
-          <div class="relative flex items-center gap-3 px-4 py-4 bg-bg-card/80 backdrop-blur-sm border border-neon-primary/20 rounded-2xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+          <div
+            class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+          </div>
+          <div
+            class="relative flex items-center gap-3 px-4 py-4 bg-bg-card/80 backdrop-blur-sm border border-neon-primary/20 rounded-2xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
             <ion-icon name="search-outline" class="text-2xl text-neon-primary"></ion-icon>
-            <input
-              type="text"
-              placeholder="Buscar servicios, negocios..."
-              class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body text-base"
-            />
-            <kbd class="hidden sm:flex items-center gap-1 px-2 py-1 bg-bg-tertiary rounded-md border border-neon-primary/20 text-xs font-mono text-text-tertiary">
+            <input type="text" placeholder="Buscar servicios, negocios..."
+              class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body text-base" />
+            <kbd
+              class="hidden sm:flex items-center gap-1 px-2 py-1 bg-bg-tertiary rounded-md border border-neon-primary/20 text-xs font-mono text-text-tertiary">
               <span>⌘</span> K
             </kbd>
           </div>
@@ -77,15 +89,16 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           <ng-container *ngFor="let item of quickAccessItems">
-            <button
-              *ngIf="item.route !== '/admin/users' || isAdmin()"
-              [routerLink]="item.route"
-              class="group relative overflow-hidden"
-            >
-              <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div class="relative p-4 bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-xl hover:border-neon-primary/30 transition-all duration-300">
+            <button *ngIf="item.route !== '/admin/users' || isAdmin()" [routerLink]="item.route"
+              class="group relative overflow-hidden">
+              <div
+                class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              </div>
+              <div
+                class="relative p-4 bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-xl hover:border-neon-primary/30 transition-all duration-300">
                 <div class="flex flex-col items-center text-center gap-2">
-                  <div class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-primary/20 to-neon-secondary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-primary/20 to-neon-secondary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <ion-icon [name]="item.icon" class="text-2xl text-neon-primary"></ion-icon>
                   </div>
                   <div>
@@ -106,14 +119,18 @@
             <span class="w-1 h-5 bg-neon-primary rounded-full"></span>
             Disponibilidad Cercana
           </h3>
-          <button class="text-neon-primary hover:text-neon-secondary transition-colors text-sm font-mono flex items-center gap-1">
+          <button
+            class="text-neon-primary hover:text-neon-secondary transition-colors text-sm font-mono flex items-center gap-1">
             Ver mapa <ion-icon name="arrow-forward-outline"></ion-icon>
           </button>
         </div>
 
         <!-- Mapa interactivo mejorado -->
-        <div class="relative group cursor-pointer overflow-hidden rounded-2xl border border-neon-primary/20 hover:border-neon-primary/40 transition-all duration-500">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+        <div
+          class="relative group cursor-pointer overflow-hidden rounded-2xl border border-neon-primary/20 hover:border-neon-primary/40 transition-all duration-500">
+          <div
+            class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur">
+          </div>
 
           <div class="relative bg-gradient-card aspect-[16/9] min-h-[200px] p-4">
             <!-- SVG del mapa mejorado -->
@@ -124,35 +141,35 @@
                   <stop offset="100%" style="stop-color:#00F5D4;stop-opacity:1" />
                 </linearGradient>
                 <filter id="glow">
-                  <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                  <feGaussianBlur stdDeviation="4" result="coloredBlur" />
                   <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
                   </feMerge>
                 </filter>
               </defs>
 
               <!-- Calles con efecto neón -->
-              <line x1="0" y1="80" x2="400" y2="80" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
-              <line x1="0" y1="160" x2="400" y2="160" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
-              <line x1="0" y1="240" x2="400" y2="240" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
-              <line x1="80" y1="0" x2="80" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
-              <line x1="160" y1="0" x2="160" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
-              <line x1="240" y1="0" x2="240" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
-              <line x1="320" y1="0" x2="320" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2"/>
+              <line x1="0" y1="80" x2="400" y2="80" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
+              <line x1="0" y1="160" x2="400" y2="160" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
+              <line x1="0" y1="240" x2="400" y2="240" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
+              <line x1="80" y1="0" x2="80" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
+              <line x1="160" y1="0" x2="160" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
+              <line x1="240" y1="0" x2="240" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
+              <line x1="320" y1="0" x2="320" y2="300" stroke="#00E0FF" stroke-width="0.5" opacity="0.2" />
 
               <!-- Pines con efecto 3D -->
               <circle cx="80" cy="80" r="8" fill="url(#glowPin)" filter="url(#glow)">
-                <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite" />
               </circle>
               <circle cx="240" cy="160" r="8" fill="url(#glowPin)" filter="url(#glow)">
-                <animate attributeName="r" values="8;10;8" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                <animate attributeName="r" values="8;10;8" dur="2s" begin="0.5s" repeatCount="indefinite" />
               </circle>
               <circle cx="320" cy="240" r="6" fill="url(#glowPin)" filter="url(#glow)">
-                <animate attributeName="r" values="6;8;6" dur="2s" begin="1s" repeatCount="indefinite"/>
+                <animate attributeName="r" values="6;8;6" dur="2s" begin="1s" repeatCount="indefinite" />
               </circle>
               <circle cx="120" cy="200" r="7" fill="url(#glowPin)" filter="url(#glow)">
-                <animate attributeName="r" values="7;9;7" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+                <animate attributeName="r" values="7;9;7" dur="2s" begin="1.5s" repeatCount="indefinite" />
               </circle>
 
               <!-- Texto de ubicación -->
@@ -161,8 +178,10 @@
             </svg>
 
             <!-- Overlay con información -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-bg-primary/80 via-transparent to-transparent">
-              <div class="bg-bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-neon-primary/30 flex items-center gap-2">
+            <div
+              class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-bg-primary/80 via-transparent to-transparent">
+              <div
+                class="bg-bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-neon-primary/30 flex items-center gap-2">
                 <ion-icon name="location-outline" class="text-neon-primary animate-pulse"></ion-icon>
                 <span class="text-text-secondary text-sm font-mono">12 negocios cerca de ti</span>
               </div>
@@ -178,7 +197,8 @@
             <span class="w-1 h-5 bg-neon-primary rounded-full"></span>
             Recomendados para ti
           </h3>
-          <button routerLink="/businesses" class="text-neon-primary hover:text-neon-secondary transition-colors text-sm font-mono">
+          <button routerLink="/businesses"
+            class="text-neon-primary hover:text-neon-secondary transition-colors text-sm font-mono">
             Ver todo →
           </button>
         </div>
@@ -190,7 +210,7 @@
 
         <!-- Empty State -->
         <div *ngIf="!loadingRecommendations && recommendedBusinesses.length === 0"
-             class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
+          class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
           <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
           <div class="relative">
             <ion-icon name="sparkles-outline" class="text-4xl text-neon-primary mb-3"></ion-icon>
@@ -201,34 +221,36 @@
         <!-- Lista de Recomendaciones con imágenes mejoradas -->
         <div *ngIf="!loadingRecommendations && recommendedBusinesses.length > 0" class="space-y-4">
           <article *ngFor="let business of recommendedBusinesses; trackBy: trackByBusinessName"
-                   class="group relative overflow-hidden rounded-2xl">
+            class="group relative overflow-hidden rounded-2xl">
 
             <!-- Efecto de glow en hover -->
-            <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div
+              class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
 
             <!-- Tarjeta principal -->
-            <div class="relative bg-bg-card/90 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
+            <div
+              class="relative bg-bg-card/90 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
 
               <!-- Imagen de fondo con overlay -->
               <div class="relative h-48 overflow-hidden">
                 <!-- Imagen según categoría -->
-                <img
-                  [src]="getBusinessImage(business.category)"
-                  [alt]="business.name"
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <img [src]="getBusinessImage(business.category)" [alt]="business.name"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
 
                 <!-- Overlay degradado -->
                 <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div>
 
                 <!-- Badge Verificado -->
-                <div class="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
+                <div
+                  class="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
                   <ion-icon name="checkmark-circle" class="text-neon-primary text-sm"></ion-icon>
                   <span class="text-xs font-mono text-text-primary">Verificado</span>
                 </div>
 
                 <!-- Rating en esquina superior derecha -->
-                <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
+                <div
+                  class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
                   <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
                   <span class="text-xs font-mono text-text-primary font-bold">{{ business.rating }}</span>
                   <span class="text-xs text-text-tertiary">({{ business.reviewCount }})</span>
@@ -249,7 +271,8 @@
               <div class="p-4">
                 <div class="flex items-center justify-between">
                   <!-- Botón Google -->
-                  <button class="flex items-center gap-2 px-3 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
+                  <button
+                    class="flex items-center gap-2 px-3 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
                     <span class="text-lg font-bold text-neon-primary">G</span>
                     <span class="text-xs font-mono text-text-secondary">Reserva con Google</span>
                   </button>
@@ -262,7 +285,8 @@
                 </div>
 
                 <!-- Botón Reservar -->
-                <button class="w-full mt-4 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-xl text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                <button
+                  class="w-full mt-4 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-xl text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
                   <span>Reservar Visita</span>
                   <ion-icon name="arrow-forward-outline"></ion-icon>
                 </button>

@@ -47,23 +47,18 @@ export class OwnerBusinessService {
   }
 
   /**
-   * Create a new business with images
+   * Create a new business (images optional)
    */
-  createWithImages(business: CreateBusinessRequest, images: File[]): Observable<OwnerBusiness> {
+  createWithFormData(business: CreateBusinessRequest, images: File[] = []): Observable<OwnerBusiness> {
     const formData = new FormData();
-
-    // Añadir todos los campos del negocio
     Object.entries(business).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
       }
     });
-
-    // Añadir imágenes
     images.forEach(image => {
       formData.append('images', image, image.name);
     });
-
     return this.api.post<OwnerBusiness>('/api/business', formData);
   }
 
@@ -93,10 +88,10 @@ export class OwnerBusinessService {
   }
 
   /**
-   * Legacy create method (sin imágenes)
+   * Legacy create method (sin imágenes) - ahora redirige a createWithFormData
    */
   create(business: CreateBusinessRequest): Observable<OwnerBusiness> {
-    return this.api.post<OwnerBusiness>('/api/business', business);
+    return this.createWithFormData(business, []);
   }
 
   /**

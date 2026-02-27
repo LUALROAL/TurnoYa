@@ -1,8 +1,11 @@
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthSessionService } from '../core/services/auth-session.service';
+import { Observable, Subscription } from 'rxjs';
+import { AuthSession } from '../core/models/auth-session.model';
 
 type QuickAccessItem = {
   title: string;
@@ -111,7 +114,13 @@ export class HomePage implements OnInit, OnDestroy {
 
   private loadTimeoutId?: ReturnType<typeof setTimeout>;
 
-  constructor(protected authSession: AuthSessionService) {}
+  private sessionSub?: Subscription;
+  session$: Observable<AuthSession | null>;
+  userName: string = 'Usuario';
+  userRole: string = '';
+  constructor(protected authSession: AuthSessionService) {
+    this.session$ = this.authSession.session$;
+  }
 
   /**
    * Verifica si el usuario actual es Admin
@@ -122,16 +131,43 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Simulamos carga de datos
+    // Simulación de carga de recomendaciones (igual que antes)
     this.loadTimeoutId = setTimeout(() => {
       this.recommendedBusinesses = this.initialRecommendations;
       this.loadingRecommendations = false;
     }, 1500);
+
+    // Suscripción al observable de sesión para actualizar propiedades locales
+    this.sessionSub = this.session$.subscribe(session => {
+      if (session?.user) {
+        this.userName = session.user.firstName || 'Usuario';
+        this.userRole = session.user.role || '';
+      } else {
+        this.userName = 'Usuario';
+        this.userRole = '';
+      }
+    });
   }
 
   ngOnDestroy() {
-    if (this.loadTimeoutId) {
-      clearTimeout(this.loadTimeoutId);
+    if (this.loadTimeoutId) clearTimeout(this.loadTimeoutId);
+    this.sessionSub?.unsubscribe(); // evitar memory leaks
+  }
+  // ngOnDestroy() {
+  //   if (this.loadTimeoutId) {
+  //     clearTimeout(this.loadTimeoutId);
+  //   }
+  //   window.removeEventListener('refreshUserProfile', this.handleRefreshUserProfile);
+  // }
+
+  // Manejar refresco de perfil para actualizar el rol
+  private handleRefreshUserProfile = () => {
+    // Actualizar el rol del usuario en la sesión
+    const session = this.authSession.getSession();
+    if (session && session.user) {
+      // Forzar actualización de la vista si usas signals/observables
+      // Si solo usas getUserRole(), la vista se actualizará al llamar ese método
+      // Si usas variables locales, actualízalas aquí
     }
   }
 
@@ -139,11 +175,11 @@ export class HomePage implements OnInit, OnDestroy {
     return business.name;
   }
 
-  // Método para obtener el nombre del usuario
-  protected getUserName(): string {
-    const session = this.authSession.getSession();
-    return session?.user?.firstName || 'Usuario';
-  }
+  // // Método para obtener el nombre del usuario
+  // protected getUserName(): string {
+  //   const session = this.authSession.getSession();
+  //   return session?.user?.firstName || 'Usuario';
+  // }
 
   // Método para obtener imágenes según categoría
   protected getBusinessImage(category: string): string {
@@ -156,5 +192,28 @@ export class HomePage implements OnInit, OnDestroy {
     };
 
     return images[category as keyof typeof images] || images.default;
+  }
+
+  /**
+   * Devuelve el rol actual del usuario
+   */
+
+   // Métodos auxiliares (pueden usar las propiedades locales)
+  protected getUserName(): string {
+    return this.userName;
+  }
+
+  getUserRole(): string {
+    return this.userRole;
+  }
+
+  getRoleLabel(role: string): string {
+    switch (role) {
+      case 'Admin': return 'Administrador';
+      case 'OwnerBusiness':
+      case 'Owner': return 'Dueño';
+      case 'Customer': return 'Cliente';
+      default: return role || '';
+    }
   }
 }

@@ -4,7 +4,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Subject, switchMap, takeUntil } from 'rxjs';
 import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -33,6 +33,8 @@ import { AppPhoto, PhotoService } from '../../services/photo.service';
 
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { UserService } from 'src/app/features/account/services/user.service';
+import { AuthSessionService } from 'src/app/core/services/auth-session.service';
 
 @Component({
   selector: 'app-business-form',
@@ -57,6 +59,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   private readonly businessService = inject(BusinessService);
   private readonly photoService = inject(PhotoService);
   private readonly destroy$ = new Subject<void>();
+  private userService = inject(UserService)
 
   businessForm!: FormGroup;
   businessId: string = '';
@@ -382,56 +385,62 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     }
   }
 
-  private createBusiness() {
-    const formValue = this.businessForm.value;
-    let categoryValue = formValue.category?.trim();
-    if (this.isCustomCategory && this.customCategoryValue.trim()) {
-      categoryValue = this.customCategoryValue.trim();
-    }
-    // Mayúsculas
-    const nameUpper = formValue.name?.trim().toUpperCase();
-    const categoryUpper = categoryValue?.toUpperCase();
-    const addressUpper = formValue.address?.trim().toUpperCase();
-    let websiteValue = formValue.website?.trim() || undefined;
-    if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
-      websiteValue = 'https://' + websiteValue;
-    }
-
-    const request: CreateBusinessRequest = {
-      name: nameUpper,
-      description: formValue.description?.trim() || undefined,
-      category: categoryUpper,
-      address: addressUpper,
-      city: formValue.city?.trim(),
-      department: formValue.department?.trim(),
-      phone: formValue.phone?.trim() || undefined,
-      email: formValue.email?.trim() || undefined,
-      website: websiteValue,
-      latitude: formValue.latitude ? parseFloat(formValue.latitude) : undefined,
-      longitude: formValue.longitude ? parseFloat(formValue.longitude) : undefined,
-    };
-
-    // Elegir el método según si hay imágenes
-    const saveObservable = this.selectedImages.length > 0
-      ? this.ownerBusinessService.createWithImages(request, this.selectedImages)
-      : this.ownerBusinessService.create(request);
-
-    saveObservable
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (createdBusiness: OwnerBusiness) => {
-          this.notify.showSuccess('Negocio creado correctamente');
-          this.cleanup();
-          // Redirigir a creación de servicios para este negocio
-          this.router.navigate(['/owner/businesses', createdBusiness.id, 'services', 'create']);
-        },
-        error: (error) => {
-          console.error('Error al crear negocio:', error);
-          this.notify.showError(error.error?.message || 'Error al crear el negocio');
-          this.saving = false;
-        },
-      });
+ private createBusiness() {
+  const formValue = this.businessForm.value;
+  let categoryValue = formValue.category?.trim();
+  if (this.isCustomCategory && this.customCategoryValue.trim()) {
+    categoryValue = this.customCategoryValue.trim();
   }
+  // Mayúsculas
+  const nameUpper = formValue.name?.trim().toUpperCase();
+  const categoryUpper = categoryValue?.toUpperCase();
+  const addressUpper = formValue.address?.trim().toUpperCase();
+  let websiteValue = formValue.website?.trim() || undefined;
+  if (websiteValue && !/^https?:\/\//i.test(websiteValue)) {
+    websiteValue = 'https://' + websiteValue;
+  }
+
+  const request: CreateBusinessRequest = {
+    name: nameUpper,
+    description: formValue.description?.trim() || undefined,
+    category: categoryUpper,
+    address: addressUpper,
+    city: formValue.city?.trim(),
+    department: formValue.department?.trim(),
+    phone: formValue.phone?.trim() || undefined,
+    email: formValue.email?.trim() || undefined,
+    website: websiteValue,
+    latitude: formValue.latitude ? parseFloat(formValue.latitude) : undefined,
+    longitude: formValue.longitude ? parseFloat(formValue.longitude) : undefined,
+  };
+
+  // Siempre usar FormData, imágenes opcionales
+  const saveObservable = this.ownerBusinessService.createWithFormData(request, this.selectedImages);
+
+  saveObservable
+    .pipe(
+      takeUntil(this.destroy$),
+      // Después de crear el negocio, actualizamos el perfil y la sesión
+      switchMap((createdBusiness: OwnerBusiness) =>
+        this.userService.refreshUserProfile().pipe(
+          map(() => createdBusiness) // devolvemos el negocio creado para el siguiente paso
+        )
+      )
+    )
+    .subscribe({
+      next: (createdBusiness) => {
+        this.notify.showSuccess('Negocio creado correctamente');
+        this.cleanup();
+        // Redirigir a creación de servicios para este negocio
+        this.router.navigate(['/owner/businesses', createdBusiness.id, 'services', 'create']);
+      },
+      error: (error) => {
+        console.error('Error al crear negocio:', error);
+        this.notify.showError(error.error?.message || 'Error al crear el negocio');
+        this.saving = false;
+      },
+    });
+}
 
   private updateBusiness() {
     const formValue = this.businessForm.value;

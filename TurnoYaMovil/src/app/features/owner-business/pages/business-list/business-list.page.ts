@@ -24,10 +24,11 @@ import {
   arrowBackOutline,
   settingsOutline,
 } from 'ionicons/icons';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { OwnerBusiness } from '../../models';
 import { NotifyService } from '../../../../core/services/notify.service';
+import { UserService } from 'src/app/features/account/services/user.service';
 
 @Component({
   selector: 'app-business-list',
@@ -42,10 +43,6 @@ import { NotifyService } from '../../../../core/services/notify.service';
   ],
 })
 export class BusinessListPage implements OnInit, OnDestroy {
-    getImageSrc(base64: string | undefined): string {
-      if (!base64) return '';
-      return base64.startsWith('data:image') ? base64 : 'data:image/jpeg;base64,' + base64;
-    }
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
@@ -53,7 +50,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
   protected businesses: OwnerBusiness[] = [];
   protected loading = true;
   protected isEmpty = false;
-
+  private userService = inject(UserService); // inyecta
   constructor() {
     addIcons({
       addOutline,
@@ -131,5 +128,28 @@ export class BusinessListPage implements OnInit, OnDestroy {
 
   protected trackByBusinessId(_: number, business: OwnerBusiness): string {
     return business.id;
+  }
+
+  protected deleteBusiness(businessId: string): void {
+    this.ownerBusinessService.delete(businessId)
+      .pipe(
+        takeUntil(this.destroy$),
+        // Después de eliminar, actualiza la sesión (el rol podría cambiar a Customer)
+        switchMap(() => this.userService.refreshUserProfile())
+      )
+      .subscribe({
+        next: () => {
+          this.notify.showSuccess('Negocio eliminado correctamente');
+          this.loadMyBusinesses(); // recarga la lista
+        },
+        error: (error) => {
+          console.error('Error al eliminar negocio:', error);
+          this.notify.showError('No se pudo eliminar el negocio');
+        }
+      });
+  }
+  getImageSrc(base64: string | undefined): string {
+    if (!base64) return '';
+    return base64.startsWith('data:image') ? base64 : 'data:image/jpeg;base64,' + base64;
   }
 }

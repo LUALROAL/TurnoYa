@@ -70,6 +70,18 @@ namespace TurnoYa.Infrastructure.Services
             business.CreatedAt = DateTime.UtcNow;
             business.UpdatedAt = DateTime.UtcNow;
 
+            // Validar si es el primer negocio del usuario
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == ownerId);
+            if (user != null)
+            {
+                var negociosActuales = await _context.Businesses.CountAsync(b => b.OwnerId == ownerId);
+                if (user.Role == "Customer" && negociosActuales == 0)
+                {
+                    user.Role = "OwnerBusiness";
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             var createdBusiness = await _businessRepository.AddAsync(business);
 
             // Guardar imágenes si existen
@@ -192,6 +204,18 @@ namespace TurnoYa.Infrastructure.Services
                 throw new UnauthorizedAccessException();
 
             await _businessRepository.DeleteAsync(id);
+
+            // Validar si el usuario ya no tiene negocios
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == ownerId);
+            if (user != null)
+            {
+                var negociosRestantes = await _context.Businesses.CountAsync(b => b.OwnerId == ownerId);
+                if (user.Role == "OwnerBusiness" && negociosRestantes == 0)
+                {
+                    user.Role = "Customer";
+                    await _context.SaveChangesAsync();
+                }
+            }
         }
     }
 }

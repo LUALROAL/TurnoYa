@@ -131,6 +131,9 @@
                 class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl">
                 <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
                 <span class="text-text-primary font-mono text-sm">{{ profile()?.email }}</span>
+                <ion-badge class="ml-3" color="primary">
+                  {{ getRoleLabel(profile()?.role) }}
+                </ion-badge>
               </div>
             </div>
           </div>

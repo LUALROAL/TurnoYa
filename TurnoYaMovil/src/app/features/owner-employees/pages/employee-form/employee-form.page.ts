@@ -303,10 +303,14 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
           this.router.navigate(['/owner/businesses', this.businessId, 'employees', createdEmployee.id, 'schedule']);
           this.notify.showSuccess('Empleado creado correctamente');
         },
-        error: (error: unknown) => {
+        error: (error: any) => {
           console.error('Error al crear empleado:', error);
-          this.notify.showError('No se pudo crear el empleado');
           this.saving = false;
+          if (error?.status === 400 && error?.error?.errors) {
+            this.mapBackendValidationErrors(error.error.errors);
+          } else {
+            this.notify.showError('No se pudo crear el empleado');
+          }
         },
       });
   }
@@ -334,11 +338,31 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
           this.router.navigate(['/owner/businesses', this.businessId, 'employees']);
           this.notify.showSuccess('Empleado actualizado correctamente');
         },
-        error: (error: unknown) => {
+        error: (error: any) => {
           console.error('Error al actualizar empleado:', error);
-          this.notify.showError('No se pudo actualizar el empleado');
           this.saving = false;
+          if (error?.status === 400 && error?.error?.errors) {
+            this.mapBackendValidationErrors(error.error.errors);
+          } else {
+            this.notify.showError('No se pudo actualizar el empleado');
+          }
         },
       });
+  }
+
+  /**
+   * Mapea los errores de validación del backend a los campos del formulario
+   */
+  private mapBackendValidationErrors(errors: { [key: string]: string[] }): void {
+    Object.entries(errors).forEach(([field, messages]) => {
+      const control = this.employeeForm.get(field.toLowerCase());
+      if (control) {
+        control.setErrors({ backend: messages.join(' ') });
+      }
+      // Mostrar notificación para el primer error
+      if (messages.length > 0) {
+        this.notify.showError(messages[0]);
+      }
+    });
   }
 }
