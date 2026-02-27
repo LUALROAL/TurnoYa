@@ -197,8 +197,19 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     };
 
     this.saving = true;
-    // Aquí deberías continuar con la lógica de guardado de la cita (ejemplo: llamar a appointmentsService.createAppointment)
-    // ...
+    this.appointmentsService.create(request)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (created) => {
+          this.saving = false;
+          this.notify.showSuccess('Cita agendada correctamente');
+          this.router.navigate(['/appointments']);
+        },
+        error: (err) => {
+          this.saving = false;
+          this.notify.showError('No se pudo agendar la cita. Intenta nuevamente.');
+        }
+      });
   }
 
   protected selectTime(time: string): void {
