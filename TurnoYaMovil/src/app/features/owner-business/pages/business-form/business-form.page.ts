@@ -585,14 +585,14 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     }
   }
 
- onCategoryFocus(): void {
-  if (this.closeTimeout) {
-    clearTimeout(this.closeTimeout);
-    this.closeTimeout = null;
+  onCategoryFocus(): void {
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+      this.closeTimeout = null;
+    }
+    this.showCategorySuggestions = true;
+    this.categorySuggestions = [...this.categories];
   }
-  this.showCategorySuggestions = true;
-  this.categorySuggestions = [...this.categories];
-}
 
   onCategorySelect(category: string): void {
     this.businessForm.patchValue({ category });
@@ -670,24 +670,24 @@ export class BusinessFormPage implements OnInit, OnDestroy {
   // ===== MÉTODO PARA CERRAR MENÚS =====
 
   onClickOutside(): void {
-  if (this.closeTimeout) {
-    clearTimeout(this.closeTimeout);
-  }
-  this.closeTimeout = setTimeout(() => {
-    const active = document.activeElement as HTMLElement | null;
-    const catInput = document.getElementById('category');
-    const catMenu = document.querySelector('.category-suggestions-menu');
-
-    if (active === catInput || (catMenu && catMenu.contains(active))) {
-      return; // No cerrar
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
     }
-    this.showCategorySuggestions = false;
-    this.categorySuggestions = [];
-    this.departmentSuggestions = [];
-    this.citySuggestions = [];
-    this.closeTimeout = null;
-  }, 200);
-}
+    this.closeTimeout = setTimeout(() => {
+      const active = document.activeElement as HTMLElement | null;
+      const catInput = document.getElementById('category');
+      const catMenu = document.querySelector('.category-suggestions-menu');
+
+      if (active === catInput || (catMenu && catMenu.contains(active))) {
+        return; // No cerrar
+      }
+      this.showCategorySuggestions = false;
+      this.categorySuggestions = [];
+      this.departmentSuggestions = [];
+      this.citySuggestions = [];
+      this.closeTimeout = null;
+    }, 200);
+  }
 
   /**
   * Mostrar snackbar de confirmación para eliminar imagen existente
@@ -733,4 +733,20 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     this.pendingDeleteImageIndex = null;
   }
 
+  /**
+    * Devuelve el src correcto para una imagen base64 o url
+    */
+  getImageSrc(base64OrUrl: string | undefined): string {
+    if (!base64OrUrl) return '';
+    // Si ya tiene el prefijo base64
+    if (base64OrUrl.startsWith('data:image')) {
+      return base64OrUrl;
+    }
+    // Si parece base64 puro (sin prefijo)
+    if (/^[A-Za-z0-9+/=]+$/.test(base64OrUrl) && base64OrUrl.length > 100) {
+      return 'data:image/jpeg;base64,' + base64OrUrl;
+    }
+    // Si es una URL normal
+    return base64OrUrl;
+  }
 }
