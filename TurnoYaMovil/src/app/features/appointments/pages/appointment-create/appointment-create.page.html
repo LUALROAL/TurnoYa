@@ -2,7 +2,9 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
@@ -41,9 +43,12 @@
 
         <!-- Tarjeta principal del formulario -->
         <div class="relative group">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+          <div
+            class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+          </div>
 
-          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+          <div
+            class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
 
             <!-- Título de la sección -->
             <div class="flex items-center gap-2 mb-4">
@@ -83,7 +88,9 @@
                 PROFESIONAL (opcional)
               </label>
               <div class="relative">
-                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div
+                  class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                </div>
                 <ion-select id="employeeId" formControlName="employeeId" placeholder="Sin preferencia"
                   interface="action-sheet"
                   class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
@@ -104,7 +111,8 @@
               </label>
               <div class="relative cursor-pointer" (click)="openCalendar()">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300"></div>
-                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
+                <div
+                  class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
                   <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
                   <span class="flex-1 text-text-primary font-body">
                     {{ (appointmentForm.get('scheduledDate')?.value | date:'dd/MM/yyyy') || 'Seleccionar fecha' }}
@@ -134,7 +142,8 @@
                 </div>
                 }
 
-                @if (!loadingSlots && availableSlots.length === 0 && formControls['scheduledDate']?.value && formControls['serviceId']?.value) {
+                @if (!loadingSlots && availableSlots.length === 0 && formControls['scheduledDate']?.value &&
+                formControls['serviceId']?.value) {
                 <div class="text-center py-6">
                   <p class="text-text-secondary font-mono text-sm">
                     No hay horarios disponibles para esta fecha
@@ -169,8 +178,11 @@
                 NOTAS (opcional)
               </label>
               <div class="relative">
-                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-                <div class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <div
+                  class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                </div>
+                <div
+                  class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
                   <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
                   <ion-textarea id="notes" formControlName="notes" rows="4"
                     placeholder="Ej: Prefiero corte clásico y barba"
@@ -200,10 +212,16 @@
           </button>
           <button type="submit" [disabled]="appointmentForm.invalid || saving"
             class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50">
-            <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
-            <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
-              <ion-icon [name]="saving ? 'sync-outline' : 'save'" class="text-xl" [class.animate-spin]="saving"></ion-icon>
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+            <div
+              class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300">
+            </div>
+            <div
+              class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+              <ion-icon [name]="saving ? 'sync-outline' : 'save'" class="text-xl"
+                [class.animate-spin]="saving"></ion-icon>
               <span>{{ saving ? 'AGENDANDO...' : 'AGENDAR CITA' }}</span>
             </div>
           </button>
@@ -220,20 +238,23 @@
         <!-- Cabecera -->
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-display font-semibold text-text-primary">Seleccionar fecha</h3>
-          <button (click)="closeCalendar()" class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+          <button (click)="closeCalendar()"
+            class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
             <ion-icon name="close-outline" class="text-text-primary"></ion-icon>
           </button>
         </div>
 
         <!-- Navegación de meses -->
         <div class="flex items-center justify-between mb-4">
-          <button (click)="prevMonth()" class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+          <button (click)="prevMonth()"
+            class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
             <ion-icon name="chevron-back-outline" class="text-neon-primary"></ion-icon>
           </button>
           <span class="text-text-primary font-display font-semibold">
             {{ currentMonth | date:'MMMM yyyy':'':'es' | titlecase }}
           </span>
-          <button (click)="nextMonth()" class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+          <button (click)="nextMonth()"
+            class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
             <ion-icon name="chevron-forward-outline" class="text-neon-primary"></ion-icon>
           </button>
         </div>
@@ -241,38 +262,35 @@
         <!-- Días de la semana -->
         <div class="grid grid-cols-7 gap-1 mb-2">
           @for (day of weekDays; track $index) {
-            <div class="text-center text-xs font-mono text-neon-primary">{{ day }}</div>
+          <div class="text-center text-xs font-mono text-neon-primary">{{ day }}</div>
           }
         </div>
 
         <!-- Indicador de carga -->
         @if (loadingDays) {
-          <div class="flex justify-center py-4">
-            <ion-spinner name="crescent" class="text-neon-primary w-6 h-6"></ion-spinner>
-          </div>
+        <div class="flex justify-center py-4">
+          <ion-spinner name="crescent" class="text-neon-primary w-6 h-6"></ion-spinner>
+        </div>
         }
 
         <!-- Grid de días -->
         @if (!loadingDays) {
-          <div class="grid grid-cols-7 gap-1">
-            @for (day of calendarDays; track $index) {
-              <button
-                type="button"
-                [disabled]="!day.isSelectable"
-                (click)="selectDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
-                class="calendar-day aspect-square rounded-lg font-mono text-sm transition-all duration-300 relative"
-                [class.selected]="isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
-                [class.other-month]="!day.isCurrentMonth"
-                [class.disabled]="!day.isSelectable"
-                [class.available]="availableDaysSet.has(formatDate(day.date)) && !isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
-              >
-                {{ day.day }}
-                @if (availableDaysSet.has(formatDate(day.date)) && !isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))) {
-                  <span class="availability-dot"></span>
-                }
-              </button>
+        <div class="grid grid-cols-7 gap-1">
+          @for (day of calendarDays; track $index) {
+          <!-- En el bucle de días, dentro del modal del calendario -->
+          <button type="button" [disabled]="!day.isSelectable"
+            (click)="selectDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
+            class="calendar-day aspect-square rounded-lg font-mono text-sm transition-all duration-300 relative"
+            [class.selected]="isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
+            [class.available]="day.isSelectable && !isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
+            [class.other-month]="!day.isCurrentMonth" [class.disabled]="!day.isSelectable">
+            {{ day.day }}
+            @if (availableDaysSet.has(formatDate(day.date))) {
+            <span class="availability-dot"></span>
             }
-          </div>
+          </button>
+          }
+        </div>
         }
       </div>
     </ng-template>

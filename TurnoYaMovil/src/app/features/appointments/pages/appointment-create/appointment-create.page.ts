@@ -265,6 +265,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const dateStr = `${year}-${month}-${dayStr}`;
 
     this.appointmentForm.patchValue({ scheduledDate: dateStr }, { emitEvent: false });
+
+    // 🔥 Forzar carga de horas para la nueva fecha
+    this.loadAvailability().pipe(takeUntil(this.destroy$)).subscribe();
+
     this.closeCalendar();
   }
 
