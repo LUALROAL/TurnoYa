@@ -69,7 +69,20 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
     return employee.id;
   }
 
-  protected getBusinessImage(category: string): string {
+  /**
+   * Devuelve el src correcto para el logo del negocio (base64 o url)
+   */
+  protected getBusinessLogoSrc(): string {
+    if (this.business && this.business.images && this.business.images.length > 0) {
+      const img = this.business.images[0].imageBase64;
+      if (!img) return '';
+      if (img.startsWith('data:image')) return img;
+      if (/^[A-Za-z0-9+/=]+$/.test(img) && img.length > 100) {
+        return 'data:image/jpeg;base64,' + img;
+      }
+      return img;
+    }
+    // fallback: imagen por categoría
     const images: Record<string, string> = {
       'Peluquería': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=3274&auto=format&fit=crop',
       'Bienestar': 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=3270&auto=format&fit=crop',
@@ -77,7 +90,7 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
       'Electrónica': 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=3301&auto=format&fit=crop',
       'default': 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=3271&auto=format&fit=crop'
     };
-    return images[category] || images['default'];
+    return this.business ? (images[this.business.category] || images['default']) : images['default'];
   }
 
   /**

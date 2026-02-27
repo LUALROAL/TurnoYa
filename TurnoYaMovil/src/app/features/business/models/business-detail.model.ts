@@ -41,6 +41,13 @@ export interface BusinessEmployeeItem {
   updatedAt: string;
 }
 
+export interface BusinessImage {
+  id: string;
+  imageBase64?: string;
+  imagePath?: string;
+  createdAt: string;
+}
+
 export interface BusinessDetail {
   id: string;
   name: string;
@@ -61,4 +68,5 @@ export interface BusinessDetail {
   owner: BusinessOwner;
   services: BusinessServiceItem[];
   employees: BusinessEmployeeItem[];
+  images?: BusinessImage[];
 }
