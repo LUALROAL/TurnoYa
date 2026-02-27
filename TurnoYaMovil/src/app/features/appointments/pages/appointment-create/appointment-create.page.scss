@@ -5,27 +5,13 @@
 
 // Animaciones personalizadas
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-5px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
 @keyframes glow-pulse {
-
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-
-  50% {
-    opacity: 0.6;
-  }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
 .animation-delay-2000 {
@@ -50,13 +36,8 @@
 }
 
 @keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 // Scrollbar personalizado
@@ -72,10 +53,7 @@
 ::-webkit-scrollbar-thumb {
   background: #00E0FF;
   border-radius: 4px;
-
-  &:hover {
-    background: #00F5D4;
-  }
+  &:hover { background: #00F5D4; }
 }
 
 // Ajustes para Ionic
@@ -88,16 +66,12 @@ ion-select::part(icon) {
   color: #00E0FF;
   opacity: 1;
 }
-
 ion-select::part(text) {
   color: #FFFFFF;
 }
-
 ion-select.ios::part(icon) {
   color: #00E0FF;
 }
-
-// Estilo para el placeholder
 ion-select::part(placeholder) {
   color: rgba(112, 134, 160, 0.5);
 }
@@ -118,7 +92,6 @@ ion-textarea {
   pointer-events: none;
   border-radius: inherit;
 }
-
 .group:focus-within .input-glow {
   opacity: 1;
 }
@@ -138,24 +111,20 @@ ion-textarea {
 ::ng-deep .action-sheet {
   --background: #1A1F2F;
   --backdrop-opacity: 0.8;
-
   .action-sheet-title {
     color: #00E0FF;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     border-bottom: 1px solid rgba(0, 224, 255, 0.2);
   }
-
   .action-sheet-button {
     color: #FFFFFF;
     font-family: 'Outfit', sans-serif;
-
     &.selected {
       color: #00E0FF;
       font-weight: bold;
     }
   }
-
   .action-sheet-cancel {
     background: rgba(0, 224, 255, 0.1);
     color: #00E0FF;
@@ -165,7 +134,6 @@ ion-textarea {
 // Efecto hover para las opciones del select
 .select-option {
   transition: all 0.3s ease;
-
   &:hover {
     background: rgba(0, 224, 255, 0.1);
   }
@@ -184,17 +152,9 @@ ion-textarea {
 
 // Animación para el botón de guardar
 @keyframes save-pulse {
-
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(0, 224, 255, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 0 40px rgba(0, 224, 255, 0.6);
-  }
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 224, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 224, 255, 0.6); }
 }
-
 .save-button {
   animation: save-pulse 2s infinite;
 }
@@ -204,7 +164,6 @@ ion-textarea {
   border-color: #00F5D4 !important;
   box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
 }
-
 .invalid-field {
   border-color: #ef4444 !important;
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
@@ -232,7 +191,6 @@ ion-textarea {
   justify-content: center;
   flex-direction: column;
   gap: 16px;
-
   p {
     color: #00E0FF;
     font-family: 'JetBrains Mono', monospace;
@@ -241,11 +199,20 @@ ion-textarea {
   }
 }
 
-// Botones de selección de hora
+// ========== ESTILOS DE HORAS ==========
+.slots-container {
+  transition: opacity 0.5s ease-in-out;
+  &.loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
 .time-slot-btn {
-  background: rgba(26, 31, 47, 0.5); // bg-bg-secondary/50
+  background: rgba(26, 31, 47, 0.5);
   border-color: rgba(0, 224, 255, 0.2);
-  color: #B0C4DE; // text-text-secondary
+  color: #B0C4DE;
+  transition: all 0.3s ease;
 
   &:hover:not(:disabled) {
     border-color: rgba(0, 224, 255, 0.5);
@@ -256,7 +223,7 @@ ion-textarea {
   &.selected {
     background: linear-gradient(135deg, #00E0FF, #00F5D4);
     border-color: transparent;
-    color: #03050A; // text-bg-primary
+    color: #03050A;
     font-weight: 600;
     box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
   }
@@ -273,7 +240,8 @@ ion-textarea {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-// ==================== CALENDARIO MEJORADO ====================
+
+// ========== ESTILOS DEL CALENDARIO ==========
 .calendar-modal {
   --height: auto;
   --width: 90%;
@@ -355,6 +323,14 @@ ion-textarea {
     color: #FFFFFF;
   }
 
+  // Días disponibles (no seleccionados)
+  &.available:not(.selected) {
+    background: rgba(0, 224, 255, 0.1);
+    border-color: rgba(0, 224, 255, 0.4);
+    color: #FFFFFF;
+  }
+
+  // Día seleccionado
   &.selected {
     background: linear-gradient(135deg, #00E0FF, #00F5D4);
     border-color: transparent;
@@ -394,16 +370,14 @@ ion-textarea {
   height: 24px;
 }
 
-// Responsive: ajustes para móviles pequeños
+// Responsive
 @media (max-width: 360px) {
   .calendar-container {
     padding: 16px;
   }
-
   .calendar-day {
     font-size: 0.75rem;
   }
-
   .calendar-container .grid-cols-7.gap-1.mb-2 > div {
     font-size: 0.7rem;
     padding: 4px 0;

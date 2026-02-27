@@ -2,9 +2,7 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div
-      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
-    </div>
+    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
@@ -43,12 +41,9 @@
 
         <!-- Tarjeta principal del formulario -->
         <div class="relative group">
-          <div
-            class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
-          </div>
+          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
 
-          <div
-            class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
+          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
 
             <!-- Título de la sección -->
             <div class="flex items-center gap-2 mb-4">
@@ -88,9 +83,7 @@
                 PROFESIONAL (opcional)
               </label>
               <div class="relative">
-                <div
-                  class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                </div>
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
                 <ion-select id="employeeId" formControlName="employeeId" placeholder="Sin preferencia"
                   interface="action-sheet"
                   class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
@@ -111,8 +104,7 @@
               </label>
               <div class="relative cursor-pointer" (click)="openCalendar()">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300"></div>
-                <div
-                  class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
+                <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
                   <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
                   <span class="flex-1 text-text-primary font-body">
                     {{ (appointmentForm.get('scheduledDate')?.value | date:'dd/MM/yyyy') || 'Seleccionar fecha' }}
@@ -134,32 +126,34 @@
                 HORA *
               </label>
 
-              @if (loadingSlots) {
-              <div class="flex items-center justify-center py-6">
-                <ion-spinner name="crescent" class="text-neon-primary w-8 h-8"></ion-spinner>
-              </div>
-              }
+              <!-- Contenedor con transición suave -->
+              <div class="slots-container" [class.loading]="loadingSlots">
+                @if (loadingSlots) {
+                <div class="flex items-center justify-center py-6">
+                  <ion-spinner name="crescent" class="text-neon-primary w-8 h-8"></ion-spinner>
+                </div>
+                }
 
-              @if (!loadingSlots && availableSlots.length === 0 && formControls['scheduledDate']?.value &&
-              formControls['serviceId']?.value) {
-              <div class="text-center py-6">
-                <p class="text-text-secondary font-mono text-sm">
-                  No hay horarios disponibles para esta fecha
-                </p>
-              </div>
-              }
+                @if (!loadingSlots && availableSlots.length === 0 && formControls['scheduledDate']?.value && formControls['serviceId']?.value) {
+                <div class="text-center py-6">
+                  <p class="text-text-secondary font-mono text-sm">
+                    No hay horarios disponibles para esta fecha
+                  </p>
+                </div>
+                }
 
-              @if (!loadingSlots && availableSlots.length > 0) {
-              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
-                @for (slot of availableSlots; track slot) {
-                <button type="button" (click)="selectTime(slot)"
-                  class="time-slot-btn py-3 px-2 rounded-xl border font-mono text-sm transition-all duration-300"
-                  [class.selected]="appointmentForm.get('scheduledTime')?.value === slot">
-                  {{ slot }}
-                </button>
+                @if (!loadingSlots && availableSlots.length > 0) {
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
+                  @for (slot of availableSlots; track slot) {
+                  <button type="button" (click)="selectTime(slot)"
+                    class="time-slot-btn py-3 px-2 rounded-xl border font-mono text-sm transition-all duration-300"
+                    [class.selected]="appointmentForm.get('scheduledTime')?.value === slot">
+                    {{ slot }}
+                  </button>
+                  }
+                </div>
                 }
               </div>
-              }
 
               @if (formControls['scheduledTime'].touched && formControls['scheduledTime'].invalid && !loadingSlots) {
               <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
@@ -175,11 +169,8 @@
                 NOTAS (opcional)
               </label>
               <div class="relative">
-                <div
-                  class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                </div>
-                <div
-                  class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+                <div class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
                   <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
                   <ion-textarea id="notes" formControlName="notes" rows="4"
                     placeholder="Ej: Prefiero corte clásico y barba"
@@ -209,16 +200,10 @@
           </button>
           <button type="submit" [disabled]="appointmentForm.invalid || saving"
             class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50">
-            <div
-              class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300">
-            </div>
-            <div
-              class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300">
-            </div>
-            <div
-              class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
-              <ion-icon [name]="saving ? 'sync-outline' : 'save'" class="text-xl"
-                [class.animate-spin]="saving"></ion-icon>
+            <div class="absolute inset-0 bg-gradient-to-r from-neon-primary to-neon-secondary opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="absolute inset-0 translate-y-full group-hover:translate-y-0 bg-white/20 transition-transform duration-300"></div>
+            <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-bg-primary font-display font-semibold">
+              <ion-icon [name]="saving ? 'sync-outline' : 'save'" class="text-xl" [class.animate-spin]="saving"></ion-icon>
               <span>{{ saving ? 'AGENDANDO...' : 'AGENDAR CITA' }}</span>
             </div>
           </button>
@@ -279,9 +264,10 @@
                 [class.selected]="isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
                 [class.other-month]="!day.isCurrentMonth"
                 [class.disabled]="!day.isSelectable"
+                [class.available]="availableDaysSet.has(formatDate(day.date)) && !isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
               >
                 {{ day.day }}
-                @if (availableDaysSet.has(formatDate(day.date))) {
+                @if (availableDaysSet.has(formatDate(day.date)) && !isSelectedDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))) {
                   <span class="availability-dot"></span>
                 }
               </button>

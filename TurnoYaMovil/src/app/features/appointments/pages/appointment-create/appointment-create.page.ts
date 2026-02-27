@@ -34,7 +34,7 @@ import { CreateAppointmentRequest } from '../../models';
 import { AppointmentsService } from '../../services/appointments.service';
 import { AvailabilityResponse } from '../../models/availability.models';
 
-// Registrar locale español (si no está ya registrado globalmente)
+// Registrar locale español
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 registerLocaleData(localeEs);
@@ -55,7 +55,7 @@ registerLocaleData(localeEs);
   ],
   templateUrl: './appointment-create.page.html',
   styleUrls: ['./appointment-create.page.scss'],
-  providers: [{ provide: LOCALE_ID, useValue: 'es' }] // Forzar locale español en este componente
+  providers: [{ provide: LOCALE_ID, useValue: 'es' }]
 })
 export class AppointmentCreatePage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -121,10 +121,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       const preselectedService = params.get('serviceId');
       const preselectedEmployee = params.get('employeeId');
       if (preselectedService) {
-        this.appointmentForm.patchValue({ serviceId: preselectedService });
+        this.appointmentForm.patchValue({ serviceId: preselectedService }, { emitEvent: false });
       }
       if (preselectedEmployee) {
-        this.appointmentForm.patchValue({ employeeId: preselectedEmployee });
+        this.appointmentForm.patchValue({ employeeId: preselectedEmployee }, { emitEvent: false });
       }
     });
 
@@ -142,6 +142,19 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
         switchMap(() => this.loadAvailability())
       )
       .subscribe();
+
+    // Suscripción a cambios en employeeId para recargar días disponibles
+    this.appointmentForm.get('employeeId')?.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        if (this.appointmentForm.get('serviceId')?.value) {
+          this.loadAvailableDays();
+        }
+      });
 
     this.loadBusiness();
   }
@@ -208,14 +221,14 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   }
 
   protected selectTime(time: string): void {
-    this.appointmentForm.patchValue({ scheduledTime: time });
+    this.appointmentForm.patchValue({ scheduledTime: time }, { emitEvent: false });
   }
 
   // ========== MÉTODOS DEL CALENDARIO ==========
   protected openCalendar(): void {
     this.isCalendarOpen = true;
-    // Si los días aún no se han cargado (por ejemplo, si se abrió antes de que termine la carga), forzar recarga
-    if (!this.loadingDays && this.availableDaysSet.size === 0) {
+    // Si no hay días cargados y hay servicio, cargar
+    if (!this.loadingDays && this.availableDaysSet.size === 0 && this.appointmentForm.get('serviceId')?.value) {
       this.loadAvailableDays();
     }
   }
@@ -227,13 +240,17 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected prevMonth(): void {
     this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
     this.generateCalendar();
-    this.loadAvailableDays();
+    if (this.appointmentForm.get('serviceId')?.value) {
+      this.loadAvailableDays();
+    }
   }
 
   protected nextMonth(): void {
     this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
     this.generateCalendar();
-    this.loadAvailableDays();
+    if (this.appointmentForm.get('serviceId')?.value) {
+      this.loadAvailableDays();
+    }
   }
 
   protected selectDate(day: number, monthOffset: number = 0): void {
@@ -247,7 +264,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const dayStr = day.toString().padStart(2, '0');
     const dateStr = `${year}-${month}-${dayStr}`;
 
-    this.appointmentForm.patchValue({ scheduledDate: dateStr });
+    this.appointmentForm.patchValue({ scheduledDate: dateStr }, { emitEvent: false });
     this.closeCalendar();
   }
 
@@ -275,7 +292,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const lastDayOfMonth = new Date(year, month + 1, 0);
 
     const startDay = firstDayOfMonth.getDay(); // 0 = Domingo, 1 = Lunes, ...
-    const startOffset = startDay === 0 ? 6 : startDay - 1; // para que empiece en Lunes
+    const startOffset = startDay === 0 ? 6 : startDay - 1;
 
     const daysInMonth = lastDayOfMonth.getDate();
 
@@ -380,14 +397,9 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.employees = business.employees.filter(employee => employee.isActive);
           this.loading = false;
 
-          // Auto‑seleccionar si solo hay un servicio
-          if (this.services.length === 1) {
-            this.appointmentForm.patchValue({ serviceId: this.services[0].id });
-          }
-
-          // Pre‑cargar los días disponibles para el mes actual
-          // (esto se ejecutará si hay un servicio seleccionado, ya sea por queryParam o auto‑selección)
-          this.loadAvailableDays();
+          // Limpiar disponibilidad inicial
+          this.availableDaysSet.clear();
+          this.generateCalendar();
         },
         error: (error: unknown) => {
           console.error('Error al cargar negocio:', error);
@@ -420,7 +432,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.availableSlots = response.availableSlots;
           if (this.availableSlots.length === 0) {
             this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
-            this.appointmentForm.patchValue({ scheduledTime: '' });
+            this.appointmentForm.patchValue({ scheduledTime: '' }, { emitEvent: false });
           } else {
             this.appointmentForm.get('scheduledTime')?.enable({ emitEvent: false });
           }
