@@ -411,41 +411,26 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       longitude: formValue.longitude ? parseFloat(formValue.longitude) : undefined,
     };
 
-    // Si hay imágenes, usar el método con imágenes
-    if (this.selectedImages.length > 0) {
-      this.ownerBusinessService
-        .createWithImages(request, this.selectedImages)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (createdBusiness: OwnerBusiness) => {
-            this.notify.showSuccess('Negocio creado correctamente');
-            this.cleanup();
-            this.router.navigate(['/owner/businesses', createdBusiness.id, 'settings'], { queryParams: { tab: 'schedule' } });
-          },
-          error: (error) => {
-            console.error('Error al crear negocio:', error);
-            this.notify.showError(error.error?.message || 'Error al crear el negocio');
-            this.saving = false;
-          },
-        });
-    } else {
-      // Sin imágenes, usar método legacy
-      this.ownerBusinessService
-        .create(request)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.notify.showSuccess('Negocio creado correctamente');
-            this.cleanup();
-            this.router.navigate(['/owner/businesses']);
-          },
-          error: (error) => {
-            console.error('Error al crear negocio:', error);
-            this.notify.showError(error.error?.message || 'Error al crear el negocio');
-            this.saving = false;
-          },
-        });
-    }
+    // Elegir el método según si hay imágenes
+    const saveObservable = this.selectedImages.length > 0
+      ? this.ownerBusinessService.createWithImages(request, this.selectedImages)
+      : this.ownerBusinessService.create(request);
+
+    saveObservable
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (createdBusiness: OwnerBusiness) => {
+          this.notify.showSuccess('Negocio creado correctamente');
+          this.cleanup();
+          // Redirigir a creación de servicios para este negocio
+          this.router.navigate(['/owner/businesses', createdBusiness.id, 'services', 'create']);
+        },
+        error: (error) => {
+          console.error('Error al crear negocio:', error);
+          this.notify.showError(error.error?.message || 'Error al crear el negocio');
+          this.saving = false;
+        },
+      });
   }
 
   private updateBusiness() {

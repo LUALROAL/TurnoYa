@@ -199,7 +199,8 @@ export class ServiceFormPage implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/owner/businesses', this.businessId, 'services']);
+          // Redirigir a configuración de horarios (pestaña schedule)
+          this.router.navigate(['/owner/businesses', this.businessId, 'settings'], { queryParams: { tab: 'schedule' } });
         },
         error: (error: unknown) => {
           console.error('Error al crear servicio:', error);
