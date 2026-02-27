@@ -188,8 +188,12 @@ export class ProfilePage implements OnInit, OnDestroy {
   const updateData: UpdateUserProfileDto = {};
   const form = this.profileForm.getRawValue();
 
-  if (form.firstName !== this.profile()?.firstName) updateData.firstName = form.firstName;
-  if (form.lastName !== this.profile()?.lastName) updateData.lastName = form.lastName;
+  // Guardar nombre y apellido en mayúsculas
+  const firstNameUpper = form.firstName ? form.firstName.toUpperCase() : '';
+  const lastNameUpper = form.lastName ? form.lastName.toUpperCase() : '';
+
+  if (firstNameUpper !== (this.profile()?.firstName?.toUpperCase() || '')) updateData.firstName = firstNameUpper;
+  if (lastNameUpper !== (this.profile()?.lastName?.toUpperCase() || '')) updateData.lastName = lastNameUpper;
   if (form.phoneNumber !== this.profile()?.phoneNumber) updateData.phoneNumber = form.phoneNumber;
 
   // Mapear género
