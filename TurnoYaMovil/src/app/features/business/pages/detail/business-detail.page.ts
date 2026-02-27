@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
 import { Subject, takeUntil } from "rxjs";
 
-import { BusinessDetail } from "../../models";
+import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from "../../models";
 import { BusinessService } from "../../services/business.service";
 
 @Component({
@@ -15,12 +15,42 @@ import { BusinessService } from "../../services/business.service";
   styleUrls: ["./business-detail.page.scss"],
 })
 export class BusinessDetailPage implements OnInit, OnDestroy {
+      /**
+       * Devuelve el src correcto para una imagen base64 de empleado
+       */
+      getEmployeeImageSrc(photoBase64: string | undefined): string {
+        if (!photoBase64) return '';
+        if (photoBase64.startsWith('data:image')) return photoBase64;
+        if (/^[A-Za-z0-9+/=]+$/.test(photoBase64) && photoBase64.length > 100) {
+          return 'data:image/jpeg;base64,' + photoBase64;
+        }
+        return photoBase64;
+      }
+    /**
+     * Devuelve las iniciales del empleado
+     */
+    getEmployeeInitials(fullName: string): string {
+      if (!fullName) return '';
+      const names = fullName.trim().split(' ');
+      if (names.length === 1) return names[0].substring(0, 2).toUpperCase();
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
   private readonly route = inject(ActivatedRoute);
   private readonly businessService = inject(BusinessService);
   private readonly destroy$ = new Subject<void>();
 
   protected loading = true;
   protected business: BusinessDetail | null = null;
+
+  // Listas originales
+  protected services: BusinessServiceItem[] = [];
+  protected employees: BusinessEmployeeItem[] = [];
+
+  // Listas filtradas
+  protected filteredServices: BusinessServiceItem[] = [];
+  protected filteredEmployees: BusinessEmployeeItem[] = [];
+  protected selectedServiceFilter: string = '';
+  protected selectedEmployeeFilter: string = '';
 
   ngOnInit() {
     this.loadBusinessDetail();
@@ -31,29 +61,36 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  protected trackByServiceId(_: number, service: { id: string }) {
+  protected trackByServiceId(_: number, service: BusinessServiceItem) {
     return service.id;
   }
 
-  protected trackByEmployeeId(_: number, employee: { id: string }) {
+  protected trackByEmployeeId(_: number, employee: BusinessEmployeeItem) {
     return employee.id;
   }
 
   protected getBusinessImage(category: string): string {
-    const images = {
+    const images: Record<string, string> = {
       'Peluquería': 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=3274&auto=format&fit=crop',
       'Bienestar': 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=3270&auto=format&fit=crop',
       'Salud': 'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=3270&auto=format&fit=crop',
       'Electrónica': 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=3301&auto=format&fit=crop',
       'default': 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=3271&auto=format&fit=crop'
     };
+    return images[category] || images['default'];
+  }
 
-    return images[category as keyof typeof images] || images.default;
+  /**
+   * Genera un enlace de WhatsApp con el número y mensaje personalizado
+   */
+  protected getWhatsAppLink(phone: string, businessName: string): string {
+    const cleanedPhone = phone.replace(/\D/g, '');
+    const message = encodeURIComponent(`Hola, quiero información sobre ${businessName}`);
+    return `https://wa.me/${cleanedPhone}?text=${message}`;
   }
 
   private loadBusinessDetail() {
     const businessId = this.route.snapshot.paramMap.get("id");
-
     if (!businessId) {
       this.loading = false;
       return;
@@ -65,13 +102,45 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
       .getById(businessId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (business: BusinessDetail) => {
+        next: (business) => {
           this.business = business;
+          this.services = business.services.filter(s => s.isActive);
+          this.employees = business.employees.filter(e => e.isActive);
+          this.filteredServices = this.services;
+          this.filteredEmployees = this.employees;
           this.loading = false;
         },
         error: () => {
           this.loading = false;
         },
       });
+  }
+
+  protected filterByService(event: any): void {
+    this.selectedServiceFilter = event.detail.value;
+    this.applyServiceFilter();
+  }
+
+  private applyServiceFilter(): void {
+    if (!this.business) return;
+    if (!this.selectedServiceFilter) {
+      this.filteredServices = this.services;
+    } else {
+      this.filteredServices = this.services.filter(s => s.id === this.selectedServiceFilter);
+    }
+  }
+
+  protected filterByEmployee(event: any): void {
+    this.selectedEmployeeFilter = event.detail.value;
+    this.applyEmployeeFilter();
+  }
+
+  private applyEmployeeFilter(): void {
+    if (!this.business) return;
+    if (!this.selectedEmployeeFilter) {
+      this.filteredEmployees = this.employees;
+    } else {
+      this.filteredEmployees = this.employees.filter(e => e.id === this.selectedEmployeeFilter);
+    }
   }
 }

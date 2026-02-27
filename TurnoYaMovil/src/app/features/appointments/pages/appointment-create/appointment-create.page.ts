@@ -84,16 +84,27 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.businessId = this.route.snapshot.paramMap.get('id') || '';
-
-    if (!this.businessId) {
-      this.notify.showError('No se encontró el negocio');
-      this.router.navigate(['/businesses']);
-      return;
+  this.businessId = this.route.snapshot.paramMap.get('id') || '';
+  // Leer query params
+  this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+    const preselectedService = params.get('serviceId');
+    const preselectedEmployee = params.get('employeeId');
+    if (preselectedService) {
+      this.appointmentForm.patchValue({ serviceId: preselectedService });
     }
+    if (preselectedEmployee) {
+      this.appointmentForm.patchValue({ employeeId: preselectedEmployee });
+    }
+  });
 
-    this.loadBusiness();
+  if (!this.businessId) {
+    this.notify.showError('No se encontró el negocio');
+    this.router.navigate(['/businesses']);
+    return;
   }
+
+  this.loadBusiness();
+}
 
   ngOnDestroy(): void {
     this.destroy$.next();
