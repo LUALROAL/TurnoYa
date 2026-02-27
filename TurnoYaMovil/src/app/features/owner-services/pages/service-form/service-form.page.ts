@@ -182,7 +182,7 @@ export class ServiceFormPage implements OnInit, OnDestroy {
     const formValue = this.serviceForm.value;
 
     const request: CreateServiceRequest = {
-      name: formValue.name?.trim(),
+      name: formValue.name?.trim().toUpperCase(),
       description: formValue.description?.trim() || undefined,
       price: parseFloat(formValue.price),
       duration: parseInt(formValue.duration, 10),
@@ -214,7 +214,7 @@ export class ServiceFormPage implements OnInit, OnDestroy {
     const formValue = this.serviceForm.value;
 
     const request: UpdateServiceRequest = {
-      name: formValue.name?.trim() || undefined,
+      name: formValue.name?.trim().toUpperCase() || undefined,
       description: formValue.description?.trim() || undefined,
       price: formValue.price !== '' ? parseFloat(formValue.price) : undefined,
       duration: formValue.duration !== '' ? parseInt(formValue.duration, 10) : undefined,
