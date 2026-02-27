@@ -14,4 +14,5 @@ public class BusinessListDto
     public int TotalReviews { get; set; }
     public bool IsActive { get; set; }
     public decimal? Distance { get; set; } // En kilómetros
+    public string? ImageBase64 { get; set; } // 👈 NUEVO: imagen en base64
 }

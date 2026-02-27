@@ -23,7 +23,7 @@ public class BusinessRepository : IBusinessRepository
             .Include(b => b.Owner)
             .Include(b => b.Services)
             .Include(b => b.Employees)
-            .Include(b => b.Images)
+            .Include(b => b.Images) // 👈 AÑADIDO
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
@@ -31,6 +31,7 @@ public class BusinessRepository : IBusinessRepository
     {
         return await _context.Businesses
             .Include(b => b.Owner)
+            .Include(b => b.Images) // 👈 AÑADIDO
             .Where(b => b.IsActive)
             .ToListAsync();
     }
@@ -39,7 +40,7 @@ public class BusinessRepository : IBusinessRepository
     {
         return await _context.Businesses
             .Where(b => b.OwnerId == ownerId)
-            .Include(b => b.Images)
+            .Include(b => b.Images) // 👈 AÑADIDO
             .ToListAsync();
     }
 
@@ -48,6 +49,7 @@ public class BusinessRepository : IBusinessRepository
         return await _context.Businesses
             .Where(b => b.Category == category && b.IsActive)
             .Include(b => b.Owner)
+            .Include(b => b.Images) // 👈 AÑADIDO
             .ToListAsync();
     }
 
@@ -59,6 +61,7 @@ public class BusinessRepository : IBusinessRepository
         var businesses = await _context.Businesses
             .Where(b => b.IsActive && b.Latitude.HasValue && b.Longitude.HasValue)
             .Include(b => b.Owner)
+            .Include(b => b.Images) // 👈 AÑADIDO
             .ToListAsync();
 
         // Calcular distancia usando fórmula de Haversine
@@ -82,6 +85,7 @@ public class BusinessRepository : IBusinessRepository
         var businessesQuery = _context.Businesses
             .Where(b => b.IsActive)
             .Include(b => b.Owner)
+            .Include(b => b.Images) // 👈 AÑADIDO
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(query))
@@ -103,7 +107,6 @@ public class BusinessRepository : IBusinessRepository
 
         return await businessesQuery.ToListAsync();
     }
-
     public async Task<Business> AddAsync(Business business)
     {
         await _context.Businesses.AddAsync(business);

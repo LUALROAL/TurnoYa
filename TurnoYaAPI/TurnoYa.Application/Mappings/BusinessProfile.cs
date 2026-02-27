@@ -17,7 +17,7 @@ public class BusinessProfile : Profile
             .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => 0m))
             .ForMember(dest => dest.TotalReviews, opt => opt.MapFrom(src => 0))
             .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.OwnerId, opt => opt.Ignore()) // Se setea manualmente
+            .ForMember(dest => dest.OwnerId, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.Owner, opt => opt.Ignore())
@@ -40,13 +40,17 @@ public class BusinessProfile : Profile
 
         // Business → BusinessDto
         CreateMap<Business, BusinessDto>()
-            .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => 
+            .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src =>
                 src.Owner != null ? $"{src.Owner.FirstName} {src.Owner.LastName}" : string.Empty))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
-        // Business → BusinessListDto
+        // Business → BusinessListDto (✅ NUEVO: incluir imagen)
         CreateMap<Business, BusinessListDto>()
-            .ForMember(dest => dest.Distance, opt => opt.Ignore()); // Se calcula manualmente
+            .ForMember(dest => dest.Distance, opt => opt.Ignore())
+            .ForMember(dest => dest.ImageBase64, opt => opt.MapFrom(src =>
+                src.Images != null && src.Images.Any() && src.Images.First().ImageData != null
+                    ? Convert.ToBase64String(src.Images.First().ImageData)
+                    : null));
 
         // Business → BusinessDetailDto
         CreateMap<Business, BusinessDetailDto>()
@@ -55,10 +59,11 @@ public class BusinessProfile : Profile
             .ForMember(dest => dest.Employees, opt => opt.MapFrom(src => src.Employees))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
+        // BusinessImage → BusinessImageDto (✅ CORREGIDO: solo base64, sin prefijo)
         CreateMap<BusinessImage, BusinessImageDto>()
             .ForMember(dest => dest.ImageBase64, opt => opt.MapFrom(src =>
                 src.ImageData != null && src.ImageData.Length > 0
-                    ? $"data:image/jpeg;base64,{Convert.ToBase64String(src.ImageData)}"
+                    ? Convert.ToBase64String(src.ImageData)
                     : null));
 
         // BusinessSettings → BusinessSettingsDto

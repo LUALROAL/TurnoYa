@@ -42,6 +42,10 @@ import { NotifyService } from '../../../../core/services/notify.service';
   ],
 })
 export class BusinessListPage implements OnInit, OnDestroy {
+    getImageSrc(base64: string | undefined): string {
+      if (!base64) return '';
+      return base64.startsWith('data:image') ? base64 : 'data:image/jpeg;base64,' + base64;
+    }
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();

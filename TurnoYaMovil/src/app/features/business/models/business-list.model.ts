@@ -8,4 +8,5 @@ export interface BusinessListItem {
   totalReviews: number;
   isActive: boolean;
   distance: number | null;
+  imageBase64?: string; // 👈 NUEVO
 }

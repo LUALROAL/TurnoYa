@@ -2,7 +2,9 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
 
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
@@ -15,7 +17,8 @@
     <!-- Header con navegación -->
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="flex items-center gap-4">
-        <button routerLink="/home" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+        <button routerLink="/home"
+          class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
           <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
         </button>
         <div>
@@ -31,7 +34,7 @@
       </div>
     </header>
 
-      <div class="px-4 space-y-6 mt-4">
+    <div class="px-4 space-y-6 mt-4">
       <!-- Título de sección mejorado -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
@@ -46,57 +49,58 @@
 
       <!-- Panel de filtros mejorado -->
       <div class="relative z-20 group">
-        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur"></div>
+        <div
+          class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+        </div>
 
-        <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-5 space-y-4">
+        <div
+          class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-5 space-y-4">
 
           <!-- Buscador principal -->
           <div class="relative">
-            <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-            <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+            <div
+              class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            </div>
+            <div
+              class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
               <ion-icon name="search-outline" class="text-neon-primary text-xl"></ion-icon>
-              <input
-                type="text"
-                placeholder="Buscar por nombre o categoría..."
-                [value]="searchQuery"
+              <input type="text" placeholder="Buscar por nombre o categoría..." [value]="searchQuery"
                 (input)="onSearchQueryChange($event)"
-                class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-              />
+                class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
             </div>
           </div>
 
           <!-- Filtro por ciudad con autocompletado -->
           <div class="relative">
-            <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
-            <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+            <div
+              class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            </div>
+            <div
+              class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
               <ion-icon name="location-outline" class="text-neon-primary text-xl"></ion-icon>
-              <input
-                type="text"
-                placeholder="Filtrar por ciudad..."
-                [value]="cityFilter"
-                (input)="onCityFilterChange($event)"
-                (focus)="showCitySuggestions = citySuggestions.length > 0"
-                (blur)="hideCitySuggestionsWithDelay()"
-                autocomplete="off"
-                class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-              />
+              <input type="text" placeholder="Filtrar por ciudad..." [value]="cityFilter"
+                (input)="onCityFilterChange($event)" (focus)="showCitySuggestions = citySuggestions.length > 0"
+                (blur)="hideCitySuggestionsWithDelay()" autocomplete="off"
+                class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
             </div>
 
             <!-- Menú desplegable de sugerencias de ciudades (estilo futurista) -->
             <ul *ngIf="showCitySuggestions && citySuggestions.length > 0"
-                class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
+              class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
               <!-- Efecto de glow -->
               <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
 
               <!-- Lista de sugerencias -->
-              <div class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
-                <li *ngFor="let suggestion of citySuggestions"
-                    (mousedown)="selectCitySuggestion(suggestion)"
-                    class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group cursor-pointer">
+              <div
+                class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                <li *ngFor="let suggestion of citySuggestions" (mousedown)="selectCitySuggestion(suggestion)"
+                  class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group cursor-pointer">
                   <div class="flex items-center gap-3">
-                    <ion-icon name="location-outline" class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                    <ion-icon name="location-outline"
+                      class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
                     <span class="text-text-primary font-mono text-sm">{{ suggestion.name }}</span>
-                    <span *ngIf="suggestion.state" class="text-xs text-text-secondary ml-auto">{{ suggestion.state }}</span>
+                    <span *ngIf="suggestion.state" class="text-xs text-text-secondary ml-auto">{{ suggestion.state
+                      }}</span>
                   </div>
                 </li>
               </div>
@@ -104,43 +108,38 @@
           </div>
 
           <!-- Categoría con Autocomplete personalizado (estilo futurista) -->
-          <div *ngIf="categories.length > 0" class="space-y-2 relative category_s" >
+          <div *ngIf="categories.length > 0" class="space-y-2 relative category_s">
             <!-- <p class="text-xs font-mono text-neon-primary tracking-wider mb-1">
               CATEGORÍA
             </p> -->
             <div class="relative">
-              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20"></div>
+              <div
+                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+              </div>
 
               <!-- Input con icono -->
-              <div class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+              <div
+                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
                 <ion-icon name="pricetags-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                <input
-                  type="text"
-                  placeholder="Todas las categorías"
-                  [value]="selectedCategory"
-                  (input)="onCategoryInput($any($event.target).value)"
-                  (focus)="onCategoryFocus()"
-                  autocomplete="off"
-                  class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
-                />
+                <input type="text" placeholder="Todas las categorías" [value]="selectedCategory"
+                  (input)="onCategoryInput($any($event.target).value)" (focus)="onCategoryFocus()" autocomplete="off"
+                  class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
               </div>
 
               <!-- Menú desplegable de categorías (estilo futurista) -->
               <div *ngIf="showCategorySuggestions && filteredCategories.length > 0"
-                   class="absolute z-[9999] w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
+                class="absolute z-[9999] w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
                 <!-- Efecto de glow -->
                 <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
 
                 <!-- Lista de sugerencias -->
-                <div class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar ">
-                  <button
-                    *ngFor="let cat of filteredCategories"
-                    type="button"
-                    (click)="onCategorySelect(cat)"
-                    class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group"
-                  >
-                    <div class="flex items-center gap-3" >
-                      <ion-icon name="pricetags-outline" class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                <div
+                  class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar ">
+                  <button *ngFor="let cat of filteredCategories" type="button" (click)="onCategorySelect(cat)"
+                    class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
+                    <div class="flex items-center gap-3">
+                      <ion-icon name="pricetags-outline"
+                        class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
                       <span class="text-text-primary font-mono text-sm">{{ cat }}</span>
                     </div>
                   </button>
@@ -151,20 +150,14 @@
 
           <!-- Acciones de filtros -->
           <div class="flex items-center justify-between pt-2">
-            <button
-              type="button"
-              (click)="clearFilters()"
-              class="text-text-secondary hover:text-neon-primary transition-colors text-sm font-mono flex items-center gap-1"
-            >
+            <button type="button" (click)="clearFilters()"
+              class="text-text-secondary hover:text-neon-primary transition-colors text-sm font-mono flex items-center gap-1">
               <ion-icon name="close-outline"></ion-icon>
               Limpiar filtros
             </button>
 
-            <button
-              type="button"
-              (click)="applyFilters()"
-              class="px-6 py-2 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display text-sm font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105"
-            >
+            <button type="button" (click)="applyFilters()"
+              class="px-6 py-2 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display text-sm font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
               Buscar
             </button>
           </div>
@@ -184,7 +177,7 @@
 
       <!-- Empty State -->
       <article *ngIf="!loading && businesses.length === 0"
-               class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
+        class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
         <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
         <div class="relative">
           <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-neon-primary/10 flex items-center justify-center">
@@ -192,7 +185,8 @@
           </div>
           <h3 class="text-xl font-display font-semibold text-text-primary mb-2">No hay negocios disponibles</h3>
           <p class="text-text-secondary font-mono text-sm">
-            Intenta con otros filtros o <button (click)="clearFilters()" class="text-neon-primary hover:text-neon-secondary">limpia la búsqueda</button>
+            Intenta con otros filtros o <button (click)="clearFilters()"
+              class="text-neon-primary hover:text-neon-secondary">limpia la búsqueda</button>
           </p>
         </div>
       </article>
@@ -208,36 +202,42 @@
 
         <div class="space-y-4">
           <article *ngFor="let business of businesses; trackBy: trackByBusinessId"
-                   class="group relative overflow-hidden rounded-2xl">
+            class="group relative overflow-hidden rounded-2xl">
 
             <!-- Efecto de glow en hover -->
-            <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div
+              class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
 
             <!-- Tarjeta principal -->
-            <div class="relative bg-bg-card/90 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
+            <div
+              class="relative bg-bg-card/90 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300">
 
               <!-- Imagen de fondo con overlay -->
               <div class="relative h-48 overflow-hidden">
                 <!-- Imagen según categoría -->
+                <!-- Dentro del article, en la parte de la imagen -->
                 <img
-                  [src]="getBusinessImage(business.category)"
+                  [src]="business.imageBase64 ? 'data:image/jpeg;base64,' + business.imageBase64 : getBusinessImage(business.category)"
                   [alt]="business.name"
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
 
                 <!-- Overlay degradado -->
                 <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div>
 
                 <!-- Badge Verificado -->
-                <div class="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
+                <div
+                  class="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
                   <ion-icon name="checkmark-circle" class="text-neon-primary text-sm"></ion-icon>
                   <span class="text-xs font-mono text-text-primary">Verificado</span>
                 </div>
 
                 <!-- Rating en la esquina superior derecha -->
-                <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
+                <div
+                  class="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
                   <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
-                  <span class="text-xs font-mono text-text-primary font-bold">{{ business.averageRating | number:'1.1-1' }}</span>
+                  <span class="text-xs font-mono text-text-primary font-bold">{{ business.averageRating | number:'1.1-1'
+                    }}</span>
                   <span class="text-xs text-text-tertiary">(2k)</span>
                 </div>
 
@@ -256,7 +256,8 @@
               <div class="p-4">
                 <div class="flex items-center justify-between">
                   <!-- Botón Google -->
-                  <button class="flex items-center gap-2 px-3 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
+                  <button
+                    class="flex items-center gap-2 px-3 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl hover:border-neon-primary/50 transition-all duration-300">
                     <span class="text-lg font-bold text-neon-primary">G</span>
                     <span class="text-xs font-mono text-text-secondary">Reserva con Google</span>
                   </button>
@@ -270,7 +271,7 @@
 
                 <!-- Botón Reservar -->
                 <button [routerLink]="['/businesses', business.id]"
-                        class="w-full mt-4 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-xl text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                  class="w-full mt-4 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-xl text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
                   <span>Reservar Visita</span>
                   <ion-icon name="arrow-forward-outline"></ion-icon>
                 </button>
