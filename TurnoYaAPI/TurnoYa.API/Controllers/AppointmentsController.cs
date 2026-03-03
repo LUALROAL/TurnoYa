@@ -146,9 +146,16 @@ namespace TurnoYaAPI.Controllers
         {
             var requesterId = GetUserId();
             if (requesterId == null) return Unauthorized();
-            var ok = await _appointmentService.CancelAsync(id, requesterId.Value, body?.Reason);
-            if (!ok) return BadRequest();
-            return NoContent();
+            try
+            {
+                var ok = await _appointmentService.CancelAsync(id, requesterId.Value, body?.Reason);
+                if (!ok) return BadRequest();
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         /// <summary>

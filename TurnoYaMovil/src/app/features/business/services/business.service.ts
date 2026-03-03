@@ -4,6 +4,13 @@ import { Observable } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { BusinessDetail, BusinessListItem } from "../models";
 
+type BusinessSettingsResponse = {
+  bookingAdvanceDays: number;
+  cancellationHours: number;
+  bufferTimeBetweenAppointments: number;
+  workingHours?: string;
+};
+
 type BusinessSearchParams = {
   query?: string;
   city?: string;
@@ -32,5 +39,9 @@ export class BusinessService {
 
   getById(id: string): Observable<BusinessDetail> {
     return this.api.get<BusinessDetail>(`/api/business/${id}`);
+  }
+
+  getSettings(id: string): Observable<BusinessSettingsResponse> {
+    return this.api.get<BusinessSettingsResponse>(`/api/business/${id}/settings`);
   }
 }

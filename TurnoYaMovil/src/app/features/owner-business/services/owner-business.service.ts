@@ -6,8 +6,8 @@ import {
   OwnerBusiness,
   CreateBusinessRequest,
   UpdateBusinessRequest,
-  BusinessSettings,
 } from '../models';
+import { BusinessSettings } from '../models/business-settings.model';
 import { HttpHeaders } from '@angular/common/http';
 import { WorkingHoursDto } from '../models/business-schedule.models';
 

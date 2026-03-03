@@ -172,7 +172,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BusinessSettings>(e =>
         {
             e.HasOne(s => s.Business).WithOne(b => b.Settings).HasForeignKey<BusinessSettings>(s => s.BusinessId).OnDelete(DeleteBehavior.Cascade);
-            e.Property(p => p.NoShowDepositAmount).HasPrecision(10,2);
+            e.Property(p => p.MaxAdvanceBookingDays).HasDefaultValue(0);
+            e.Property(p => p.BufferTime).HasDefaultValue(15);
             e.Property(p => p.LateCancellationFee).HasPrecision(10,2);
         });
 

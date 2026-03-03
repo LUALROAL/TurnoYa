@@ -8,7 +8,6 @@ import {
   IonIcon,
   IonInput,
   IonCheckbox,
-  IonTextarea,
   IonSegment,
   IonSegmentButton,
   IonLabel,
@@ -19,7 +18,6 @@ import {
   save,
   time,
   calendar,
-  cash,
   trash,
   businessOutline,
   timeOutline,
@@ -27,7 +25,7 @@ import {
 } from 'ionicons/icons';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
-import { BusinessSettings } from '../../models';
+import { BusinessSettings } from '../../models/business-settings.model';
 import { WorkingHoursDto, DayScheduleDto } from '../../models/business-schedule.models';
 
 @Component({
@@ -40,7 +38,6 @@ import { WorkingHoursDto, DayScheduleDto } from '../../models/business-schedule.
     IonIcon,
     IonInput,
     IonCheckbox,
-    IonTextarea,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -91,7 +88,6 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       save,
       time,
       calendar,
-      cash,
       trash,
       businessOutline,
       timeOutline,
@@ -129,12 +125,9 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   private initForms() {
     // Formulario de ajustes generales
     this.settingsForm = this.fb.group({
-      bookingAdvanceDays: [30, [Validators.required, Validators.min(1), Validators.max(365)]],
+      bookingAdvanceDays: [0, [Validators.required, Validators.min(0), Validators.max(365)]],
       cancellationHours: [24, [Validators.required, Validators.min(0), Validators.max(168)]],
-      requiresDeposit: [false],
-      noShowPolicy: [''],
-      defaultSlotDuration: [30, [Validators.required, Validators.min(5), Validators.max(480)]],
-      bufferTimeBetweenAppointments: [0, [Validators.required, Validators.min(0), Validators.max(120)]],
+      bufferTimeBetweenAppointments: [15, [Validators.required, Validators.min(0), Validators.max(120)]],
       workingHours: [''],
     });
 

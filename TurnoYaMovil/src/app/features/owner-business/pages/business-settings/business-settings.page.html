@@ -76,10 +76,10 @@
             <div
               class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-5">
 
-              <!-- Días de anticipación máxima -->
+              <!-- Días mínimos de anticipación -->
               <div class="space-y-2">
                 <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  DÍAS DE ANTICIPACIÓN MÁXIMA
+                  DÍAS MÍNIMOS DE ANTICIPACIÓN
                 </label>
                 <div class="relative">
                   <div
@@ -93,37 +93,11 @@
                       class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
                   </div>
                 </div>
-                <p class="text-xs font-mono text-text-tertiary">Máximo de días para reservar con anticipación</p>
+                <p class="text-xs font-mono text-text-tertiary">Mínimo de días de anticipación para reservar (0 = desde hoy)</p>
                 @if (formControls['bookingAdvanceDays'].touched && formControls['bookingAdvanceDays'].invalid) {
                 <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
                   <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                  Ingresa un valor entre 1 y 365 días
-                </p>
-                }
-              </div>
-
-              <!-- Duración de cita por defecto -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  DURACIÓN DE CITA POR DEFECTO (MINUTOS)
-                </label>
-                <div class="relative">
-                  <div
-                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                  </div>
-                  <div
-                    class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="time-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input id="defaultSlotDuration" type="number" formControlName="defaultSlotDuration"
-                      placeholder="30" min="5" max="480"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
-                  </div>
-                </div>
-                <p class="text-xs font-mono text-text-tertiary">Duración estándar de cada cita</p>
-                @if (formControls['defaultSlotDuration'].touched && formControls['defaultSlotDuration'].invalid) {
-                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                  Ingresa un valor entre 5 y 480 minutos
+                  Ingresa un valor entre 0 y 365 días
                 </p>
                 }
               </div>
@@ -205,58 +179,6 @@
                 }
               </div>
 
-              <!-- Política de no-show -->
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  POLÍTICA DE NO-SHOW
-                </label>
-                <div class="relative">
-                  <div
-                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                  </div>
-                  <div
-                    class="relative flex items-start gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="document-text-outline" class="text-neon-primary text-xl mt-1"></ion-icon>
-                    <ion-textarea id="noShowPolicy" formControlName="noShowPolicy"
-                      placeholder="Ej: Después de 3 no-shows, el cliente será bloqueado temporalmente..." rows="4"
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Pagos -->
-        <section class="space-y-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-neon-primary/10 flex items-center justify-center">
-              <ion-icon name="cash" class="text-neon-primary text-xl"></ion-icon>
-            </div>
-            <div>
-              <h2 class="text-xl font-display font-semibold text-text-primary">Pagos</h2>
-              <p class="text-text-secondary font-mono text-sm">Configura depósitos y adelantos</p>
-            </div>
-          </div>
-
-          <div class="relative group">
-            <div
-              class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
-            </div>
-
-            <div
-              class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6">
-              <label class="flex items-start gap-4 cursor-pointer group">
-                <div class="relative flex-shrink-0 mt-1">
-                  <ion-checkbox formControlName="requiresDeposit" class="checkbox-neon"></ion-checkbox>
-                </div>
-                <div>
-                  <span class="block text-sm font-display font-semibold text-text-primary mb-1">Requiere depósito para
-                    reservar</span>
-                  <span class="text-xs font-mono text-text-tertiary">Solicitar pago adelantado al momento de la
-                    reserva</span>
-                </div>
-              </label>
             </div>
           </div>
         </section>

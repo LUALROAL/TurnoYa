@@ -19,21 +19,6 @@ export interface BusinessSettings {
   cancellationHours: number;
 
   /**
-   * Indica si el negocio requiere depósito para reservas
-   */
-  requiresDeposit: boolean;
-
-  /**
-   * Política de no-show del negocio
-   */
-  noShowPolicy?: string;
-
-  /**
-   * Duración del slot por defecto en minutos (ej: 30 min)
-   */
-  defaultSlotDuration: number;
-
-  /**
    * Tiempo de buffer entre citas en minutos (ej: 5 min)
    */
   bufferTimeBetweenAppointments: number;

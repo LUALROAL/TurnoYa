@@ -71,19 +71,3 @@ export interface UpdateBusinessRequest {
   isActive?: boolean;
 }
 
-/**
- * Business settings model
- */
-export interface BusinessSettings {
-  id?: string;
-  businessId: string;
-  allowOnlineBooking: boolean;
-  requireConfirmation: boolean;
-  maxAdvanceBookingDays: number;
-  minAdvanceBookingHours: number;
-  cancellationPolicy: string;
-  timeSlotDuration: number;
-  workingHours?: any;
-  createdAt?: string;
-  updatedAt?: string;
-}

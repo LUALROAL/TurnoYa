@@ -54,6 +54,14 @@ namespace TurnoYa.Infrastructure.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(bs => bs.BusinessId == dto.BusinessId);
             var bufferTime = businessSettings?.BufferTime ?? 0;
+            var requiredAdvanceDays = Math.Max(businessSettings?.MaxAdvanceBookingDays ?? 0, 0);
+
+            var todayUtc = DateTime.UtcNow.Date;
+            var minAllowedDate = todayUtc.AddDays(requiredAdvanceDays);
+            var scheduledDate = dto.ScheduledDate.Date;
+
+            if (scheduledDate < minAllowedDate)
+                throw new InvalidOperationException($"La cita debe agendarse desde {minAllowedDate:yyyy-MM-dd} en adelante.");
 
             Guid assignedEmployeeId;
             if (dto.EmployeeId.HasValue)
@@ -171,6 +179,16 @@ namespace TurnoYa.Infrastructure.Services
 
             if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Completed)
                 return false;
+
+            var settings = await _context.BusinessSettings
+                .AsNoTracking()
+                .FirstOrDefaultAsync(bs => bs.BusinessId == appointment.BusinessId);
+
+            var minCancellationHours = settings?.FreeCancellationHours ?? 24;
+            var hoursUntilAppointment = (appointment.ScheduledDate - DateTime.UtcNow).TotalHours;
+
+            if (hoursUntilAppointment < minCancellationHours)
+                throw new InvalidOperationException("No se puede cancelar dentro del tiempo mínimo permitido.");
 
             appointment.Status = AppointmentStatus.Cancelled;
             // Opcional: guardar motivo en StatusHistory (pendiente de implementar)

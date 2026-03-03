@@ -45,6 +45,13 @@ namespace TurnoYa.Infrastructure.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(bs => bs.BusinessId == businessId);
             int bufferTime = businessSettings?.BufferTime ?? 0;
+            int requiredAdvanceDays = Math.Max(businessSettings?.MaxAdvanceBookingDays ?? 0, 0);
+
+            var todayUtc = DateTime.UtcNow.Date;
+            var minAllowedDate = todayUtc.AddDays(requiredAdvanceDays);
+
+            if (date.Date < minAllowedDate)
+                throw new Exception($"La fecha debe estar desde {minAllowedDate:yyyy-MM-dd} en adelante");
 
             var dayStart = date.Date;
             var dayEnd = dayStart.AddDays(1);
@@ -102,13 +109,23 @@ namespace TurnoYa.Infrastructure.Services
                 .FirstOrDefaultAsync(bs => bs.BusinessId == businessId);
             int bufferTime = businessSettings?.BufferTime ?? 0;
             int slotDuration = service.Duration;
+            int requiredAdvanceDays = Math.Max(businessSettings?.MaxAdvanceBookingDays ?? 0, 0);
+
+            var todayUtc = DateTime.UtcNow.Date;
+            var minAllowedDate = todayUtc.AddDays(requiredAdvanceDays);
+
+            var adjustedFrom = from.Date < minAllowedDate ? minAllowedDate : from.Date;
+            var adjustedTo = to.Date;
+
+            if (adjustedFrom > adjustedTo)
+                return new List<string>();
 
             var targetEmployeeIds = await ResolveTargetEmployeesAsync(businessId, employeeId);
             if (!targetEmployeeIds.Any())
                 return new List<string>();
 
-            var fromDate = from.Date;
-            var toDate = to.Date.AddDays(1);
+            var fromDate = adjustedFrom.Date;
+            var toDate = adjustedTo.Date.AddDays(1);
 
             var appointmentsByEmployee = await _appointmentRepository.GetActiveAppointmentsByEmployeesAsync(
                 businessId,
@@ -118,7 +135,7 @@ namespace TurnoYa.Infrastructure.Services
 
             var availableDays = new List<string>();
 
-            for (var date = from.Date; date <= to.Date; date = date.AddDays(1))
+            for (var date = adjustedFrom; date <= adjustedTo; date = date.AddDays(1))
             {
                 bool hasAtLeastOneSlot = false;
 

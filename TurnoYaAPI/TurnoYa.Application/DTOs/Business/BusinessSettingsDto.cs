@@ -14,7 +14,7 @@ public class BusinessSettingsDto
     /// <summary>
     /// Días de anticipación permitidos para reservar (ej: 30 días)
     /// </summary>
-    public int BookingAdvanceDays { get; set; } = 30;
+    public int BookingAdvanceDays { get; set; } = 0;
 
     /// <summary>
     /// Horas mínimas de anticipación para cancelar sin penalización (ej: 24 horas)
@@ -22,22 +22,7 @@ public class BusinessSettingsDto
     public int CancellationHours { get; set; } = 24;
 
     /// <summary>
-    /// Indica si el negocio requiere depósito para reservas
-    /// </summary>
-    public bool RequiresDeposit { get; set; } = false;
-
-    /// <summary>
-    /// Política de no-show del negocio
-    /// </summary>
-    public string? NoShowPolicy { get; set; }
-
-    /// <summary>
-    /// Duración del slot por defecto en minutos (ej: 30 min)
-    /// </summary>
-    public int DefaultSlotDuration { get; set; } = 30;
-
-    /// <summary>
     /// Tiempo de buffer entre citas en minutos (ej: 5 min)
     /// </summary>
-    public int BufferTimeBetweenAppointments { get; set; } = 0;
+    public int BufferTimeBetweenAppointments { get; set; } = 15;
 }

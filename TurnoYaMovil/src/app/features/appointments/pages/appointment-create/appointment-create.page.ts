@@ -26,7 +26,7 @@ import {
   chevronForwardOutline,
   closeOutline
 } from 'ionicons/icons';
-import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil, catchError, map } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil, catchError, map, forkJoin } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from '../../../business/models';
 import { BusinessService } from '../../../business/services/business.service';
@@ -87,6 +87,8 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected currentMonth: Date = new Date();
   protected calendarDays: { day: number; date: Date; isCurrentMonth: boolean; isSelectable: boolean }[] = [];
   protected weekDays = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  protected minSelectableDate: Date = new Date();
+  protected maxSelectableDate: Date = new Date();
 
   // Días disponibles (con al menos un horario)
   protected availableDaysSet: Set<string> = new Set();
@@ -188,6 +190,11 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.isWithinBookingWindow(scheduledDate)) {
+      this.notify.showError('La fecha seleccionada está fuera del rango permitido para reservar.');
+      return;
+    }
+
     const request: CreateAppointmentRequest = {
       businessId: this.businessId,
       serviceId: formValue.serviceId,
@@ -251,9 +258,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
   protected selectDate(day: number, monthOffset: number = 0): void {
     const selectedDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + monthOffset, day);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (selectedDate < today) return;
+    if (!this.isWithinBookingWindow(selectedDate)) return;
 
     const year = selectedDate.getFullYear();
     const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
@@ -296,9 +301,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
     const daysInMonth = lastDayOfMonth.getDate();
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     const tempDays: { day: number; date: Date; isCurrentMonth: boolean; isSelectable: boolean }[] = [];
 
     // Días del mes anterior
@@ -310,7 +312,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
         day,
         date,
         isCurrentMonth: false,
-        isSelectable: date >= today && this.availableDaysSet.has(this.formatDate(date))
+        isSelectable: this.isDateSelectable(date)
       });
     }
 
@@ -321,7 +323,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
         day,
         date,
         isCurrentMonth: true,
-        isSelectable: date >= today && this.availableDaysSet.has(this.formatDate(date))
+        isSelectable: this.isDateSelectable(date)
       });
     }
 
@@ -333,7 +335,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
         day,
         date,
         isCurrentMonth: false,
-        isSelectable: date >= today && this.availableDaysSet.has(this.formatDate(date))
+        isSelectable: this.isDateSelectable(date)
       });
     }
 
@@ -358,8 +360,18 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
-    const from = firstDay.toISOString().split('T')[0];
-    const to = lastDay.toISOString().split('T')[0];
+    const fromDate = firstDay < this.minSelectableDate ? this.minSelectableDate : firstDay;
+    const toDate = lastDay > this.maxSelectableDate ? this.maxSelectableDate : lastDay;
+
+    if (fromDate > toDate) {
+      this.availableDaysSet.clear();
+      this.generateCalendar();
+      this.loadingDays = false;
+      return;
+    }
+
+    const from = fromDate.toISOString().split('T')[0];
+    const to = toDate.toISOString().split('T')[0];
 
     console.log('Fetching available days from', from, 'to', to);
 
@@ -387,14 +399,17 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   private loadBusiness(): void {
     this.loading = true;
 
-    this.businessService
-      .getById(this.businessId)
+    forkJoin({
+      business: this.businessService.getById(this.businessId),
+      settings: this.businessService.getSettings(this.businessId),
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (business: BusinessDetail) => {
+        next: ({ business, settings }: { business: BusinessDetail; settings: { bookingAdvanceDays: number } }) => {
           this.business = business;
           this.services = business.services.filter(service => service.isActive);
           this.employees = business.employees.filter(employee => employee.isActive);
+          this.configureBookingWindow(settings.bookingAdvanceDays ?? 30);
           this.loading = false;
 
           // Limpiar disponibilidad inicial
@@ -451,7 +466,32 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
   // Corregir getMinDate para evitar error de variable no encontrada
   protected getMinDate(): string {
-    const now = new Date();
-    return now.toISOString().split('T')[0];
+    return this.minSelectableDate.toISOString().split('T')[0];
+  }
+
+  protected getMaxDate(): string {
+    return this.maxSelectableDate.toISOString().split('T')[0];
+  }
+
+  private configureBookingWindow(maxAdvanceDays: number): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    this.minSelectableDate = new Date(today);
+    this.minSelectableDate.setDate(this.minSelectableDate.getDate() + Math.max(maxAdvanceDays, 0));
+
+    this.maxSelectableDate = new Date(today);
+    this.maxSelectableDate.setDate(this.maxSelectableDate.getDate() + 365);
+  }
+
+  private isDateSelectable(date: Date): boolean {
+    return this.isWithinBookingWindow(date) && this.availableDaysSet.has(this.formatDate(date));
+  }
+
+  private isWithinBookingWindow(date: Date): boolean {
+    const normalized = new Date(date);
+    normalized.setHours(0, 0, 0, 0);
+
+    return normalized >= this.minSelectableDate && normalized <= this.maxSelectableDate;
   }
 }
