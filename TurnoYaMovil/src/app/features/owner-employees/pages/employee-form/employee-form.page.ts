@@ -298,9 +298,9 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       .create(this.businessId, request, this.selectedPhotoFile || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (createdEmployee) => {
+        next: () => {
           this.saving = false;
-          this.router.navigate(['/owner/businesses', this.businessId, 'employees', createdEmployee.id, 'schedule']);
+          this.router.navigate(['/owner/businesses']);
           this.notify.showSuccess('Empleado creado correctamente');
         },
         error: (error: any) => {

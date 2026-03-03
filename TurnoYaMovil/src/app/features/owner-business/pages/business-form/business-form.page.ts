@@ -481,7 +481,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
         next: () => {
           this.notify.showSuccess('Negocio actualizado correctamente');
           this.cleanup();
-          this.router.navigate(['/owner/businesses', this.businessId, 'settings'], { queryParams: { tab: 'schedule' } });
+          // this.router.navigate(['/owner/businesses', this.businessId, 'settings'], { queryParams: { tab: 'schedule' } });
         },
         error: (error) => {
           console.error('Error al actualizar negocio:', error);
