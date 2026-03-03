@@ -296,6 +296,10 @@ public class BusinessController : ControllerBase
         {
             return Forbid("No autorizado para modificar este negocio");
         }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al actualizar negocio");

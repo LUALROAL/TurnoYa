@@ -67,6 +67,7 @@ namespace TurnoYa.Infrastructure.Services
         {
             var business = _mapper.Map<Business>(businessDto);
             business.OwnerId = ownerId;
+            business.IsActive = false;
             business.CreatedAt = DateTime.UtcNow;
             business.UpdatedAt = DateTime.UtcNow;
 
@@ -111,7 +112,23 @@ namespace TurnoYa.Infrastructure.Services
             if (business.OwnerId != userId)
                 throw new UnauthorizedAccessException("No autorizado para modificar este negocio");
 
+            var wasActive = business.IsActive;
             _mapper.Map(businessDto, business);
+
+            if (!wasActive && business.IsActive)
+            {
+                var activeEmployees = (await _context.Employees
+                    .Where(e => e.BusinessId == business.Id && e.IsActive)
+                    .Select(e => e.Id)
+                    .ToListAsync())
+                    .Count;
+
+                if (activeEmployees == 0)
+                {
+                    throw new InvalidOperationException("Tu negocio debe tener al menos un empleado activo para poder continuar.");
+                }
+            }
+
             business.UpdatedAt = DateTime.UtcNow;
             var updatedBusiness = await _businessRepository.UpdateAsync(business);
 

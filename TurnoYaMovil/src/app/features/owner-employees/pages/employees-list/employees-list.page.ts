@@ -101,7 +101,10 @@ export class EmployeesListPage implements OnInit, OnDestroy {
         },
         error: (error: unknown) => {
           console.error('Error al cambiar estado del empleado:', error);
-          this.notify.showError('No se pudo cambiar el estado del empleado');
+          const backendMessage = this.getBackendMessage(error);
+          if (!backendMessage) {
+            this.notify.showError('No se pudo cambiar el estado del empleado');
+          }
         },
       });
   }
@@ -126,9 +129,17 @@ export class EmployeesListPage implements OnInit, OnDestroy {
         },
         error: (error: unknown) => {
           console.error('Error al eliminar empleado:', error);
-          this.notify.showError('No se pudo eliminar el empleado');
+          const backendMessage = this.getBackendMessage(error);
+          if (!backendMessage) {
+            this.notify.showError('No se pudo eliminar el empleado');
+          }
         },
       });
+  }
+
+  private getBackendMessage(error: unknown): string | null {
+    const maybeError = error as { error?: { message?: string } };
+    return maybeError?.error?.message ?? null;
   }
 
   private loadEmployees(): void {

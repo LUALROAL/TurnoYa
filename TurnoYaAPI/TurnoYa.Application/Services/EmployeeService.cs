@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using TurnoYa.Application.DTOs.Employee;
@@ -68,6 +69,19 @@ namespace TurnoYa.Application.Services
             if (employee.Business?.OwnerId != ownerId)
                 throw new UnauthorizedAccessException("No autorizado para modificar este empleado");
 
+            var business = employee.Business ?? await _businessRepository.GetByIdAsync(employee.BusinessId);
+            if (business == null)
+                throw new KeyNotFoundException("Negocio no encontrado");
+
+            if (dto.IsActive.HasValue && !dto.IsActive.Value && employee.IsActive && business.IsActive)
+            {
+                var activeEmployees = (await _employeeRepository.GetByBusinessIdAsync(employee.BusinessId))
+                    .Count(e => e.IsActive);
+
+                if (activeEmployees <= 1)
+                    throw new InvalidOperationException("Tu negocio debe tener al menos un empleado activo para poder continuar.");
+            }
+
             // Actualizar campos
             if (dto.FirstName != null || dto.LastName != null)
             {
@@ -102,6 +116,19 @@ namespace TurnoYa.Application.Services
 
             if (employee.Business?.OwnerId != ownerId)
                 throw new UnauthorizedAccessException("No autorizado para eliminar este empleado");
+
+            var business = employee.Business ?? await _businessRepository.GetByIdAsync(employee.BusinessId);
+            if (business == null)
+                throw new KeyNotFoundException("Negocio no encontrado");
+
+            if (business.IsActive && employee.IsActive)
+            {
+                var activeEmployees = (await _employeeRepository.GetByBusinessIdAsync(employee.BusinessId))
+                    .Count(e => e.IsActive);
+
+                if (activeEmployees <= 1)
+                    throw new InvalidOperationException("Tu negocio debe tener al menos un empleado activo para poder continuar.");
+            }
 
             await _employeeRepository.DeleteAsync(id);
         }

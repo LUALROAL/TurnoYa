@@ -121,7 +121,10 @@ export class BusinessListPage implements OnInit, OnDestroy {
         },
         error: (error: unknown) => {
           console.error('Error toggling business status:', error);
-          this.notify.showError('No se pudo cambiar el estado del negocio');
+          const backendMessage = this.getBackendMessage(error);
+          if (!backendMessage) {
+            this.notify.showError('No se pudo cambiar el estado del negocio');
+          }
         },
       });
   }
@@ -144,9 +147,17 @@ export class BusinessListPage implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error al eliminar negocio:', error);
-          this.notify.showError('No se pudo eliminar el negocio');
+          const backendMessage = this.getBackendMessage(error);
+          if (!backendMessage) {
+            this.notify.showError('No se pudo eliminar el negocio');
+          }
         }
       });
+  }
+
+  private getBackendMessage(error: unknown): string | null {
+    const maybeError = error as { error?: { message?: string } };
+    return maybeError?.error?.message ?? null;
   }
   getImageSrc(base64: string | undefined): string {
     if (!base64) return '';

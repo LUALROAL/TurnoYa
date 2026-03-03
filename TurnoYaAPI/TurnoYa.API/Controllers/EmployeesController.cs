@@ -122,6 +122,10 @@ public class EmployeesController : ControllerBase
         {
             return Forbid(ex.Message);
         }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al actualizar empleado {EmployeeId}", id);
@@ -149,6 +153,10 @@ public class EmployeesController : ControllerBase
         catch (UnauthorizedAccessException ex)
         {
             return Forbid(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
         }
         catch (Exception ex)
         {
