@@ -156,7 +156,7 @@
                   @for (slot of availableSlots; track slot) {
                   <button type="button" (click)="selectTime(slot)"
                     class="time-slot-btn py-3 px-2 rounded-xl border font-mono text-sm transition-all duration-300"
-                    [class.selected]="appointmentForm.get('scheduledTime')?.value === slot">
+                    [class.selected]="appointmentForm.get('scheduledTime')?.value === getSlotStart(slot)">
                     {{ slot }}
                   </button>
                   }

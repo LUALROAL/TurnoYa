@@ -213,7 +213,11 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   }
 
   protected selectTime(time: string): void {
-    this.appointmentForm.patchValue({ scheduledTime: time }, { emitEvent: false });
+    this.appointmentForm.patchValue({ scheduledTime: this.getSlotStart(time) }, { emitEvent: false });
+  }
+
+  protected getSlotStart(slotLabel: string): string {
+    return slotLabel.split(' - ')[0]?.trim() ?? slotLabel;
   }
 
   // ========== MÉTODOS DEL CALENDARIO ==========

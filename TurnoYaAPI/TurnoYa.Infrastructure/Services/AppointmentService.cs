@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TurnoYa.Application.DTOs.Appointment;
@@ -15,53 +16,86 @@ namespace TurnoYa.Infrastructure.Services
     public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeScheduleRepository _employeeScheduleRepository;
         private readonly ApplicationDbContext _context; // Temporal para acceder a otras entidades (servicios, empleados, negocios)
         private readonly IMapper _mapper;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
+            IEmployeeRepository employeeRepository,
+            IEmployeeScheduleRepository employeeScheduleRepository,
             ApplicationDbContext context,
             IMapper mapper)
         {
             _appointmentRepository = appointmentRepository;
+            _employeeRepository = employeeRepository;
+            _employeeScheduleRepository = employeeScheduleRepository;
             _context = context;
             _mapper = mapper;
         }
 
         public async Task<AppointmentDto> CreateAsync(CreateAppointmentDto dto, Guid userId)
         {
-            // Validar servicio y negocio
+            // Validar servicio activo y coherencia con negocio
             var service = await _context.Services
-                .Include(s => s.Business)
-                .FirstOrDefaultAsync(s => s.Id == dto.ServiceId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == dto.ServiceId && s.BusinessId == dto.BusinessId && s.IsActive)
                 ?? throw new InvalidOperationException("Servicio no encontrado");
 
-            var business = service.Business
-                ?? throw new InvalidOperationException("Negocio no encontrado");
+            var businessExists = await _context.Businesses
+                .AsNoTracking()
+                .AnyAsync(b => b.Id == dto.BusinessId);
 
-            // Validar empleado si se especificó
+            if (!businessExists)
+                throw new InvalidOperationException("Negocio no encontrado");
+
+            var businessSettings = await _context.BusinessSettings
+                .AsNoTracking()
+                .FirstOrDefaultAsync(bs => bs.BusinessId == dto.BusinessId);
+            var bufferTime = businessSettings?.BufferTime ?? 0;
+
+            Guid assignedEmployeeId;
             if (dto.EmployeeId.HasValue)
             {
                 var employee = await _context.Employees
-                    .FirstOrDefaultAsync(e => e.Id == dto.EmployeeId.Value && e.BusinessId == business.Id);
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(e => e.Id == dto.EmployeeId.Value && e.BusinessId == dto.BusinessId && e.IsActive);
+
                 if (employee == null)
                     throw new InvalidOperationException("Empleado no encontrado o no pertenece al negocio");
+
+                assignedEmployeeId = employee.Id;
+            }
+            else
+            {
+                var employeeId = await FindAvailableEmployeeAsync(
+                    dto.BusinessId,
+                    dto.ScheduledDate,
+                    service.Duration,
+                    bufferTime);
+
+                if (!employeeId.HasValue)
+                    throw new InvalidOperationException("No hay empleados disponibles para el horario seleccionado");
+
+                assignedEmployeeId = employeeId.Value;
             }
 
-            // Calcular fecha de fin
+            var effectiveStart = dto.ScheduledDate;
+            var effectiveEnd = dto.ScheduledDate.AddMinutes(service.Duration + bufferTime);
             var endDate = dto.ScheduledDate.AddMinutes(service.Duration);
 
-            // Validar disponibilidad (conflicto con otras citas)
-            if (await _appointmentRepository.HasConflictAsync(service.Id, dto.ScheduledDate, endDate))
-                throw new InvalidOperationException("El horario seleccionado no está disponible");
+            await using var tx = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
-            // Crear la cita
+            if (await _appointmentRepository.HasConflictAsync(dto.BusinessId, assignedEmployeeId, effectiveStart, effectiveEnd))
+                throw new InvalidOperationException("El horario seleccionado no estÃ¡ disponible");
+
             var appointment = new Appointment
             {
                 Id = Guid.NewGuid(),
                 ServiceId = service.Id,
-                EmployeeId = dto.EmployeeId,
-                BusinessId = business.Id,
+                EmployeeId = assignedEmployeeId,
+                BusinessId = dto.BusinessId,
                 UserId = userId,
                 ScheduledDate = dto.ScheduledDate,
                 EndDate = endDate,
@@ -73,6 +107,7 @@ namespace TurnoYa.Infrastructure.Services
             };
 
             var created = await _appointmentRepository.AddAsync(appointment);
+            await tx.CommitAsync();
             return _mapper.Map<AppointmentDto>(created);
         }
 
@@ -81,7 +116,7 @@ namespace TurnoYa.Infrastructure.Services
             var appointment = await _appointmentRepository.GetByIdAsync(id);
             if (appointment == null) return null;
 
-            // Verificar permisos: el usuario dueño de la cita o el dueño del negocio
+            // Verificar permisos: el usuario dueï¿½o de la cita o el dueï¿½o del negocio
             if (appointment.UserId != requesterId)
             {
                 var business = await _context.Businesses.FindAsync(appointment.BusinessId);
@@ -100,7 +135,7 @@ namespace TurnoYa.Infrastructure.Services
 
         public async Task<IEnumerable<AppointmentDto>> GetBusinessAsync(Guid businessId, Guid ownerId, DateTime? from = null, DateTime? to = null)
         {
-            // Verificar que el usuario sea el dueño del negocio
+            // Verificar que el usuario sea el dueï¿½o del negocio
             var business = await _context.Businesses.FindAsync(businessId);
             if (business == null || business.OwnerId != ownerId)
                 return Enumerable.Empty<AppointmentDto>();
@@ -172,6 +207,123 @@ namespace TurnoYa.Infrastructure.Services
             appointment.Status = AppointmentStatus.NoShow;
             await _appointmentRepository.UpdateAsync(appointment);
             return true;
+        }
+
+        private async Task<Guid?> FindAvailableEmployeeAsync(Guid businessId, DateTime startDate, int serviceDurationMinutes, int bufferTimeMinutes)
+        {
+            var effectiveEnd = startDate.AddMinutes(serviceDurationMinutes + bufferTimeMinutes);
+            var dayStart = startDate.Date;
+            var dayEnd = dayStart.AddDays(1);
+
+            var employees = (await _employeeRepository.GetByBusinessIdAsync(businessId))
+                .Where(e => e.IsActive)
+                .ToList();
+
+            if (!employees.Any())
+                return null;
+
+            var eligibleBySchedule = new List<Guid>();
+            var scheduleByEmployeeId = new Dictionary<Guid, EmployeeSchedule>();
+
+            foreach (var employee in employees)
+            {
+                var schedule = await _employeeScheduleRepository.GetByEmployeeIdAsync(employee.Id);
+                if (schedule == null)
+                    continue;
+
+                var ranges = GetWorkingRangesForEmployeeDate(schedule, startDate.Date);
+                var canAttend = ranges.Any(r => startDate >= r.Start && effectiveEnd <= r.End);
+
+                if (canAttend)
+                {
+                    eligibleBySchedule.Add(employee.Id);
+                    scheduleByEmployeeId[employee.Id] = schedule;
+                }
+            }
+
+            if (!eligibleBySchedule.Any())
+                return null;
+
+            var appointmentsByEmployee = await _appointmentRepository.GetActiveAppointmentsByEmployeesAsync(
+                businessId,
+                eligibleBySchedule,
+                dayStart,
+                dayEnd);
+
+            var availableCandidates = eligibleBySchedule
+                .Where(employeeId =>
+                {
+                    if (!appointmentsByEmployee.TryGetValue(employeeId, out var existingAppointments))
+                        return true;
+
+                    return !existingAppointments.Any(a => startDate < a.EndDate && effectiveEnd > a.ScheduledDate);
+                })
+                .Select(employeeId => new
+                {
+                    EmployeeId = employeeId,
+                    Workload = appointmentsByEmployee.TryGetValue(employeeId, out var items) ? items.Count : 0
+                })
+                .OrderBy(x => x.Workload)
+                .ThenBy(x => x.EmployeeId)
+                .ToList();
+
+            return availableCandidates.FirstOrDefault()?.EmployeeId;
+        }
+
+        private List<TimeRange> GetWorkingRangesForEmployeeDate(EmployeeSchedule schedule, DateTime date)
+        {
+            int mappedDay = MapDayOfWeek(date.DayOfWeek);
+            var workingDay = schedule.WorkingDays.FirstOrDefault(wd => wd.DayOfWeek == mappedDay);
+            if (workingDay == null || !workingDay.IsOpen)
+                return new List<TimeRange>();
+
+            var ranges = new List<TimeRange>();
+            foreach (var block in workingDay.TimeBlocks)
+            {
+                var blockStart = date.Date.Add(block.StartTime);
+                var blockEnd = date.Date.Add(block.EndTime);
+
+                var breaks = workingDay.BreakTimes
+                    .Where(b => b.StartTime >= block.StartTime && b.EndTime <= block.EndTime)
+                    .OrderBy(b => b.StartTime)
+                    .ToList();
+
+                var currentStart = blockStart;
+                foreach (var br in breaks)
+                {
+                    var breakStart = date.Date.Add(br.StartTime);
+                    var breakEnd = date.Date.Add(br.EndTime);
+                    if (currentStart < breakStart)
+                        ranges.Add(new TimeRange { Start = currentStart, End = breakStart });
+                    currentStart = breakEnd;
+                }
+
+                if (currentStart < blockEnd)
+                    ranges.Add(new TimeRange { Start = currentStart, End = blockEnd });
+            }
+
+            return ranges;
+        }
+
+        private int MapDayOfWeek(DayOfWeek day)
+        {
+            return day switch
+            {
+                DayOfWeek.Monday => 0,
+                DayOfWeek.Tuesday => 1,
+                DayOfWeek.Wednesday => 2,
+                DayOfWeek.Thursday => 3,
+                DayOfWeek.Friday => 4,
+                DayOfWeek.Saturday => 5,
+                DayOfWeek.Sunday => 6,
+                _ => 0
+            };
+        }
+
+        private class TimeRange
+        {
+            public DateTime Start { get; set; }
+            public DateTime End { get; set; }
         }
 
         private static string GenerateReferenceNumber()

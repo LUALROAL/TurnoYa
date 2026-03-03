@@ -13,18 +13,18 @@ namespace TurnoYa.Infrastructure.Services
 {
     public class AvailabilityService : IAvailabilityService
     {
-        private readonly IBusinessScheduleRepository _businessScheduleRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly IEmployeeScheduleRepository _employeeScheduleRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly ApplicationDbContext _context;
 
         public AvailabilityService(
-            IBusinessScheduleRepository businessScheduleRepository,
+            IEmployeeRepository employeeRepository,
             IEmployeeScheduleRepository employeeScheduleRepository,
             IAppointmentRepository appointmentRepository,
             ApplicationDbContext context)
         {
-            _businessScheduleRepository = businessScheduleRepository;
+            _employeeRepository = employeeRepository;
             _employeeScheduleRepository = employeeScheduleRepository;
             _appointmentRepository = appointmentRepository;
             _context = context;
@@ -35,64 +35,52 @@ namespace TurnoYa.Infrastructure.Services
             if (date.Date < DateTime.Today)
                 throw new Exception("No se puede consultar disponibilidad para fechas pasadas");
 
-            var service = await _context.Services.FindAsync(serviceId);
+            var service = await _context.Services
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == serviceId && s.BusinessId == businessId && s.IsActive);
             if (service == null)
                 throw new Exception("Servicio no encontrado");
 
             var businessSettings = await _context.BusinessSettings
+                .AsNoTracking()
                 .FirstOrDefaultAsync(bs => bs.BusinessId == businessId);
             int bufferTime = businessSettings?.BufferTime ?? 0;
 
-            List<TimeRange> workingRanges;
-            if (employeeId.HasValue)
-            {
-                var schedule = await _employeeScheduleRepository.GetByEmployeeIdAsync(employeeId.Value);
-                if (schedule == null)
-                    throw new Exception("El empleado no tiene horario configurado");
-                workingRanges = GetWorkingRangesForEmployeeDate(schedule, date);
-            }
-            else
-            {
-                var schedule = await _businessScheduleRepository.GetByBusinessIdAsync(businessId);
-                if (schedule == null)
-                    throw new Exception("El negocio no tiene horario configurado");
-                workingRanges = GetWorkingRangesForBusinessDate(schedule, date);
-            }
+            var dayStart = date.Date;
+            var dayEnd = dayStart.AddDays(1);
+            var employeeIds = await ResolveTargetEmployeesAsync(businessId, employeeId);
 
-            if (!workingRanges.Any())
+            if (!employeeIds.Any())
                 return new AvailabilityResponseDto { Date = date.ToString("yyyy-MM-dd"), AvailableSlots = new List<string>() };
 
-            var startOfDay = date.Date;
-            var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
-            var appointments = await _appointmentRepository.GetByBusinessIdAsync(businessId, startOfDay, endOfDay);
+            var appointmentsByEmployee = await _appointmentRepository.GetActiveAppointmentsByEmployeesAsync(
+                businessId,
+                employeeIds,
+                dayStart,
+                dayEnd);
 
-            if (employeeId.HasValue)
-                appointments = appointments.Where(a => a.EmployeeId == employeeId.Value).ToList();
-            else
-                appointments = appointments.Where(a => a.ServiceId == serviceId).ToList();
-
-            appointments = appointments.Where(a => a.Status != AppointmentStatus.Cancelled && a.Status != AppointmentStatus.Completed).ToList();
-
-            var availableSlots = new List<string>();
-            int slotDuration = service.Duration;
-
-            foreach (var range in workingRanges)
+            var slotStarts = new SortedSet<DateTime>();
+            foreach (var targetEmployeeId in employeeIds)
             {
-                var current = range.Start;
-                while (current.AddMinutes(slotDuration) <= range.End)
-                {
-                    var slotStart = current;
-                    var slotEnd = current.AddMinutes(slotDuration);
+                var schedule = await _employeeScheduleRepository.GetByEmployeeIdAsync(targetEmployeeId);
+                if (schedule == null)
+                    continue;
 
-                    bool isFree = !appointments.Any(a =>
-                        slotStart < a.EndDate && slotEnd > a.ScheduledDate);
+                var ranges = GetWorkingRangesForEmployeeDate(schedule, date);
+                if (!ranges.Any())
+                    continue;
 
-                    if (isFree)
-                        availableSlots.Add(slotStart.ToString("HH:mm"));
+                var employeeAppointments = appointmentsByEmployee.TryGetValue(targetEmployeeId, out var list)
+                    ? list
+                    : new List<Appointment>();
 
-                    current = current.AddMinutes(slotDuration + bufferTime);
-                }
+                foreach (var slotStart in BuildAvailableSlotStarts(ranges, employeeAppointments, service.Duration, bufferTime))
+                    slotStarts.Add(slotStart);
             }
+
+            var availableSlots = slotStarts
+                .Select(start => $"{start:HH:mm} - {start.AddMinutes(service.Duration):HH:mm}")
+                .ToList();
 
             return new AvailabilityResponseDto
             {
@@ -103,67 +91,56 @@ namespace TurnoYa.Infrastructure.Services
 
         public async Task<List<string>> GetAvailableDaysAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime from, DateTime to)
         {
-            var service = await _context.Services.FindAsync(serviceId);
+            var service = await _context.Services
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == serviceId && s.BusinessId == businessId && s.IsActive);
             if (service == null)
                 throw new Exception("Servicio no encontrado");
 
             var businessSettings = await _context.BusinessSettings
+                .AsNoTracking()
                 .FirstOrDefaultAsync(bs => bs.BusinessId == businessId);
             int bufferTime = businessSettings?.BufferTime ?? 0;
             int slotDuration = service.Duration;
 
-            object scheduleObj = null;
-            bool useBusiness = !employeeId.HasValue;
-            if (useBusiness)
-                scheduleObj = await _businessScheduleRepository.GetByBusinessIdAsync(businessId);
-            else
-                scheduleObj = await _employeeScheduleRepository.GetByEmployeeIdAsync(employeeId.Value);
-
-            if (scheduleObj == null)
+            var targetEmployeeIds = await ResolveTargetEmployeesAsync(businessId, employeeId);
+            if (!targetEmployeeIds.Any())
                 return new List<string>();
 
-            var appointments = await _appointmentRepository.GetByBusinessIdAsync(businessId, from, to);
-            if (employeeId.HasValue)
-                appointments = appointments.Where(a => a.EmployeeId == employeeId.Value).ToList();
-            else
-                appointments = appointments.Where(a => a.ServiceId == serviceId).ToList();
-            appointments = appointments.Where(a => a.Status != AppointmentStatus.Cancelled && a.Status != AppointmentStatus.Completed).ToList();
+            var fromDate = from.Date;
+            var toDate = to.Date.AddDays(1);
+
+            var appointmentsByEmployee = await _appointmentRepository.GetActiveAppointmentsByEmployeesAsync(
+                businessId,
+                targetEmployeeIds,
+                fromDate,
+                toDate);
 
             var availableDays = new List<string>();
 
             for (var date = from.Date; date <= to.Date; date = date.AddDays(1))
             {
-                List<TimeRange> ranges;
-                if (useBusiness)
-                    ranges = GetWorkingRangesForBusinessDate((BusinessSchedule)scheduleObj, date);
-                else
-                    ranges = GetWorkingRangesForEmployeeDate((EmployeeSchedule)scheduleObj, date);
-
-                if (!ranges.Any()) continue;
-
-                var appointmentsOfDay = appointments.Where(a => a.ScheduledDate.Date == date).ToList();
                 bool hasAtLeastOneSlot = false;
 
-                foreach (var range in ranges)
+                foreach (var targetEmployeeId in targetEmployeeIds)
                 {
-                    var current = range.Start;
-                    while (current.AddMinutes(slotDuration) <= range.End)
+                    var schedule = await _employeeScheduleRepository.GetByEmployeeIdAsync(targetEmployeeId);
+                    if (schedule == null)
+                        continue;
+
+                    var ranges = GetWorkingRangesForEmployeeDate(schedule, date);
+                    if (!ranges.Any())
+                        continue;
+
+                    var appointmentsOfDay = appointmentsByEmployee.TryGetValue(targetEmployeeId, out var allAppointments)
+                        ? allAppointments.Where(a => a.ScheduledDate.Date == date.Date).ToList()
+                        : new List<Appointment>();
+
+                    if (BuildAvailableSlotStarts(ranges, appointmentsOfDay, slotDuration, bufferTime).Any())
                     {
-                        var slotStart = current;
-                        var slotEnd = current.AddMinutes(slotDuration);
-
-                        bool isFree = !appointmentsOfDay.Any(a =>
-                            slotStart < a.EndDate && slotEnd > a.ScheduledDate);
-
-                        if (isFree)
-                        {
-                            hasAtLeastOneSlot = true;
-                            break;
-                        }
-
-                        current = current.AddMinutes(slotDuration + bufferTime);
+                        hasAtLeastOneSlot = true;
+                        break;
                     }
-                    if (hasAtLeastOneSlot) break;
                 }
 
                 if (hasAtLeastOneSlot)
@@ -173,37 +150,51 @@ namespace TurnoYa.Infrastructure.Services
             return availableDays;
         }
 
-        private List<TimeRange> GetWorkingRangesForBusinessDate(BusinessSchedule schedule, DateTime date)
+        private async Task<List<Guid>> ResolveTargetEmployeesAsync(Guid businessId, Guid? employeeId)
         {
-            int mappedDay = MapDayOfWeek(date.DayOfWeek);
-            var workingDay = schedule.WorkingDays.FirstOrDefault(wd => wd.DayOfWeek == mappedDay);
-            if (workingDay == null || !workingDay.IsOpen)
-                return new List<TimeRange>();
-
-            var ranges = new List<TimeRange>();
-            foreach (var block in workingDay.TimeBlocks)
+            if (employeeId.HasValue)
             {
-                var blockStart = date.Date.Add(block.StartTime);
-                var blockEnd = date.Date.Add(block.EndTime);
+                var employee = await _context.Employees
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(e => e.Id == employeeId.Value && e.BusinessId == businessId && e.IsActive);
 
-                var breaks = workingDay.BreakTimes
-                    .Where(b => b.StartTime >= block.StartTime && b.EndTime <= block.EndTime)
-                    .OrderBy(b => b.StartTime)
-                    .ToList();
+                if (employee == null)
+                    return new List<Guid>();
 
-                var currentStart = blockStart;
-                foreach (var br in breaks)
-                {
-                    var breakStart = date.Date.Add(br.StartTime);
-                    var breakEnd = date.Date.Add(br.EndTime);
-                    if (currentStart < breakStart)
-                        ranges.Add(new TimeRange { Start = currentStart, End = breakStart });
-                    currentStart = breakEnd;
-                }
-                if (currentStart < blockEnd)
-                    ranges.Add(new TimeRange { Start = currentStart, End = blockEnd });
+                return new List<Guid> { employee.Id };
             }
-            return ranges;
+
+            var employees = await _employeeRepository.GetByBusinessIdAsync(businessId);
+            return employees.Where(e => e.IsActive).Select(e => e.Id).ToList();
+        }
+
+        private IEnumerable<DateTime> BuildAvailableSlotStarts(
+            List<TimeRange> workingRanges,
+            List<Appointment> appointments,
+            int serviceDuration,
+            int bufferTime)
+        {
+            var result = new List<DateTime>();
+
+            foreach (var range in workingRanges)
+            {
+                var current = range.Start;
+                while (current.AddMinutes(serviceDuration + bufferTime) <= range.End)
+                {
+                    var slotStart = current;
+                    var slotEndWithBuffer = current.AddMinutes(serviceDuration + bufferTime);
+
+                    bool isFree = !appointments.Any(a =>
+                        slotStart < a.EndDate && slotEndWithBuffer > a.ScheduledDate);
+
+                    if (isFree)
+                        result.Add(slotStart);
+
+                    current = current.AddMinutes(serviceDuration + bufferTime);
+                }
+            }
+
+            return result;
         }
 
         private List<TimeRange> GetWorkingRangesForEmployeeDate(EmployeeSchedule schedule, DateTime date)

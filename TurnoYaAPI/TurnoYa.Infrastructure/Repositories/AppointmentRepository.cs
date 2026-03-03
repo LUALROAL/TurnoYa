@@ -60,10 +60,11 @@ namespace TurnoYa.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> HasConflictAsync(Guid serviceId, DateTime start, DateTime end, Guid? excludeAppointmentId = null)
+        public async Task<bool> HasConflictAsync(Guid businessId, Guid employeeId, DateTime start, DateTime end, Guid? excludeAppointmentId = null)
         {
             var query = _context.Appointments
-                .Where(a => a.ServiceId == serviceId)
+            .Where(a => a.BusinessId == businessId)
+            .Where(a => a.EmployeeId == employeeId)
                 .Where(a => a.Status != AppointmentStatus.Cancelled && a.Status != AppointmentStatus.Completed)
                 .Where(a => start < a.EndDate && end > a.ScheduledDate);
 
@@ -71,6 +72,25 @@ namespace TurnoYa.Infrastructure.Repositories
                 query = query.Where(a => a.Id != excludeAppointmentId.Value);
 
             return await query.AnyAsync();
+        }
+
+        public async Task<Dictionary<Guid, List<Appointment>>> GetActiveAppointmentsByEmployeesAsync(Guid businessId, IEnumerable<Guid> employeeIds, DateTime from, DateTime to)
+        {
+            var employeeIdList = employeeIds.Distinct().ToList();
+            if (!employeeIdList.Any())
+                return new Dictionary<Guid, List<Appointment>>();
+
+            var appointments = await _context.Appointments
+                .Where(a => a.BusinessId == businessId)
+                .Where(a => a.EmployeeId.HasValue && employeeIdList.Contains(a.EmployeeId.Value))
+                .Where(a => a.Status != AppointmentStatus.Cancelled && a.Status != AppointmentStatus.Completed)
+                .Where(a => a.ScheduledDate < to && a.EndDate > from)
+                .OrderBy(a => a.ScheduledDate)
+                .ToListAsync();
+
+            return appointments
+                .GroupBy(a => a.EmployeeId!.Value)
+                .ToDictionary(g => g.Key, g => g.ToList());
         }
 
         public async Task<Appointment> AddAsync(Appointment appointment)
