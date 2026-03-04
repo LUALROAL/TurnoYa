@@ -73,9 +73,11 @@ export class RegisterPage {
       return;
     }
 
+    const normalizedFullName = fullName.trim().toUpperCase();
+
     this.loading = true;
     this.errorMessage = '';
-    this.authService.register(fullName, email, password).subscribe({
+    this.authService.register(normalizedFullName, email, password).subscribe({
       next: () => {
         this.loading = false;
         void this.router.navigateByUrl("/auth/login");
