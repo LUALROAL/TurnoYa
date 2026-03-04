@@ -304,7 +304,13 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
     }
 
     this.savingSettings = true;
-    const settings: BusinessSettings = this.settingsForm.value;
+    const rawSettings = this.settingsForm.value;
+    const settings: BusinessSettings = {
+      ...rawSettings,
+      bookingAdvanceDays: Number(rawSettings.bookingAdvanceDays),
+      cancellationHours: Number(rawSettings.cancellationHours),
+      bufferTimeBetweenAppointments: Number(rawSettings.bufferTimeBetweenAppointments),
+    };
 
     this.ownerBusinessService
       .updateSettings(this.businessId, settings)

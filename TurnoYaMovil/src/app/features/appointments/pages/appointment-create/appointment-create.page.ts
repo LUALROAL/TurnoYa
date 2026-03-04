@@ -385,8 +385,8 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       return;
     }
 
-    const from = fromDate.toISOString().split('T')[0];
-    const to = toDate.toISOString().split('T')[0];
+    const from = this.toLocalDateString(fromDate);
+    const to = this.toLocalDateString(toDate);
 
     this.loadingDays = true;
 
@@ -464,7 +464,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.services = [...this.allServices];
           this.employees = [...this.allEmployees];
           this.applySelectionFilters();
-          this.configureBookingWindow(settings.bookingAdvanceDays ?? 30);
+          this.configureBookingWindow(settings.bookingAdvanceDays ?? 0);
           this.loading = false;
 
           // Limpiar disponibilidad inicial
@@ -614,22 +614,34 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
   // Corregir getMinDate para evitar error de variable no encontrada
   protected getMinDate(): string {
-    return this.minSelectableDate.toISOString().split('T')[0];
+    return this.toLocalDateString(this.minSelectableDate);
   }
 
   protected getMaxDate(): string {
-    return this.maxSelectableDate.toISOString().split('T')[0];
+    return this.toLocalDateString(this.maxSelectableDate);
   }
 
-  private configureBookingWindow(maxAdvanceDays: number): void {
+  private configureBookingWindow(minAdvanceDays: number): void {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const parsedMinAdvance = Number(minAdvanceDays);
+    const safeMinAdvance = Number.isFinite(parsedMinAdvance)
+      ? Math.max(Math.trunc(parsedMinAdvance), 0)
+      : 0;
+
     this.minSelectableDate = new Date(today);
-    this.minSelectableDate.setDate(this.minSelectableDate.getDate() + Math.max(maxAdvanceDays, 0));
+    this.minSelectableDate.setDate(this.minSelectableDate.getDate() + safeMinAdvance);
 
     this.maxSelectableDate = new Date(today);
     this.maxSelectableDate.setDate(this.maxSelectableDate.getDate() + 365);
+  }
+
+  private toLocalDateString(date: Date): string {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   private isDateSelectable(date: Date): boolean {
