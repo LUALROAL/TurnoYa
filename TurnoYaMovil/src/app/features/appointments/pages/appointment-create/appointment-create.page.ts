@@ -364,10 +364,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const serviceId = this.appointmentForm.get('serviceId')?.value;
     const employeeId = this.appointmentForm.get('employeeId')?.value;
 
-    console.log('loadAvailableDays called', { serviceId, employeeId, businessId: this.businessId });
-
     if (!serviceId) {
-      console.log('No serviceId, clearing days');
       this.availableDaysSet.clear();
       this.generateCalendar();
       return;
@@ -390,8 +387,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
     const from = fromDate.toISOString().split('T')[0];
     const to = toDate.toISOString().split('T')[0];
-
-    console.log('Fetching available days from', from, 'to', to);
 
     this.loadingDays = true;
 
@@ -440,7 +435,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (days) => {
-          console.log('Received available days:', days);
           this.availableDaysSet = new Set(days);
           this.generateCalendar();
           this.loadingDays = false;

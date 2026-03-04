@@ -213,8 +213,6 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Enviando schedule:', JSON.stringify(cleanedSchedule, null, 2));
-
     const request$ = this.scheduleExists
       ? this.employeesService.updateEmployeeSchedule(this.employeeId, cleanedSchedule)
       : this.employeesService.createEmployeeSchedule(this.employeeId, cleanedSchedule);

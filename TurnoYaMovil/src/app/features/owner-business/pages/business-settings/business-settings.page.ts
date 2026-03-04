@@ -357,8 +357,6 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       this.savingSchedule = false;
       return;
     }
-    console.log('Enviando schedule:', JSON.stringify(cleanedSchedule, null, 2));
-
     // Si no existe horario, crear (POST); si existe, actualizar (PUT)
     let request$;
     if (this.scheduleExists) {

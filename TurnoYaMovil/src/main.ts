@@ -128,4 +128,4 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
   ],
-}).catch(err => console.log(err));
+}).catch(err => console.error(err));
