@@ -76,6 +76,8 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected business: BusinessDetail | null = null;
   protected services: BusinessServiceItem[] = [];
   protected employees: BusinessEmployeeItem[] = [];
+  private allServices: BusinessServiceItem[] = [];
+  private allEmployees: BusinessEmployeeItem[] = [];
   protected appointmentForm: FormGroup;
 
   // Disponibilidad (horas)
@@ -149,14 +151,30 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    // Suscripción a cambios en employeeId para recargar días disponibles
-    this.appointmentForm.get('employeeId')?.valueChanges
+    this.appointmentForm.get('serviceId')?.valueChanges
       .pipe(
-        debounceTime(300),
+        debounceTime(100),
         distinctUntilChanged(),
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
+        this.applySelectionFilters('service');
+        if (this.appointmentForm.get('serviceId')?.value) {
+          this.loadAvailableDays();
+        } else {
+          this.availableDaysSet.clear();
+          this.generateCalendar();
+        }
+      });
+
+    this.appointmentForm.get('employeeId')?.valueChanges
+      .pipe(
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.applySelectionFilters('employee');
         if (this.appointmentForm.get('serviceId')?.value) {
           this.loadAvailableDays();
         }
@@ -407,8 +425,11 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       .subscribe({
         next: ({ business, settings }: { business: BusinessDetail; settings: { bookingAdvanceDays: number } }) => {
           this.business = business;
-          this.services = business.services.filter(service => service.isActive);
-          this.employees = business.employees.filter(employee => employee.isActive);
+          this.allServices = business.services.filter(service => service.isActive);
+          this.allEmployees = business.employees.filter(employee => employee.isActive);
+          this.services = [...this.allServices];
+          this.employees = [...this.allEmployees];
+          this.applySelectionFilters();
           this.configureBookingWindow(settings.bookingAdvanceDays ?? 30);
           this.loading = false;
 
@@ -423,6 +444,47 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.router.navigate(['/businesses']);
         },
       });
+  }
+
+  private applySelectionFilters(changedBy?: 'service' | 'employee'): void {
+    const selectedServiceId = this.appointmentForm.get('serviceId')?.value as string;
+    const selectedEmployeeId = this.appointmentForm.get('employeeId')?.value as string;
+
+    if (selectedEmployeeId) {
+      const selectedEmployee = this.allEmployees.find(employee => employee.id === selectedEmployeeId);
+      const assignedServiceIds = selectedEmployee?.serviceIds ?? [];
+      this.services = this.allServices.filter(service => assignedServiceIds.includes(service.id));
+    } else {
+      this.services = [...this.allServices];
+    }
+
+    if (selectedServiceId) {
+      this.employees = this.allEmployees.filter(employee => (employee.serviceIds ?? []).includes(selectedServiceId));
+    } else {
+      this.employees = [...this.allEmployees];
+    }
+
+    if (selectedServiceId && !this.services.some(service => service.id === selectedServiceId)) {
+      this.appointmentForm.patchValue(
+        { serviceId: '', scheduledDate: '', scheduledTime: '' },
+        { emitEvent: false }
+      );
+      this.availableSlots = [];
+      if (changedBy === 'employee') {
+        this.notify.showError('El servicio seleccionado no está asignado al profesional elegido.');
+      }
+    }
+
+    if (selectedEmployeeId && !this.employees.some(employee => employee.id === selectedEmployeeId)) {
+      this.appointmentForm.patchValue(
+        { employeeId: '', scheduledDate: '', scheduledTime: '' },
+        { emitEvent: false }
+      );
+      this.availableSlots = [];
+      if (changedBy === 'service') {
+        this.notify.showError('El profesional seleccionado no atiende el servicio elegido.');
+      }
+    }
   }
 
   private loadAvailability(): Observable<void> {

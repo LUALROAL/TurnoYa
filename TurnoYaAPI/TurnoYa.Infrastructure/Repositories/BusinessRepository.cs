@@ -23,6 +23,7 @@ public class BusinessRepository : IBusinessRepository
             .Include(b => b.Owner)
             .Include(b => b.Services)
             .Include(b => b.Employees)
+                .ThenInclude(e => e.EmployeeServices)
             .Include(b => b.Images) // 👈 AÑADIDO
             .FirstOrDefaultAsync(b => b.Id == id);
     }

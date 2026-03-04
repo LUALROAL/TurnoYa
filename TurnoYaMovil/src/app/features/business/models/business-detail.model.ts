@@ -36,6 +36,7 @@ export interface BusinessEmployeeItem {
   bio: string | null;
   profilePictureUrl: string | null;
   photoBase64?: string; // Nueva propiedad para imagen base64
+  serviceIds?: string[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
