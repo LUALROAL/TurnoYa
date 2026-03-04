@@ -149,6 +149,17 @@ public class BusinessController : ControllerBase
     }
 
     /// <summary>
+    /// Obtiene el listado de ciudades disponibles (distintas en la tabla de negocios activos)
+    /// </summary>
+    [HttpGet("cities")]
+    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<string>>> GetCities()
+    {
+        var cities = await _businessService.GetCitiesAsync();
+        return Ok(cities);
+    }
+
+    /// <summary>
     /// Crea un nuevo negocio
     /// </summary>
     [HttpPost]

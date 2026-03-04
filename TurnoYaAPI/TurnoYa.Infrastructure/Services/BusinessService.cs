@@ -168,6 +168,16 @@ namespace TurnoYa.Infrastructure.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<string>> GetCitiesAsync()
+        {
+            return await _context.Businesses
+                .Where(b => !string.IsNullOrEmpty(b.City) && b.IsActive)
+                .Select(b => b.City)
+                .Distinct()
+                .OrderBy(c => c)
+                .ToListAsync();
+        }
+
         public async Task<BusinessSettingsDto?> GetSettingsAsync(Guid businessId)
         {
             var business = await _context.Businesses

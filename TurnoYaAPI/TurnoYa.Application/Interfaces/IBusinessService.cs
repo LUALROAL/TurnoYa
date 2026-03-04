@@ -18,6 +18,7 @@ namespace TurnoYa.Application.Interfaces
         Task DeleteAsync(Guid id, Guid ownerId);
         //Task<bool> DeleteAsync(Guid id , Guid ownerId);
         Task<IEnumerable<string>> GetCategoriesAsync();
+        Task<IEnumerable<string>> GetCitiesAsync();
         Task<BusinessSettingsDto?> GetSettingsAsync(Guid businessId);
         Task<BusinessSettingsDto?> UpdateSettingsAsync(Guid businessId, BusinessSettingsDto dto, Guid userId);
     }

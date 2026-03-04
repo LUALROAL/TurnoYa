@@ -31,6 +31,10 @@ export class BusinessService {
     return this.api.get<string[]>("/api/business/categories");
   }
 
+  getCities(): Observable<string[]> {
+    return this.api.get<string[]>("/api/business/cities");
+  }
+
   search(params: BusinessSearchParams): Observable<BusinessListItem[]> {
     return this.api.get<BusinessListItem[]>("/api/business/search", {
       params,
