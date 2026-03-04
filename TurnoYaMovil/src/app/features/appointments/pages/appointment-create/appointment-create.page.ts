@@ -1,16 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, LOCALE_ID } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, LOCALE_ID, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonContent,
   IonIcon,
-  IonInput,
-  IonSelect,
-  IonSelectOption,
   IonTextarea,
   IonSpinner,
-  IonModal
+  IonModal,
+  IonPopover
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -24,7 +22,9 @@ import {
   syncOutline,
   chevronBackOutline,
   chevronForwardOutline,
-  closeOutline
+  closeOutline,
+  cutOutline,
+  chevronDownOutline
 } from 'ionicons/icons';
 import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil, catchError, map, forkJoin } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -48,20 +48,20 @@ registerLocaleData(localeEs);
     ReactiveFormsModule,
     IonContent,
     IonIcon,
-    IonSelect,
-    IonSelectOption,
     IonTextarea,
-    IonModal
+    IonModal,
+    IonPopover
   ],
   templateUrl: './appointment-create.page.html',
   styleUrls: ['./appointment-create.page.scss'],
   providers: [{ provide: LOCALE_ID, useValue: 'es' }]
 })
 export class AppointmentCreatePage implements OnInit, OnDestroy {
-    // Getter público para acceder a los controles del formulario desde la plantilla
-    get formControls() {
-      return this.appointmentForm.controls;
-    }
+  // Getter público para acceder a los controles del formulario desde la plantilla
+  get formControls() {
+    return this.appointmentForm.controls;
+  }
+
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
@@ -96,6 +96,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected availableDaysSet: Set<string> = new Set();
   protected loadingDays = false;
 
+  // Referencias a los popovers
+  @ViewChild('servicePopover') servicePopover!: IonPopover;
+  @ViewChild('employeePopover') employeePopover!: IonPopover;
+
   constructor() {
     addIcons({
       arrowBack,
@@ -108,7 +112,9 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       syncOutline,
       chevronBackOutline,
       chevronForwardOutline,
-      closeOutline
+      closeOutline,
+      cutOutline,
+      chevronDownOutline
     });
 
     this.appointmentForm = this.fb.group({
@@ -294,10 +300,45 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     return slotLabel.split(' - ')[0]?.trim() ?? slotLabel;
   }
 
+  // ========== MÉTODOS DEL POPOVER ==========
+  async openServicePopover(event: any) {
+    this.servicePopover.event = event;
+    await this.servicePopover.present();
+  }
+
+  selectService(service: BusinessServiceItem) {
+    this.appointmentForm.patchValue({ serviceId: service.id });
+    this.servicePopover.dismiss();
+  }
+
+  async openEmployeePopover(event: any) {
+    this.employeePopover.event = event;
+    await this.employeePopover.present();
+  }
+
+  selectEmployee(employeeId: string) {
+    this.appointmentForm.patchValue({ employeeId });
+    this.employeePopover.dismiss();
+  }
+
+  // Obtener nombre del servicio seleccionado
+  getSelectedServiceName(): string {
+    const serviceId = this.appointmentForm.get('serviceId')?.value;
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.name || '';
+  }
+
+  // Obtener nombre del empleado seleccionado (o "Sin preferencia")
+  getSelectedEmployeeName(): string {
+    const employeeId = this.appointmentForm.get('employeeId')?.value;
+    if (!employeeId) return 'Sin preferencia';
+    const employee = this.employees.find(e => e.id === employeeId);
+    return employee?.fullName || '';
+  }
+
   // ========== MÉTODOS DEL CALENDARIO ==========
   protected openCalendar(): void {
     this.isCalendarOpen = true;
-    // Si no hay días cargados y hay servicio, cargar
     if (!this.loadingDays && this.availableDaysSet.size === 0 && this.appointmentForm.get('serviceId')?.value) {
       this.loadAvailableDays();
     }
@@ -334,7 +375,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
     this.appointmentForm.patchValue({ scheduledDate: dateStr }, { emitEvent: false });
 
-    // 🔥 Forzar carga de horas para la nueva fecha
     this.loadAvailability().pipe(takeUntil(this.destroy$)).subscribe();
 
     this.closeCalendar();
@@ -363,14 +403,13 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
 
-    const startDay = firstDayOfMonth.getDay(); // 0 = Domingo, 1 = Lunes, ...
+    const startDay = firstDayOfMonth.getDay();
     const startOffset = startDay === 0 ? 6 : startDay - 1;
 
     const daysInMonth = lastDayOfMonth.getDate();
 
     const tempDays: { day: number; date: Date; isCurrentMonth: boolean; isSelectable: boolean }[] = [];
 
-    // Días del mes anterior
     const prevMonthLastDay = new Date(year, month, 0).getDate();
     for (let i = startOffset - 1; i >= 0; i--) {
       const day = prevMonthLastDay - i;
@@ -383,7 +422,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       });
     }
 
-    // Días del mes actual
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       tempDays.push({
@@ -394,7 +432,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       });
     }
 
-    // Completar hasta 42
     const remaining = 42 - tempDays.length;
     for (let day = 1; day <= remaining; day++) {
       const date = new Date(year, month + 1, day);
@@ -516,7 +553,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.configureBookingWindow(settings.bookingAdvanceDays ?? 0);
           this.loading = false;
 
-          // Limpiar disponibilidad inicial
           this.availableDaysSet.clear();
           this.generateCalendar();
         },
@@ -661,7 +697,6 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       );
   }
 
-  // Corregir getMinDate para evitar error de variable no encontrada
   protected getMinDate(): string {
     return this.toLocalDateString(this.minSelectableDate);
   }

@@ -1,5 +1,5 @@
 <ion-content class="bg-bg-primary" [fullscreen]="true">
-  <!-- Fondo con partículas animadas -->
+  <!-- Fondo con partículas animadas (sin cambios) -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
     <div
@@ -13,7 +13,7 @@
   </div>
 
   <div class="relative z-10 pb-8">
-    <!-- Header con navegación -->
+    <!-- Header (sin cambios) -->
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="flex items-center gap-4">
         <button (click)="onCancel()"
@@ -56,23 +56,19 @@
               <h2 class="text-xl font-display font-semibold text-text-primary">Detalle del turno</h2>
             </div>
 
-            <!-- Campo: Servicio -->
+            <!-- Campo: Servicio (Dropdown personalizado) -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">SERVICIO *</label>
               <div class="relative">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
-                <ion-select formControlName="serviceId" placeholder="Selecciona un servicio" interface="action-sheet"
-                  class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                  <ion-select-option *ngFor="let service of services" [value]="service.id"
-                    class="bg-bg-card text-text-primary">
-                    <div class="flex flex-col py-1">
-                      <span class="font-display">{{ service.name }}</span>
-                      <span class="text-xs text-neon-primary">
-                        {{ service.duration }} min · {{ service.price | currency:'COP':'symbol':'1.0-0' }}
-                      </span>
-                    </div>
-                  </ion-select-option>
-                </ion-select>
+                <button type="button" (click)="openServicePopover($event)"
+                  class="relative w-full flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300 text-left">
+                  <ion-icon name="cut-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                  <span class="flex-1 font-body truncate">
+                    {{ getSelectedServiceName() || 'Selecciona un servicio' }}
+                  </span>
+                  <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg flex-shrink-0"></ion-icon>
+                </button>
               </div>
               @if (formControls['serviceId'].touched && formControls['serviceId'].invalid) {
               <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
@@ -82,29 +78,68 @@
               }
             </div>
 
-            <!-- Campo: Profesional -->
+            <!-- Popover para Servicio -->
+            <ion-popover #servicePopover>
+              <ng-template>
+                <div class="popover-content max-h-64 overflow-y-auto">
+                  @for (service of services; track service.id) {
+                  <button type="button" (click)="selectService(service)"
+                    class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+                    <div class="flex flex-col">
+                      <span class="font-display text-text-primary">{{ service.name }}</span>
+                      <span class="text-xs text-neon-primary">
+                        {{ service.duration }} min · {{ service.price | currency:'COP':'symbol':'1.0-0' }}
+                      </span>
+                    </div>
+                  </button>
+                  }
+                  @empty {
+                  <div class="px-4 py-3 text-text-secondary font-mono text-sm">No hay servicios disponibles</div>
+                  }
+                </div>
+              </ng-template>
+            </ion-popover>
+
+            <!-- Campo: Profesional (Dropdown personalizado) -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">
                 PROFESIONAL (opcional)
               </label>
               <div class="relative">
-                <div
-                  class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                </div>
-                <ion-select id="employeeId" formControlName="employeeId" placeholder="Sin preferencia"
-                  interface="action-sheet"
-                  class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                  <ion-select-option value="" class="bg-bg-card text-text-primary">Sin preferencia</ion-select-option>
-                  @for (employee of employees; track employee.id) {
-                  <ion-select-option [value]="employee.id" class="bg-bg-card text-text-primary">
-                    {{ employee.fullName }}
-                  </ion-select-option>
-                  }
-                </ion-select>
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+                <button type="button" (click)="openEmployeePopover($event)"
+                  class="relative w-full flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300 text-left">
+                  <ion-icon name="person-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                  <span class="flex-1 font-body truncate">
+                    {{ getSelectedEmployeeName() }}
+                  </span>
+                  <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg flex-shrink-0"></ion-icon>
+                </button>
               </div>
             </div>
 
-            <!-- Fecha (selector personalizado) -->
+            <!-- Popover para Profesional -->
+            <ion-popover #employeePopover>
+              <ng-template>
+                <div class="popover-content max-h-64 overflow-y-auto">
+                  <button type="button" (click)="selectEmployee('')"
+                    class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+                    <span class="font-display text-text-primary">Sin preferencia</span>
+                  </button>
+                  @for (employee of employees; track employee.id) {
+                  <button type="button" (click)="selectEmployee(employee.id)"
+                    class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+                    <span class="font-display text-text-primary">{{ employee.fullName }}</span>
+                  </button>
+                  }
+                  @empty {
+                  <div class="px-4 py-3 text-text-secondary font-mono text-sm">No hay profesionales disponibles</div>
+                  }
+                </div>
+              </ng-template>
+            </ion-popover>
+
+            <!-- Fecha (sin cambios) -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">
                 FECHA *
@@ -128,13 +163,12 @@
               }
             </div>
 
-            <!-- Hora (selector de botones) -->
+            <!-- Hora (sin cambios) -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">
                 HORA *
               </label>
 
-              <!-- Contenedor con transición suave -->
               <div class="slots-container" [class.loading]="loadingSlots">
                 @if (loadingSlots) {
                 <div class="flex items-center justify-center py-6">
@@ -172,7 +206,7 @@
               }
             </div>
 
-            <!-- Campo: Notas -->
+            <!-- Notas (sin cambios) -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">
                 NOTAS (opcional)
@@ -204,7 +238,7 @@
           </div>
         </div>
 
-        <!-- Botones de acción -->
+        <!-- Botones de acción (sin cambios) -->
         <div class="flex flex-col sm:flex-row gap-3 pt-2">
           <button type="button" (click)="onCancel()" [disabled]="saving"
             class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50">
@@ -231,7 +265,7 @@
     </div>
   </div>
 
-  <!-- Modal del calendario -->
+  <!-- Modal del calendario (sin cambios) -->
   <ion-modal [isOpen]="isCalendarOpen" (didDismiss)="closeCalendar()" class="calendar-modal">
     <ng-template>
       <div class="calendar-container p-5">
@@ -277,7 +311,6 @@
         @if (!loadingDays) {
         <div class="grid grid-cols-7 gap-1">
           @for (day of calendarDays; track $index) {
-          <!-- En el bucle de días, dentro del modal del calendario -->
           <button type="button" [disabled]="!day.isSelectable"
             (click)="selectDate(day.day, day.isCurrentMonth ? 0 : (day.date > currentMonth ? 1 : -1))"
             class="calendar-day aspect-square rounded-lg font-mono text-sm transition-all duration-300 relative"

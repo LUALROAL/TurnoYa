@@ -3,7 +3,7 @@
   height: 100%;
 }
 
-// Animaciones personalizadas
+// Animaciones personalizadas (sin cambios)
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-5px); }
@@ -22,7 +22,7 @@
   animation-delay: 1s;
 }
 
-// Skeleton loader
+// Skeleton loader (sin cambios)
 .skeleton-form {
   height: 600px;
   background: linear-gradient(90deg,
@@ -40,7 +40,7 @@
   100% { background-position: -200% 0; }
 }
 
-// Scrollbar personalizado
+// Scrollbar personalizado (sin cambios)
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -56,25 +56,13 @@
   &:hover { background: #00F5D4; }
 }
 
-// Ajustes para Ionic
+// Ajustes para Ionic (sin cambios)
 ion-content {
   --background: transparent;
 }
 
-// Estilo para los selects de Ionic
-ion-select::part(icon) {
-  color: #00E0FF;
-  opacity: 1;
-}
-ion-select::part(text) {
-  color: #FFFFFF;
-}
-ion-select.ios::part(icon) {
-  color: #00E0FF;
-}
-ion-select::part(placeholder) {
-  color: rgba(112, 134, 160, 0.5);
-}
+// Eliminamos los estilos anteriores de ion-select porque ya no se usan
+// pero mantenemos los que aún sirven para otros elementos
 
 // Estilo para el textarea
 ion-textarea {
@@ -82,7 +70,7 @@ ion-textarea {
   --padding-bottom: 0;
 }
 
-// Efecto de brillo para los inputs
+// Efecto de brillo para los inputs (sin cambios)
 .input-glow {
   position: absolute;
   inset: 0;
@@ -107,39 +95,45 @@ ion-textarea {
   --caret-color: #00E0FF;
 }
 
-// Estilo para los items de action sheet personalizados
-::ng-deep .action-sheet {
-  --background: #1A1F2F;
-  --backdrop-opacity: 0.8;
-  .action-sheet-title {
-    color: #00E0FF;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    border-bottom: 1px solid rgba(0, 224, 255, 0.2);
-  }
-  .action-sheet-button {
-    color: #FFFFFF;
-    font-family: 'Outfit', sans-serif;
-    &.selected {
-      color: #00E0FF;
-      font-weight: bold;
-    }
-  }
-  .action-sheet-cancel {
-    background: rgba(0, 224, 255, 0.1);
-    color: #00E0FF;
-  }
-}
+// Efecto hover para las opciones del select (ahora en popover)
+.popover-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
 
-// Efecto hover para las opciones del select
-.select-option {
-  transition: all 0.3s ease;
   &:hover {
     background: rgba(0, 224, 255, 0.1);
   }
+
+  &:active {
+    background: rgba(0, 224, 255, 0.2);
+  }
 }
 
-// Badge de precio en el select
+// Estilo del contenido del popover
+.popover-content {
+  background: #1A1F2F;
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
+  min-width: 250px;
+  max-width: 350px;
+  color: #FFFFFF;
+}
+
+// Ajustes para ion-popover
+ion-popover {
+  --background: transparent;
+  --box-shadow: none;
+  --backdrop-opacity: 0.2;
+
+  &::part(content) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+// Badge de precio en el select (ya no se usa directamente, pero lo dejamos por si acaso)
 .price-badge {
   background: rgba(0, 224, 255, 0.1);
   border: 1px solid rgba(0, 224, 255, 0.3);
@@ -150,7 +144,7 @@ ion-textarea {
   font-family: 'JetBrains Mono', monospace;
 }
 
-// Animación para el botón de guardar
+// Animación para el botón de guardar (sin cambios)
 @keyframes save-pulse {
   0%, 100% { box-shadow: 0 0 20px rgba(0, 224, 255, 0.3); }
   50% { box-shadow: 0 0 40px rgba(0, 224, 255, 0.6); }
@@ -159,7 +153,7 @@ ion-textarea {
   animation: save-pulse 2s infinite;
 }
 
-// Efecto de validación visual
+// Efecto de validación visual (sin cambios)
 .valid-field {
   border-color: #00F5D4 !important;
   box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
@@ -169,7 +163,7 @@ ion-textarea {
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
 }
 
-// Tooltip de validación
+// Tooltip de validación (sin cambios)
 .validation-tooltip {
   position: absolute;
   bottom: -20px;
@@ -179,7 +173,7 @@ ion-textarea {
   font-family: 'JetBrains Mono', monospace;
 }
 
-// Efecto de carga
+// Efecto de carga (sin cambios)
 .saving-overlay {
   position: fixed;
   inset: 0;
@@ -199,7 +193,7 @@ ion-textarea {
   }
 }
 
-// ========== ESTILOS DE HORAS ==========
+// ========== ESTILOS DE HORAS (sin cambios) ==========
 .slots-container {
   transition: opacity 0.5s ease-in-out;
   &.loading {
@@ -234,14 +228,13 @@ ion-textarea {
   }
 }
 
-// Ajuste para el grid en móviles
 @media (max-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-// ========== ESTILOS DEL CALENDARIO ==========
+// ========== ESTILOS DEL CALENDARIO (sin cambios) ==========
 .calendar-modal {
   --height: auto;
   --width: 90%;
@@ -265,14 +258,12 @@ ion-textarea {
   overflow-y: auto;
 }
 
-// Título del mes
 .calendar-container .text-text-primary.font-display.font-semibold {
   font-size: 1.2rem;
   letter-spacing: 0.5px;
   color: #FFFFFF;
 }
 
-// Días de la semana (cabecera)
 .calendar-container .grid-cols-7.gap-1.mb-2 {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -292,7 +283,6 @@ ion-textarea {
   }
 }
 
-// Grid de días
 .calendar-container .grid-cols-7.gap-1:last-child {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -323,14 +313,12 @@ ion-textarea {
     color: #FFFFFF;
   }
 
-  // Días disponibles (no seleccionados)
   &.available:not(.selected) {
     background: rgba(0, 224, 255, 0.1);
     border-color: rgba(0, 224, 255, 0.4);
     color: #FFFFFF;
   }
 
-  // Día seleccionado
   &.selected {
     background: linear-gradient(135deg, #00E0FF, #00F5D4);
     border-color: transparent;
@@ -363,14 +351,12 @@ ion-textarea {
   transform: translateX(-50%);
 }
 
-// Indicador de carga
 .calendar-container ion-spinner {
   --color: #00E0FF;
   width: 24px;
   height: 24px;
 }
 
-// Responsive
 @media (max-width: 360px) {
   .calendar-container {
     padding: 16px;
