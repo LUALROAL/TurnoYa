@@ -31,6 +31,8 @@ namespace TurnoYa.Application.DTOs.Employee
         // Para recibir la imagen como base64
         public string? PhotoBase64 { get; set; }
 
+        public List<Guid>? ServiceIds { get; set; }
+
         public bool? IsActive { get; set; }
     }
 }

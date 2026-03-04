@@ -244,6 +244,36 @@
                 }
               </div> -->
 
+              <div class="space-y-2">
+                <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                  SERVICIOS ASIGNADOS *
+                </label>
+                <div class="relative">
+                  <div
+                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                  </div>
+                  <div
+                    class="relative px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                    <ion-select
+                      formControlName="serviceIds"
+                      [multiple]="true"
+                      interface="popover"
+                      placeholder="Selecciona uno o más servicios"
+                      class="text-text-primary font-body">
+                      @for (service of availableServices; track service.id) {
+                      <ion-select-option [value]="service.id">{{ service.name }}</ion-select-option>
+                      }
+                    </ion-select>
+                  </div>
+                </div>
+                @if (formControls['serviceIds'].touched && formControls['serviceIds'].invalid) {
+                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                  Debes asignar al menos un servicio
+                </p>
+                }
+              </div>
+
               <!-- Estado (solo en edición) -->
               @if (isEditMode) {
               <div class="border-t border-neon-primary/10 pt-4">

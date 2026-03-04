@@ -11,6 +11,8 @@ import { CreateEmployeeRequest, UpdateEmployeeRequest } from '../../models';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
 import { AppPhoto } from 'src/app/features/owner-business/services/photo.service';
 import { PhotoService } from 'src/app/features/owner-business/services/photo.service';
+import { OwnerServicesService } from 'src/app/features/owner-services/services/owner-services.service';
+import { OwnerService } from 'src/app/features/owner-services/models';
  // 👈 Importar desde core
 
 @Component({
@@ -29,6 +31,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly ownerEmployeesService = inject(OwnerEmployeesService);
+  private readonly ownerServicesService = inject(OwnerServicesService);
   private readonly notify = inject(NotifyService);
   private readonly photoService = inject(PhotoService) as PhotoService; // 👈 Inyectar PhotoService tipado
   private readonly destroy$ = new Subject<void>();
@@ -39,6 +42,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
   isEditMode = false;
   loading = false;
   saving = false;
+  availableServices: OwnerService[] = [];
 
   selectedPhotoFile: File | null = null;
   photoPreview: string | null = null;
@@ -61,6 +65,8 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       this.onCancel();
       return;
     }
+
+    this.loadBusinessServices();
 
     if (this.isEditMode) {
       this.loadEmployee();
@@ -230,8 +236,24 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       email: ['', [Validators.email]],
       profilePictureUrl: ['', [Validators.pattern(/^(https?:\/\/).+/i)]],
       bio: ['', [Validators.maxLength(500)]],
+      serviceIds: [[], [Validators.required]],
       isActive: [true],
     });
+  }
+
+  private loadBusinessServices(): void {
+    this.ownerServicesService
+      .getByBusinessId(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: services => {
+          this.availableServices = services.filter(service => service.isActive);
+        },
+        error: (error: unknown) => {
+          console.error('Error al cargar servicios:', error);
+          this.notify.showError('No se pudieron cargar los servicios del negocio');
+        },
+      });
   }
 
   private loadEmployee(): void {
@@ -251,6 +273,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
             email: employee.email || '',
             profilePictureUrl: employee.profilePictureUrl || '',
             bio: employee.bio || '',
+            serviceIds: employee.serviceIds || [],
             isActive: employee.isActive,
           });
           this.loading = false;
@@ -291,6 +314,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       email: formValue.email?.trim() || undefined,
       profilePictureUrl: formValue.profilePictureUrl?.trim() || undefined,
       bio: formValue.bio?.trim() || undefined,
+      serviceIds: (formValue.serviceIds || []) as string[],
       isActive: true,
     };
 
@@ -326,6 +350,7 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       email: formValue.email?.trim() || undefined,
       profilePictureUrl: formValue.profilePictureUrl?.trim() || undefined,
       bio: formValue.bio?.trim() || undefined,
+      serviceIds: (formValue.serviceIds || []) as string[],
       isActive: !!formValue.isActive,
     };
 
@@ -355,7 +380,9 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
    */
   private mapBackendValidationErrors(errors: { [key: string]: string[] }): void {
     Object.entries(errors).forEach(([field, messages]) => {
-      const control = this.employeeForm.get(field.toLowerCase());
+      const controlKey = Object.keys(this.employeeForm.controls)
+        .find(key => key.toLowerCase() === field.toLowerCase());
+      const control = controlKey ? this.employeeForm.get(controlKey) : null;
       if (control) {
         control.setErrors({ backend: messages.join(' ') });
       }

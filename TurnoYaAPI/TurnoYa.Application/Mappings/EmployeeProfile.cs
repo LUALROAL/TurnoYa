@@ -1,4 +1,5 @@
 using AutoMapper;
+using System.Linq;
 using TurnoYa.Application.DTOs.Employee;
 using TurnoYa.Core.Entities;
 
@@ -12,6 +13,7 @@ namespace TurnoYa.Application.Mappings
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => GetFirstName(src.Name)))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => GetLastName(src.Name)))
                 .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.PhotoUrl))
+                .ForMember(dest => dest.ServiceIds, opt => opt.MapFrom(src => src.EmployeeServices.Select(es => es.ServiceId).ToList()))
                 .ForMember(dest => dest.PhotoBase64, opt => opt.MapFrom(src => src.PhotoData != null ? Convert.ToBase64String(src.PhotoData) : null));
 
             CreateMap<CreateEmployeeDto, Employee>()

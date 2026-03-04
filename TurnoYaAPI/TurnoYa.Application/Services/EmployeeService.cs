@@ -55,6 +55,16 @@ namespace TurnoYa.Application.Services
             employee.UpdatedAt = DateTime.UtcNow;
             employee.PhotoData = photoData;
 
+            var requestedServiceIds = (dto.ServiceIds ?? new List<Guid>()).Distinct().ToList();
+            ValidateBusinessServices(requestedServiceIds, business.Services.Select(s => s.Id));
+            employee.EmployeeServices = requestedServiceIds
+                .Select(serviceId => new EmployeeServiceAssignment
+                {
+                    EmployeeId = employee.Id,
+                    ServiceId = serviceId
+                })
+                .ToList();
+
             var created = await _employeeRepository.AddAsync(employee);
             return _mapper.Map<EmployeeDto>(created);
         }
@@ -69,7 +79,7 @@ namespace TurnoYa.Application.Services
             if (employee.Business?.OwnerId != ownerId)
                 throw new UnauthorizedAccessException("No autorizado para modificar este empleado");
 
-            var business = employee.Business ?? await _businessRepository.GetByIdAsync(employee.BusinessId);
+            var business = await _businessRepository.GetByIdAsync(employee.BusinessId);
             if (business == null)
                 throw new KeyNotFoundException("Negocio no encontrado");
 
@@ -102,6 +112,22 @@ namespace TurnoYa.Application.Services
             if (dto.IsActive.HasValue) employee.IsActive = dto.IsActive.Value;
             if (photoData != null) employee.PhotoData = photoData;
 
+            if (dto.ServiceIds != null)
+            {
+                var requestedServiceIds = dto.ServiceIds.Distinct().ToList();
+                ValidateBusinessServices(requestedServiceIds, business.Services.Select(s => s.Id));
+
+                employee.EmployeeServices.Clear();
+                foreach (var serviceId in requestedServiceIds)
+                {
+                    employee.EmployeeServices.Add(new EmployeeServiceAssignment
+                    {
+                        EmployeeId = employee.Id,
+                        ServiceId = serviceId
+                    });
+                }
+            }
+
             employee.UpdatedAt = DateTime.UtcNow;
 
             var updated = await _employeeRepository.UpdateAsync(employee);
@@ -131,6 +157,15 @@ namespace TurnoYa.Application.Services
             }
 
             await _employeeRepository.DeleteAsync(id);
+        }
+
+        private static void ValidateBusinessServices(IEnumerable<Guid> requestedServiceIds, IEnumerable<Guid> businessServiceIds)
+        {
+            var businessServiceIdsSet = businessServiceIds.ToHashSet();
+            var invalidServiceIds = requestedServiceIds.Where(serviceId => !businessServiceIdsSet.Contains(serviceId)).ToList();
+
+            if (invalidServiceIds.Count > 0)
+                throw new InvalidOperationException("Uno o más servicios seleccionados no pertenecen al negocio.");
         }
     }
 }

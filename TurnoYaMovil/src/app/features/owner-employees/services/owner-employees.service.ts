@@ -29,12 +29,7 @@ export class OwnerEmployeesService {
   ): Observable<OwnerEmployee> {
     const formData = new FormData();
 
-    // Añadir campos del request
-    Object.entries(request).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
-      }
-    });
+    this.appendRequestToFormData(formData, request);
 
     // Añadir foto si existe
     if (photoFile) {
@@ -54,11 +49,7 @@ export class OwnerEmployeesService {
   ): Observable<OwnerEmployee> {
     const formData = new FormData();
 
-    Object.entries(request).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
-      }
-    });
+    this.appendRequestToFormData(formData, request);
 
     if (photoFile) {
       formData.append('photo', photoFile, photoFile.name);
@@ -113,5 +104,23 @@ export class OwnerEmployeesService {
       `/api/EmployeeSchedule/Update/${employeeId}`,
       schedule
     );
+  }
+
+  private appendRequestToFormData(
+    formData: FormData,
+    request: CreateEmployeeRequest | UpdateEmployeeRequest
+  ): void {
+    Object.entries(request).forEach(([key, value]) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => formData.append(key, item.toString()));
+        return;
+      }
+
+      formData.append(key, value.toString());
+    });
   }
 }

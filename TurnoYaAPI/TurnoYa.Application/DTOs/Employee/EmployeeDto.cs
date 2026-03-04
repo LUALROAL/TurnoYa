@@ -15,6 +15,7 @@ namespace TurnoYa.Application.DTOs.Employee
         public string? Bio { get; set; }
         public string? ProfilePictureUrl { get; set; }
         public string? PhotoBase64 { get; set; } // Para enviar al frontend
+        public List<Guid> ServiceIds { get; set; } = new();
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

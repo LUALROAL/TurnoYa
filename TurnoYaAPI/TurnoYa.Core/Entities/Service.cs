@@ -15,4 +15,5 @@ public class Service : BaseEntity
 
     public Business? Business { get; set; }
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public ICollection<EmployeeServiceAssignment> EmployeeServices { get; set; } = new List<EmployeeServiceAssignment>();
 }

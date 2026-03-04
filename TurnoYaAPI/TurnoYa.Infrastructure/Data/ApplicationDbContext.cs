@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Business> Businesses => Set<Business>();
     public DbSet<Service> Services => Set<Service>();
     public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<EmployeeServiceAssignment> EmployeeServiceAssignments => Set<EmployeeServiceAssignment>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<AppointmentStatusHistory> AppointmentStatusHistory => Set<AppointmentStatusHistory>();
     public DbSet<BusinessSettings> BusinessSettings => Set<BusinessSettings>();
@@ -148,6 +149,19 @@ public class ApplicationDbContext : DbContext
         {
             e.HasOne(emp => emp.Business).WithMany(b => b.Employees).HasForeignKey(emp => emp.BusinessId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(emp => emp.User).WithMany().HasForeignKey(emp => emp.UserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<EmployeeServiceAssignment>(e =>
+        {
+            e.HasKey(x => new { x.EmployeeId, x.ServiceId });
+            e.HasOne(x => x.Employee)
+                .WithMany(emp => emp.EmployeeServices)
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Service)
+                .WithMany(s => s.EmployeeServices)
+                .HasForeignKey(x => x.ServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Appointment>(e =>

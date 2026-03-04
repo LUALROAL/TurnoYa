@@ -20,6 +20,7 @@ namespace TurnoYa.Infrastructure.Repositories
         public async Task<IEnumerable<Employee>> GetByBusinessIdAsync(Guid businessId)
         {
             return await _context.Employees
+                .Include(e => e.EmployeeServices)
                 .Where(e => e.BusinessId == businessId)
                 .ToListAsync();
         }
@@ -28,6 +29,7 @@ namespace TurnoYa.Infrastructure.Repositories
         {
             return await _context.Employees
                 .Include(e => e.Business)
+                .Include(e => e.EmployeeServices)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 

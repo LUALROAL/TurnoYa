@@ -19,6 +19,7 @@ namespace TurnoYa.Core.Entities
         public Business? Business { get; set; }
         public User? User { get; set; }
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public ICollection<EmployeeServiceAssignment> EmployeeServices { get; set; } = new List<EmployeeServiceAssignment>();
         public EmployeeSchedule? Schedule { get; set; }
     }
 }
