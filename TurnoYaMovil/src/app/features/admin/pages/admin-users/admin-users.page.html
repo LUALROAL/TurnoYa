@@ -1,278 +1,335 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button (click)="goBack()"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Gestión de Usuarios</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
-  <!-- Controles de búsqueda y filtros -->
-  <div class="filter-section mb-4">
-    <div class="mb-3">
-      <ion-searchbar
-        placeholder="Buscar por email, nombre..."
-        (ionInput)="onSearchChange($event)"
-        debounce="300"
-        animated>
-      </ion-searchbar>
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas (opcional, copiado de appointment-create) -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
     </div>
-
-    <div class="filter-row gap-2">
-      <ion-select
-        placeholder="Filtrar por rol"
-        [(ngModel)]="selectedRole"
-        (ionChange)="onRoleFilterChange()">
-        <ion-select-option value="">Todos los roles</ion-select-option>
-        <ion-select-option value="Customer">Cliente</ion-select-option>
-        <ion-select-option value="Owner">Propietario</ion-select-option>
-        <ion-select-option value="Admin">Administrador</ion-select-option>
-      </ion-select>
-
-      <ion-button
-        fill="outline"
-        size="small"
-        (click)="resetFilters()">
-        Limpiar
-      </ion-button>
+    <div class="absolute inset-0" style="background-image:
+      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;">
     </div>
   </div>
 
-  <!-- Estado vacío -->
-  <div *ngIf="!loading() && users().length === 0" class="empty-state text-center py-8">
-    <ion-text color="medium">
-      <p>No se encontraron usuarios</p>
-    </ion-text>
-  </div>
-
-  <!-- Spinner de carga -->
-  <div *ngIf="loading()" class="flex justify-center py-8">
-    <ion-spinner></ion-spinner>
-  </div>
-
-  <!-- Lista de usuarios -->
-  <div *ngIf="!loading() && users().length > 0" class="users-list">
-    <ion-card
-      *ngFor="let user of users()"
-      class="user-card mb-3">
-      <ion-card-header>
-        <div class="user-header-row">
-          <div class="user-info">
-            <ion-card-title class="text-base font-semibold">
-              {{ user.fullName }}
-            </ion-card-title>
-            <ion-text color="medium" class="text-sm">
-              {{ user.email }}
-            </ion-text>
-          </div>
-          <div class="user-status">
-            <ion-badge
-              [color]="getRoleColor(user.role)"
-              class="mr-2">
-              {{ getRoleLabel(user.role) }}
-            </ion-badge>
-            <ion-badge
-              [color]="user.isBlocked ? 'danger' : 'success'">
-              {{ user.isBlocked ? 'Bloqueado' : 'Activo' }}
-            </ion-badge>
-          </div>
-        </div>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div class="user-details mb-3">
-          <div class="detail-row">
-            <span class="detail-label">Email verificado:</span>
-            <ion-icon
-              [icon]="user.isEmailVerified ? checkmark : close"
-              [color]="user.isEmailVerified ? 'success' : 'danger'">
-            </ion-icon>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Último acceso:</span>
-            <span class="detail-value">
-              {{ user.lastLoginAt ? (user.lastLoginAt | date : 'short') : 'Nunca' }}
+  <div class="relative z-10 pb-8">
+    <!-- Header personalizado estilo neón -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <button (click)="goBack()"
+          class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <ion-icon name="arrow-back" class="text-xl text-text-primary"></ion-icon>
+        </button>
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            ADMINISTRACIÓN
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              Gestión de Usuarios
             </span>
+          </h1>
+        </div>
+      </div>
+    </header>
+
+    <div class="px-4 space-y-4 mt-4">
+      <!-- Controles de búsqueda y filtros -->
+      <div class="relative group">
+        <div
+          class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+        </div>
+        <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-4">
+
+          <!-- Búsqueda -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono text-neon-primary tracking-wider">BUSCAR</label>
+            <div class="relative">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+              <div
+                class="relative flex items-center gap-3 px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                <ion-icon name="search-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                <input type="text" placeholder="Buscar por email, nombre..." (input)="onSearchChange($event)"
+                  class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
+              </div>
+            </div>
           </div>
-          <div class="detail-row">
-            <span class="detail-label">Registrado:</span>
-            <span class="detail-value">
-              {{ user.createdAt | date : 'short' }}
-            </span>
-          </div>
-          <div *ngIf="user.isBlocked && user.blockReason" class="detail-row warning">
-            <span class="detail-label">Razón del bloqueo:</span>
-            <span class="detail-value">{{ user.blockReason }}</span>
+
+          <!-- Filtro por rol (dropdown personalizado) y botón limpiar -->
+          <div class="flex flex-wrap items-end gap-3">
+            <div class="flex-1 min-w-[200px] space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">FILTRAR POR ROL</label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+                <button type="button" (click)="openRolePopover($event)"
+                  class="relative w-full flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300 text-left">
+                  <ion-icon name="funnel-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                  <span class="flex-1 font-body truncate">
+                    {{ getSelectedRoleLabel() }}
+                  </span>
+                  <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg flex-shrink-0"></ion-icon>
+                </button>
+              </div>
+            </div>
+
+            <button type="button" (click)="resetFilters()"
+              class="h-12 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display text-sm hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 flex items-center justify-center">
+              Limpiar
+            </button>
           </div>
         </div>
+      </div>
 
-        <!-- Acciones -->
-        <div class="actions-row">
-          <ion-button
-            fill="outline"
-            size="small"
-            (click)="openEditModal(user)">
-            <ion-icon slot="start" [icon]="create"></ion-icon>
-            Editar
-          </ion-button>
+      <!-- Popover para selección de rol -->
+      <ion-popover #rolePopover>
+        <ng-template>
+          <div class="popover-content max-h-64 overflow-y-auto">
+            <button type="button" (click)="selectRole('')"
+              class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+              <span class="font-display text-text-primary">Todos los roles</span>
+            </button>
+            <button type="button" (click)="selectRole('Customer')"
+              class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+              <span class="font-display text-text-primary">Cliente</span>
+            </button>
+            <button type="button" (click)="selectRole('Owner')"
+              class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+              <span class="font-display text-text-primary">Propietario</span>
+            </button>
+            <button type="button" (click)="selectRole('Admin')"
+              class="popover-item w-full text-left px-4 py-3 border-b border-neon-primary/10 last:border-0 hover:bg-neon-primary/10 transition-colors duration-200">
+              <span class="font-display text-text-primary">Administrador</span>
+            </button>
+          </div>
+        </ng-template>
+      </ion-popover>
 
-          <ion-button
-            *ngIf="!user.isBlocked"
-            fill="outline"
-            size="small"
-            color="danger"
-            (click)="openBlockModal(user)">
-            <ion-icon slot="start" [icon]="ban"></ion-icon>
-            Bloquear
-          </ion-button>
-
-          <ion-button
-            *ngIf="user.isBlocked"
-            fill="outline"
-            size="small"
-            color="success"
-            (click)="unblockUser(user)">
-            <ion-icon slot="start" [icon]="checkmark"></ion-icon>
-            Desbloquear
-          </ion-button>
+      <!-- Estado vacío -->
+      @if (!loading() && users().length === 0) {
+        <div class="empty-state text-center py-12">
+          <div class="text-text-secondary font-mono text-sm">No se encontraron usuarios</div>
         </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      }
 
-  <!-- Paginación -->
-  <div *ngIf="!loading() && users().length > 0" class="pagination-section mt-4 text-center">
-    <ion-text color="medium" class="text-sm">
-      Página {{ currentPage() }} de {{ totalPages() }}
-    </ion-text>
-    <div class="flex justify-center gap-2 mt-2">
-      <ion-button
-        fill="outline"
-        size="small"
-        [disabled]="currentPage() === 1"
-        (click)="previousPage()">
-        Anterior
-      </ion-button>
-      <ion-button
-        fill="outline"
-        size="small"
-        [disabled]="currentPage() >= totalPages()"
-        (click)="nextPage()">
-        Siguiente
-      </ion-button>
+      <!-- Spinner de carga -->
+      @if (loading()) {
+        <div class="flex justify-center py-12">
+          <ion-spinner name="crescent" class="text-neon-primary w-8 h-8"></ion-spinner>
+        </div>
+      }
+
+      <!-- Lista de usuarios -->
+      @if (!loading() && users().length > 0) {
+        <div class="space-y-4">
+          @for (user of users(); track user.id) {
+            <div class="relative group">
+              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+              <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-4">
+
+                <!-- Cabecera de la tarjeta -->
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 class="text-lg font-display font-semibold text-text-primary">{{ user.fullName }}</h3>
+                    <p class="text-sm text-text-secondary font-mono">{{ user.email }}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-mono border"
+                      [ngClass]="{
+                        'bg-neon-primary/20 text-neon-primary border-neon-primary/30': user.role === 'Admin',
+                        'bg-neon-secondary/20 text-neon-secondary border-neon-secondary/30': user.role === 'Owner',
+                        'bg-blue-500/20 text-blue-400 border-blue-500/30': user.role === 'Customer'
+                      }">
+                      {{ getRoleLabel(user.role) }}
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-mono border"
+                      [ngClass]="user.isBlocked ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'">
+                      {{ user.isBlocked ? 'Bloqueado' : 'Activo' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Detalles del usuario -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm bg-bg-secondary/30 p-4 rounded-xl border border-neon-primary/10">
+                  <div class="flex items-center gap-2">
+                    <span class="text-text-tertiary font-mono text-xs">Email verificado:</span>
+                    <ion-icon [name]="user.isEmailVerified ? 'checkmark-circle' : 'close-circle'"
+                      [class.text-neon-secondary]="user.isEmailVerified"
+                      [class.text-red-400]="!user.isEmailVerified" class="text-lg"></ion-icon>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-text-tertiary font-mono text-xs">Último acceso:</span>
+                    <span class="text-text-primary font-mono text-xs">{{ user.lastLoginAt ? (user.lastLoginAt | date:'short') : 'Nunca' }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-text-tertiary font-mono text-xs">Registrado:</span>
+                    <span class="text-text-primary font-mono text-xs">{{ user.createdAt | date:'short' }}</span>
+                  </div>
+                  @if (user.isBlocked && user.blockReason) {
+                    <div class="flex items-center gap-2 col-span-2 bg-red-500/10 p-2 rounded-lg border border-red-500/30">
+                      <span class="text-text-tertiary font-mono text-xs">Razón:</span>
+                      <span class="text-text-primary font-mono text-xs">{{ user.blockReason }}</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Acciones -->
+                <div class="flex flex-wrap gap-3 pt-2">
+                  <button (click)="openEditModal(user)"
+                    class="flex-1 min-w-[100px] py-2 px-4 bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary font-display font-semibold rounded-xl hover:shadow-neon transition-all duration-300 flex items-center justify-center gap-2">
+                    <ion-icon name="create-outline" class="text-lg"></ion-icon>
+                    Editar
+                  </button>
+
+                  @if (!user.isBlocked) {
+                    <button (click)="openBlockModal(user)"
+                      class="flex-1 min-w-[100px] py-2 px-4 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-red-400/50 hover:text-red-400 transition-all duration-300 flex items-center justify-center gap-2">
+                      <ion-icon name="ban-outline" class="text-lg"></ion-icon>
+                      Bloquear
+                    </button>
+                  } @else {
+                    <button (click)="unblockUser(user)"
+                      class="flex-1 min-w-[100px] py-2 px-4 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-green-400/50 hover:text-green-400 transition-all duration-300 flex items-center justify-center gap-2">
+                      <ion-icon name="checkmark-circle-outline" class="text-lg"></ion-icon>
+                      Desbloquear
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Paginación -->
+      @if (!loading() && users().length > 0) {
+        <div class="flex flex-col items-center gap-3 mt-8 p-4 bg-bg-card/50 backdrop-blur-sm border border-neon-primary/10 rounded-xl">
+          <span class="text-text-tertiary font-mono text-sm">
+            Página {{ currentPage() }} de {{ totalPages() }}
+          </span>
+          <div class="flex gap-3">
+            <button [disabled]="currentPage() === 1" (click)="previousPage()"
+              class="px-5 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display text-sm hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed">
+              Anterior
+            </button>
+            <button [disabled]="currentPage() >= totalPages()" (click)="nextPage()"
+              class="px-5 py-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display text-sm hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed">
+              Siguiente
+            </button>
+          </div>
+        </div>
+      }
     </div>
   </div>
+
+  <!-- Modal para editar usuario -->
+  <ion-modal [isOpen]="editModalOpen()" (didDismiss)="closeEditModal()" class="user-modal">
+    <ng-template>
+      <div class="modal-container p-5">
+        <!-- Cabecera -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-display font-semibold text-text-primary">Editar Usuario</h3>
+          <button (click)="closeEditModal()"
+            class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+            <ion-icon name="close-outline" class="text-text-primary"></ion-icon>
+          </button>
+        </div>
+
+        @if (selectedUser()) {
+          <form [formGroup]="editForm" (ngSubmit)="saveUser()" class="space-y-4">
+            <!-- Campo de rol (ion-select estilizado) -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">ROL</label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+                <ion-select formControlName="role" interface="action-sheet"
+                  class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-select-option value="Customer" class="bg-bg-card text-text-primary">Cliente</ion-select-option>
+                  <ion-select-option value="Owner" class="bg-bg-card text-text-primary">Propietario</ion-select-option>
+                  <ion-select-option value="Admin" class="bg-bg-card text-text-primary">Administrador</ion-select-option>
+                </ion-select>
+              </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex gap-3 pt-4">
+              <button type="submit" [disabled]="updatingUser()"
+                class="flex-1 py-3 px-4 bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary font-display font-semibold rounded-xl hover:shadow-neon transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2">
+                @if (updatingUser()) {
+                  <ion-spinner name="crescent" class="w-4 h-4"></ion-spinner>
+                }
+                Guardar cambios
+              </button>
+              <button type="button" (click)="closeEditModal()"
+                class="flex-1 py-3 px-4 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal para bloquear usuario -->
+  <ion-modal [isOpen]="blockModalOpen()" (didDismiss)="closeBlockModal()" class="user-modal">
+    <ng-template>
+      <div class="modal-container p-5">
+        <!-- Cabecera -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-display font-semibold text-text-primary">Bloquear Usuario</h3>
+          <button (click)="closeBlockModal()"
+            class="w-8 h-8 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all">
+            <ion-icon name="close-outline" class="text-text-primary"></ion-icon>
+          </button>
+        </div>
+
+        @if (selectedUser()) {
+          <form [formGroup]="blockForm" (ngSubmit)="confirmBlock()" class="space-y-4">
+            <!-- Razón del bloqueo -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">RAZÓN (opcional)</label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+                <div
+                  class="relative flex items-center gap-3 px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                  <input type="text" formControlName="blockReason" placeholder="Indique la razón"
+                    class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Fecha hasta bloquear -->
+            <div class="space-y-2">
+              <label class="block text-xs font-mono text-neon-primary tracking-wider">BLOQUEAR HASTA (opcional)</label>
+              <div class="relative">
+                <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+                <div
+                  class="relative flex items-center gap-3 px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  <ion-icon name="calendar-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                  <input type="datetime-local" formControlName="blockUntil"
+                    class="w-full bg-transparent text-text-primary focus:outline-none font-body [color-scheme:dark]" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex gap-3 pt-4">
+              <button type="submit" [disabled]="updatingUser()"
+                class="flex-1 py-3 px-4 bg-gradient-to-r from-red-500 to-red-400 text-bg-primary font-display font-semibold rounded-xl hover:shadow-red-500/50 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2">
+                @if (updatingUser()) {
+                  <ion-spinner name="crescent" class="w-4 h-4"></ion-spinner>
+                }
+                Bloquear Usuario
+              </button>
+              <button type="button" (click)="closeBlockModal()"
+                class="flex-1 py-3 px-4 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>
-
-<!-- Modal para editar usuario -->
-<ion-modal
-  [isOpen]="editModalOpen()"
-  (didDismiss)="closeEditModal()">
-  <ng-template ionModalContent>
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>Editar Usuario</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="closeEditModal()">
-            <ion-icon slot="icon-only" [icon]="close"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding" *ngIf="selectedUser()">
-      <form [formGroup]="editForm" (ngSubmit)="saveUser()">
-        <!-- Campo de rol -->
-        <div class="mb-4">
-          <ion-label class="block mb-2 font-semibold">Rol</ion-label>
-          <ion-select
-            formControlName="role"
-            class="ion-padding-md">
-            <ion-select-option value="Customer">Cliente</ion-select-option>
-            <ion-select-option value="Owner">Propietario</ion-select-option>
-            <ion-select-option value="Admin">Administrador</ion-select-option>
-          </ion-select>
-        </div>
-
-        <!-- Botones de acción -->
-        <div class="flex gap-2">
-          <ion-button
-            expand="block"
-            color="primary"
-            [disabled]="updatingUser()"
-            (click)="saveUser()">
-            <ion-spinner *ngIf="updatingUser()" slot="start"></ion-spinner>
-            Guardar cambios
-          </ion-button>
-          <ion-button
-            expand="block"
-            fill="outline"
-            (click)="closeEditModal()">
-            Cancelar
-          </ion-button>
-        </div>
-      </form>
-    </ion-content>
-  </ng-template>
-</ion-modal>
-
-<!-- Modal para bloquear usuario -->
-<ion-modal
-  [isOpen]="blockModalOpen()"
-  (didDismiss)="closeBlockModal()">
-  <ng-template ionModalContent>
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>Bloquear Usuario</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="closeBlockModal()">
-            <ion-icon slot="icon-only" [icon]="close"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding" *ngIf="selectedUser()">
-      <form [formGroup]="blockForm" (ngSubmit)="confirmBlock()">
-        <!-- Razón del bloqueo -->
-        <div class="mb-4">
-          <ion-label class="block mb-2 font-semibold">Razón del bloqueo</ion-label>
-          <ion-input
-            formControlName="blockReason"
-            placeholder="Indique la razón (opcional)"
-            class="ion-padding-md">
-          </ion-input>
-        </div>
-
-        <!-- Fecha hasta bloquear -->
-        <div class="mb-4">
-          <ion-label class="block mb-2 font-semibold">Bloquear hasta (opcional)</ion-label>
-          <ion-input
-            formControlName="blockUntil"
-            type="datetime-local"
-            class="ion-padding-md">
-          </ion-input>
-        </div>
-
-        <!-- Botones de acción -->
-        <div class="flex gap-2">
-          <ion-button
-            expand="block"
-            color="danger"
-            [disabled]="updatingUser()"
-            (click)="confirmBlock()">
-            <ion-spinner *ngIf="updatingUser()" slot="start"></ion-spinner>
-            Bloquear Usuario
-          </ion-button>
-          <ion-button
-            expand="block"
-            fill="outline"
-            (click)="closeBlockModal()">
-            Cancelar
-          </ion-button>
-        </div>
-      </form>
-    </ion-content>
-  </ng-template>
-</ion-modal>

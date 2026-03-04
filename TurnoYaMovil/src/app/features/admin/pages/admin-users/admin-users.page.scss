@@ -1,222 +1,174 @@
-// ===== FILTER SECTION =====
-.filter-section {
-  background: color-mix(in srgb, var(--color-surface-1) 60%, transparent);
-  padding: var(--space-4);
-  border-radius: var(--radius-input);
-  border: 1px solid var(--color-outline);
-  margin-bottom: var(--space-4);
+:host {
+  display: block;
+  height: 100%;
 }
 
-.filter-row {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  flex-wrap: wrap;
+// Animaciones (copiadas de appointment-create)
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+// Scrollbar personalizado
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00E0FF;
+  border-radius: 4px;
+  &:hover { background: #00F5D4; }
+}
+
+// Estilos para ion-content
+ion-content {
+  --background: transparent;
+}
+
+// Popover personalizado
+ion-popover {
+  --background: transparent;
+  --box-shadow: none;
+  --backdrop-opacity: 0.2;
+
+  &::part(content) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.popover-content {
+  background: #1A1F2F;
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
+  min-width: 200px;
+  max-width: 300px;
+  color: #FFFFFF;
+}
+
+.popover-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 224, 255, 0.1);
+  }
+
+  &:active {
+    background: rgba(0, 224, 255, 0.2);
+  }
+}
+
+// Estilos para ion-select dentro de modales (para que coincida con el tema)
 ion-select {
-  flex: 1;
-  min-width: 120px;
-}
-
-// ===== USER ITEM STYLES =====
-.user-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  gap: var(--space-3);
-}
-
-.user-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.user-status {
-  display: flex;
-  gap: var(--space-2);
-  justify-content: flex-end;
-  flex-shrink: 0;
-}
-
-// ===== USER DETAILS MODAL STYLES =====
-.user-details {
-  background: color-mix(in srgb, var(--color-surface-1) 50%, transparent);
-  padding: var(--space-4);
-  border-radius: var(--radius-input);
-  border: 1px solid var(--color-outline);
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-outline) 50%, transparent);
-
-  &:last-child {
-    border-bottom: none;
+  &::part(icon) {
+    color: #00E0FF;
+    opacity: 1;
   }
-
-  &.warning {
-    background: color-mix(in srgb, #FFA500 15%, transparent);
-    padding: var(--space-3);
-    border-radius: calc(var(--radius-input) / 2);
-    border-left: 3px solid #FFA500;
+  &::part(text) {
+    color: #FFFFFF;
+  }
+  &::part(placeholder) {
+    color: rgba(112, 134, 160, 0.5);
   }
 }
 
-.detail-label {
-  font-weight: 600;
-  min-width: 120px;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-}
-
-.detail-value {
-  text-align: right;
-  color: var(--color-text);
-  font-weight: 500;
-}
-
-// ===== ACTION BUTTONS =====
-.actions-row {
-  display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin-top: var(--space-4);
-
-  ion-button {
-    flex: 1;
-    min-width: 100px;
-    --padding-start: var(--space-3);
-    --padding-end: var(--space-3);
+// Estilo para inputs tipo datetime-local
+input[type="datetime-local"] {
+  color-scheme: dark;
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
-// ===== PAGINATION =====
-.pagination-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-6);
-  margin-bottom: var(--space-4);
-  padding: var(--space-4);
-  background: color-mix(in srgb, var(--color-surface-1) 40%, transparent);
-  border-radius: var(--radius-input);
+// Modales personalizados
+.user-modal {
+  --height: auto;
+  --width: 90%;
+  --max-width: 400px;
+  --border-radius: 24px;
+
+  &::part(content) {
+    background: transparent;
+  }
 }
 
-// ===== EMPTY STATE =====
+.modal-container {
+  background: #1A1F2F;
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 0 40px rgba(0, 224, 255, 0.2);
+  backdrop-filter: blur(10px);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+// Estado vacío
 .empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-height: 300px;
-  color: var(--color-text-muted);
-
-  ion-icon {
-    font-size: 48px;
-    opacity: 0.3;
-  }
+  background: rgba(26, 31, 47, 0.5);
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
 }
 
-// ===== UTILITY CLASSES (PROJECT ALIGNED) =====
-.gap-2 {
-  gap: var(--space-2);
+// Clases de utilidad adicionales (si faltan)
+.text-neon-secondary {
+  color: #00F5D4;
 }
-
-.gap-3 {
-  gap: var(--space-3);
+.bg-neon-secondary\/20 {
+  background-color: rgba(0, 245, 212, 0.2);
 }
-
-.mb-2 {
-  margin-bottom: var(--space-2);
+.border-neon-secondary\/30 {
+  border-color: rgba(0, 245, 212, 0.3);
 }
-
-.mb-3 {
-  margin-bottom: var(--space-3);
+.text-blue-400 {
+  color: #60a5fa;
 }
-
-.mb-4 {
-  margin-bottom: var(--space-4);
+.bg-blue-500\/20 {
+  background-color: rgba(59, 130, 246, 0.2);
 }
-
-.mt-2 {
-  margin-top: var(--space-2);
+.border-blue-500\/30 {
+  border-color: rgba(59, 130, 246, 0.3);
 }
-
-.mt-4 {
-  margin-top: var(--space-4);
+.text-red-400 {
+  color: #f87171;
 }
-
-.mr-2 {
-  margin-right: var(--space-2);
+.bg-red-500\/20 {
+  background-color: rgba(239, 68, 68, 0.2);
 }
-
-.mr-3 {
-  margin-right: var(--space-3);
+.border-red-500\/30 {
+  border-color: rgba(239, 68, 68, 0.3);
 }
-
-.p-3 {
-  padding: var(--space-3);
+.text-green-400 {
+  color: #4ade80;
 }
-
-.p-4 {
-  padding: var(--space-4);
+.bg-green-500\/20 {
+  background-color: rgba(34, 197, 94, 0.2);
 }
-
-.flex {
-  display: flex;
+.border-green-500\/30 {
+  border-color: rgba(34, 197, 94, 0.3);
 }
-
-.flex-col {
-  flex-direction: column;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-}
-
-.text-sm {
-  font-size: 0.85rem;
-}
-
-.text-base {
-  font-size: 1rem;
-}
-
-.text-lg {
-  font-size: 1.1rem;
-}
-
-.font-semibold {
-  font-weight: 600;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.text-muted {
-  color: var(--color-text-muted);
+.hover\:shadow-red-500\/50:hover {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
 }

@@ -1,37 +1,39 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonSearchbar,
+  IonSpinner,
+  IonModal,
+  IonIcon,
+  IonPopover,
   IonSelect,
   IonSelectOption,
-  IonButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonLabel,
-  IonBadge,
-  IonSpinner,
-  IonText,
-  IonModal,
-  IonButtons,
-  IonIcon,
-  IonInput,
-  IonBackButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { close, create, ban, checkmark } from 'ionicons/icons';
+import {
+  close,
+  create,
+  ban,
+  checkmark,
+  arrowBack,
+  searchOutline,
+  funnelOutline,
+  chevronDownOutline,
+  createOutline,
+  banOutline,
+  checkmarkCircleOutline,
+  closeOutline,
+  calendarOutline,
+  chatbubbleOutline,
+  checkmarkCircle,
+  closeCircle,
+} from 'ionicons/icons';
 import { AdminUsersService } from '../../services/admin-users.service';
 import {
   UserManageDto,
   PagedUsersResponseDto,
   UpdateUserStatusDto,
-  UpdateUserRoleDto,
 } from '../../models/admin-users.models';
 import { NotifyService } from '../../../../core/services/notify.service';
 
@@ -42,27 +44,13 @@ import { NotifyService } from '../../../../core/services/notify.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
-    IonSearchbar,
+    IonSpinner,
+    IonModal,
+    IonIcon,
+    IonPopover,
     IonSelect,
     IonSelectOption,
-    IonButton,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonLabel,
-    IonBadge,
-    IonSpinner,
-    IonText,
-    IonModal,
-    IonButtons,
-    IonIcon,
-    IonInput,
-    IonBackButton,
   ],
   templateUrl: './admin-users.page.html',
   styleUrls: ['./admin-users.page.scss'],
@@ -95,13 +83,33 @@ export class AdminUsersPage implements OnInit {
   editForm!: FormGroup;
   blockForm!: FormGroup;
 
+  // Popover
+  @ViewChild('rolePopover') rolePopover!: IonPopover;
+
   constructor(
     private adminUsersService: AdminUsersService,
     private notify: NotifyService,
     private fb: FormBuilder,
     private location: Location
   ) {
-    addIcons({ create, close, ban, checkmark });
+    addIcons({
+      close,
+      create,
+      ban,
+      checkmark,
+      arrowBack,
+      searchOutline,
+      funnelOutline,
+      chevronDownOutline,
+      createOutline,
+      banOutline,
+      checkmarkCircleOutline,
+      closeOutline,
+      calendarOutline,
+      chatbubbleOutline,
+      checkmarkCircle,
+      closeCircle,
+    });
   }
 
   ngOnInit() {
@@ -114,12 +122,12 @@ export class AdminUsersPage implements OnInit {
    */
   private initializeForms() {
     this.editForm = this.fb.group({
-      role: ['']
+      role: [''],
     });
 
     this.blockForm = this.fb.group({
       blockReason: [''],
-      blockUntil: ['']
+      blockUntil: [''],
     });
   }
 
@@ -141,10 +149,10 @@ export class AdminUsersPage implements OnInit {
           this.totalPages.set(response.totalPages);
           this.loading.set(false);
         },
-        error: (error) => {
+        error: () => {
           this.notify.showError('Error al cargar usuarios');
           this.loading.set(false);
-        }
+        },
       });
   }
 
@@ -152,7 +160,7 @@ export class AdminUsersPage implements OnInit {
    * Maneja el cambio en el campo de búsqueda
    */
   onSearchChange(event: any) {
-    this.searchTerm = event.detail.value || '';
+    this.searchTerm = event.target.value || '';
     this.currentPage.set(1);
     this.loadUsers();
   }
@@ -197,13 +205,39 @@ export class AdminUsersPage implements OnInit {
     }
   }
 
+  // ========== MÉTODOS DEL POPOVER ==========
+  async openRolePopover(event: any) {
+    this.rolePopover.event = event;
+    await this.rolePopover.present();
+  }
+
+  selectRole(role: string) {
+    this.selectedRole = role;
+    this.rolePopover.dismiss();
+    this.onRoleFilterChange();
+  }
+
+  getSelectedRoleLabel(): string {
+    if (!this.selectedRole) return 'Filtrar por rol';
+    switch (this.selectedRole) {
+      case 'Customer':
+        return 'Cliente';
+      case 'Owner':
+        return 'Propietario';
+      case 'Admin':
+        return 'Administrador';
+      default:
+        return this.selectedRole;
+    }
+  }
+
   /**
    * Abre el modal para editar usuario
    */
   openEditModal(user: UserManageDto) {
     this.selectedUser.set(user);
     this.editForm.patchValue({
-      role: user.role
+      role: user.role,
     });
     this.editModalOpen.set(true);
   }
@@ -241,10 +275,10 @@ export class AdminUsersPage implements OnInit {
           this.loadUsers();
           this.updatingUser.set(false);
         },
-        error: (error) => {
+        error: () => {
           this.notify.showError('Error al actualizar el usuario');
           this.updatingUser.set(false);
-        }
+        },
       });
   }
 
@@ -278,7 +312,7 @@ export class AdminUsersPage implements OnInit {
     const blockData: UpdateUserStatusDto = {
       isBlocked: true,
       blockReason: this.blockForm.get('blockReason')?.value || undefined,
-      blockUntil: this.blockForm.get('blockUntil')?.value || undefined
+      blockUntil: this.blockForm.get('blockUntil')?.value || undefined,
     };
 
     this.adminUsersService
@@ -290,10 +324,10 @@ export class AdminUsersPage implements OnInit {
           this.loadUsers();
           this.updatingUser.set(false);
         },
-        error: (error) => {
+        error: () => {
           this.notify.showError('Error al bloquear el usuario');
           this.updatingUser.set(false);
-        }
+        },
       });
   }
 
@@ -303,7 +337,7 @@ export class AdminUsersPage implements OnInit {
   unblockUser(user: UserManageDto) {
     this.updatingUser.set(true);
     const unblockData: UpdateUserStatusDto = {
-      isBlocked: false
+      isBlocked: false,
     };
 
     this.adminUsersService
@@ -314,15 +348,15 @@ export class AdminUsersPage implements OnInit {
           this.loadUsers();
           this.updatingUser.set(false);
         },
-        error: (error) => {
+        error: () => {
           this.notify.showError('Error al desbloquear el usuario');
           this.updatingUser.set(false);
-        }
+        },
       });
   }
 
   /**
-   * Retorna el color del badge del rol
+   * Retorna el color del badge del rol (se usa para clases, ahora manejado por ngClass)
    */
   getRoleColor(role: string): string {
     switch (role) {
@@ -350,9 +384,11 @@ export class AdminUsersPage implements OnInit {
         return role;
     }
   }
+
   /**
    * Navega hacia atrás
    */
   goBack() {
     this.location.back();
-  }}
+  }
+}
