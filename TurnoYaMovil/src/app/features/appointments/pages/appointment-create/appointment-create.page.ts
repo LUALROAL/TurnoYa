@@ -222,19 +222,68 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     };
 
     this.saving = true;
-    this.appointmentsService.create(request)
+    this.loadAvailability()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (created) => {
-          this.saving = false;
-          this.notify.showSuccess('Cita agendada correctamente');
-          this.router.navigate(['/appointments']);
+        next: () => {
+          const selectedTime = formValue.scheduledTime as string;
+          const stillAvailable = this.availableSlots.some(slot => this.getSlotStart(slot) === selectedTime);
+
+          if (!stillAvailable) {
+            this.saving = false;
+            this.notify.showError('La hora seleccionada ya no está disponible. Elige otro horario.');
+            return;
+          }
+
+          this.appointmentsService.create(request)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: () => {
+                this.saving = false;
+                this.notify.showSuccess('Cita agendada correctamente');
+                this.router.navigate(['/appointments']);
+              },
+              error: (err) => {
+                this.saving = false;
+                this.notify.showError(this.getCreateAppointmentErrorMessage(err));
+              }
+            });
         },
-        error: (err) => {
+        error: () => {
           this.saving = false;
-          this.notify.showError('No se pudo agendar la cita. Intenta nuevamente.');
+          this.notify.showError('No se pudo validar la disponibilidad. Intenta nuevamente.');
         }
       });
+  }
+
+  private getCreateAppointmentErrorMessage(error: unknown): string {
+    const apiError = error as {
+      status?: number;
+      error?: {
+        message?: string;
+        errors?: Record<string, string[]>;
+      };
+    };
+
+    const scheduledDateErrors = apiError?.error?.errors?.['ScheduledDate'];
+    if (Array.isArray(scheduledDateErrors) && scheduledDateErrors.length > 0) {
+      const combinedMessage = scheduledDateErrors.join(' ');
+      if (combinedMessage.toLowerCase().includes('futura')) {
+        return 'La hora seleccionada ya pasó o no está disponible. Elige una hora futura.';
+      }
+      return combinedMessage;
+    }
+
+    const backendMessage = apiError?.error?.message;
+    if (typeof backendMessage === 'string' && backendMessage.trim().length > 0) {
+      return backendMessage;
+    }
+
+    if (apiError?.status === 409) {
+      return 'El horario seleccionado ya fue tomado. Elige otro horario.';
+    }
+
+    return 'No se pudo agendar la cita. Intenta nuevamente.';
   }
 
   protected selectTime(time: string): void {

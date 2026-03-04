@@ -18,7 +18,7 @@ public class CreateAppointmentDtoValidator : AbstractValidator<CreateAppointment
 
         RuleFor(x => x.ScheduledDate)
             .NotEmpty().WithMessage("La fecha programada es requerida")
-            .Must(date => date > DateTime.UtcNow).WithMessage("La fecha debe ser futura");
+            .Must(date => date > DateTime.Now).WithMessage("La fecha y hora debe ser futura");
 
         RuleFor(x => x.Notes)
             .MaximumLength(500).WithMessage("Las notas no pueden exceder 500 caracteres")
