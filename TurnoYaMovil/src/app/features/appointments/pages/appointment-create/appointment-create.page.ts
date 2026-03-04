@@ -395,6 +395,46 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
     this.loadingDays = true;
 
+    if (!employeeId) {
+      const associatedEmployeeIds = this.allEmployees
+        .filter(employee => employee.isActive && (employee.serviceIds ?? []).includes(serviceId))
+        .map(employee => employee.id);
+
+      if (associatedEmployeeIds.length === 0) {
+        this.availableDaysSet.clear();
+        this.generateCalendar();
+        this.loadingDays = false;
+        return;
+      }
+
+      const availableDaysRequests = associatedEmployeeIds.map(id =>
+        this.appointmentsService
+          .getAvailableDays(this.businessId, serviceId, from, to, id)
+          .pipe(catchError(() => of([] as string[])))
+      );
+
+      forkJoin(availableDaysRequests)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (daysByEmployee: string[][]) => {
+            const mergedDays: string[] = daysByEmployee.reduce((acc: string[], days: string[]) => {
+              return acc.concat(days);
+            }, []);
+            this.availableDaysSet = new Set<string>(mergedDays);
+            this.generateCalendar();
+            this.loadingDays = false;
+          },
+          error: (err) => {
+            console.error('Error al cargar días disponibles sin preferencia', err);
+            this.availableDaysSet.clear();
+            this.generateCalendar();
+            this.loadingDays = false;
+          }
+        });
+
+      return;
+    }
+
     this.appointmentsService
       .getAvailableDays(this.businessId, serviceId, from, to, employeeId || undefined)
       .pipe(takeUntil(this.destroy$))
@@ -500,6 +540,58 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
     this.loadingSlots = true;
     this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+
+    if (!employeeId) {
+      const associatedEmployeeIds = this.allEmployees
+        .filter(employee => employee.isActive && (employee.serviceIds ?? []).includes(serviceId))
+        .map(employee => employee.id);
+
+      if (associatedEmployeeIds.length === 0) {
+        this.availableSlots = [];
+        this.appointmentForm.patchValue({ scheduledTime: '' }, { emitEvent: false });
+        this.loadingSlots = false;
+        return of(undefined);
+      }
+
+      const availabilityRequests = associatedEmployeeIds.map(id =>
+        this.appointmentsService
+          .getAvailability(this.businessId, serviceId, dateValue, id)
+          .pipe(catchError(() => of({ date: dateValue, availableSlots: [] } as AvailabilityResponse)))
+      );
+
+      return forkJoin(availabilityRequests).pipe(
+        takeUntil(this.destroy$),
+        map((responses: AvailabilityResponse[]) => {
+          const mergedSlots: string[] = responses.reduce((acc: string[], response: AvailabilityResponse) => {
+            return acc.concat(response.availableSlots);
+          }, []);
+          this.availableSlots = Array.from(new Set<string>(mergedSlots)).sort((a: string, b: string) =>
+            this.getSlotStart(a).localeCompare(this.getSlotStart(b))
+          );
+
+          const selectedTime = this.appointmentForm.get('scheduledTime')?.value;
+          if (this.availableSlots.length === 0 || !this.availableSlots.includes(selectedTime)) {
+            this.appointmentForm.patchValue({ scheduledTime: '' }, { emitEvent: false });
+          }
+
+          if (this.availableSlots.length === 0) {
+            this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+          } else {
+            this.appointmentForm.get('scheduledTime')?.enable({ emitEvent: false });
+          }
+
+          this.loadingSlots = false;
+          return undefined;
+        }),
+        catchError((error) => {
+          console.error('Error al cargar disponibilidad sin preferencia:', error);
+          this.availableSlots = [];
+          this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
+          this.loadingSlots = false;
+          return of(undefined);
+        })
+      );
+    }
 
     return this.appointmentsService
       .getAvailability(this.businessId, serviceId, dateValue, employeeId || undefined)
