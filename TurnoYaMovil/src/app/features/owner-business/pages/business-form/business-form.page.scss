@@ -1,7 +1,3 @@
-.category-suggestions-menu {
-  max-height: 220px !important;
-  overflow-y: auto;
-}
 :host {
   display: block;
   height: 100%;
@@ -370,7 +366,6 @@ input {
 .image-glow {
   animation: imageGlow 2s infinite;
 }
-
 
 // Estilos mejorados para el snackbar
 .fixed.bottom-4 {

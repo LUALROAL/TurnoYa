@@ -44,7 +44,7 @@
         <div class="skeleton-form-section"></div>
       </div>
       } @else {
-      <form [formGroup]="businessForm" (ngSubmit)="onSave()" class="space-y-6" (click)="onClickOutside()">
+      <form [formGroup]="businessForm" (ngSubmit)="onSave()" class="space-y-6" (click)="onClickOutside($event)">
 
         <!-- Información Básica -->
         <section class="space-y-3">
@@ -110,72 +110,74 @@
               <!-- Grid: Categoría y Sitio Web -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Categoría (Autocomplete personalizado) -->
-                <div class="space-y-2 relative">
-                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    CATEGORÍA *
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                    </div>
-
-                    <!-- Input con icono -->
-                    <div
-                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                      <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                      <ion-input id="category" type="text" formControlName="category"
-                      [disabled]="categories.length === 0"
-                        (ionInput)="onCategoryInput($any($event.target).value)" (focus)="onCategoryFocus()"
-                        placeholder="Selecciona una categoría" autocomplete="off"
-                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
-                    </div>
-
-                    <!-- Menú desplegable de categorías (estilo futurista) -->
-                    @if (showCategorySuggestions && categorySuggestions.length) {
-                    <div
-                      class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn category-suggestions-menu"
-                      (click)="$event.stopPropagation()">
-                      <!-- Efecto de glow -->
-                      <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
-
-                      <!-- Lista de sugerencias -->
+                <div class="category-container relative" (click)="$event.stopPropagation()">
+                  <div class="space-y-2">
+                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                      CATEGORÍA *
+                    </label>
+                    <div class="relative">
                       <div
-                        class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
-                        @for (cat of categorySuggestions; track cat) {
-                        <button type="button" (click)="onCategorySelect(cat)"
-                          class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
-                          <div class="flex items-center gap-3">
-                            <ion-icon name="business-outline"
-                              class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
-                            <span class="text-text-primary font-mono text-sm">{{ cat }}</span>
-                          </div>
-                        </button>
-                        }
+                        class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
                       </div>
+
+                      <!-- Input con icono -->
+                      <div
+                        class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                        <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                        <ion-input id="category" type="text" formControlName="category"
+                          [disabled]="categories.length === 0"
+                          (ionInput)="onCategoryInput($any($event.target).value)" (focus)="onCategoryFocus()"
+                          placeholder="Selecciona una categoría" autocomplete="off"
+                          class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                      </div>
+
+                      <!-- Menú desplegable de categorías (estilo futurista) -->
+                      @if (showCategorySuggestions && categorySuggestions.length) {
+                      <div
+                        class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn category-suggestions-menu"
+                        (click)="$event.stopPropagation()">
+                        <!-- Efecto de glow -->
+                        <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
+
+                        <!-- Lista de sugerencias -->
+                        <div
+                          class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                          @for (cat of categorySuggestions; track cat) {
+                          <button type="button" (click)="onCategorySelect(cat)"
+                            class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
+                            <div class="flex items-center gap-3">
+                              <ion-icon name="business-outline"
+                                class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                              <span class="text-text-primary font-mono text-sm">{{ cat }}</span>
+                            </div>
+                          </button>
+                          }
+                        </div>
+                      </div>
+                      }
+                    </div>
+
+                    @if (formControls['category'].touched && formControls['category'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      {{ getErrorMessage('category') }}
+                    </p>
+                    }
+                    <!-- Custom category input -->
+                    @if (isCustomCategory) {
+                    <div class="mt-2 relative group">
+                      <div
+                        class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur input-glow">
+                      </div>
+                      <label class="block text-xs font-mono text-neon-primary tracking-wider mb-1">
+                        Escribe tu categoría personalizada
+                      </label>
+                      <input type="text" [(ngModel)]="customCategoryValue" [ngModelOptions]="{standalone: true}"
+                        name="customCategoryValue" placeholder="Ej: Barbería, Veterinaria, etc."
+                        class="w-full bg-bg-secondary/50 border border-neon-primary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
                     </div>
                     }
                   </div>
-
-                  @if (formControls['category'].touched && formControls['category'].invalid) {
-                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                    {{ getErrorMessage('category') }}
-                  </p>
-                  }
-                  <!-- Custom category input -->
-                  @if (isCustomCategory) {
-                  <div class="mt-2 relative group">
-                    <div
-                      class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur input-glow">
-                    </div>
-                    <label class="block text-xs font-mono text-neon-primary tracking-wider mb-1">
-                      Escribe tu categoría personalizada
-                    </label>
-                    <input type="text" [(ngModel)]="customCategoryValue" [ngModelOptions]="{standalone: true}"
-                      name="customCategoryValue" placeholder="Ej: Barbería, Veterinaria, etc."
-                      class="w-full bg-bg-secondary/50 border border-neon-primary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
-                  </div>
-                  }
                 </div>
 
                 <!-- Sitio Web -->
@@ -349,110 +351,116 @@
               <!-- Grid: Departamento y Ciudad con Autocomplete Mejorado -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Departamento (Autocomplete) -->
-                <div class="space-y-2 relative">
-                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    DEPARTAMENTO *
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                    </div>
-
-                    <!-- Input con icono -->
-                    <div
-                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                      <ion-icon name="location-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                      <ion-input id="department" type="text" formControlName="department"
-                        (ionInput)="onDepartmentInput($any($event.target).value)" placeholder="Ej: Cundinamarca"
-                        autocomplete="off"
-                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
-                    </div>
-
-                    <!-- Menú desplegable de sugerencias (estilo futurista) -->
-                    @if (departmentSuggestions.length) {
-                    <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
-                      <!-- Efecto de glow -->
-                      <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
-
-                      <!-- Lista de sugerencias -->
+                <div class="department-container relative" (click)="$event.stopPropagation()">
+                  <div class="space-y-2">
+                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                      DEPARTAMENTO *
+                    </label>
+                    <div class="relative">
                       <div
-                        class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
-                        @for (dept of departmentSuggestions; track dept) {
-                        <button type="button" (click)="onDepartmentSelect(dept)"
-                          class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
-                          <div class="flex items-center gap-3">
-                            <ion-icon name="location-outline"
-                              class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
-                            <span class="text-text-primary font-mono text-sm">{{ dept }}</span>
-                          </div>
-                        </button>
-                        }
+                        class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
                       </div>
+
+                      <!-- Input con icono -->
+                      <div
+                        class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                        <ion-icon name="location-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                        <ion-input id="department" type="text" formControlName="department"
+                          (ionInput)="onDepartmentInput($any($event.target).value)" placeholder="Ej: Cundinamarca"
+                          autocomplete="off"
+                          class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                      </div>
+
+                      <!-- Menú desplegable de sugerencias (estilo futurista) -->
+                      @if (departmentSuggestions.length) {
+                      <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn"
+                           (click)="$event.stopPropagation()">
+                        <!-- Efecto de glow -->
+                        <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
+
+                        <!-- Lista de sugerencias -->
+                        <div
+                          class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                          @for (dept of departmentSuggestions; track dept) {
+                          <button type="button" (click)="onDepartmentSelect(dept)"
+                            class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
+                            <div class="flex items-center gap-3">
+                              <ion-icon name="location-outline"
+                                class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                              <span class="text-text-primary font-mono text-sm">{{ dept }}</span>
+                            </div>
+                          </button>
+                          }
+                        </div>
+                      </div>
+                      }
                     </div>
+
+                    <!-- Mensajes de error -->
+                    @if (formControls['department'].touched && formControls['department'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      {{ getErrorMessage('department') }}
+                    </p>
                     }
                   </div>
-
-                  <!-- Mensajes de error -->
-                  @if (formControls['department'].touched && formControls['department'].invalid) {
-                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                    {{ getErrorMessage('department') }}
-                  </p>
-                  }
                 </div>
 
                 <!-- Ciudad (Autocomplete) -->
-                <div class="space-y-2 relative">
-                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                    CIUDAD *
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                    </div>
-
-                    <!-- Input con icono -->
-                    <div
-                      class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
-                      [class.opacity-50]="!businessForm.get('department')?.value">
-                      <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                      <ion-input id="city" type="text" [formControlName]="'city'"
-                        (ionInput)="onCityInput($any($event.target).value)" placeholder="Ej: Bogotá" autocomplete="off"
-                        [disabled]="!businessForm.get('department')?.value"
-                        class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body disabled:opacity-50"></ion-input>
-                    </div>
-
-                    <!-- Menú desplegable de sugerencias (estilo futurista) -->
-                    @if (citySuggestions.length) {
-                    <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn">
-                      <!-- Efecto de glow -->
-                      <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
-
-                      <!-- Lista de sugerencias -->
+                <div class="city-container relative" (click)="$event.stopPropagation()">
+                  <div class="space-y-2">
+                    <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                      CIUDAD *
+                    </label>
+                    <div class="relative">
                       <div
-                        class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
-                        @for (city of citySuggestions; track city.name) {
-                        <button type="button" (click)="onCitySelect(city.name)"
-                          class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
-                          <div class="flex items-center gap-3">
-                            <ion-icon name="business-outline"
-                              class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
-                            <span class="text-text-primary font-mono text-sm">{{ city.name }}</span>
-                          </div>
-                        </button>
-                        }
+                        class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
                       </div>
+
+                      <!-- Input con icono -->
+                      <div
+                        class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300"
+                        [class.opacity-50]="!businessForm.get('department')?.value">
+                        <ion-icon name="business-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                        <ion-input id="city" type="text" [formControlName]="'city'"
+                          (ionInput)="onCityInput($any($event.target).value)" placeholder="Ej: Bogotá" autocomplete="off"
+                          [disabled]="!businessForm.get('department')?.value"
+                          class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body disabled:opacity-50"></ion-input>
+                      </div>
+
+                      <!-- Menú desplegable de sugerencias (estilo futurista) -->
+                      @if (citySuggestions.length) {
+                      <div class="absolute z-50 w-full mt-2 rounded-xl overflow-hidden shadow-2xl animate-fadeIn"
+                           (click)="$event.stopPropagation()">
+                        <!-- Efecto de glow -->
+                        <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-30"></div>
+
+                        <!-- Lista de sugerencias -->
+                        <div
+                          class="relative bg-bg-card/95 backdrop-blur-xl border border-neon-primary/30 rounded-xl max-h-60 overflow-auto custom-scrollbar">
+                          @for (city of citySuggestions; track city.name) {
+                          <button type="button" (click)="onCitySelect(city.name)"
+                            class="w-full px-4 py-3 text-left transition-all duration-300 hover:bg-neon-primary/10 border-b border-neon-primary/10 last:border-b-0 group">
+                            <div class="flex items-center gap-3">
+                              <ion-icon name="business-outline"
+                                class="text-neon-primary text-sm opacity-70 group-hover:opacity-100"></ion-icon>
+                              <span class="text-text-primary font-mono text-sm">{{ city.name }}</span>
+                            </div>
+                          </button>
+                          }
+                        </div>
+                      </div>
+                      }
                     </div>
+
+                    <!-- Mensajes de error -->
+                    @if (formControls['city'].touched && formControls['city'].invalid) {
+                    <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                      <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                      {{ getErrorMessage('city') }}
+                    </p>
                     }
                   </div>
-
-                  <!-- Mensajes de error -->
-                  @if (formControls['city'].touched && formControls['city'].invalid) {
-                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                    {{ getErrorMessage('city') }}
-                  </p>
-                  }
                 </div>
               </div>
 

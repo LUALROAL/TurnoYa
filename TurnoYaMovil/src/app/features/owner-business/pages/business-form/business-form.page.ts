@@ -1,4 +1,3 @@
-
 import { CityService } from '../../../city/services/city.service';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -30,7 +29,6 @@ import { BusinessService } from '../../../business/services/business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateBusinessRequest, UpdateBusinessRequest, BusinessImage, OwnerBusiness } from '../../models';
 import { AppPhoto, PhotoService } from '../../services/photo.service';
-
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserService } from 'src/app/features/account/services/user.service';
@@ -565,7 +563,7 @@ export class BusinessFormPage implements OnInit, OnDestroy {
       this.closeTimeout = null;
     }
     this.showCategorySuggestions = true;
-    this.isCustomCategory = false;
+    // Ya no activamos isCustomCategory aquí
     if (!value) {
       this.categorySuggestions = [...this.categories];
       return;
@@ -574,9 +572,6 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     this.categorySuggestions = this.categories.filter(cat =>
       cat.toLowerCase().includes(searchTerm)
     );
-    if (searchTerm === 'otro' || searchTerm === 'otros') {
-      this.isCustomCategory = true;
-    }
   }
 
   onCategoryFocus(): void {
@@ -661,20 +656,23 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     this.citySuggestions = [];
   }
 
-  // ===== MÉTODO PARA CERRAR MENÚS =====
+  // ===== MÉTODO PARA CERRAR MENÚS (MEJORADO) =====
 
-  onClickOutside(): void {
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    // No cerrar si el clic fue dentro de algún contenedor de autocompletado
+    const insideCategory = target.closest('.category-container') !== null;
+    const insideDepartment = target.closest('.department-container') !== null;
+    const insideCity = target.closest('.city-container') !== null;
+
+    if (insideCategory || insideDepartment || insideCity) {
+      return;
+    }
+
     if (this.closeTimeout) {
       clearTimeout(this.closeTimeout);
     }
     this.closeTimeout = setTimeout(() => {
-      const active = document.activeElement as HTMLElement | null;
-      const catInput = document.getElementById('category');
-      const catMenu = document.querySelector('.category-suggestions-menu');
-
-      if (active === catInput || (catMenu && catMenu.contains(active))) {
-        return; // No cerrar
-      }
       this.showCategorySuggestions = false;
       this.categorySuggestions = [];
       this.departmentSuggestions = [];
