@@ -84,25 +84,6 @@ ion-content {
   --background: transparent;
 }
 
-// Estilo para los selects de Ionic
-ion-select::part(icon) {
-  color: #00E0FF;
-  opacity: 1;
-}
-
-ion-select::part(text) {
-  color: #FFFFFF;
-}
-
-ion-select.ios::part(icon) {
-  color: #00E0FF;
-}
-
-// Estilo para el placeholder
-ion-select::part(placeholder) {
-  color: rgba(112, 134, 160, 0.5);
-}
-
 // Estilo para el textarea
 ion-textarea {
   --padding-top: 0;
@@ -135,32 +116,32 @@ ion-textarea {
   --caret-color: #00E0FF;
 }
 
-// Estilo para el checkbox personalizado
+// Estilo para el checkbox personalizado (neón)
 .checkbox-neon {
   appearance: none;
   -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: 2px solid rgba(0, 224, 255, 0.3);
-  border-radius: 6px;
+  border-radius: 4px;
   background: rgba(10, 14, 23, 0.5);
   cursor: pointer;
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 
   &:checked {
     background: linear-gradient(135deg, #00E0FF, #00F5D4);
     border-color: transparent;
-    box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 224, 255, 0.5);
   }
 
   &:checked::after {
     content: '';
     position: absolute;
-    top: 4px;
-    left: 8px;
-    width: 6px;
-    height: 12px;
+    top: 3px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
     border: solid #03050A;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
@@ -168,7 +149,38 @@ ion-textarea {
 
   &:hover {
     border-color: #00E0FF;
-    box-shadow: 0 0 10px rgba(0, 224, 255, 0.3);
+    box-shadow: 0 0 8px rgba(0, 224, 255, 0.3);
+  }
+}
+
+// Estilos para ion-popover personalizado
+ion-popover {
+  --background: transparent;
+  --box-shadow: none;
+  --backdrop-opacity: 0.2;
+
+  &::part(content) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.popover-content {
+  background: #1A1F2F;
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
+  min-width: 250px;
+  max-width: 350px;
+  color: #FFFFFF;
+}
+
+.popover-item {
+  transition: background 0.2s ease;
+  border-radius: 8px;
+  &:hover {
+    background: rgba(0, 224, 255, 0.1);
   }
 }
 
@@ -226,7 +238,7 @@ ion-textarea {
   }
 }
 
-// Estilos para el modal de preview (copiados de business-form.page.scss)
+// Estilos para el modal de preview
 .preview-modal {
   --height: 100%;
   --width: 100%;

@@ -43,9 +43,9 @@
         <div class="skeleton-form-section"></div>
       </div>
       } @else {
-      <form [formGroup]="employeeForm" (ngSubmit)="onSave()" class="space-y-6">
+      <form [formGroup]="employeeForm" (ngSubmit)="onSave()" class="space-y-6" (click)="onClickOutside($event)">
 
-        <!-- Información básica -->
+        <!-- Información básica (sin cambios) -->
         <section class="space-y-3">
           <div class="flex items-center gap-2">
             <div class="w-1 h-6 bg-neon-primary rounded-full"></div>
@@ -219,59 +219,64 @@
                 </div>
               </div>
 
-              <!-- Foto de perfil URL -->
-              <!-- <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  FOTO DE PERFIL (URL) <span class="text-text-tertiary">(opcional)</span>
-                </label>
-                <div class="relative">
-                  <div
-                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
-                  </div>
-                  <div
-                    class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-icon name="image-outline" class="text-neon-primary text-xl"></ion-icon>
-                    <ion-input id="profilePictureUrl" type="url" formControlName="profilePictureUrl"
-                      placeholder="https://..."
-                      class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
-                  </div>
-                </div>
-                @if (formControls['profilePictureUrl'].touched && formControls['profilePictureUrl'].invalid) {
-                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                  {{ getErrorMessage('profilePictureUrl') }}
-                </p>
-                }
-              </div> -->
+              <!-- SERVICIOS ASIGNADOS (dropdown personalizado) -->
+              <div class="services-container relative" (click)="$event.stopPropagation()">
+                <div class="space-y-2">
+                  <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                    SERVICIOS ASIGNADOS *
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
 
-              <div class="space-y-2">
-                <label class="block text-xs font-mono text-neon-primary tracking-wider">
-                  SERVICIOS ASIGNADOS *
-                </label>
-                <div class="relative">
-                  <div
-                    class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+                    <!-- Botón que abre el popover -->
+                    <button type="button" (click)="toggleServicesPopover($event)"
+                      class="relative w-full flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300 text-left">
+                      <ion-icon name="construct-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                      <span class="flex-1 font-body truncate">
+                        {{ getSelectedServicesText() }}
+                      </span>
+                      <span *ngIf="selectedServiceIds.length > 0"
+                        class="px-2 py-0.5 text-xs font-mono bg-neon-primary/20 text-neon-primary rounded-full border border-neon-primary/30 mr-1">
+                        {{ selectedServiceIds.length }}
+                      </span>
+                      <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg flex-shrink-0"></ion-icon>
+                    </button>
+
+                    <!-- Popover personalizado -->
+                    <ion-popover #servicesPopover>
+                      <ng-template>
+                        <div class="popover-content max-h-80 overflow-y-auto p-2">
+                          <div class="p-2 border-b border-neon-primary/10 mb-2 flex justify-between items-center">
+                            <span class="text-xs font-mono text-neon-primary">SELECCIONA SERVICIOS</span>
+                            <button type="button" (click)="closeServicesPopover()"
+                              class="text-text-secondary hover:text-neon-primary transition-colors">
+                              <ion-icon name="close-outline" class="text-xl"></ion-icon>
+                            </button>
+                          </div>
+                          @for (service of availableServices; track service.id) {
+                          <label class="popover-item flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-neon-primary/10 rounded-lg transition-colors">
+                            <input type="checkbox" [checked]="isServiceSelected(service.id)" (change)="toggleService(service.id)"
+                              class="checkbox-neon w-5 h-5" />
+                            <span class="flex-1 font-body text-text-primary">{{ service.name }}</span>
+                          </label>
+                          }
+                          @empty {
+                          <div class="px-3 py-4 text-text-secondary font-mono text-sm text-center">
+                            No hay servicios disponibles
+                          </div>
+                          }
+                        </div>
+                      </ng-template>
+                    </ion-popover>
                   </div>
-                  <div
-                    class="relative px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                    <ion-select
-                      formControlName="serviceIds"
-                      [multiple]="true"
-                      interface="popover"
-                      placeholder="Selecciona uno o más servicios"
-                      class="text-text-primary font-body">
-                      @for (service of availableServices; track service.id) {
-                      <ion-select-option [value]="service.id">{{ service.name }}</ion-select-option>
-                      }
-                    </ion-select>
-                  </div>
+
+                  @if (formControls['serviceIds'].touched && formControls['serviceIds'].invalid) {
+                  <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+                    <ion-icon name="warning-outline" class="text-sm"></ion-icon>
+                    Debes asignar al menos un servicio
+                  </p>
+                  }
                 </div>
-                @if (formControls['serviceIds'].touched && formControls['serviceIds'].invalid) {
-                <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
-                  <ion-icon name="warning-outline" class="text-sm"></ion-icon>
-                  Debes asignar al menos un servicio
-                </p>
-                }
               </div>
 
               <!-- Estado (solo en edición) -->
@@ -292,7 +297,7 @@
           </div>
         </section>
 
-        <!-- Sección de Foto de Perfil -->
+        <!-- Sección de Foto de Perfil (sin cambios) -->
         <section class="space-y-3">
           <div class="flex items-center gap-2">
             <div class="w-1 h-6 bg-neon-primary rounded-full"></div>

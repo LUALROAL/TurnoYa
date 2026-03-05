@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonPopover } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, save } from 'ionicons/icons';
+import { arrowBack, save, constructOutline, chevronDownOutline, closeOutline } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateEmployeeRequest, UpdateEmployeeRequest } from '../../models';
@@ -13,7 +13,6 @@ import { AppPhoto } from 'src/app/features/owner-business/services/photo.service
 import { PhotoService } from 'src/app/features/owner-business/services/photo.service';
 import { OwnerServicesService } from 'src/app/features/owner-services/services/owner-services.service';
 import { OwnerService } from 'src/app/features/owner-services/models';
- // 👈 Importar desde core
 
 @Component({
   selector: 'app-employee-form',
@@ -27,13 +26,15 @@ import { OwnerService } from 'src/app/features/owner-services/models';
   styleUrl: './employee-form.page.scss',
 })
 export class EmployeeFormPage implements OnInit, OnDestroy {
+  @ViewChild('servicesPopover') servicesPopover!: IonPopover;
+
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly ownerEmployeesService = inject(OwnerEmployeesService);
   private readonly ownerServicesService = inject(OwnerServicesService);
   private readonly notify = inject(NotifyService);
-  private readonly photoService = inject(PhotoService) as PhotoService; // 👈 Inyectar PhotoService tipado
+  private readonly photoService = inject(PhotoService) as PhotoService;
   private readonly destroy$ = new Subject<void>();
 
   employeeForm!: FormGroup;
@@ -48,10 +49,14 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
   photoPreview: string | null = null;
   existingPhotoBase64: string | null = null;
 
-  selectedImageForPreview: string | null = null; // 👈 Para el modal de preview
+  selectedImageForPreview: string | null = null;
+
+  // Para el dropdown de servicios
+  selectedServiceIds: string[] = [];
+  private closeTimeout: any;
 
   constructor() {
-    addIcons({ arrowBack, save });
+    addIcons({ arrowBack, save, constructOutline, chevronDownOutline, closeOutline });
     this.initForm();
   }
 
@@ -71,9 +76,19 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     if (this.isEditMode) {
       this.loadEmployee();
     }
+
+    // Sincronizar selectedServiceIds con el formulario
+    this.employeeForm.get('serviceIds')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        this.selectedServiceIds = value || [];
+      });
   }
 
   ngOnDestroy(): void {
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -137,6 +152,46 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
     }
 
     return 'Valor inválido';
+  }
+
+  // ===== MÉTODOS PARA EL DROPDOWN DE SERVICIOS =====
+
+  getSelectedServicesText(): string {
+    if (this.selectedServiceIds.length === 0) {
+      return 'Selecciona uno o más servicios';
+    }
+    if (this.selectedServiceIds.length === 1) {
+      const service = this.availableServices.find(s => s.id === this.selectedServiceIds[0]);
+      return service?.name || '1 servicio seleccionado';
+    }
+    return `${this.selectedServiceIds.length} servicios seleccionados`;
+  }
+
+  isServiceSelected(serviceId: string): boolean {
+    return this.selectedServiceIds.includes(serviceId);
+  }
+
+  toggleService(serviceId: string): void {
+    const current = [...this.selectedServiceIds];
+    const index = current.indexOf(serviceId);
+    if (index === -1) {
+      current.push(serviceId);
+    } else {
+      current.splice(index, 1);
+    }
+    this.selectedServiceIds = current;
+    this.employeeForm.patchValue({ serviceIds: current }, { emitEvent: false });
+    // Marcar como touched para validación
+    this.employeeForm.get('serviceIds')?.markAsTouched();
+  }
+
+  async toggleServicesPopover(event: any) {
+    this.servicesPopover.event = event;
+    await this.servicesPopover.present();
+  }
+
+  closeServicesPopover() {
+    this.servicesPopover.dismiss();
   }
 
   // ===== MÉTODOS DE FOTO =====
@@ -322,10 +377,23 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
       .create(this.businessId, request, this.selectedPhotoFile || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (employee) => {
           this.saving = false;
-          this.router.navigate(['/owner/businesses']);
           this.notify.showSuccess('Empleado creado correctamente');
+
+          if (employee?.id) {
+            this.router.navigate([
+              '/owner/businesses',
+              this.businessId,
+              'employees',
+              employee.id,
+              'schedule',
+            ]);
+            return;
+          }
+
+          // Fallback defensivo si el backend no devuelve el id creado.
+          this.router.navigate(['/owner/businesses', this.businessId, 'employees']);
         },
         error: (error: any) => {
           console.error('Error al crear empleado:', error);
@@ -391,5 +459,25 @@ export class EmployeeFormPage implements OnInit, OnDestroy {
         this.notify.showError(messages[0]);
       }
     });
+  }
+
+  // ===== MÉTODO PARA CERRAR POPOVER AL HACER CLICK FUERA =====
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const insideServices = target.closest('.services-container') !== null;
+
+    if (insideServices) {
+      return;
+    }
+
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+    }
+    this.closeTimeout = setTimeout(() => {
+      if (this.servicesPopover) {
+        this.servicesPopover.dismiss();
+      }
+      this.closeTimeout = null;
+    }, 200);
   }
 }
