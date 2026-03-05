@@ -40,7 +40,7 @@
           <div class="skeleton-form-section"></div>
         </div>
       } @else {
-        <form [formGroup]="serviceForm" (ngSubmit)="onSave()" class="space-y-6">
+        <form [formGroup]="serviceForm" (ngSubmit)="onSave()" class="space-y-6" (click)="onClickOutside($event)">
 
           <!-- Información Básica -->
           <section class="space-y-3">
@@ -206,6 +206,73 @@
                           placeholder="10000"
                           class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"
                         ></ion-input>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                <!-- Empleados asignados (solo en edición) -->
+                @if (isEditMode) {
+                  <div class="employees-container relative" (click)="$event.stopPropagation()">
+                    <div class="space-y-2">
+                      <label class="block text-xs font-mono text-neon-primary tracking-wider">
+                        EMPLEADOS ASIGNADOS
+                      </label>
+
+                      <div class="relative">
+                        <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
+
+                        <button
+                          type="button"
+                          (click)="toggleEmployeesPopover($event)"
+                          class="relative w-full flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300 text-left"
+                        >
+                          <ion-icon name="people-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                          <span class="flex-1 font-body truncate">
+                            {{ getSelectedEmployeesText() }}
+                          </span>
+                          @if (selectedEmployeeIds.length > 0) {
+                            <span class="px-2 py-0.5 text-xs font-mono bg-neon-primary/20 text-neon-primary rounded-full border border-neon-primary/30 mr-1">
+                              {{ selectedEmployeeIds.length }}
+                            </span>
+                          }
+                          <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg flex-shrink-0"></ion-icon>
+                        </button>
+
+                        <ion-popover #employeesPopover>
+                          <ng-template>
+                            <div class="popover-content max-h-80 overflow-y-auto p-2">
+                              <div class="p-2 border-b border-neon-primary/10 mb-2 flex justify-between items-center">
+                                <span class="text-xs font-mono text-neon-primary">SELECCIONA EMPLEADOS</span>
+                                <button
+                                  type="button"
+                                  (click)="closeEmployeesPopover()"
+                                  class="text-text-secondary hover:text-neon-primary transition-colors"
+                                >
+                                  <ion-icon name="close-outline" class="text-xl"></ion-icon>
+                                </button>
+                              </div>
+
+                              @for (employee of availableEmployees; track employee.id) {
+                                <label class="popover-item flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-neon-primary/10 rounded-lg transition-colors">
+                                  <input
+                                    type="checkbox"
+                                    [checked]="isEmployeeSelected(employee.id)"
+                                    (change)="toggleEmployee(employee.id)"
+                                    class="checkbox-neon-native w-5 h-5"
+                                  />
+                                  <span class="flex-1 font-body text-text-primary">{{ getEmployeeDisplayName(employee) }}</span>
+                                </label>
+                              }
+
+                              @empty {
+                                <div class="px-3 py-4 text-text-secondary font-mono text-sm text-center">
+                                  No hay empleados disponibles
+                                </div>
+                              }
+                            </div>
+                          </ng-template>
+                        </ion-popover>
                       </div>
                     </div>
                   </div>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,14 +8,17 @@ import {
   IonContent,
   IonIcon,
   IonInput,
+  IonPopover,
   IonTextarea,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowBack, save } from 'ionicons/icons';
-import { Subject, takeUntil } from 'rxjs';
+import { arrowBack, save, peopleOutline, chevronDownOutline, closeOutline } from 'ionicons/icons';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { CreateServiceRequest, UpdateServiceRequest } from '../../models';
 import { OwnerServicesService } from '../../services/owner-services.service';
+import { OwnerEmployeesService } from '../../../owner-employees/services/owner-employees.service';
+import { OwnerEmployee } from '../../../owner-employees/models';
 
 @Component({
   selector: 'app-service-form',
@@ -28,15 +31,19 @@ import { OwnerServicesService } from '../../services/owner-services.service';
     IonInput,
     IonTextarea,
     IonCheckbox,
+    IonPopover,
   ],
   templateUrl: './service-form.page.html',
   styleUrl: './service-form.page.scss',
 })
 export class ServiceFormPage implements OnInit, OnDestroy {
+  @ViewChild('employeesPopover') employeesPopover!: IonPopover;
+
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly ownerServicesService = inject(OwnerServicesService);
+  private readonly ownerEmployeesService = inject(OwnerEmployeesService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
 
@@ -46,9 +53,14 @@ export class ServiceFormPage implements OnInit, OnDestroy {
   isEditMode = false;
   loading = false;
   saving = false;
+  availableEmployees: OwnerEmployee[] = [];
+
+  selectedEmployeeIds: string[] = [];
+  private initialSelectedEmployeeIds: string[] = [];
+  private closeTimeout: any;
 
   constructor() {
-    addIcons({ arrowBack, save });
+    addIcons({ arrowBack, save, peopleOutline, chevronDownOutline, closeOutline });
     this.initForm();
   }
 
@@ -65,10 +77,20 @@ export class ServiceFormPage implements OnInit, OnDestroy {
 
     if (this.isEditMode) {
       this.loadService();
+      this.loadBusinessEmployees();
     }
+
+    this.serviceForm.get('employeeIds')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        this.selectedEmployeeIds = value || [];
+      });
   }
 
   ngOnDestroy(): void {
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -146,8 +168,65 @@ export class ServiceFormPage implements OnInit, OnDestroy {
       duration: ['', [Validators.required, Validators.min(5)]],
       requiresDeposit: [false],
       depositAmount: [''],
+      employeeIds: [[]],
       isActive: [true],
     });
+  }
+
+  getSelectedEmployeesText(): string {
+    if (this.selectedEmployeeIds.length === 0) {
+      return 'Selecciona uno o más empleados';
+    }
+
+    if (this.selectedEmployeeIds.length === 1) {
+      const employee = this.availableEmployees.find(e => e.id === this.selectedEmployeeIds[0]);
+      return employee ? this.getEmployeeDisplayName(employee) : '1 empleado seleccionado';
+    }
+
+    return `${this.selectedEmployeeIds.length} empleados seleccionados`;
+  }
+
+  getEmployeeDisplayName(employee: OwnerEmployee): string {
+    const firstName = employee.firstName?.trim() || '';
+    const lastName = employee.lastName?.trim() || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    if (fullName) {
+      return fullName;
+    }
+
+    if (employee.fullName?.trim()) {
+      return employee.fullName.trim();
+    }
+
+    return 'Empleado sin nombre';
+  }
+
+  isEmployeeSelected(employeeId: string): boolean {
+    return this.selectedEmployeeIds.includes(employeeId);
+  }
+
+  toggleEmployee(employeeId: string): void {
+    const current = [...this.selectedEmployeeIds];
+    const index = current.indexOf(employeeId);
+
+    if (index === -1) {
+      current.push(employeeId);
+    } else {
+      current.splice(index, 1);
+    }
+
+    this.selectedEmployeeIds = current;
+    this.serviceForm.patchValue({ employeeIds: current }, { emitEvent: false });
+  }
+
+  async toggleEmployeesPopover(event: any) {
+    this.employeesPopover.event = event;
+    await this.employeesPopover.present();
+  }
+
+  closeEmployeesPopover() {
+    this.employeesPopover.dismiss();
   }
 
   private loadService(): void {
@@ -174,6 +253,28 @@ export class ServiceFormPage implements OnInit, OnDestroy {
           this.notify.showError('No se pudo cargar el servicio');
           this.loading = false;
           this.onCancel();
+        },
+      });
+  }
+
+  private loadBusinessEmployees(): void {
+    this.ownerEmployeesService
+      .getByBusinessId(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: employees => {
+          this.availableEmployees = employees;
+          const assignedEmployeeIds = employees
+            .filter(employee => (employee.serviceIds || []).includes(this.serviceId))
+            .map(employee => employee.id);
+
+          this.selectedEmployeeIds = [...assignedEmployeeIds];
+          this.initialSelectedEmployeeIds = [...assignedEmployeeIds];
+          this.serviceForm.patchValue({ employeeIds: assignedEmployeeIds }, { emitEvent: false });
+        },
+        error: (error: unknown) => {
+          console.error('Error al cargar empleados del negocio:', error);
+          this.notify.showError('No se pudieron cargar los empleados para este servicio');
         },
       });
   }
@@ -231,8 +332,7 @@ export class ServiceFormPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.saving = false;
-          this.router.navigate(['/owner/businesses', this.businessId, 'services']);
+          this.syncServiceEmployees();
         },
         error: (error: unknown) => {
           console.error('Error al actualizar servicio:', error);
@@ -240,5 +340,84 @@ export class ServiceFormPage implements OnInit, OnDestroy {
           this.saving = false;
         },
       });
+  }
+
+  private syncServiceEmployees(): void {
+    if (!this.isEditMode) {
+      this.saving = false;
+      this.router.navigate(['/owner/businesses', this.businessId, 'services']);
+      return;
+    }
+
+    const selectedSet = new Set(this.selectedEmployeeIds);
+    const initialSet = new Set(this.initialSelectedEmployeeIds);
+
+    const hasAssignmentChanges =
+      selectedSet.size !== initialSet.size
+      || [...selectedSet].some(id => !initialSet.has(id));
+
+    if (!hasAssignmentChanges) {
+      this.saving = false;
+      this.router.navigate(['/owner/businesses', this.businessId, 'services']);
+      return;
+    }
+
+    const updateRequests = this.availableEmployees
+      .map(employee => {
+        const currentServiceIds = employee.serviceIds || [];
+        const currentlyAssigned = currentServiceIds.includes(this.serviceId);
+        const shouldBeAssigned = selectedSet.has(employee.id);
+
+        if (currentlyAssigned === shouldBeAssigned) {
+          return null;
+        }
+
+        const nextServiceIds = shouldBeAssigned
+          ? Array.from(new Set([...currentServiceIds, this.serviceId]))
+          : currentServiceIds.filter(serviceId => serviceId !== this.serviceId);
+
+        return this.ownerEmployeesService.update(employee.id, { serviceIds: nextServiceIds });
+      })
+      .filter((request): request is ReturnType<OwnerEmployeesService['update']> => request !== null);
+
+    if (updateRequests.length === 0) {
+      this.saving = false;
+      this.router.navigate(['/owner/businesses', this.businessId, 'services']);
+      return;
+    }
+
+    forkJoin(updateRequests)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.saving = false;
+          this.router.navigate(['/owner/businesses', this.businessId, 'services']);
+        },
+        error: (error: unknown) => {
+          console.error('Error al sincronizar empleados del servicio:', error);
+          this.notify.showError('El servicio se actualizó, pero falló la asignación de empleados');
+          this.saving = false;
+        },
+      });
+  }
+
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const insideEmployees = target.closest('.employees-container') !== null;
+
+    if (insideEmployees) {
+      return;
+    }
+
+    if (this.closeTimeout) {
+      clearTimeout(this.closeTimeout);
+    }
+
+    this.closeTimeout = setTimeout(() => {
+      if (this.employeesPopover) {
+        this.employeesPopover.dismiss();
+      }
+      this.closeTimeout = null;
+    }, 200);
   }
 }

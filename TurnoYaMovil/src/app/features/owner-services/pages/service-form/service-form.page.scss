@@ -129,6 +129,75 @@ ion-content {
   }
 }
 
+// Estilo de checkbox nativo para listas en popover
+.checkbox-neon-native {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 224, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(10, 14, 23, 0.5);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+
+  &:checked {
+    background: linear-gradient(135deg, #00E0FF, #00F5D4);
+    border-color: transparent;
+    box-shadow: 0 0 10px rgba(0, 224, 255, 0.5);
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid #03050A;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  &:hover {
+    border-color: #00E0FF;
+    box-shadow: 0 0 8px rgba(0, 224, 255, 0.3);
+  }
+}
+
+// Estilos para ion-popover personalizado
+ion-popover {
+  --background: transparent;
+  --box-shadow: none;
+  --backdrop-opacity: 0.2;
+
+  &::part(content) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.popover-content {
+  background: #1A1F2F;
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
+  min-width: 250px;
+  max-width: 350px;
+  color: #FFFFFF;
+}
+
+.popover-item {
+  transition: background 0.2s ease;
+  border-radius: 8px;
+
+  &:hover {
+    background: rgba(0, 224, 255, 0.1);
+  }
+}
+
 // Efecto de validación visual
 .valid-field {
   border-color: #00F5D4 !important;
