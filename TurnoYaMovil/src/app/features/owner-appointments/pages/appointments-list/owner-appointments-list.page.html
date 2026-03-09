@@ -95,9 +95,7 @@
                       <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
                       {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
                       {{ appointment.scheduledDate | date: 'h:mm a' }} - {{ appointment.endDate | date: 'h:mm a' }}
-                    </p>
-                    <p class="text-xs text-text-secondary font-mono mt-1">
-                      Ref: {{ appointment.referenceNumber }}
+                      <span class="ml-2 text-xs font-mono">Ref: {{ appointment.referenceNumber }}</span>
                     </p>
                   </div>
 
