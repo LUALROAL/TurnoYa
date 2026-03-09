@@ -12,6 +12,7 @@ export interface AppointmentItem {
   userId: string;
   businessId: string;
   serviceId: string;
+  serviceName: string;
   employeeId?: string;
   scheduledDate: string;
   endDate: string;

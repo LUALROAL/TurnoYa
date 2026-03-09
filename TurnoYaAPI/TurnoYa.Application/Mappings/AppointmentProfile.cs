@@ -32,6 +32,7 @@ public class AppointmentProfile : Profile
             .ForMember(dest => dest.StatusHistory, opt => opt.Ignore());
 
         // Appointment → AppointmentDto
-        CreateMap<Appointment, AppointmentDto>();
+        CreateMap<Appointment, AppointmentDto>()
+            .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service != null ? src.Service.Name : string.Empty));
     }
 }
