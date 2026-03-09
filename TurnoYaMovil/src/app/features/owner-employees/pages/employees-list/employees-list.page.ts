@@ -4,8 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
-  IonModal,
-} from '@ionic/angular/standalone';
+  IonModal, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   addOutline,
@@ -26,16 +25,18 @@ import { OwnerEmployee } from '../../models';
 import { OwnerService } from '../../../owner-services/models/owner-service.model';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
 import { OwnerServicesService } from '../../../owner-services/services/owner-services.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employees-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, IonContent, IonIcon, IonModal],
+  imports: [IonSpinner, CommonModule, RouterLink, IonContent, IonIcon, IonModal, IonSpinner],
   templateUrl: './employees-list.page.html',
   styleUrls: ['./employees-list.page.scss'],
 })
 export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly ownerEmployeesService = inject(OwnerEmployeesService);
   private readonly ownerServicesService = inject(OwnerServicesService);
   private readonly notify = inject(NotifyService);
@@ -102,6 +103,28 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   protected closeServicesModal(): void {
     this.showServicesModal = false;
     this.selectedEmployee = null;
+  }
+
+  protected navigating = false;
+
+  protected navigateToEdit(serviceId: string): void {
+    // show some feedback and wait for modal to close animation
+    this.navigating = true;
+    this.closeServicesModal();
+    // small delay to ensure modal is dismissed before routing
+    setTimeout(() => {
+      this.router
+        .navigate([
+          '/owner/businesses',
+          this.businessId,
+          'services',
+          serviceId,
+          'edit',
+        ])
+        .finally(() => {
+          this.navigating = false;
+        });
+    }, 250);
   }
 
   protected getEmployeeServicesCount(employee: OwnerEmployee): number {

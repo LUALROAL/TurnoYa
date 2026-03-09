@@ -276,7 +276,10 @@
         </header>
 
         <!-- Contenido de la modal -->
-        <div class="flex-1 overflow-y-auto px-4 py-6">
+        <div class="relative flex-1 overflow-y-auto px-4 py-6">
+          <div *ngIf="navigating" class="absolute inset-0 bg-bg-primary/80 z-50 flex items-center justify-center">
+            <ion-spinner name="crescent" class="text-neon-primary"></ion-spinner>
+          </div>
           @if (selectedEmployee && getEmployeeServicesCount(selectedEmployee) > 0) {
             <div class="space-y-3">
               @for (serviceId of selectedEmployee.serviceIds || []; track serviceId) {
@@ -289,6 +292,10 @@
                     <div class="flex-1">
                       <span class="block text-text-primary font-display font-semibold">{{ getServiceName(serviceId) }}</span>
                     </div>
+                    <button (click)="navigateToEdit(serviceId)"
+                      class="w-8 h-8 rounded-lg bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary hover:bg-neon-primary/10 transition-all duration-300 flex-shrink-0">
+                      <ion-icon name="create-outline" class="text-sm text-neon-primary"></ion-icon>
+                    </button>
                   </div>
                 </div>
               }
