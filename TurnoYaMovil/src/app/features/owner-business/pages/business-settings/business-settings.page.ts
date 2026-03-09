@@ -9,6 +9,7 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
+  IonInput,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -39,6 +40,7 @@ import { OwnerEmployee } from '../../../owner-employees/models';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonInput,
     RouterLink,
   ],
   templateUrl: './business-settings.page.html',
