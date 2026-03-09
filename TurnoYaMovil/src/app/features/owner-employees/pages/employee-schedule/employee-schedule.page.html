@@ -103,8 +103,9 @@
                 <button
                   type="button"
                   (click)="openBlockedDatesModal()"
-                  class="w-full py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300"
+                  class="blocked-dates-button w-full py-4 px-6 text-text-primary font-display font-semibold"
                 >
+                  <ion-icon name="calendar-outline"></ion-icon>
                   Gestionar fechas bloqueadas ({{ blockedDates.length }} fechas)
                 </button>
               </div>
