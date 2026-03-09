@@ -292,10 +292,16 @@
                     <div class="flex-1">
                       <span class="block text-text-primary font-display font-semibold">{{ getServiceName(serviceId) }}</span>
                     </div>
-                    <button (click)="navigateToEdit(serviceId)"
-                      class="w-8 h-8 rounded-lg bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary hover:bg-neon-primary/10 transition-all duration-300 flex-shrink-0">
-                      <ion-icon name="create-outline" class="text-sm text-neon-primary"></ion-icon>
-                    </button>
+                    <div class="flex gap-2 items-center flex-shrink-0">
+                      <button (click)="navigateToEdit(serviceId)"
+                        class="w-8 h-8 rounded-lg bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary hover:bg-neon-primary/10 transition-all duration-300">
+                        <ion-icon name="create-outline" class="text-sm text-neon-primary"></ion-icon>
+                      </button>
+                      <button (click)="confirmUnassign(serviceId)"
+                        class="w-8 h-8 rounded-lg bg-bg-tertiary/50 border border-neon-danger/20 flex items-center justify-center hover:border-neon-danger hover:bg-neon-danger/10 transition-all duration-300">
+                        <ion-icon name="close-outline" class="text-sm text-danger"></ion-icon>
+                      </button>
+                    </div>
                   </div>
                 </div>
               }

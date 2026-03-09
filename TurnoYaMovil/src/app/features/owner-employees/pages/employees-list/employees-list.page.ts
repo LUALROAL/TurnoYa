@@ -127,6 +127,50 @@ export class EmployeesListPage implements OnInit, OnDestroy {
     }, 250);
   }
 
+  protected confirmUnassign(serviceId: string): void {
+    if (!this.selectedEmployee) {
+      return;
+    }
+    const confirmed = confirm(
+      `¿Deseas quitar el servicio "${this.getServiceName(serviceId)}" de este empleado?`
+    );
+    if (confirmed) {
+      this.unassignService(serviceId);
+    }
+  }
+
+  private unassignService(serviceId: string): void {
+    if (!this.selectedEmployee) {
+      return;
+    }
+    const employee = this.selectedEmployee;
+    const currentIds = employee.serviceIds || [];
+    const nextIds = currentIds.filter(id => id !== serviceId);
+
+    this.ownerEmployeesService
+      .update(employee.id, { serviceIds: nextIds })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // update local state
+          employee.serviceIds = nextIds;
+          // also update main list copy
+          const idx = this.employees.findIndex(e => e.id === employee.id);
+          if (idx !== -1) {
+            this.employees[idx].serviceIds = nextIds;
+          }
+          this.notify.showSuccess('Servicio desasignado correctamente');
+        },
+        error: (error: unknown) => {
+          console.error('Error al desasignar servicio:', error);
+          const backendMessage = this.getBackendMessage(error);
+          if (!backendMessage) {
+            this.notify.showError('No se pudo quitar el servicio');
+          }
+        },
+      });
+  }
+
   protected getEmployeeServicesCount(employee: OwnerEmployee): number {
     return employee.serviceIds?.length || 0;
   }
