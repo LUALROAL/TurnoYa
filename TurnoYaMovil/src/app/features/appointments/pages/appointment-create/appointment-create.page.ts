@@ -154,7 +154,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       return;
     }
 
-    this.appointmentForm.valueChanges
+    this.appointmentForm.get('scheduledDate')?.valueChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
