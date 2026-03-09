@@ -182,6 +182,21 @@
                   <ion-icon name="time-outline" class="text-sm"></ion-icon>
                   <span class="hidden sm:inline">Horarios</span>
                 </button>
+                <!-- Servicios -->
+                <!-- <button (click)="openServicesModal(employee)"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                  <ion-icon name="construct-outline" class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">{{ getEmployeeServicesCount(employee) }}</span>
+                </button> -->
+                <!-- Servicios -->
+                <button (click)="openServicesModal(employee)"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
+                  <ion-icon name="construct-outline" class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">
+                      Servicios
+                    <!-- {{ getEmployeeServicesCount(employee) }} -->
+                  </span>
+                </button>
 
                 <!-- Editar -->
                 <button [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'edit']"
@@ -233,4 +248,65 @@
     </div>
   </div>
   }
+
+  <!-- Modal de servicios del empleado -->
+  <ion-modal [isOpen]="showServicesModal" (didDismiss)="closeServicesModal()">
+    <ng-template>
+      <div class="relative z-10 pb-8 h-full flex flex-col bg-bg-primary">
+        <!-- Header de Modal -->
+        <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+                  SERVICIOS DEL EMPLEADO
+                </p>
+                <h2 class="text-lg font-display font-bold">
+                  <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+                    {{ selectedEmployee?.firstName }} {{ selectedEmployee?.lastName }}
+                  </span>
+                </h2>
+              </div>
+            </div>
+            <button (click)="closeServicesModal()"
+              class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+              <ion-icon name="close-outline" class="text-xl text-text-primary"></ion-icon>
+            </button>
+          </div>
+        </header>
+
+        <!-- Contenido de la modal -->
+        <div class="flex-1 overflow-y-auto px-4 py-6">
+          @if (selectedEmployee && getEmployeeServicesCount(selectedEmployee) > 0) {
+            <div class="space-y-3">
+              @for (serviceId of selectedEmployee.serviceIds || []; track serviceId) {
+                <div class="relative group overflow-hidden rounded-xl">
+                  <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-xl p-4 flex items-center gap-4 hover:border-neon-primary/50 transition-all duration-300">
+                    <div class="w-10 h-10 rounded-lg bg-neon-primary/10 flex items-center justify-center flex-shrink-0">
+                      <ion-icon name="construct-outline" class="text-neon-primary text-lg"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                      <span class="block text-text-primary font-display font-semibold">{{ getServiceName(serviceId) }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="flex items-center justify-center h-full">
+              <div class="text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-tertiary/30 border border-neon-primary/20 flex items-center justify-center">
+                  <ion-icon name="construct-outline" class="text-4xl text-neon-primary/50"></ion-icon>
+                </div>
+                <p class="text-text-secondary font-mono text-sm">
+                  Sin servicios asignados
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

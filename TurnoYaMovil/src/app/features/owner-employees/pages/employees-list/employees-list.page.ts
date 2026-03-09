@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
+  IonModal,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -22,18 +23,21 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { OwnerEmployee } from '../../models';
+import { OwnerService } from '../../../owner-services/models/owner-service.model';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
+import { OwnerServicesService } from '../../../owner-services/services/owner-services.service';
 
 @Component({
   selector: 'app-employees-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, IonContent, IonIcon],
+  imports: [CommonModule, RouterLink, IonContent, IonIcon, IonModal],
   templateUrl: './employees-list.page.html',
   styleUrls: ['./employees-list.page.scss'],
 })
 export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly ownerEmployeesService = inject(OwnerEmployeesService);
+  private readonly ownerServicesService = inject(OwnerServicesService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
 
@@ -41,6 +45,10 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   protected loading = true;
   protected isEmpty = false;
   protected employees: OwnerEmployee[] = [];
+  protected selectedEmployee: OwnerEmployee | null = null;
+  protected showServicesModal = false;
+  protected serviceNameMap: Map<string, string> = new Map(); // Cache de IDs a nombres
+  protected availableServices: OwnerService[] = [];
 
   constructor() {
     addIcons({
@@ -84,6 +92,32 @@ export class EmployeesListPage implements OnInit, OnDestroy {
 
   protected trackByEmployeeId(_: number, employee: OwnerEmployee): string {
     return employee.id;
+  }
+
+  protected openServicesModal(employee: OwnerEmployee): void {
+    this.selectedEmployee = employee;
+    this.showServicesModal = true;
+  }
+
+  protected closeServicesModal(): void {
+    this.showServicesModal = false;
+    this.selectedEmployee = null;
+  }
+
+  protected getEmployeeServicesCount(employee: OwnerEmployee): number {
+    return employee.serviceIds?.length || 0;
+  }
+
+  protected getServiceName(serviceId: string): string {
+    // Busca en el mapa de cache, si no está, usa el ID como fallback
+    return this.serviceNameMap.get(serviceId) || serviceId;
+  }
+
+  private buildServiceNameMap(): void {
+    this.serviceNameMap.clear();
+    this.availableServices.forEach(service => {
+      this.serviceNameMap.set(service.id, service.name);
+    });
   }
 
   protected toggleEmployeeStatus(employee: OwnerEmployee): void {
@@ -152,6 +186,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
         next: (employees: OwnerEmployee[]) => {
           this.employees = employees;
           this.isEmpty = employees.length === 0;
+          this.loadServices();
           this.loading = false;
         },
         error: (error: unknown) => {
@@ -160,6 +195,22 @@ export class EmployeesListPage implements OnInit, OnDestroy {
           this.employees = [];
           this.isEmpty = true;
           this.loading = false;
+        },
+      });
+  }
+
+  private loadServices(): void {
+    this.ownerServicesService
+      .getByBusinessId(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (services: OwnerService[]) => {
+          this.availableServices = services.filter(s => s.isActive);
+          this.buildServiceNameMap();
+        },
+        error: (error: unknown) => {
+          console.error('Error al cargar servicios:', error);
+          this.notify.showError('No se pudieron cargar los servicios');
         },
       });
   }
