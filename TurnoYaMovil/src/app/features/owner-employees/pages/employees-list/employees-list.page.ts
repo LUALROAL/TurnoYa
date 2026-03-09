@@ -48,8 +48,10 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   protected employees: OwnerEmployee[] = [];
   protected selectedEmployee: OwnerEmployee | null = null;
   protected showServicesModal = false;
+  protected showAddServiceModal = false;
   protected serviceNameMap: Map<string, string> = new Map(); // Cache de IDs a nombres
   protected availableServices: OwnerService[] = [];
+  protected assigningService = false;
 
   constructor() {
     addIcons({
@@ -166,6 +168,63 @@ export class EmployeesListPage implements OnInit, OnDestroy {
           const backendMessage = this.getBackendMessage(error);
           if (!backendMessage) {
             this.notify.showError('No se pudo quitar el servicio');
+          }
+        },
+      });
+  }
+
+  protected getAvailableServicesForEmployee(): OwnerService[] {
+    if (!this.selectedEmployee) {
+      return [];
+    }
+    const assignedIds = new Set(this.selectedEmployee.serviceIds || []);
+    return this.availableServices.filter(s => !assignedIds.has(s.id) && s.isActive);
+  }
+
+  protected openAddServiceModal(): void {
+    this.showAddServiceModal = true;
+  }
+
+  protected closeAddServiceModal(): void {
+    this.showAddServiceModal = false;
+  }
+
+  protected assignService(serviceId: string): void {
+    if (!this.selectedEmployee) {
+      return;
+    }
+    const employee = this.selectedEmployee;
+    const currentIds = employee.serviceIds || [];
+
+    if (currentIds.includes(serviceId)) {
+      this.notify.showError('Este servicio ya está asignado al empleado');
+      return;
+    }
+
+    const nextIds = Array.from(new Set([...currentIds, serviceId]));
+    this.assigningService = true;
+
+    this.ownerEmployeesService
+      .update(employee.id, { serviceIds: nextIds })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.assigningService = false;
+          // update local state
+          employee.serviceIds = nextIds;
+          // also update main list copy
+          const idx = this.employees.findIndex(e => e.id === employee.id);
+          if (idx !== -1) {
+            this.employees[idx].serviceIds = nextIds;
+          }
+          this.notify.showSuccess('Servicio asignado correctamente');
+        },
+        error: (error: unknown) => {
+          this.assigningService = false;
+          console.error('Error al asignar servicio:', error);
+          const backendMessage = this.getBackendMessage(error);
+          if (!backendMessage) {
+            this.notify.showError('No se pudo asignar el servicio');
           }
         },
       });

@@ -268,10 +268,17 @@
                 </h2>
               </div>
             </div>
-            <button (click)="closeServicesModal()"
-              class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
-              <ion-icon name="close-outline" class="text-xl text-text-primary"></ion-icon>
-            </button>
+            <div class="flex gap-2 items-center">
+              <button (click)="openAddServiceModal()"
+                class="px-4 py-2 rounded-full bg-bg-tertiary/40 border border-neon-primary/50 hover:border-neon-primary hover:bg-bg-tertiary/60 transition-all duration-300 flex items-center gap-2 text-neon-primary font-display font-semibold text-sm">
+                <span class="w-2 h-2 rounded-full bg-neon-primary animate-pulse"></span>
+                <span>Asignar</span>
+              </button>
+              <button (click)="closeServicesModal()"
+                class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+                <ion-icon name="close-outline" class="text-xl text-text-primary"></ion-icon>
+              </button>
+            </div>
           </div>
         </header>
 
@@ -314,6 +321,79 @@
                 </div>
                 <p class="text-text-secondary font-mono text-sm">
                   Sin servicios asignados
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal para agregar servicios al empleado -->
+  <ion-modal [isOpen]="showAddServiceModal" (didDismiss)="closeAddServiceModal()" class="custom-modal">
+    <ng-template>
+      <div class="relative z-10 pb-8 h-full flex flex-col bg-bg-primary">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+                  AGREGAR SERVICIOS
+                </p>
+                <h2 class="text-lg font-display font-bold">
+                  <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+                    A {{ selectedEmployee?.firstName }}
+                  </span>
+                </h2>
+              </div>
+            </div>
+            <button (click)="closeAddServiceModal()"
+              class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+              <ion-icon name="close-outline" class="text-xl text-text-primary"></ion-icon>
+            </button>
+          </div>
+        </header>
+
+        <!-- Contenido -->
+        <div class="relative flex-1 overflow-y-auto px-4 py-6">
+          <div *ngIf="assigningService" class="absolute inset-0 bg-bg-primary/80 z-50 flex items-center justify-center">
+            <ion-spinner name="crescent" class="text-neon-primary"></ion-spinner>
+          </div>
+
+          @if (getAvailableServicesForEmployee().length > 0) {
+            <div class="space-y-3">
+              @for (service of getAvailableServicesForEmployee(); track service.id) {
+                <div class="relative group overflow-hidden rounded-xl">
+                  <div class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-xl p-4 flex items-center justify-between hover:border-neon-primary/50 transition-all duration-300">
+                    <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded-lg bg-neon-primary/10 flex items-center justify-center flex-shrink-0">
+                        <ion-icon name="construct-outline" class="text-neon-primary text-lg"></ion-icon>
+                      </div>
+                      <div>
+                        <span class="block text-text-primary font-display font-semibold">{{ service.name }}</span>
+                        <span class="text-xs text-text-secondary">{{ service.duration }} min • {{ service.price | currency }}</span>
+                      </div>
+                    </div>
+                    <button (click)="assignService(service.id)"
+                      class="px-4 py-2 rounded-lg bg-gradient-to-r from-neon-primary/20 to-neon-secondary/20 hover:from-neon-primary hover:to-neon-secondary hover:shadow-lg hover:shadow-neon-primary/50 border border-neon-primary/40 transition-all duration-300 flex items-center gap-2 text-neon-primary font-semibold text-sm flex-shrink-0">
+                      <ion-icon name="checkmark-done-outline" class="text-lg"></ion-icon>
+                      <span>Asignar</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="flex items-center justify-center h-full">
+              <div class="text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-bg-tertiary/30 border border-neon-primary/20 flex items-center justify-center">
+                  <ion-icon name="construct-outline" class="text-4xl text-neon-primary/50"></ion-icon>
+                </div>
+                <p class="text-text-secondary font-mono text-sm">
+                  Todos los servicios ya están asignados
                 </p>
               </div>
             </div>
