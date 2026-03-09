@@ -1,13 +1,11 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import {
   IonContent,
   IonIcon,
-  IonInput,
-  IonCheckbox,
   IonSegment,
   IonSegmentButton,
   IonLabel,
@@ -26,7 +24,9 @@ import {
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { BusinessSettings } from '../../models/business-settings.model';
-import { WorkingHoursDto, DayScheduleDto } from '../../models/business-schedule.models';
+// employees-related imports
+import { OwnerEmployeesService } from '../../../owner-employees/services/owner-employees.service';
+import { OwnerEmployee } from '../../../owner-employees/models';
 
 @Component({
   selector: 'app-business-settings',
@@ -36,11 +36,10 @@ import { WorkingHoursDto, DayScheduleDto } from '../../models/business-schedule.
     ReactiveFormsModule,
     IonContent,
     IonIcon,
-    IonInput,
-    IonCheckbox,
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    RouterLink,
   ],
   templateUrl: './business-settings.page.html',
   styleUrls: ['./business-settings.page.scss'],
@@ -50,6 +49,7 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly ownerBusinessService = inject(OwnerBusinessService);
+  private readonly ownerEmployeesService = inject(OwnerEmployeesService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
 
@@ -62,25 +62,36 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   loadingSettings = false;
   savingSettings = false;
 
-  // Formulario de horarios
-  scheduleForm!: FormGroup;
-  loadingSchedule = false;
-  savingSchedule = false;
-  scheduleExists = false;
+  // empleados para el tab de horarios
+  employees: OwnerEmployee[] = [];
+  loadingEmployees = false;
+  isEmptyEmployees = false;
 
   // Para eliminar negocio
   deleting = false;
 
-  // Días para iterar en la plantilla
-  days = [
-    { key: 'monday', label: 'Lunes' },
-    { key: 'tuesday', label: 'Martes' },
-    { key: 'wednesday', label: 'Miércoles' },
-    { key: 'thursday', label: 'Jueves' },
-    { key: 'friday', label: 'Viernes' },
-    { key: 'saturday', label: 'Sábado' },
-    { key: 'sunday', label: 'Domingo' },
-  ];
+  // methode to load employees
+  private loadEmployees(): void {
+    this.loadingEmployees = true;
+    this.ownerEmployeesService
+      .getByBusinessId(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (emps: OwnerEmployee[]) => {
+          this.employees = emps;
+          this.isEmptyEmployees = emps.length === 0;
+          this.loadingEmployees = false;
+        },
+        error: (err) => {
+          console.error('Error al cargar empleados:', err);
+          this.notify.showError('No se pudieron cargar los empleados del negocio');
+          this.employees = [];
+          this.isEmptyEmployees = true;
+          this.loadingEmployees = false;
+        },
+      });
+  }
+
 
   constructor() {
     addIcons({
@@ -104,13 +115,16 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       const tab = params.get('tab');
       if (tab === 'schedule') {
         this.selectedTab = 'schedule';
+        if (this.businessId) {
+          this.loadEmployees();
+        }
       }
     });
 
     if (this.businessId) {
       this.loadBusinessInfo();
       this.loadSettings();
-      this.loadSchedule();
+      // schedule tab now shows empleados instead of horario
     } else {
       this.notify.showError('ID de negocio no válido');
       this.router.navigate(['/owner/businesses']);
@@ -130,28 +144,9 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       bufferTimeBetweenAppointments: [15, [Validators.required, Validators.min(0), Validators.max(120)]],
       workingHours: [''],
     });
-
-    // Formulario de horarios
-    this.scheduleForm = this.fb.group({
-      monday: this.createDayGroup(),
-      tuesday: this.createDayGroup(),
-      wednesday: this.createDayGroup(),
-      thursday: this.createDayGroup(),
-      friday: this.createDayGroup(),
-      saturday: this.createDayGroup(),
-      sunday: this.createDayGroup(),
-    });
+    // no necesitamos formulario de horarios en este componente
   }
 
-  private createDayGroup(): FormGroup {
-  return this.fb.group({
-    isOpen: [true],
-    openTime: ['09:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-    closeTime: ['18:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-    breakStartTime: ['13:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-    breakEndTime: ['14:00', [Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)]],
-  });
-}
 
   private loadSettings() {
     this.loadingSettings = true;
@@ -213,68 +208,9 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   //     });
   // }
 
-  private loadSchedule() {
-  this.loadingSchedule = true;
-  this.ownerBusinessService
-    .getSchedule(this.businessId)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (schedule) => {
-        if (schedule) {
-          // Hay horario guardado
-          const normalized: any = {};
-          for (const day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']) {
-            const dayData = schedule[day as keyof WorkingHoursDto] as DayScheduleDto;
-            normalized[day] = {
-              isOpen: dayData.isOpen,
-              openTime: dayData.openTime || '',
-              closeTime: dayData.closeTime || '',
-              breakStartTime: dayData.breakStartTime || '',
-              breakEndTime: dayData.breakEndTime || ''
-            };
-          }
-          this.scheduleForm.patchValue(normalized);
-          this.scheduleExists = true;
-        } else {
-          // No existe horario
-          this.scheduleExists = false;
-          this.resetScheduleForm();
-        }
-        this.loadingSchedule = false;
-      },
-      error: (error) => {
-        console.error('Error al cargar horarios:', error);
-        this.notify.showError('Error al cargar los horarios del negocio');
-        this.loadingSchedule = false;
-      },
-    });
-}
+  // ya no se usa carga de horarios en este componente
 
-  private resetScheduleForm() {
-    const defaultWeekday = {
-      isOpen: true,
-      openTime: '09:00',
-      closeTime: '18:00',
-      breakStartTime: '13:00',
-      breakEndTime: '14:00'
-    };
-    const defaultWeekend = {
-      isOpen: false,
-      openTime: '',
-      closeTime: '',
-      breakStartTime: '',
-      breakEndTime: ''
-    };
-    this.scheduleForm.setValue({
-      monday: defaultWeekday,
-      tuesday: defaultWeekday,
-      wednesday: defaultWeekday,
-      thursday: defaultWeekday,
-      friday: defaultWeekday,
-      saturday: defaultWeekend,
-      sunday: defaultWeekend
-    });
-  }
+  // método de respaldo de horarios eliminado ya que no se utiliza
 
   private loadBusinessInfo() {
     this.ownerBusinessService
@@ -293,6 +229,13 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   // Cambio de pestaña
   onSegmentChange(event: any) {
     this.selectedTab = event.detail.value;
+    if (this.selectedTab === 'schedule' && this.businessId) {
+      this.loadEmployees();
+    }
+  }
+
+  protected trackByEmployeeId(_: number, employee: OwnerEmployee): string {
+    return employee.id;
   }
 
   // Guardar ajustes generales
@@ -329,84 +272,9 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
       });
   }
 
-  // Guardar horarios
-  onSaveSchedule() {
-    if (!this.businessId) {
-      this.notify.showError('No se encontró el ID del negocio.');
-      return;
-    }
-    if (this.scheduleForm.invalid) {
-      this.scheduleForm.markAllAsTouched();
-      this.notify.showError('Por favor, completa todos los horarios correctamente');
-      return;
-    }
+  // el manejo de horarios ya se realiza en otra pantalla de empleado; no se ocupa aquí
 
-    this.savingSchedule = true;
-    const rawSchedule = this.scheduleForm.value;
-
-    // Limpiar campos para días cerrados
-    const cleanedSchedule: any = {};
-    for (const day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']) {
-      const dayData = rawSchedule[day];
-      cleanedSchedule[day] = {
-        isOpen: dayData.isOpen,
-        openTime: dayData.isOpen ? dayData.openTime : '',
-        closeTime: dayData.isOpen ? dayData.closeTime : '',
-        breakStartTime: dayData.isOpen && dayData.breakStartTime ? dayData.breakStartTime : '',
-        breakEndTime: dayData.isOpen && dayData.breakEndTime ? dayData.breakEndTime : ''
-      };
-    }
-
-    // Validar que las horas de inicio sean menores que las de fin
-    if (!this.validateScheduleTimes(cleanedSchedule)) {
-      this.notify.showError('Las horas de inicio deben ser menores que las de fin y el descanso debe estar dentro del horario laboral');
-      this.savingSchedule = false;
-      return;
-    }
-    // Si no existe horario, crear (POST); si existe, actualizar (PUT)
-    let request$;
-    if (this.scheduleExists) {
-      request$ = this.ownerBusinessService.updateSchedule(this.businessId, cleanedSchedule);
-    } else {
-      request$ = this.ownerBusinessService.createSchedule(this.businessId, cleanedSchedule);
-    }
-
-    request$.pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        this.notify.showSuccess('Horarios guardados correctamente');
-        this.scheduleExists = true;
-        this.savingSchedule = false;
-         this.router.navigate(['/owner/businesses']);
-      },
-      error: (error) => {
-        console.error('Error al guardar horarios:', error);
-        const message = error.error?.message || error.message || 'Error al guardar los horarios';
-        this.notify.showError(message);
-        this.savingSchedule = false;
-      },
-    });
-  }
-
-  private validateScheduleTimes(schedule: any): boolean {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    for (const day of days) {
-      const dayData = schedule[day];
-      if (dayData.isOpen) {
-        if (dayData.openTime >= dayData.closeTime) {
-          return false;
-        }
-        if (dayData.breakStartTime && dayData.breakEndTime) {
-          if (dayData.breakStartTime >= dayData.breakEndTime) {
-            return false;
-          }
-          if (dayData.breakStartTime < dayData.openTime || dayData.breakEndTime > dayData.closeTime) {
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  }
+  // ya no es necesario validar horarios aquí
   onCancel() {
     this.router.navigate(['/owner/businesses']);
   }
