@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TurnoYa.Application.DTOs.Business;
+using TurnoYa.Application.DTOs.Employee;
 using TurnoYa.Application.Interfaces;
 
 namespace TurnoYa.API.Controllers;
@@ -22,12 +22,12 @@ public class EmployeeScheduleController : ControllerBase
     /// <param name="employeeId">ID del empleado</param>
     /// <returns>Horario de trabajo</returns>
     [HttpGet("{employeeId}")]
-    public async Task<ActionResult<WorkingHoursDto>> GetByEmployee(Guid employeeId)
+    public async Task<ActionResult<EmployeeWorkingHoursDto>> GetByEmployee(Guid employeeId)
     {
-        var schedule = await _service.GetByEmployeeIdAsync(employeeId);
-        if (schedule == null)
-            return NotFound();
-        return Ok(schedule);
+                var schedule = await _service.GetByEmployeeIdAsync(employeeId);
+            // Es normal no tener un horario aún; devolvemos null para que el cliente lo maneje
+            // (antes retornábamos NotFound lo que generaba 404 en la red).
+            return Ok(schedule);
     }
     /// <summary>
     /// Crea un nuevo horario de trabajo para un empleado
@@ -35,7 +35,7 @@ public class EmployeeScheduleController : ControllerBase
     /// <param name="employeeId">ID del empleado</param>
     /// <param name="dto">Datos del horario</param>
     [HttpPost]
-    public async Task<ActionResult> Create(Guid employeeId, [FromBody] WorkingHoursDto dto)
+    public async Task<ActionResult> Create(Guid employeeId, [FromBody] EmployeeWorkingHoursDto dto)
     {
         await _service.CreateAsync(employeeId, dto);
         return CreatedAtAction(nameof(GetByEmployee), new { employeeId }, dto);
@@ -46,7 +46,7 @@ public class EmployeeScheduleController : ControllerBase
     /// <param name="employeeId">ID del empleado</param>
     /// <param name="dto">Datos del horario</param>
     [HttpPut("{employeeId}")]
-    public async Task<ActionResult> Update(Guid employeeId, [FromBody] WorkingHoursDto dto)
+    public async Task<ActionResult> Update(Guid employeeId, [FromBody] EmployeeWorkingHoursDto dto)
     {
         await _service.UpdateAsync(employeeId, dto);
         return NoContent();

@@ -33,6 +33,8 @@ import { BusinessService } from '../../../business/services/business.service';
 import { CreateAppointmentRequest } from '../../models';
 import { AppointmentsService } from '../../services/appointments.service';
 import { AvailabilityResponse } from '../../models/availability.models';
+import { OwnerEmployeesService } from '../../../owner-employees/services/owner-employees.service';
+import { EmployeeWorkingHoursDto } from '../../../owner-employees/models/employee-schedule.models';
 
 // Registrar locale español
 import { registerLocaleData } from '@angular/common';
@@ -68,6 +70,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   private readonly businessService = inject(BusinessService);
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly notify = inject(NotifyService);
+  private readonly employeesService = inject(OwnerEmployeesService);
   private readonly destroy$ = new Subject<void>();
 
   protected businessId = '';
@@ -79,6 +82,9 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   private allServices: BusinessServiceItem[] = [];
   private allEmployees: BusinessEmployeeItem[] = [];
   protected appointmentForm: FormGroup;
+
+  // Fechas bloqueadas del empleado seleccionado
+  protected blockedDatesForEmployee: string[] = [];
 
   // Disponibilidad (horas)
   protected availableSlots: string[] = [];
@@ -570,11 +576,13 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     const selectedEmployeeId = this.appointmentForm.get('employeeId')?.value as string;
 
     if (selectedEmployeeId) {
+      this.loadBlockedDates(selectedEmployeeId);
       const selectedEmployee = this.allEmployees.find(employee => employee.id === selectedEmployeeId);
       const assignedServiceIds = selectedEmployee?.serviceIds ?? [];
       this.services = this.allServices.filter(service => assignedServiceIds.includes(service.id));
     } else {
       this.services = [...this.allServices];
+      this.blockedDatesForEmployee = [];
     }
 
     if (selectedServiceId) {
@@ -729,7 +737,23 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   }
 
   private isDateSelectable(date: Date): boolean {
-    return this.isWithinBookingWindow(date) && this.availableDaysSet.has(this.formatDate(date));
+    return this.isWithinBookingWindow(date) && this.availableDaysSet.has(this.formatDate(date)) && !this.blockedDatesForEmployee.includes(this.formatDate(date));
+  }
+
+  private loadBlockedDates(employeeId: string): void {
+    this.employeesService
+      .getEmployeeSchedule(employeeId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (schedule: EmployeeWorkingHoursDto | null) => {
+          this.blockedDatesForEmployee = schedule?.blockedDates || [];
+          this.generateCalendar();
+        },
+        error: (error) => {
+          console.error('Error al cargar fechas bloqueadas:', error);
+          this.blockedDatesForEmployee = [];
+        },
+      });
   }
 
   private isWithinBookingWindow(date: Date): boolean {

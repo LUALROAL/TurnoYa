@@ -43,6 +43,10 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey<EmployeeSchedule>(x => x.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
             e.Property(x => x.AppointmentDuration).HasDefaultValue(30);
+            e.Property(x => x.BlockedDatesJson)
+                .IsRequired(false)
+                .HasColumnType("nvarchar(max)");
+            e.Ignore(x => x.BlockedDates);
             e.HasMany(x => x.WorkingDays)
                 .WithOne(x => x.EmployeeSchedule)
                 .HasForeignKey(x => x.EmployeeScheduleId)

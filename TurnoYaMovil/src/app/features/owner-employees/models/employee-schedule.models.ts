@@ -4,4 +4,8 @@ import {
   DayScheduleDto
 } from '../../owner-business/models/business-schedule.models';
 
+export interface EmployeeWorkingHoursDto extends WorkingHoursDto {
+  blockedDates: string[]; // Fechas en formato YYYY-MM-DD
+}
+
 export { WorkingHoursDto, DayScheduleDto };

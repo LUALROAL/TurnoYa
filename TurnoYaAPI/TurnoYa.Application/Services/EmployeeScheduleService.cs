@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 using TurnoYa.Core.Entities;
 using TurnoYa.Core.Interfaces;
+using TurnoYa.Application.DTOs.Employee;
 using TurnoYa.Application.DTOs.Business;
 using TurnoYa.Application.Interfaces;
 
@@ -18,7 +20,7 @@ namespace TurnoYa.Application.Services
             _repository = repository;
         }
 
-        public async Task<WorkingHoursDto?> GetByEmployeeIdAsync(Guid employeeId)
+        public async Task<EmployeeWorkingHoursDto?> GetByEmployeeIdAsync(Guid employeeId)
         {
             var schedule = await _repository.GetByEmployeeIdAsync(employeeId);
             if (schedule == null)
@@ -27,24 +29,25 @@ namespace TurnoYa.Application.Services
             return MapToDto(schedule);
         }
 
-        public async Task CreateAsync(Guid employeeId, WorkingHoursDto dto)
+        public async Task CreateAsync(Guid employeeId, EmployeeWorkingHoursDto dto)
         {
             var schedule = new EmployeeSchedule
             {
                 Id = Guid.NewGuid(),
-                EmployeeId = employeeId
+                EmployeeId = employeeId,
+                BlockedDatesJson = JsonSerializer.Serialize(dto.BlockedDates.Select(d => DateTime.Parse(d)).ToList())
             };
             schedule.WorkingDays = MapWorkingDays(dto, schedule);
             await _repository.AddAsync(schedule);
         }
 
-        public async Task UpdateAsync(Guid employeeId, WorkingHoursDto dto)
+        public async Task UpdateAsync(Guid employeeId, EmployeeWorkingHoursDto dto)
         {
             var existing = await _repository.GetByEmployeeIdAsync(employeeId);
             if (existing == null)
                 throw new Exception("No existe horario para el empleado");
 
-            // Eliminar el horario existente (en cascada elimina días, bloques y descansos)
+            // Eliminar el horario existente (en cascada elimina dï¿½as, bloques y descansos)
             await _repository.DeleteAsync(existing);
 
             // Crear uno nuevo con los datos actualizados
@@ -58,13 +61,13 @@ namespace TurnoYa.Application.Services
                 await _repository.DeleteAsync(schedule);
         }
 
-        // ===== MÉTODOS PRIVADOS DE MAPEO =====
+        // ===== Mï¿½TODOS PRIVADOS DE MAPEO =====
 
-        private static WorkingHoursDto MapToDto(EmployeeSchedule schedule)
+        private static EmployeeWorkingHoursDto MapToDto(EmployeeSchedule schedule)
         {
-            var dto = new WorkingHoursDto();
+            var dto = new EmployeeWorkingHoursDto();
 
-            // Inicializar todos los días como cerrados por defecto
+            // Inicializar todos los dï¿½as como cerrados por defecto
             var defaultDay = new DayScheduleDto { IsOpen = false };
             dto.Monday = defaultDay;
             dto.Tuesday = defaultDay;
@@ -107,10 +110,14 @@ namespace TurnoYa.Application.Services
                 }
             }
 
+            dto.BlockedDates = schedule.BlockedDatesJson != null
+                ? JsonSerializer.Deserialize<List<DateTime>>(schedule.BlockedDatesJson)?.Select(d => d.ToString("yyyy-MM-dd")).ToList() ?? new List<string>()
+                : new List<string>();
+
             return dto;
         }
 
-        private static List<EmployeeWorkingDay> MapWorkingDays(WorkingHoursDto dto, EmployeeSchedule schedule)
+        private static List<EmployeeWorkingDay> MapWorkingDays(EmployeeWorkingHoursDto dto, EmployeeSchedule schedule)
         {
             var days = new List<EmployeeWorkingDay>();
             var dayDtos = new[]

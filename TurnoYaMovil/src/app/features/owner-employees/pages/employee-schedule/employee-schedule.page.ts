@@ -8,6 +8,12 @@ import {
   IonIcon,
   IonInput,
   IonCheckbox,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -15,10 +21,14 @@ import {
   save,
   syncOutline,
   timeOutline,
+  calendarOutline,
+  chevronBackOutline,
+  chevronForwardOutline,
+  closeOutline,
 } from 'ionicons/icons';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
 import { NotifyService } from '../../../../core/services/notify.service';
-import { WorkingHoursDto, DayScheduleDto } from '../../models/employee-schedule.models';
+import { EmployeeWorkingHoursDto, WorkingHoursDto, DayScheduleDto } from '../../models/employee-schedule.models';
 
 @Component({
   selector: 'app-employee-schedule',
@@ -30,6 +40,12 @@ import { WorkingHoursDto, DayScheduleDto } from '../../models/employee-schedule.
     IonIcon,
     IonInput,
     IonCheckbox,
+    IonModal,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
   ],
   templateUrl: './employee-schedule.page.html',
   styleUrls: ['./employee-schedule.page.scss'],
@@ -50,6 +66,13 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   saving = false;
   scheduleExists = false;
 
+  // Fechas bloqueadas
+  blockedDates: string[] = [];
+  isBlockedDatesModalOpen = false;
+  currentMonth: Date = new Date();
+  calendarDays: { day: number; date: Date; isCurrentMonth: boolean }[] = [];
+  weekDays = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
   days = [
     { key: 'monday', label: 'Lunes' },
     { key: 'tuesday', label: 'Martes' },
@@ -61,7 +84,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   ];
 
   constructor() {
-    addIcons({ arrowBack, save, syncOutline, timeOutline });
+    addIcons({ arrowBack, save, syncOutline, timeOutline, calendarOutline, chevronBackOutline, chevronForwardOutline, closeOutline });
     this.initForm();
   }
 
@@ -77,6 +100,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
 
     this.loadEmployeeInfo();
     this.loadSchedule();
+    this.generateCalendar();
   }
 
   ngOnDestroy() {
@@ -126,7 +150,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
       .getEmployeeSchedule(this.employeeId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (schedule) => {
+        next: (schedule: EmployeeWorkingHoursDto | null) => {
           if (schedule) {
             // Hay horario guardado
             const normalized: any = {};
@@ -141,11 +165,13 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
               };
             }
             this.scheduleForm.patchValue(normalized);
+            this.blockedDates = schedule.blockedDates || [];
             this.scheduleExists = true;
           } else {
             // No existe horario
             this.scheduleExists = false;
             this.resetScheduleForm();
+            this.blockedDates = [];
           }
           this.loading = false;
         },
@@ -214,8 +240,8 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
     }
 
     const request$ = this.scheduleExists
-      ? this.employeesService.updateEmployeeSchedule(this.employeeId, cleanedSchedule)
-      : this.employeesService.createEmployeeSchedule(this.employeeId, cleanedSchedule);
+      ? this.employeesService.updateEmployeeSchedule(this.employeeId, { ...cleanedSchedule, blockedDates: this.blockedDates })
+      : this.employeesService.createEmployeeSchedule(this.employeeId, { ...cleanedSchedule, blockedDates: this.blockedDates });
 
     request$.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
@@ -255,5 +281,94 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
 
   onCancel() {
     this.router.navigate(['/owner/businesses', this.businessId, 'employees']);
+  }
+
+  // Métodos para fechas bloqueadas
+  openBlockedDatesModal() {
+    this.isBlockedDatesModalOpen = true;
+    this.generateCalendar();
+  }
+
+  closeBlockedDatesModal() {
+    this.isBlockedDatesModalOpen = false;
+  }
+
+  prevMonth() {
+    this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
+    this.generateCalendar();
+  }
+
+  nextMonth() {
+    this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
+    this.generateCalendar();
+  }
+
+  toggleBlockedDate(date: Date) {
+    const dateStr = this.formatDate(date);
+    const index = this.blockedDates.indexOf(dateStr);
+    if (index > -1) {
+      this.blockedDates.splice(index, 1);
+    } else {
+      this.blockedDates.push(dateStr);
+    }
+    this.generateCalendar(); // Para actualizar visual
+  }
+
+  isBlocked(date: Date): boolean {
+    return this.blockedDates.includes(this.formatDate(date));
+  }
+
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private generateCalendar(): void {
+    const year = this.currentMonth.getFullYear();
+    const month = this.currentMonth.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    const startDay = firstDayOfMonth.getDay();
+    const startOffset = startDay === 0 ? 6 : startDay - 1;
+
+    const daysInMonth = lastDayOfMonth.getDate();
+
+    const tempDays: { day: number; date: Date; isCurrentMonth: boolean }[] = [];
+
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    for (let i = startOffset - 1; i >= 0; i--) {
+      const day = prevMonthLastDay - i;
+      const date = new Date(year, month - 1, day);
+      tempDays.push({
+        day,
+        date,
+        isCurrentMonth: false,
+      });
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      tempDays.push({
+        day,
+        date,
+        isCurrentMonth: true,
+      });
+    }
+
+    const remaining = 42 - tempDays.length;
+    for (let day = 1; day <= remaining; day++) {
+      const date = new Date(year, month + 1, day);
+      tempDays.push({
+        day,
+        date,
+        isCurrentMonth: false,
+      });
+    }
+
+    this.calendarDays = tempDays;
   }
 }

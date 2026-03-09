@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using TurnoYa.Application.DTOs.Business;
+using TurnoYa.Application.DTOs.Employee;
 
 namespace TurnoYa.Application.Interfaces
 {
     public interface IEmployeeScheduleService
     {
-        Task<WorkingHoursDto?> GetByEmployeeIdAsync(Guid employeeId);
-        Task CreateAsync(Guid employeeId, WorkingHoursDto dto);
-        Task UpdateAsync(Guid employeeId, WorkingHoursDto dto);
+        Task<EmployeeWorkingHoursDto?> GetByEmployeeIdAsync(Guid employeeId);
+        Task CreateAsync(Guid employeeId, EmployeeWorkingHoursDto dto);
+        Task UpdateAsync(Guid employeeId, EmployeeWorkingHoursDto dto);
         Task DeleteAsync(Guid employeeId);
     }
 }

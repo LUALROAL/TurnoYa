@@ -6,7 +6,7 @@ import {
   OwnerEmployee,
   UpdateEmployeeRequest,
 } from '../models';
-import { WorkingHoursDto } from '../models/employee-schedule.models';
+import { EmployeeWorkingHoursDto, WorkingHoursDto } from '../models/employee-schedule.models';
 
 @Injectable({
   providedIn: 'root',
@@ -67,9 +67,9 @@ export class OwnerEmployeesService {
   /**
    * Obtiene el horario de un empleado
    */
-  getEmployeeSchedule(employeeId: string): Observable<WorkingHoursDto | null> {
+  getEmployeeSchedule(employeeId: string): Observable<EmployeeWorkingHoursDto | null> {
     return this.api
-      .get<WorkingHoursDto>(`/api/EmployeeSchedule/GetByEmployee/${employeeId}`)
+      .get<EmployeeWorkingHoursDto>(`/api/EmployeeSchedule/GetByEmployee/${employeeId}`)
       .pipe(
         catchError((error) => {
           if (error.status === 404) {
@@ -85,7 +85,7 @@ export class OwnerEmployeesService {
    */
   createEmployeeSchedule(
     employeeId: string,
-    schedule: WorkingHoursDto
+    schedule: EmployeeWorkingHoursDto
   ): Observable<void> {
     return this.api.post<void>(
       `/api/EmployeeSchedule/Create?employeeId=${employeeId}`,
@@ -98,7 +98,7 @@ export class OwnerEmployeesService {
    */
   updateEmployeeSchedule(
     employeeId: string,
-    schedule: WorkingHoursDto
+    schedule: EmployeeWorkingHoursDto
   ): Observable<void> {
     return this.api.put<void>(
       `/api/EmployeeSchedule/Update/${employeeId}`,
