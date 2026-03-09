@@ -93,7 +93,8 @@
                     </h3>
                     <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
                       <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
-                      {{ appointment.scheduledDate | date: 'medium' }}
+                      {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
+                      {{ appointment.scheduledDate | date: 'h:mm a' }} - {{ appointment.endDate | date: 'h:mm a' }}
                     </p>
                     <p class="text-xs text-text-secondary font-mono mt-1">
                       Ref: {{ appointment.referenceNumber }}
