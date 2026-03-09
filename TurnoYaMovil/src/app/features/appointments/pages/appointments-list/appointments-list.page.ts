@@ -177,6 +177,26 @@ export class AppointmentsListPage implements OnInit, OnDestroy {
     }
   }
 
+  protected getDurationText(appointment: AppointmentItem): string {
+    const start = new Date(appointment.scheduledDate);
+    const end = new Date(appointment.endDate);
+    const diffMs = end.getTime() - start.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes} minutos`;
+    }
+
+    const hours = Math.floor(diffMinutes / 60);
+    const remainingMinutes = diffMinutes % 60;
+
+    if (remainingMinutes === 0) {
+      return hours === 1 ? '1 hora' : `${hours} horas`;
+    }
+
+    return `${hours}:${remainingMinutes.toString().padStart(2, '0')} horas`;
+  }
+
   private setProcessing(appointmentId: string, isProcessing: boolean): void {
     if (isProcessing) {
       this.processingIds.add(appointmentId);
