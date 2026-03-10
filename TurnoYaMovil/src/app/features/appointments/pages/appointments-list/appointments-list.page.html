@@ -95,11 +95,11 @@
                       {{ appointment.serviceName }}
                     </span>
                     <!-- Fecha y hora -->
-                    <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
+                    <!-- <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
                       <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
                       {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
                       {{ appointment.scheduledDate | date: 'h:mm a' }} A {{ appointment.endDate | date: 'h:mm a' }}
-                    </p>
+                    </p> -->
                   </div>
                   <!-- Status badge -->
                   <span [class]="getStatusClass(appointment.status)"
@@ -118,6 +118,19 @@
                       <ion-icon name="document-text-outline" class="text-neon-primary text-sm"></ion-icon>
                     </div>
                     <span class="font-mono text-xs">Ref: {{ appointment.referenceNumber }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-text-secondary">
+                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                      <ion-icon name="briefcase-outline" class="text-neon-primary text-sm"></ion-icon>
+                    </div>
+                    <span class="font-mono text-xs">Servicio: {{ appointment.serviceName }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-text-secondary">
+                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                      <ion-icon name="calendar-outline" class="text-neon-primary text-sm"></ion-icon>
+                    </div>
+                    <span class="font-mono text-xs">Fecha: {{ appointment.scheduledDate | date: 'MMM d, y' }}
+                      {{ appointment.scheduledDate | date: 'h:mm a' }} A {{ appointment.endDate | date: 'h:mm a' }}</span>
                   </div>
                   <div class="flex items-center gap-2 text-sm text-text-secondary">
                     <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
