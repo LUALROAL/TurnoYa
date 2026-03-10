@@ -124,20 +124,37 @@
                 </div>
                 <span class="font-mono text-xs">Ref: {{ appointment.referenceNumber }}</span>
               </div>
+
+              @if (appointment.employeeName) {
+              <!-- Información de Profesional -->
+              <div class="mt-4 flex items-center gap-3 p-3 rounded-xl bg-bg-tertiary/40 border border-neon-primary/10">
+                <div
+                  class="relative w-10 h-10 rounded-full overflow-hidden border border-neon-primary/20 bg-bg-secondary flex-shrink-0">
+                  @if (appointment.employeePhotoBase64) {
+                  <img [src]="'data:image/jpeg;base64,' + appointment.employeePhotoBase64" alt="Foto profesional"
+                    class="w-full h-full object-cover">
+                  } @else if (appointment.employeePhotoUrl) {
+                  <img [src]="appointment.employeePhotoUrl" alt="Foto profesional" class="w-full h-full object-cover">
+                  } @else {
+                  <div class="w-full h-full flex items-center justify-center text-neon-primary">
+                    <ion-icon name="person-outline" class="text-xl"></ion-icon>
+                  </div>
+                  }
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[10px] font-mono text-text-secondary uppercase tracking-wider mb-0.5">Profesional</p>
+                  <p class="text-sm font-display font-medium text-text-primary truncate">
+                    {{ appointment.employeeName }}
+                  </p>
+                </div>
+              </div>
+              }
               <div class="flex items-center gap-2 text-sm text-text-secondary">
                 <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
                   <ion-icon name="briefcase-outline" class="text-neon-primary text-sm"></ion-icon>
                 </div>
                 <span class="font-mono text-xs">Servicio: {{ appointment.serviceName }}</span>
               </div>
-              @if (appointment.employeeName) {
-              <div class="flex items-center gap-2 text-sm text-text-secondary">
-                <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-                  <ion-icon name="person-outline" class="text-neon-primary text-sm"></ion-icon>
-                </div>
-                <span class="font-mono text-xs">Profesional: {{ appointment.employeeName }}</span>
-              </div>
-              }
               <div class="flex items-center gap-2 text-sm text-text-secondary">
                 <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
                   <ion-icon name="calendar-outline" class="text-neon-primary text-sm"></ion-icon>

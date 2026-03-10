@@ -33,8 +33,13 @@ public class AppointmentProfile : Profile
 
         // Appointment → AppointmentDto
         CreateMap<Appointment, AppointmentDto>()
+            .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}".Trim() : string.Empty))
+            .ForMember(dest => dest.ClientPhotoUrl, opt => opt.MapFrom(src => src.User != null ? src.User.PhotoUrl : null))
+            .ForMember(dest => dest.ClientPhotoBase64, opt => opt.MapFrom(src => src.User != null && src.User.PhotoData != null ? Convert.ToBase64String(src.User.PhotoData) : null))
             .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.Business != null ? src.Business.Name : string.Empty))
             .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service != null ? src.Service.Name : string.Empty))
-            .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee != null ? src.Employee.Name : null));
+            .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee != null ? src.Employee.Name : null))
+            .ForMember(dest => dest.EmployeePhotoUrl, opt => opt.MapFrom(src => src.Employee != null ? src.Employee.PhotoUrl : null))
+            .ForMember(dest => dest.EmployeePhotoBase64, opt => opt.MapFrom(src => src.Employee != null && src.Employee.PhotoData != null ? Convert.ToBase64String(src.Employee.PhotoData) : null));
     }
 }

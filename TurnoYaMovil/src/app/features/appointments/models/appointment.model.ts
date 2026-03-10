@@ -10,12 +10,17 @@ export interface AppointmentItem {
   id: string;
   referenceNumber: string;
   userId: string;
+  clientName?: string;
+  clientPhotoUrl?: string;
+  clientPhotoBase64?: string;
   businessId: string;
   businessName?: string;
   serviceId: string;
   serviceName: string;
   employeeId?: string;
   employeeName?: string;
+  employeePhotoUrl?: string;
+  employeePhotoBase64?: string;
   scheduledDate: string;
   endDate: string;
   status: string | number;
