@@ -344,6 +344,11 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
   // ========== MÉTODOS DEL CALENDARIO ==========
   protected openCalendar(): void {
+    if (!this.appointmentForm.get('serviceId')?.value) {
+      this.notify.showError('Debes seleccionar un servicio para ver las fechas disponibles.');
+      return;
+    }
+
     this.isCalendarOpen = true;
     if (!this.loadingDays && this.availableDaysSet.size === 0 && this.appointmentForm.get('serviceId')?.value) {
       this.loadAvailableDays();
