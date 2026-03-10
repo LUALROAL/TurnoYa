@@ -98,6 +98,18 @@ namespace TurnoYa.Infrastructure.Services
             if (await _appointmentRepository.HasConflictAsync(dto.BusinessId, assignedEmployeeId, effectiveStart, effectiveEnd))
                 throw new InvalidOperationException("El horario seleccionado no está disponible");
 
+            var userAppointments = await _appointmentRepository.GetActiveAppointmentsByUserAsync(userId, scheduledDate, scheduledDate.AddDays(1));
+            bool isUserFree = !userAppointments.Any(a =>
+            {
+                var existingBlockedUntil = a.EndDate.AddMinutes(15);
+                var proposedBlockedUntil = endDate.AddMinutes(15);
+                
+                return effectiveStart < existingBlockedUntil && proposedBlockedUntil > a.ScheduledDate;
+            });
+
+            if (!isUserFree)
+                throw new InvalidOperationException("Ya tienes una cita programada en este horario o no se respeta el tiempo de espera mínimo de 15 minutos entre citas.");
+
             var appointment = new Appointment
             {
                 Id = Guid.NewGuid(),

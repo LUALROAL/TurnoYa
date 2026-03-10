@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TurnoYa.Application.DTOs.Availability;
 using TurnoYa.Application.Interfaces;
@@ -33,7 +34,14 @@ namespace TurnoYa.API.Controllers
         {
             try
             {
-                var result = await _availabilityService.GetAvailableSlotsAsync(businessId, serviceId, employeeId, date);
+                Guid? userId = null;
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedId))
+                {
+                    userId = parsedId;
+                }
+
+                var result = await _availabilityService.GetAvailableSlotsAsync(businessId, serviceId, employeeId, date, userId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -52,7 +60,14 @@ namespace TurnoYa.API.Controllers
         {
             try
             {
-                var result = await _availabilityService.GetAvailableDaysAsync(businessId, serviceId, employeeId, from, to);
+                Guid? userId = null;
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedId))
+                {
+                    userId = parsedId;
+                }
+
+                var result = await _availabilityService.GetAvailableDaysAsync(businessId, serviceId, employeeId, from, to, userId);
                 return Ok(result);
             }
             catch (Exception ex)

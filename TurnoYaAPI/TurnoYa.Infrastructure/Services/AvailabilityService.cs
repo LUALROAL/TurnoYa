@@ -30,7 +30,7 @@ namespace TurnoYa.Infrastructure.Services
             _context = context;
         }
 
-        public async Task<AvailabilityResponseDto> GetAvailableSlotsAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime date)
+        public async Task<AvailabilityResponseDto> GetAvailableSlotsAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime date, Guid? userId = null)
         {
             if (date.Date < DateTime.Today)
                 throw new Exception("No se puede consultar disponibilidad para fechas pasadas");
@@ -66,6 +66,12 @@ namespace TurnoYa.Infrastructure.Services
                 dayStart,
                 dayEnd);
 
+            var userAppointments = new List<Appointment>();
+            if (userId.HasValue)
+            {
+                userAppointments = (await _appointmentRepository.GetActiveAppointmentsByUserAsync(userId.Value, dayStart, dayEnd)).ToList();
+            }
+
             var slotStarts = new SortedSet<DateTime>();
             foreach (var targetEmployeeId in employeeIds)
             {
@@ -81,7 +87,7 @@ namespace TurnoYa.Infrastructure.Services
                     ? list
                     : new List<Appointment>();
 
-                foreach (var slotStart in BuildAvailableSlotStarts(ranges, employeeAppointments, service.Duration, bufferTime))
+                foreach (var slotStart in BuildAvailableSlotStarts(ranges, employeeAppointments, userAppointments, service.Duration, bufferTime))
                     slotStarts.Add(slotStart);
             }
 
@@ -96,7 +102,7 @@ namespace TurnoYa.Infrastructure.Services
             };
         }
 
-        public async Task<List<string>> GetAvailableDaysAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime from, DateTime to)
+        public async Task<List<string>> GetAvailableDaysAsync(Guid businessId, Guid serviceId, Guid? employeeId, DateTime from, DateTime to, Guid? userId = null)
         {
             var service = await _context.Services
                 .AsNoTracking()
@@ -133,6 +139,12 @@ namespace TurnoYa.Infrastructure.Services
                 fromDate,
                 toDate);
 
+            var allUserAppointments = new List<Appointment>();
+            if (userId.HasValue)
+            {
+                allUserAppointments = (await _appointmentRepository.GetActiveAppointmentsByUserAsync(userId.Value, fromDate, toDate)).ToList();
+            }
+
             var availableDays = new List<string>();
 
             for (var date = adjustedFrom; date <= adjustedTo; date = date.AddDays(1))
@@ -153,7 +165,9 @@ namespace TurnoYa.Infrastructure.Services
                         ? allAppointments.Where(a => a.ScheduledDate.Date == date.Date).ToList()
                         : new List<Appointment>();
 
-                    if (BuildAvailableSlotStarts(ranges, appointmentsOfDay, slotDuration, bufferTime).Any())
+                    var userAppointmentsOfDay = allUserAppointments.Where(a => a.ScheduledDate.Date == date.Date).ToList();
+
+                    if (BuildAvailableSlotStarts(ranges, appointmentsOfDay, userAppointmentsOfDay, slotDuration, bufferTime).Any())
                     {
                         hasAtLeastOneSlot = true;
                         break;
@@ -187,7 +201,8 @@ namespace TurnoYa.Infrastructure.Services
 
         private IEnumerable<DateTime> BuildAvailableSlotStarts(
             List<TimeRange> workingRanges,
-            List<Appointment> appointments,
+            List<Appointment> employeeAppointments,
+            List<Appointment> userAppointments,
             int serviceDuration,
             int bufferTime)
         {
@@ -200,11 +215,33 @@ namespace TurnoYa.Infrastructure.Services
                 {
                     var slotStart = current;
                     var slotEndWithBuffer = current.AddMinutes(serviceDuration + bufferTime);
+                    var slotEndOnly = current.AddMinutes(serviceDuration); // The actual end of the service, used to compare against user's schedule
 
-                    bool isFree = !appointments.Any(a =>
+                    // Check if employee is free
+                    bool isEmployeeFree = !employeeAppointments.Any(a =>
                         slotStart < a.EndDate && slotEndWithBuffer > a.ScheduledDate);
 
-                    if (isFree)
+                    // Check if user is free (including 15-minute buffer after any of their existing appointments or slot itself)
+                    bool isUserFree = true;
+                    if (userAppointments != null && userAppointments.Any())
+                    {
+                        // The user needs a 15 min buffer after an existing appointment.
+                        // User's existing appt takes [a.ScheduledDate, a.EndDate]. A booked appt has a 15m penalty afterwards [a.EndDate, a.EndDate + 15m]
+                        // Also, the new slot we are offering takes [slotStart, slotEndOnly].
+                        // If they book here, they can't book anything else until slotEndOnly + 15m.
+                        // So the "User Blocked Time" for an appointment is [ScheduledDate, EndDate + 15m]
+                        
+                        isUserFree = !userAppointments.Any(a =>
+                        {
+                            var existingBlockedUntil = a.EndDate.AddMinutes(15);
+                            var proposedBlockedUntil = slotEndOnly.AddMinutes(15);
+                            
+                            // Check overlap between [slotStart, proposedBlockedUntil] and [a.ScheduledDate, existingBlockedUntil]
+                            return slotStart < existingBlockedUntil && proposedBlockedUntil > a.ScheduledDate;
+                        });
+                    }
+
+                    if (isEmployeeFree && isUserFree)
                         result.Add(slotStart);
 
                     current = current.AddMinutes(serviceDuration + bufferTime);

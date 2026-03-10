@@ -63,6 +63,16 @@ namespace TurnoYa.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Appointment>> GetActiveAppointmentsByUserAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Appointments
+                .Where(a => a.UserId == userId)
+                .Where(a => a.Status != AppointmentStatus.Cancelled && a.Status != AppointmentStatus.Completed)
+                .Where(a => a.ScheduledDate < to && a.EndDate > from)
+                .OrderBy(a => a.ScheduledDate)
+                .ToListAsync();
+        }
+
         public async Task<bool> HasConflictAsync(Guid businessId, Guid employeeId, DateTime start, DateTime end, Guid? excludeAppointmentId = null)
         {
             var query = _context.Appointments
