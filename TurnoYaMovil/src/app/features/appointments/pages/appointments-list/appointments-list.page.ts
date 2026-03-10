@@ -10,7 +10,9 @@ import {
   closeCircleOutline,
   timeOutline,
   searchOutline,
-  businessOutline
+  businessOutline,
+  briefcaseOutline,
+  personOutline
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -42,7 +44,9 @@ export class AppointmentsListPage implements OnInit, OnDestroy {
       cashOutline,
       closeCircleOutline,
       searchOutline,
-      businessOutline
+      businessOutline,
+      briefcaseOutline,
+      personOutline
     });
   }
 

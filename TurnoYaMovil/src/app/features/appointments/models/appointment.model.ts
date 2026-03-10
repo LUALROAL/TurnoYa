@@ -15,6 +15,7 @@ export interface AppointmentItem {
   serviceId: string;
   serviceName: string;
   employeeId?: string;
+  employeeName?: string;
   scheduledDate: string;
   endDate: string;
   status: string | number;

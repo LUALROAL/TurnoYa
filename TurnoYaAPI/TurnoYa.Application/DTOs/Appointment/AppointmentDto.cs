@@ -15,6 +15,7 @@ public class AppointmentDto
     public Guid ServiceId { get; set; }
     public string ServiceName { get; set; } = string.Empty;
     public Guid? EmployeeId { get; set; }
+    public string? EmployeeName { get; set; }
     public DateTime ScheduledDate { get; set; }
     public DateTime EndDate { get; set; }
     public AppointmentStatus Status { get; set; }
