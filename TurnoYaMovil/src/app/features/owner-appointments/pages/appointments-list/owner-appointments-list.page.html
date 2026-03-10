@@ -95,7 +95,6 @@
                       <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
                       {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
                       {{ appointment.scheduledDate | date: 'h:mm a' }} - {{ appointment.endDate | date: 'h:mm a' }}
-                      <span class="ml-2 text-xs font-mono">Ref: {{ appointment.referenceNumber }}</span>
                     </p>
                   </div>
 
@@ -113,6 +112,12 @@
                 <div class="space-y-2 pt-2">
                   <div class="flex items-center gap-2 text-sm text-text-secondary">
                     <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                      <ion-icon name="document-text-outline" class="text-neon-primary text-sm"></ion-icon>
+                    </div>
+                    <span class="font-mono text-xs">Ref: {{ appointment.referenceNumber }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-text-secondary">
+                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
                       <ion-icon name="time-outline" class="text-neon-primary text-sm"></ion-icon>
                     </div>
                     <span class="font-mono text-xs">Duración: {{ getDurationText(appointment) }}</span>
@@ -122,7 +127,7 @@
                     <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
                       <ion-icon name="cash-outline" class="text-neon-primary text-sm"></ion-icon>
                     </div>
-                    <span class="font-mono text-xs">Total: {{ appointment.totalAmount | currency:'COP':'symbol':'1.0-0' }}</span>
+                    <span class="font-mono text-xs">Total: {{ appointment.totalAmount | currency:'COP-':'symbol':'1.0-0' }}</span>
                   </div>
                 </div>
 
