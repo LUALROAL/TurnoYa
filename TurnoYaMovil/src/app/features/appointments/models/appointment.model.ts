@@ -11,6 +11,7 @@ export interface AppointmentItem {
   referenceNumber: string;
   userId: string;
   businessId: string;
+  businessName?: string;
   serviceId: string;
   serviceName: string;
   employeeId?: string;

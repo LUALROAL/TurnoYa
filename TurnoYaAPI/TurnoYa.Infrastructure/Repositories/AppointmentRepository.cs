@@ -21,6 +21,7 @@ namespace TurnoYa.Infrastructure.Repositories
         public async Task<Appointment?> GetByIdAsync(Guid id)
         {
             return await _context.Appointments
+                .Include(a => a.Business)
                 .Include(a => a.Service)
                 .Include(a => a.Employee)
                 .FirstOrDefaultAsync(a => a.Id == id);
@@ -29,6 +30,7 @@ namespace TurnoYa.Infrastructure.Repositories
         public async Task<IEnumerable<Appointment>> GetByUserIdAsync(Guid userId, DateTime? from = null, DateTime? to = null)
         {
             var query = _context.Appointments
+                .Include(a => a.Business)
                 .Include(a => a.Service)
                 .Include(a => a.Employee)
                 .Where(a => a.UserId == userId);
@@ -46,6 +48,7 @@ namespace TurnoYa.Infrastructure.Repositories
         public async Task<IEnumerable<Appointment>> GetByBusinessIdAsync(Guid businessId, DateTime? from = null, DateTime? to = null)
         {
             var query = _context.Appointments
+                .Include(a => a.Business)
                 .Include(a => a.Service)
                 .Include(a => a.Employee)
                 .Where(a => a.BusinessId == businessId);

@@ -2,7 +2,9 @@
   <!-- Fondo con partículas animadas -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
-    <div class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
 
     <div class="absolute inset-0" style="background-image:
       linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
@@ -16,7 +18,8 @@
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <button [routerLink]="['/owner/businesses']" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+          <button [routerLink]="['/owner/businesses']"
+            class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
             <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
           </button>
           <div>
@@ -48,141 +51,151 @@
 
       <!-- Loading skeleton -->
       @if (loading) {
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          @for (i of [1, 2, 3, 4]; track i) {
-            <div class="skeleton-card"></div>
-          }
-        </section>
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-card"></div>
+        }
+      </section>
       }
 
       <!-- Empty state mejorado -->
       @if (!loading && isEmpty) {
-        <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
-          <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
-          <div class="relative">
-            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-              <ion-icon name="calendar-outline" class="text-5xl text-neon-primary"></ion-icon>
-            </div>
-            <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes citas agendadas</h3>
-            <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
-              Comparte tu negocio para que los clientes puedan reservar.
-            </p>
-            <button [routerLink]="['/owner/businesses', businessId, 'services']"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
-              <ion-icon name="construct-outline"></ion-icon>
-              Ver servicios
-            </button>
+      <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-12 text-center">
+        <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-30"></div>
+        <div class="relative">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+            <ion-icon name="calendar-outline" class="text-5xl text-neon-primary"></ion-icon>
           </div>
+          <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes citas agendadas</h3>
+          <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
+            Comparte tu negocio para que los clientes puedan reservar.
+          </p>
+          <button [routerLink]="['/owner/businesses', businessId, 'services']"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
+            <ion-icon name="construct-outline"></ion-icon>
+            Ver servicios
+          </button>
         </div>
+      </div>
       }
 
       <!-- Lista de citas -->
       @if (!loading && !isEmpty) {
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          @for (appointment of appointments; track trackByAppointmentId($index, appointment)) {
-            <div class="relative group overflow-hidden rounded-2xl">
-              <div class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (appointment of appointments; track trackByAppointmentId($index, appointment)) {
+        <div class="relative group overflow-hidden rounded-2xl">
+          <div
+            class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          </div>
 
-              <article class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300 p-5">
+          <article
+            class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300 p-5">
 
-                <!-- Cabecera de la tarjeta -->
-                <div class="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 class="text-xl font-display font-bold text-text-primary">
-                      {{ appointment.serviceName }}
-                    </h3>
-                    <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
-                      <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
-                      {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
-                      {{ appointment.scheduledDate | date: 'h:mm a' }} - {{ appointment.endDate | date: 'h:mm a' }}
-                    </p>
-                  </div>
+            <!-- Cabecera de la tarjeta -->
+            <div class="flex items-start justify-between mb-3 gap-2">
+              <div class="flex-1">
+                <h3 class="text-xl font-display font-bold text-neon-primary">
+                  <ion-icon name="business-outline"></ion-icon>
+                  {{ appointment.businessName || 'Negocio' }}
 
-                  <!-- Status badge -->
-                  <span [class]="getStatusClass(appointment.status)"
-                        class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full"
-                          [class.bg-current]="true"
-                          [class.animate-ping]="appointment.status === 'pending'"></span>
-                    {{ getStatusLabel(appointment.status) }}
-                  </span>
-                </div>
+                </h3>
+                <span class="text-xs font-mono text-text-primary  uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <!-- <ion-icon name="business-outline"></ion-icon> -->
+                  {{ appointment.serviceName }}
+                </span>
 
-                <!-- Información detallada -->
-                <div class="space-y-2 pt-2">
-                  <div class="flex items-center gap-2 text-sm text-text-secondary">
-                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-                      <ion-icon name="document-text-outline" class="text-neon-primary text-sm"></ion-icon>
-                    </div>
-                    <span class="font-mono text-xs">Ref: {{ appointment.referenceNumber }}</span>
-                  </div>
-                  <div class="flex items-center gap-2 text-sm text-text-secondary">
-                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-                      <ion-icon name="time-outline" class="text-neon-primary text-sm"></ion-icon>
-                    </div>
-                    <span class="font-mono text-xs">Duración: {{ getDurationText(appointment) }}</span>
-                  </div>
+                <!-- <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
+                  <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
+                   {{ appointment.serviceName }}
+                </p> -->
+                <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
+                  <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
+                  {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
+                  {{ appointment.scheduledDate | date: 'h:mm a' }} A {{ appointment.endDate | date: 'h:mm a' }}
+                </p>
+              </div>
 
-                  <div class="flex items-center gap-2 text-sm text-text-secondary">
-                    <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
-                      <ion-icon name="cash-outline" class="text-neon-primary text-sm"></ion-icon>
-                    </div>
-                    <span class="font-mono text-xs">Total: {{ appointment.totalAmount | currency:'COP-':'symbol':'1.0-0' }}</span>
-                  </div>
-                </div>
-
-                <!-- Notas (si existen) -->
-                @if (appointment.notes) {
-                  <div class="mt-3 p-3 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
-                    <p class="text-xs font-mono text-text-secondary">
-                      <span class="text-neon-primary">Notas:</span> {{ appointment.notes }}
-                    </p>
-                  </div>
-                }
-
-                <!-- Botones de acción (grid de 2 columnas) -->
-                <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-neon-primary/10">
-
-                  @if (canConfirm(appointment)) {
-                    <button (click)="confirmAppointment(appointment)"
-                            [disabled]="isProcessing(appointment.id)"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-neon-primary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300 disabled:opacity-50">
-                      <ion-icon name="checkmark-circle-outline" class="text-sm"></ion-icon>
-                      Confirmar
-                    </button>
-                  }
-
-                  @if (canComplete(appointment)) {
-                    <button (click)="completeAppointment(appointment)"
-                            [disabled]="isProcessing(appointment.id)"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-neon-primary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300 disabled:opacity-50">
-                      <ion-icon name="checkmark-done-outline" class="text-sm"></ion-icon>
-                      Completar
-                    </button>
-                  }
-
-                  @if (canNoShow(appointment)) {
-                    <button (click)="noShowAppointment(appointment)"
-                            [disabled]="isProcessing(appointment.id)"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-yellow-500/20 rounded-lg text-xs font-mono text-yellow-400 hover:border-yellow-500/50 hover:bg-yellow-500/10 transition-all duration-300 disabled:opacity-50">
-                      <ion-icon name="alert-circle-outline" class="text-sm"></ion-icon>
-                      No asistió
-                    </button>
-                  }
-
-                  @if (canCancel(appointment)) {
-                    <button (click)="cancelAppointment(appointment)"
-                            [disabled]="isProcessing(appointment.id)"
-                            class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300 disabled:opacity-50">
-                      <ion-icon name="close-circle-outline" class="text-sm"></ion-icon>
-                      Cancelar
-                    </button>
-                  }
-                </div>
-              </article>
+              <!-- Status badge -->
+              <span [class]="getStatusClass(appointment.status)"
+                class="px-3 py-1.5 text-xs font-mono rounded-full border backdrop-blur-sm flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full" [class.bg-current]="true"
+                  [class.animate-ping]="appointment.status === 'pending'"></span>
+                {{ getStatusLabel(appointment.status) }}
+              </span>
             </div>
-          }
-        </section>
+
+            <!-- Información detallada -->
+            <div class="space-y-2 pt-2">
+              <div class="flex items-center gap-2 text-sm text-text-secondary">
+                <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="document-text-outline" class="text-neon-primary text-sm"></ion-icon>
+                </div>
+                <span class="font-mono text-xs">Ref: {{ appointment.referenceNumber }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-text-secondary">
+                <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="time-outline" class="text-neon-primary text-sm"></ion-icon>
+                </div>
+                <span class="font-mono text-xs">Duración: {{ getDurationText(appointment) }}</span>
+              </div>
+
+              <div class="flex items-center gap-2 text-sm text-text-secondary">
+                <div class="w-6 h-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
+                  <ion-icon name="cash-outline" class="text-neon-primary text-sm"></ion-icon>
+                </div>
+                <span class="font-mono text-xs">Total: {{ appointment.totalAmount | currency:'COP-':'symbol':'1.0-0'
+                  }}</span>
+              </div>
+            </div>
+
+            <!-- Notas (si existen) -->
+            @if (appointment.notes) {
+            <div class="mt-3 p-3 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
+              <p class="text-xs font-mono text-text-secondary">
+                <span class="text-neon-primary">Notas:</span> {{ appointment.notes }}
+              </p>
+            </div>
+            }
+
+            <!-- Botones de acción (grid de 2 columnas) -->
+            <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-neon-primary/10">
+
+              @if (canConfirm(appointment)) {
+              <button (click)="confirmAppointment(appointment)" [disabled]="isProcessing(appointment.id)"
+                class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-neon-primary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300 disabled:opacity-50">
+                <ion-icon name="checkmark-circle-outline" class="text-sm"></ion-icon>
+                Confirmar
+              </button>
+              }
+
+              @if (canComplete(appointment)) {
+              <button (click)="completeAppointment(appointment)" [disabled]="isProcessing(appointment.id)"
+                class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-neon-primary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300 disabled:opacity-50">
+                <ion-icon name="checkmark-done-outline" class="text-sm"></ion-icon>
+                Completar
+              </button>
+              }
+
+              @if (canNoShow(appointment)) {
+              <button (click)="noShowAppointment(appointment)" [disabled]="isProcessing(appointment.id)"
+                class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-yellow-500/20 rounded-lg text-xs font-mono text-yellow-400 hover:border-yellow-500/50 hover:bg-yellow-500/10 transition-all duration-300 disabled:opacity-50">
+                <ion-icon name="alert-circle-outline" class="text-sm"></ion-icon>
+                No asistió
+              </button>
+              }
+
+              @if (canCancel(appointment)) {
+              <button (click)="cancelAppointment(appointment)" [disabled]="isProcessing(appointment.id)"
+                class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300 disabled:opacity-50">
+                <ion-icon name="close-circle-outline" class="text-sm"></ion-icon>
+                Cancelar
+              </button>
+              }
+            </div>
+          </article>
+        </div>
+        }
+      </section>
       }
     </div>
   </div>

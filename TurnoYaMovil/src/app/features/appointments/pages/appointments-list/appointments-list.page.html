@@ -85,16 +85,20 @@
 
               <article class="relative bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10 rounded-2xl overflow-hidden hover:border-neon-primary/30 transition-all duration-300 p-5">
 
-                <!-- Cabecera de la tarjeta -->
-                <div class="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 class="text-xl font-display font-bold text-text-primary">
-                      {{ appointment.serviceName }}
+                <div class="flex items-start justify-between mb-3 gap-2">
+                  <div class="flex-1">
+                    <h3 class="text-lg font-display font-bold text-neon-primary leading-tight">
+                        <ion-icon name="business-outline"></ion-icon>
+                      {{ appointment.businessName || 'Negocio' }}
                     </h3>
+                    <span class="text-xs font-mono text-text-primary uppercase tracking-wider mb-1 flex items-center gap-1">
+                      {{ appointment.serviceName }}
+                    </span>
+                    <!-- Fecha y hora -->
                     <p class="text-sm text-text-secondary flex items-center gap-1 mt-1">
                       <ion-icon name="calendar-outline" class="text-neon-primary text-xs"></ion-icon>
                       {{ appointment.scheduledDate | date: 'MMM d, y' }}<br>
-                      {{ appointment.scheduledDate | date: 'h:mm a' }} - {{ appointment.endDate | date: 'h:mm a' }}
+                      {{ appointment.scheduledDate | date: 'h:mm a' }} A {{ appointment.endDate | date: 'h:mm a' }}
                     </p>
                   </div>
                   <!-- Status badge -->

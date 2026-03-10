@@ -11,6 +11,7 @@ public class AppointmentDto
     public string ReferenceNumber { get; set; } = string.Empty;
     public Guid UserId { get; set; }
     public Guid BusinessId { get; set; }
+    public string BusinessName { get; set; } = string.Empty;
     public Guid ServiceId { get; set; }
     public string ServiceName { get; set; } = string.Empty;
     public Guid? EmployeeId { get; set; }

@@ -33,6 +33,7 @@ public class AppointmentProfile : Profile
 
         // Appointment → AppointmentDto
         CreateMap<Appointment, AppointmentDto>()
+            .ForMember(dest => dest.BusinessName, opt => opt.MapFrom(src => src.Business != null ? src.Business.Name : string.Empty))
             .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service != null ? src.Service.Name : string.Empty));
     }
 }
