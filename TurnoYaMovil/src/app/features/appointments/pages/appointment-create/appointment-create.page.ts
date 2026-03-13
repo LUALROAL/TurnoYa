@@ -182,6 +182,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           this.availableDaysSet.clear();
           this.generateCalendar();
         }
+
+        if (this.appointmentForm.get('scheduledDate')?.value || !this.appointmentForm.get('serviceId')?.value) {
+          this.loadAvailability().pipe(takeUntil(this.destroy$)).subscribe();
+        }
       });
 
     this.appointmentForm.get('employeeId')?.valueChanges
@@ -194,6 +198,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
         this.applySelectionFilters('employee');
         if (this.appointmentForm.get('serviceId')?.value) {
           this.loadAvailableDays();
+        }
+
+        if (this.appointmentForm.get('scheduledDate')?.value) {
+          this.loadAvailability().pipe(takeUntil(this.destroy$)).subscribe();
         }
       });
 
