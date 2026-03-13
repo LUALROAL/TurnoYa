@@ -30,7 +30,7 @@ import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap,
 import { NotifyService } from '../../../../core/services/notify.service';
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from '../../../business/models';
 import { BusinessService } from '../../../business/services/business.service';
-import { CreateAppointmentRequest } from '../../models';
+import { AppointmentItem, CreateAppointmentRequest } from '../../models';
 import { AppointmentsService } from '../../services/appointments.service';
 import { AvailabilityResponse } from '../../models/availability.models';
 import { OwnerEmployeesService } from '../../../owner-employees/services/owner-employees.service';
@@ -80,8 +80,13 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
   protected services: BusinessServiceItem[] = [];
   protected employees: BusinessEmployeeItem[] = [];
   private allServices: BusinessServiceItem[] = [];
-  private allEmployees: BusinessEmployeeItem[] = [];
+  protected allEmployees: BusinessEmployeeItem[] = [];
   protected appointmentForm: FormGroup;
+
+  // Citas del cliente actual para validación de cruces
+  protected clientAppointments: AppointmentItem[] = [];
+  protected hasTimeClash = false;
+  protected readonly APPOINTMENT_BUFFER_MINUTES = 15;
 
   // Fechas bloqueadas del empleado seleccionado
   protected blockedDatesForEmployee: string[] = [];
@@ -193,6 +198,17 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       });
 
     this.loadBusiness();
+
+    // Cargar citas del cliente para evitar cruces
+    this.appointmentsService.getMy().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (appointments) => {
+        this.clientAppointments = appointments.filter(a => {
+          const status = String(a.status || '').toLowerCase();
+          return status === 'pending' || status === 'confirmed' || status === '0' || status === '1';
+        });
+      },
+      error: (err) => console.error('Error al cargar citas del cliente para validación:', err)
+    });
   }
 
   ngOnDestroy(): void {
@@ -304,6 +320,50 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
 
   protected getSlotStart(slotLabel: string): string {
     return slotLabel.split(' - ')[0]?.trim() ?? slotLabel;
+  }
+
+  private filterSlotsByClientAppointments(slots: string[], serviceId: string, dateValue: string): string[] {
+    if (!slots || slots.length === 0) {
+      this.hasTimeClash = false;
+      return [];
+    }
+
+    const service = this.services.find(s => s.id === serviceId);
+    const durationMinutes = service?.duration || 0;
+    const buffer = this.APPOINTMENT_BUFFER_MINUTES;
+
+    this.hasTimeClash = false;
+
+    const validSlots = slots.filter(slot => {
+      const slotTime = this.getSlotStart(slot);
+      const slotDate = new Date(`${dateValue}T${slotTime}:00`);
+
+      if (Number.isNaN(slotDate.getTime())) return true;
+
+      const slotStart = slotDate.getTime();
+      const slotEnd = slotStart + durationMinutes * 60000;
+
+      const hasClash = this.clientAppointments.some(appt => {
+        const apptStart = new Date(appt.scheduledDate).getTime();
+        // Fallback a calcular endDate si endpoint no incluyera endDate adecuadamente
+        const safeApptEnd = appt.endDate ? new Date(appt.endDate).getTime() : apptStart + 30 * 60000; 
+
+        // Aplicamos buffer a la cita existente
+        const protectedStart = apptStart - buffer * 60000;
+        const protectedEnd = safeApptEnd + buffer * 60000;
+
+        // Verificar intersección de rangos: [Start1, End1] cruza con [Start2, End2] si Start1 < End2 y End1 > Start2
+        return (slotStart < protectedEnd && slotEnd > protectedStart);
+      });
+
+      if (hasClash) {
+        this.hasTimeClash = true;
+        return false;
+      }
+      return true;
+    });
+
+    return validSlots;
   }
 
   // ========== MÉTODOS DEL POPOVER ==========
@@ -657,9 +717,11 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
           const mergedSlots: string[] = responses.reduce((acc: string[], response: AvailabilityResponse) => {
             return acc.concat(response.availableSlots);
           }, []);
-          this.availableSlots = Array.from(new Set<string>(mergedSlots)).sort((a: string, b: string) =>
+          const rawSlots = Array.from(new Set<string>(mergedSlots)).sort((a: string, b: string) =>
             this.getSlotStart(a).localeCompare(this.getSlotStart(b))
           );
+
+          this.availableSlots = this.filterSlotsByClientAppointments(rawSlots, serviceId, dateValue);
 
           const selectedTime = this.appointmentForm.get('scheduledTime')?.value;
           if (this.availableSlots.length === 0 || !this.availableSlots.includes(selectedTime)) {
@@ -690,7 +752,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         map((response: AvailabilityResponse) => {
-          this.availableSlots = response.availableSlots;
+          this.availableSlots = this.filterSlotsByClientAppointments(response.availableSlots, serviceId, dateValue);
           if (this.availableSlots.length === 0) {
             this.appointmentForm.get('scheduledTime')?.disable({ emitEvent: false });
             this.appointmentForm.patchValue({ scheduledTime: '' }, { emitEvent: false });

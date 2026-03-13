@@ -170,6 +170,16 @@
                 HORA *
               </label>
 
+              @if (hasTimeClash) {
+              <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 flex items-start gap-3 mt-1 mb-2 animate-fade-in">
+                <ion-icon name="warning-outline" class="text-yellow-500 text-xl flex-shrink-0 mt-0.5"></ion-icon>
+                <div class="text-sm">
+                  <p class="text-yellow-500 font-display font-semibold mb-0">Horarios ajustados</p>
+                  <p class="text-yellow-500/80 font-body text-xs mt-0.5 mb-0">Se ocultaron algunos horarios para evitar cruces con tus citas.</p>
+                </div>
+              </div>
+              }
+
               <div class="slots-container" [class.loading]="loadingSlots">
                 @if (loadingSlots) {
                 <div class="flex items-center justify-center py-6">
