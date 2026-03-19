@@ -97,6 +97,10 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 // Registro de IBusinessService
 builder.Services.AddScoped<IBusinessService, BusinessService>();
 
+// Telegram Service
+builder.Services.AddScoped<ITelegramBotService, TelegramBotService>();
+builder.Services.AddScoped<TelegramCallbackHandler>();
+
 // Authentication & JWT
 builder.Services.AddAuthentication(options =>
 {

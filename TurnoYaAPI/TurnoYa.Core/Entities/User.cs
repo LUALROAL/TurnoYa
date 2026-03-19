@@ -1,4 +1,4 @@
-﻿namespace TurnoYa.Core.Entities;
+namespace TurnoYa.Core.Entities;
 
 public class User : BaseEntity
 {
@@ -23,6 +23,11 @@ public class User : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? PhotoUrl { get; set; }
     public byte[]? PhotoData { get; set; } // 👈 NUEVO
+
+    // Integración de Telegram
+    public string? TelegramChatId { get; set; }
+    public string? TelegramLinkingCode { get; set; }
+    public DateTime? TelegramLinkingCodeExpiry { get; set; }
 
     public ICollection<Business> OwnedBusinesses { get; set; } = new List<Business>();
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();

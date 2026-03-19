@@ -28,7 +28,10 @@ import {
   cameraOutline,
   closeOutline,
   imageOutline,
-  trashOutline
+  trashOutline,
+  send,
+  linkOutline,
+  paperPlaneOutline
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService, } from '../../services/user.service';
@@ -50,6 +53,7 @@ type Tab = 'profile' | 'security';
     IonInput,
     IonSelect,
     IonSelectOption,
+    IonSpinner
   ],
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss']
@@ -95,7 +99,10 @@ export class ProfilePage implements OnInit, OnDestroy {
       cameraOutline,
       imageOutline,
       closeOutline,
-      trashOutline
+      trashOutline,
+      send,
+      linkOutline,
+      paperPlaneOutline
     });
 
     this.profileForm = this.createProfileForm();
@@ -401,4 +408,42 @@ private base64ToFile(base64: string, filename: string, mimeType: string): File {
   return new File([u8arr], filename, { type: mimeType });
 }
 
+  // Telegram Link
+  generatingTelegramCode = signal(false);
+  telegramCode = signal<string | null>(null);
+
+  onGenerateTelegramCode() {
+    this.generatingTelegramCode.set(true);
+    this.userService.generateTelegramCode()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.telegramCode.set(response.code);
+          this.generatingTelegramCode.set(false);
+          this.notify.showSuccess('Código generado exitosamente');
+        },
+        error: (err) => {
+          console.error('Error al generar código Telegram:', err);
+          this.notify.showError(err?.error?.detail || 'No se pudo generar el código');
+          this.generatingTelegramCode.set(false);
+        }
+      });
+  }
+
+  openTelegram(code: string) {
+    // tg:// funciona en móviles y envía el comando automáticamente
+    // Fallback a https://t.me en desktop
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    let url: string;
+    if (isMobile) {
+      // tg:// abre Telegram y envía el comando automáticamente
+      url = `tg://resolve?domain=turnoya_colombia_bot&start=${code}`;
+    } else {
+      // Desktop: usar t.me que prellena el mensaje
+      url = `https://t.me/turnoya_colombia_bot?start=${code}`;
+    }
+    
+    window.open(url, '_blank');
+  }
 }

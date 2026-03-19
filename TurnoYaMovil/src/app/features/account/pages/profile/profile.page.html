@@ -398,6 +398,56 @@
         </form>
       </div>
     </div>
+
+    <!-- SECCIÓN TELEGRAM BOT -->
+    <div class="relative group mt-6">
+      <div
+        class="absolute -inset-0.5 bg-gradient-glow rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur">
+      </div>
+
+      <div
+        class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-4">
+        
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+            <ion-icon name="send" class="text-blue-400 text-xl"></ion-icon>
+          </div>
+          <div>
+            <h3 class="text-text-primary font-display font-semibold">Notificaciones por Telegram</h3>
+            <p class="text-xs font-mono text-text-tertiary">Recibe alertas de tus citas instantáneamente</p>
+          </div>
+        </div>
+
+        @if (!telegramCode()) {
+          <button type="button" (click)="onGenerateTelegramCode()" [disabled]="generatingTelegramCode()"
+            class="w-full py-3 px-4 rounded-xl font-display font-medium bg-bg-secondary/50 border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all flex items-center justify-center gap-2">
+            @if (generatingTelegramCode()) {
+              <ion-spinner name="crescent" class="w-5 h-5 text-blue-400"></ion-spinner>
+            } @else {
+              <ion-icon name="link-outline" class="text-xl"></ion-icon>
+              <span>Generar Código de Enlace</span>
+            }
+          </button>
+        } @else {
+          <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+            <p class="text-xs font-mono text-text-secondary mb-2">Tu código de vinculación es:</p>
+            <div class="text-2xl font-display font-bold text-blue-400 tracking-widest mb-4">
+              {{ telegramCode() }}
+            </div>
+            <button type="button" (click)="openTelegram(telegramCode()!)"
+              class="w-full py-3 px-4 rounded-xl font-display font-semibold bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-lg shadow-blue-500/25 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+              <ion-icon name="paper-plane-outline" class="text-xl"></ion-icon>
+              <span>Abrir en Telegram</span>
+            </button>
+            <p class="text-[10px] font-mono text-text-tertiary mt-3 leading-tight">
+              Abre el bot y presiona INICIAR o envía <br/> <code class="text-neon-secondary">/start {{ telegramCode() }}</code>
+            </p>
+          </div>
+        }
+      </div>
+    </div>
+    <!-- FIN SECCIÓN TELEGRAM -->
+
     }
     }
     <!-- Botón cerrar sesión -->

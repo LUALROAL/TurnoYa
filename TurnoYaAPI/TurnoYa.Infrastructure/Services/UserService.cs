@@ -115,5 +115,55 @@ namespace TurnoYa.Infrastructure.Services
                 throw new InvalidOperationException("Error al cambiar la contraseña", ex);
             }
         }
+
+        public async Task<string> GenerateTelegramLinkingCodeAsync(string userId)
+        {
+            var user = await _userRepository.GetByIdAsync(new Guid(userId))
+                ?? throw new InvalidOperationException("Usuario no encontrado");
+
+            // Generar un código único simple (ej. AZ-123456)
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var random = new Random();
+            var prefix = new string(Enumerable.Repeat(chars, 2).Select(s => s[random.Next(s.Length)]).ToArray());
+            var code = $"{prefix}-{random.Next(10000, 99999)}";
+
+            user.TelegramLinkingCode = code;
+            user.TelegramLinkingCodeExpiry = DateTime.UtcNow.AddHours(24);
+            await _userRepository.UpdateAsync(user);
+
+            return code;
+        }
+
+        public async Task<bool> ValidateLinkingCodeAsync(string code)
+        {
+            if (string.IsNullOrEmpty(code))
+                return false;
+
+            var user = await _userRepository.FindByTelegramCodeAsync(code);
+            
+            if (user == null)
+                return false;
+
+            if (!user.TelegramLinkingCodeExpiry.HasValue)
+                return false;
+
+            return user.TelegramLinkingCodeExpiry >= DateTime.UtcNow;
+        }
+
+        public async Task<int> CleanupExpiredLinkingCodesAsync()
+        {
+            var expiredUsers = await _userRepository.GetUsersWithExpiredTelegramCodesAsync();
+
+            int count = 0;
+            foreach (var user in expiredUsers)
+            {
+                user.TelegramLinkingCode = null;
+                user.TelegramLinkingCodeExpiry = null;
+                await _userRepository.UpdateAsync(user);
+                count++;
+            }
+
+            return count;
+        }
     }
 }

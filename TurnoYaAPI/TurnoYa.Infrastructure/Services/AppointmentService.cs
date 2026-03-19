@@ -20,19 +20,22 @@ namespace TurnoYa.Infrastructure.Services
         private readonly IEmployeeScheduleRepository _employeeScheduleRepository;
         private readonly ApplicationDbContext _context; // Temporal para acceder a otras entidades (servicios, empleados, negocios)
         private readonly IMapper _mapper;
+        private readonly ITelegramBotService _telegramBotService;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
             IEmployeeRepository employeeRepository,
             IEmployeeScheduleRepository employeeScheduleRepository,
             ApplicationDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            ITelegramBotService telegramBotService)
         {
             _appointmentRepository = appointmentRepository;
             _employeeRepository = employeeRepository;
             _employeeScheduleRepository = employeeScheduleRepository;
             _context = context;
             _mapper = mapper;
+            _telegramBotService = telegramBotService;
         }
 
         public async Task<AppointmentDto> CreateAsync(CreateAppointmentDto dto, Guid userId)
@@ -43,11 +46,11 @@ namespace TurnoYa.Infrastructure.Services
                 .FirstOrDefaultAsync(s => s.Id == dto.ServiceId && s.BusinessId == dto.BusinessId && s.IsActive)
                 ?? throw new InvalidOperationException("Servicio no encontrado");
 
-            var businessExists = await _context.Businesses
+            var businessExistsObj = await _context.Businesses
                 .AsNoTracking()
-                .AnyAsync(b => b.Id == dto.BusinessId);
+                .FirstOrDefaultAsync(b => b.Id == dto.BusinessId);
 
-            if (!businessExists)
+            if (businessExistsObj == null)
                 throw new InvalidOperationException("Negocio no encontrado");
 
             var businessSettings = await _context.BusinessSettings
@@ -128,6 +131,35 @@ namespace TurnoYa.Infrastructure.Services
 
             var created = await _appointmentRepository.AddAsync(appointment);
             await tx.CommitAsync();
+
+            // Notificación vía Telegram
+            try
+            {
+                var telegramUser = await _context.Users
+                    .AsNoTracking()
+                    .Where(u => u.Id == businessExistsObj.OwnerId || 
+                                _context.Employees.Any(e => e.Id == assignedEmployeeId && e.UserId == u.Id))
+                    .Where(u => u.TelegramChatId != null)
+                    .Select(u => u.TelegramChatId)
+                    .FirstOrDefaultAsync();
+
+                if (!string.IsNullOrEmpty(telegramUser))
+                {
+                    var msg = $"*¡NUEVA CITA!*\n\n" +
+                              $"🗓 *Fecha:* {dto.ScheduledDate:dd/MM/yyyy}\n" +
+                              $"⏰ *Hora:* {dto.ScheduledDate:HH:mm}\n" +
+                              $"💇‍♂️ *Servicio:* {service.Name}\n\n" +
+                              $"💰 *Valor:* {service.Price}\n" +
+                              $"¿Qué deseas hacer?";
+
+                    await _telegramBotService.SendMessageWithButtonsAsync(telegramUser, msg, created.Id.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar notificación de Telegram: {ex.Message}");
+            }
+
             return _mapper.Map<AppointmentDto>(created);
         }
 
@@ -359,6 +391,108 @@ namespace TurnoYa.Infrastructure.Services
         private static string GenerateReferenceNumber()
         {
             return $"AP-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}";
+        }
+
+        public async Task<bool> ConfirmAppointmentAsync(Guid id, Guid ownerId)
+        {
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
+            if (appointment == null) return false;
+
+            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
+            if (business == null || business.OwnerId != ownerId) return false;
+
+            if (appointment.Status != AppointmentStatus.Pending) return false;
+
+            appointment.Status = AppointmentStatus.Confirmed;
+            await _appointmentRepository.UpdateAsync(appointment);
+
+            await SendStatusNotificationToClientAsync(appointment, "confirmada");
+            return true;
+        }
+
+        public async Task<bool> CancelAppointmentAsync(Guid id, Guid requesterId, string? reason)
+        {
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
+            if (appointment == null) return false;
+
+            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
+            bool isOwner = business?.OwnerId == requesterId;
+
+            if (!isOwner && appointment.UserId != requesterId) return false;
+
+            if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Completed)
+                return false;
+
+            appointment.Status = AppointmentStatus.Cancelled;
+            await _appointmentRepository.UpdateAsync(appointment);
+
+            await SendStatusNotificationToClientAsync(appointment, "cancelada", reason);
+            return true;
+        }
+
+        public async Task<bool> CompleteAppointmentAsync(Guid id, Guid ownerId)
+        {
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
+            if (appointment == null) return false;
+
+            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
+            if (business == null || business.OwnerId != ownerId) return false;
+
+            if (appointment.Status != AppointmentStatus.Confirmed) return false;
+
+            appointment.Status = AppointmentStatus.Completed;
+            await _appointmentRepository.UpdateAsync(appointment);
+
+            await SendStatusNotificationToClientAsync(appointment, "completada");
+            return true;
+        }
+
+        public async Task<bool> MarkAsNoShowAppointmentAsync(Guid id, Guid ownerId)
+        {
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
+            if (appointment == null) return false;
+
+            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
+            if (business == null || business.OwnerId != ownerId) return false;
+
+            if (appointment.Status != AppointmentStatus.Confirmed && appointment.Status != AppointmentStatus.Pending)
+                return false;
+
+            appointment.Status = AppointmentStatus.NoShow;
+            await _appointmentRepository.UpdateAsync(appointment);
+
+            await SendStatusNotificationToClientAsync(appointment, "no se presentó");
+            return true;
+        }
+
+        private async Task SendStatusNotificationToClientAsync(Appointment appointment, string statusText, string? reason = null)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(appointment.UserId);
+                if (user == null || string.IsNullOrEmpty(user.TelegramChatId))
+                    return;
+
+                var service = await _context.Services.FindAsync(appointment.ServiceId);
+                var business = await _context.Businesses.FindAsync(appointment.BusinessId);
+
+                var message = $"*Tu cita ha sido {statusText}*\n\n" +
+                              $"📅 *Fecha:* {appointment.ScheduledDate:dd/MM/yyyy}\n" +
+                              $"⏰ *Hora:* {appointment.ScheduledDate:HH:mm}\n" +
+                              $"🏪 *Negocio:* {business?.Name ?? "N/A"}\n" +
+                              $"💇 *Servicio:* {service?.Name ?? "N/A"}";
+
+                if (!string.IsNullOrEmpty(reason))
+                {
+                    message += $"\n\n📝 *Motivo:* {reason}";
+                }
+
+                await _telegramBotService.SendStatusNotificationAsync(user.TelegramChatId, statusText, _mapper.Map<AppointmentDto>(appointment));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar notificación de estado al cliente: {ex.Message}");
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TurnoYa.Application.DTOs.Auth;
 using TurnoYa.Application.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace TurnoYa.API.Controllers;
 
@@ -16,11 +17,13 @@ public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ILogger<UsersController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public UsersController(IUserService userService, ILogger<UsersController> logger)
+    public UsersController(IUserService userService, ILogger<UsersController> logger, IConfiguration configuration)
     {
         _userService = userService;
         _logger = logger;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -227,6 +230,34 @@ public class UsersController : ControllerBase
                 "Error interno del servidor",
                 "Ocurrió un error al cambiar la contraseña");
             return StatusCode(500, problemDetails);
+        }
+    }
+
+    /// <summary>
+    /// Genera el código para vincular la cuenta con Telegram
+    /// </summary>
+    [HttpPost("telegram-link")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GenerateTelegramLink()
+    {
+        try
+        {
+            var userId = GetUserId();
+            var code = await _userService.GenerateTelegramLinkingCodeAsync(userId);
+            
+            // Obtener el nombre del bot desde config
+            var botUsername = _configuration["Telegram:BotUsername"] ?? "TurnoYaBot";
+            
+            return Ok(new { 
+                code = code,
+                instructions = $"Para vincular tu cuenta de Telegram:\n\n1. Abre Telegram\n2. Busca @{botUsername}\n3. Envía el siguiente comando:\n/start {code}",
+                telegramCommand = $"/start {code}"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al generar código de Telegram");
+            return StatusCode(500, CreateProblemDetails(500, "Error del servidor", "No se pudo generar el código de vinculación."));
         }
     }
 }

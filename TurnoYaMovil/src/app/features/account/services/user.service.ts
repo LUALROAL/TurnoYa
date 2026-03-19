@@ -67,4 +67,11 @@ export class UserService {
       })
     );
   }
+
+  /**
+   * Genera el código para vincular Telegram
+   */
+  generateTelegramCode(): Observable<{code: string}> {
+    return this.http.post<{code: string}>(`${this.apiUrl}/telegram-link`, {});
+  }
 }

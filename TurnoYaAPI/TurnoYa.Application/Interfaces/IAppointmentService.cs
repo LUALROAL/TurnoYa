@@ -15,5 +15,9 @@ namespace TurnoYa.Application.Interfaces
         Task<bool> CancelAsync(Guid id, Guid requesterId, string? reason);
         Task<bool> CompleteAsync(Guid id, Guid ownerId);
         Task<bool> MarkNoShowAsync(Guid id, Guid ownerId);
+        Task<bool> ConfirmAppointmentAsync(Guid id, Guid ownerId);
+        Task<bool> CancelAppointmentAsync(Guid id, Guid requesterId, string? reason);
+        Task<bool> CompleteAppointmentAsync(Guid id, Guid ownerId);
+        Task<bool> MarkAsNoShowAppointmentAsync(Guid id, Guid ownerId);
     }
 }

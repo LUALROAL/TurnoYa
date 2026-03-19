@@ -29,4 +29,22 @@ public interface IUserService
     /// <param name="userId">ID del usuario autenticado</param>
     /// <param name="changePasswordDto">Contraseña actual y nueva</param>
     Task ChangePasswordAsync(string userId, ChangePasswordDto changePasswordDto);
+
+    /// <summary>
+    /// Genera un código único para vincular Telegram
+    /// </summary>
+    Task<string> GenerateTelegramLinkingCodeAsync(string userId);
+
+    /// <summary>
+    /// Valida que el código de vinculación no haya expirado
+    /// </summary>
+    /// <param name="code">Código de vinculación</param>
+    /// <returns>True si el código es válido y no ha expirado</returns>
+    Task<bool> ValidateLinkingCodeAsync(string code);
+
+    /// <summary>
+    /// Limpia códigos de vinculación expirados (mayores a 24 horas)
+    /// </summary>
+    /// <returns>Número de códigos eliminados</returns>
+    Task<int> CleanupExpiredLinkingCodesAsync();
 }
