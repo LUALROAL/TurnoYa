@@ -1,0 +1,16 @@
+{
+  "name": "ionic-angular",
+  "version": "0.1.0",
+  "description": "npx skills init ionic-angular",
+  "author": {
+    "name": "Alejandro Rodrriguez",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Development"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

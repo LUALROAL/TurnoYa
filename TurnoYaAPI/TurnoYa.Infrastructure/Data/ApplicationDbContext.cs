@@ -20,6 +20,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<WompiTransaction> WompiTransactions => Set<WompiTransaction>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
+    // Device tokens para notificaciones push
+    public DbSet<UserDeviceToken> UserDeviceTokens => Set<UserDeviceToken>();
+
     // Horarios de empleados
     public DbSet<EmployeeSchedule> EmployeeSchedules => Set<EmployeeSchedule>();
     public DbSet<EmployeeWorkingDay> EmployeeWorkingDays => Set<EmployeeWorkingDay>();
@@ -214,6 +217,20 @@ public class ApplicationDbContext : DbContext
         {
             e.HasIndex(rt => rt.Token).IsUnique();
             e.HasOne(rt => rt.User).WithMany().HasForeignKey(rt => rt.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // UserDeviceToken — índice único (UserId, Token) para dedup idempotente
+        modelBuilder.Entity<UserDeviceToken>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.UserId, x.Token }).IsUnique();
+            e.Property(x => x.Token).HasMaxLength(500).IsRequired();
+            e.Property(x => x.Platform).HasMaxLength(10).IsRequired();
+            e.Property(x => x.IsActive).HasDefaultValue(true);
+            e.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

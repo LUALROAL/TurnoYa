@@ -1,0 +1,16 @@
+{
+  "name": "turnoya-explore.md",
+  "version": "0.1.0",
+  "description": "turnoya-explore.md",
+  "author": {
+    "name": "Alejandro Rodriguez",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Development"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

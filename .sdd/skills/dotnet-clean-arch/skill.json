@@ -1,0 +1,16 @@
+{
+  "name": "dotnet-clean-arch",
+  "version": "0.1.0",
+  "description": "dotnet-clean-arch",
+  "author": {
+    "name": "Alejandro Rodriguez",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Development"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

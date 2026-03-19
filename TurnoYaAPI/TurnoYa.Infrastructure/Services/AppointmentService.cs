@@ -21,6 +21,7 @@ namespace TurnoYa.Infrastructure.Services
         private readonly ApplicationDbContext _context; // Temporal para acceder a otras entidades (servicios, empleados, negocios)
         private readonly IMapper _mapper;
         private readonly ITelegramBotService _telegramBotService;
+        private readonly IPushNotificationService _pushNotificationService;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
@@ -28,7 +29,8 @@ namespace TurnoYa.Infrastructure.Services
             IEmployeeScheduleRepository employeeScheduleRepository,
             ApplicationDbContext context,
             IMapper mapper,
-            ITelegramBotService telegramBotService)
+            ITelegramBotService telegramBotService,
+            IPushNotificationService pushNotificationService)
         {
             _appointmentRepository = appointmentRepository;
             _employeeRepository = employeeRepository;
@@ -36,6 +38,7 @@ namespace TurnoYa.Infrastructure.Services
             _context = context;
             _mapper = mapper;
             _telegramBotService = telegramBotService;
+            _pushNotificationService = pushNotificationService;
         }
 
         public async Task<AppointmentDto> CreateAsync(CreateAppointmentDto dto, Guid userId)
@@ -159,6 +162,27 @@ namespace TurnoYa.Infrastructure.Services
             {
                 Console.WriteLine($"Error al enviar notificación de Telegram: {ex.Message}");
             }
+
+            // Notificación push al dueño del negocio
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var pushTitle = "¡Nueva Cita!";
+                    var pushBody = $"{service.Name} - {dto.ScheduledDate:dd/MM/yyyy} {dto.ScheduledDate:HH:mm} - ${service.Price}";
+                    var pushData = new Dictionary<string, string>
+                    {
+                        { "appointmentId", created.Id.ToString() },
+                        { "type", "appointment_created" }
+                    };
+
+                    await _pushNotificationService.SendToUserAsync(businessExistsObj.OwnerId, pushTitle, pushBody, pushData);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al enviar notificación push: {ex.Message}");
+                }
+            });
 
             return _mapper.Map<AppointmentDto>(created);
         }
@@ -488,6 +512,33 @@ namespace TurnoYa.Infrastructure.Services
                 }
 
                 await _telegramBotService.SendStatusNotificationAsync(user.TelegramChatId, statusText, _mapper.Map<AppointmentDto>(appointment));
+
+                // Notificación push al cliente (fire-and-forget)
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var pushTitle = $"Tu cita ha sido {statusText}";
+                        var pushBody = $"{business?.Name ?? "N/A"} - {appointment.ScheduledDate:dd/MM/yyyy} {appointment.ScheduledDate:HH:mm}";
+                        var pushData = new Dictionary<string, string>
+                        {
+                            { "appointmentId", appointment.Id.ToString() },
+                            { "type", $"appointment_{statusText.Replace(" ", "_")}" },
+                            { "status", statusText }
+                        };
+
+                        if (!string.IsNullOrEmpty(reason))
+                        {
+                            pushData["reason"] = reason;
+                        }
+
+                        await _pushNotificationService.SendToUserAsync(appointment.UserId, pushTitle, pushBody, pushData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al enviar notificación push al cliente: {ex.Message}");
+                    }
+                });
             }
             catch (Exception ex)
             {

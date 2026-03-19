@@ -17,17 +17,20 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IPushNotificationService _pushNotificationService;
 
     public AuthService(
         ApplicationDbContext context,
         ITokenService tokenService,
         IMapper mapper,
-        IPasswordHasher<User> passwordHasher)
+        IPasswordHasher<User> passwordHasher,
+        IPushNotificationService pushNotificationService)
     {
         _context = context;
         _tokenService = tokenService;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
+        _pushNotificationService = pushNotificationService;
     }
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterUserDto registerDto)
@@ -231,6 +234,19 @@ public class AuthService : IAuthService
         }
 
         await _context.SaveChangesAsync();
+
+        // Eliminar tokens de dispositivo push del usuario (logout completo)
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await _pushNotificationService.DeleteUserTokensAsync(userGuid);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar tokens push del usuario: {ex.Message}");
+            }
+        });
     }
 
     public async Task<UserDto> UpdateUserRoleAsync(string userId, string newRole, string requestorRole)

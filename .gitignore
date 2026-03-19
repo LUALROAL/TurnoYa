@@ -20,3 +20,30 @@ packages/
 
 # IIS Express
 iisexpress/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Secretos y Configuración Sensible
+secret/
+google-services.json
+*.p12
+*.jks
+*.keystore
+
+# Node & Build artifacts
+node_modules/
+dist/
+www/
+.angular/
+
+# Android/iOS Build artifacts (Capacitor/Cordova)
+TurnoYaMovil/android/app/build/
+TurnoYaMovil/android/.gradle/
+TurnoYaMovil/ios/App/build/
+
+# System files
+nul
+Thumbs.db
+Desktop.ini

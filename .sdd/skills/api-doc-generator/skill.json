@@ -1,0 +1,16 @@
+{
+  "name": "api-doc-generator",
+  "version": "0.1.0",
+  "description": "skill api-doc-generator",
+  "author": {
+    "name": "Alejandro Rodriguez",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Documentación"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

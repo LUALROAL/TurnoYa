@@ -1,0 +1,16 @@
+{
+  "name": "turnoya-feature-new.md",
+  "version": "0.1.0",
+  "description": "skill turnoya-feature-new ",
+  "author": {
+    "name": "ALejandro Rodriguz",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Documento"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

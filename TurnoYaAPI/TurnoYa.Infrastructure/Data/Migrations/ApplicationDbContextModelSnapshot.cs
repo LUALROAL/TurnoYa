@@ -819,6 +819,9 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Property<string>("TelegramLinkingCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("TelegramLinkingCodeExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("TotalNoShows")
                         .HasColumnType("int");
 
@@ -831,6 +834,44 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TurnoYa.Core.Entities.UserDeviceToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Token")
+                        .IsUnique();
+
+                    b.ToTable("UserDeviceTokens");
                 });
 
             modelBuilder.Entity("TurnoYa.Core.Entities.WompiTransaction", b =>
@@ -1149,6 +1190,17 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("TurnoYa.Core.Entities.UserDeviceToken", b =>
+                {
+                    b.HasOne("TurnoYa.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TurnoYa.Core.Entities.WompiTransaction", b =>

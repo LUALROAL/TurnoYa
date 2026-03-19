@@ -1,0 +1,16 @@
+{
+  "name": "turnoya-context-load.md",
+  "version": "0.1.0",
+  "description": "turnoya-context-load",
+  "author": {
+    "name": "Alejandro Rodriguez",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Development"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

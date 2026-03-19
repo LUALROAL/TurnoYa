@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'TurnoYaMovil',
+  appId: 'com.turnoya.app',
+  appName: 'TurnoYa',
   webDir: 'www'
 };
 

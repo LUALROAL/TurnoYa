@@ -79,6 +79,7 @@ builder.Services.AddScoped<IEmployeeScheduleRepository, EmployeeScheduleReposito
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IUserDeviceTokenRepository, UserDeviceTokenRepository>();
 
 // Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -96,6 +97,10 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 // Registro de IBusinessService
 builder.Services.AddScoped<IBusinessService, BusinessService>();
+
+// Push Notification Service
+builder.Services.AddScoped<IFirebaseMessagingClient, FirebaseMessagingClient>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
 
 // Telegram Service
 builder.Services.AddScoped<ITelegramBotService, TelegramBotService>();

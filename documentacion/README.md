@@ -545,7 +545,7 @@ npm install @angular/fire firebase @capacitor/geolocation
 ## 🏗️ Arquitectura Técnica Mejorada
 
 ### Estructura de Cloud Functions
-```text
+```
 functions/
 ├── src/
 │   ├── config/
@@ -571,7 +571,7 @@ functions/
 ```
 
 ### Estructura de Ionic/Angular
-```text
+```
 src/
 ├── app/
 │   ├── core/

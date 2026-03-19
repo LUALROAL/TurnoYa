@@ -1,0 +1,16 @@
+{
+  "name": "turnoya-docs-update.md",
+  "version": "0.1.0",
+  "description": "turnoya-docs-update",
+  "author": {
+    "name": "Alejandro Rodriguez",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Development"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "SKILL.md",
+  "version": "0.1.0",
+  "description": "Corazón",
+  "author": {
+    "name": "Alejandro Rodriguez A",
+    "github": "LUALROAL"
+  },
+  "verticals": [
+    "Development"
+  ],
+  "tags": [],
+  "scripts": {
+    "setup": "setup.sh"
+  }
+}
