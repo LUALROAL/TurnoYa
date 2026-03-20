@@ -1,0 +1,120 @@
+<!-- Task 3.2 & 3.3: NotificationCenterComponent Template -->
+<!-- Uses Angular 17+ @for / @if control flow (NOT *ngFor/*ngIf) -->
+
+<ion-header class="ion-no-border">
+  <ion-toolbar class="backdrop-blur-sm">
+    <div class="flex items-center justify-between px-4">
+      <h2 class="text-lg font-bold text-text-primary m-0">Notificaciones</h2>
+      
+      <div class="flex items-center gap-2">
+        <!-- Clear all button (only visible if there are notifications) -->
+        @if (notifications.length > 0) {
+          <ion-button 
+            fill="clear" 
+            size="small"
+            (click)="clearAll()"
+            class="text-danger"
+            aria-label="Limpiar todas las notificaciones"
+          >
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        }
+        
+        <!-- Close button -->
+        <ion-button 
+          fill="clear" 
+          size="small"
+          (click)="close()"
+          aria-label="Cerrar"
+        >
+          <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading state -->
+  @if (isLoading) {
+    <div class="flex items-center justify-center h-full">
+      <ion-spinner name="crescent" class="text-neon-primary"></ion-spinner>
+    </div>
+  }
+
+  <!-- Task 3.3: Empty state when no notifications -->
+  @if (isEmpty) {
+    <div class="flex flex-col items-center justify-center h-full text-center px-8">
+      <div class="relative mb-6">
+        <div class="absolute inset-0 bg-gradient-glow rounded-full blur-xl opacity-50"></div>
+        <div class="relative w-20 h-20 rounded-2xl bg-bg-card/80 backdrop-blur-sm border border-neon-primary/20 flex items-center justify-center">
+          <ion-icon 
+            name="notifications-outline" 
+            class="text-4xl text-neon-primary/70"
+          ></ion-icon>
+        </div>
+      </div>
+      <h3 class="text-lg font-display font-semibold text-text-primary mb-2">Sin notificaciones</h3>
+      <p class="text-sm text-text-tertiary max-w-[260px] leading-relaxed">
+        Aún no tienes notificaciones. Te avisaremos cuando recibas nuevas solicitudes o cambios en tus turnos.
+      </p>
+    </div>
+  }
+
+  <!-- Task 3.2: Notification list sorted newest-first -->
+  @if (!isLoading && notifications.length > 0) {
+    <div class="notification-list">
+      @for (notification of notifications; track notification.id) {
+        <div 
+          class="notification-item group"
+          [class.unread]="!notification.read"
+          (click)="onNotificationTap(notification)"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="onNotificationTap(notification)"
+          (keydown.space)="onNotificationTap(notification)"
+        >
+          <!-- Unread indicator dot -->
+          @if (!notification.read) {
+            <div class="unread-dot"></div>
+          }
+
+          <!-- Notification content -->
+          <div class="flex-1 min-w-0">
+            <!-- Header: Title + Event type badge -->
+            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+              <h4 class="text-sm font-display font-semibold text-text-primary truncate m-0">
+                {{ notification.title }}
+              </h4>
+              <span 
+                class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full whitespace-nowrap"
+                [ngClass]="getEventTypeClass(notification.eventType)"
+              >
+                {{ getEventTypeLabel(notification.eventType) }}
+              </span>
+            </div>
+
+            <!-- Body: Business + Service -->
+            <p class="text-sm text-text-secondary m-0 mb-2 leading-relaxed">
+              {{ notification.body }}
+            </p>
+
+            <!-- Footer: Date + Scheduled time -->
+            <div class="flex items-center gap-1.5 text-xs text-text-tertiary">
+              <ion-icon name="time-outline" class="text-[12px]"></ion-icon>
+              <span class="font-mono">{{ notification.scheduledDate }}</span>
+            </div>
+          </div>
+
+          <!-- Read checkmark (only for read items) -->
+          @if (notification.read) {
+            <ion-icon 
+              name="checkmark-circle" 
+              class="text-success text-lg ml-2 flex-shrink-0 opacity-60"
+            ></ion-icon>
+          }
+        </div>
+      }
+    </div>
+  }
+</ion-content>

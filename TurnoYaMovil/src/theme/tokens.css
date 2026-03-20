@@ -1,6 +1,7 @@
 :root {
   /* 🎨 Tipografía Futurista */
   --font-display: 'Syne', sans-serif;
+  --font-display-a: 'Syne', sans-serif;
   --font-body: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -33,6 +34,15 @@
   --text-tertiary: #7086A0;
   --text-inverse: #03050A;
 
+  /* 🔄 Alias para compatibilidad con estilos heredados (auth-shared.scss) */
+  --color-bg: var(--bg-primary);
+  --color-surface-1: var(--bg-card);
+  --color-surface-2: var(--bg-tertiary);
+  --color-text: var(--text-primary);
+  --color-text-muted: var(--text-tertiary);
+  --color-accent-1: var(--neon-primary);
+  --color-outline: var(--border-secondary);
+
   /* 🎯 Bordes y líneas */
   --border-primary: rgba(0, 224, 255, 0.3);
   --border-secondary: rgba(255, 255, 255, 0.08);
@@ -54,18 +64,28 @@
 
   /* 📐 Espaciado */
   --space-xs: 4px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
   --space-2xl: 40px;
+  --space-8: 32px;
+  --space-10: 40px;
 
   /* 🌀 Radio de bordes */
+  --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-xl: 32px;
   --radius-full: 9999px;
+  --radius-input: 10px;
 
   /* 🌟 Sombras */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);

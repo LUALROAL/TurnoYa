@@ -1,9 +1,10 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { Subject, Observable, EMPTY } from 'rxjs';
+import { Subject, Observable, EMPTY, takeUntil } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import * as signalR from '@microsoft/signalr';
 import { AppointmentEventDto } from '../models/appointment-event.model';
 import { AuthSessionService } from './auth-session.service';
+import { NotifyService } from './notify.service';
 import { environment } from '../../../environments/environment';
 
 /** Max reconnection attempts before giving up */
@@ -14,10 +15,15 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 })
 export class SignalRService implements OnDestroy {
   private readonly authSessionService = inject(AuthSessionService);
+  private readonly notifyService = inject(NotifyService);
 
   private hubConnection: signalR.HubConnection | null = null;
   private reconnectAttempts = 0;
   private shouldReconnect = true;
+  private readonly destroy$ = new Subject<void>();
+
+  /** Tracks if app was visible when notification arrived (for deduplication with push) */
+  private appWasOpen = false;
 
   /** Emitted when the WebSocket connection is successfully established */
   readonly connectionOpened$ = new Subject<void>();
@@ -35,9 +41,93 @@ export class SignalRService implements OnDestroy {
   readonly appointmentCompleted$ = new Subject<AppointmentEventDto>();
   readonly appointmentNoShow$ = new Subject<AppointmentEventDto>();
 
-  constructor() {}
+  constructor() {
+    // Track visibility state for notification deduplication
+    this.appWasOpen = typeof document !== 'undefined' && document.visibilityState === 'visible';
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        this.appWasOpen = document.visibilityState === 'visible';
+      });
+    }
+
+    // Subscribe to appointment events and forward to NotifyService
+    this.setupAppointmentEventHandlers();
+
+    // Subscribe to action events (Accept/Reject) and invoke hub methods
+    this.setupActionEventHandlers();
+  }
+
+  /**
+   * Subscribes to all 5 appointment event subjects from SignalR
+   * and forwards them to NotifyService.handleAppointmentEvent().
+   * The role is determined by the user's session (owner vs client).
+   */
+  private setupAppointmentEventHandlers(): void {
+    const session = this.authSessionService.getSession();
+    const role = (session?.user?.role?.toLowerCase() === 'owner' ? 'owner' : 'client') as 'owner' | 'client';
+
+    this.appointmentCreated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        this.notifyService.handleAppointmentEvent(event, role);
+      });
+
+    this.appointmentConfirmed$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        this.notifyService.handleAppointmentEvent(event, role);
+      });
+
+    this.appointmentCancelled$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        this.notifyService.handleAppointmentEvent(event, role);
+      });
+
+    this.appointmentCompleted$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        this.notifyService.handleAppointmentEvent(event, role);
+      });
+
+    this.appointmentNoShow$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        this.notifyService.handleAppointmentEvent(event, role);
+      });
+  }
+
+  /**
+   * Subscribes to appointmentActionEmitted$ from NotifyService
+   * and invokes the corresponding SignalR hub methods.
+   */
+  private setupActionEventHandlers(): void {
+    this.notifyService.appointmentActionEmitted$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(async ({ event, action }) => {
+        if (!this.hubConnection || this.hubConnection.state !== signalR.HubConnectionState.Connected) {
+          console.warn('[SignalRService] Cannot send action — not connected');
+          return;
+        }
+
+        try {
+          if (action === 'accept') {
+            await this.hubConnection.invoke('ConfirmAppointment', event.appointmentId);
+            console.log('[SignalRService] Appointment confirmed via hub:', event.appointmentId);
+          } else if (action === 'reject') {
+            await this.hubConnection.invoke('CancelAppointment', event.appointmentId);
+            console.log('[SignalRService] Appointment cancelled via hub:', event.appointmentId);
+          }
+        } catch (error) {
+          console.error('[SignalRService] Failed to invoke hub method:', error);
+        }
+      });
+  }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.disconnect();
   }
 

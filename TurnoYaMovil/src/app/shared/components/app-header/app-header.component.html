@@ -1,0 +1,29 @@
+<button
+  class="relative w-11 h-11 rounded-xl bg-bg-card/80 backdrop-blur-sm border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary/40 hover:bg-bg-card-hover transition-all duration-300 active:scale-95"
+  (click)="openNotificationCenter()"
+  aria-label="Abrir centro de notificaciones"
+>
+  @if (unreadCount$ | async; as count) {
+    <ion-icon 
+      [name]="count > 0 ? 'notifications' : 'notifications-outline'"
+      class="text-xl text-neon-primary"
+    ></ion-icon>
+  } @else {
+    <ion-icon name="notifications-outline" class="text-xl text-neon-primary"></ion-icon>
+  }
+
+  <!-- Badge con count solo visible si hay unread -->
+  @if (unreadCount$ | async; as count) {
+    @if (count > 0) {
+      @if (count <= 99) {
+        <span class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1.5 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-[10px] font-bold text-bg-primary flex items-center justify-center shadow-neon animate-pulse">
+          {{ count }}
+        </span>
+      } @else {
+        <span class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1.5 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-[10px] font-bold text-bg-primary flex items-center justify-center shadow-neon animate-pulse">
+          99+
+        </span>
+      }
+    }
+  }
+</button>

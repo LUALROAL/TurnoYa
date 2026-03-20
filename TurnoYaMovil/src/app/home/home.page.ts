@@ -3,6 +3,20 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  searchOutline,
+  storefrontOutline,
+  businessOutline,
+  calendarClearOutline,
+  personCircleOutline,
+  shieldCheckmarkOutline,
+  arrowForwardOutline,
+  locationOutline,
+  sparklesOutline,
+  checkmarkCircle,
+  star
+} from 'ionicons/icons';
 import { AuthSessionService } from '../core/services/auth-session.service';
 import { Observable, Subscription } from 'rxjs';
 import { AuthSession } from '../core/models/auth-session.model';
@@ -120,6 +134,21 @@ export class HomePage implements OnInit, OnDestroy {
   userRole: string = '';
   constructor(protected authSession: AuthSessionService) {
     this.session$ = this.authSession.session$;
+    
+    // Register icons used in the template
+    addIcons({
+      'search-outline': searchOutline,
+      'storefront-outline': storefrontOutline,
+      'business-outline': businessOutline,
+      'calendar-clear-outline': calendarClearOutline,
+      'person-circle-outline': personCircleOutline,
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'arrow-forward-outline': arrowForwardOutline,
+      'location-outline': locationOutline,
+      'sparkles-outline': sparklesOutline,
+      'checkmark-circle': checkmarkCircle,
+      'star': star,
+    });
   }
 
   /**
