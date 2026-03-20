@@ -387,6 +387,10 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     this.servicePopover.dismiss();
   }
 
+  closeServicePopover() {
+    this.servicePopover.dismiss();
+  }
+
   async openEmployeePopover(event: any) {
     this.employeePopover.event = event;
     await this.employeePopover.present();
@@ -396,6 +400,11 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
     this.appointmentForm.patchValue({ employeeId });
     this.employeePopover.dismiss();
   }
+
+  closeEmployeePopover() {
+    this.employeePopover.dismiss();
+  }
+
 
   // Obtener nombre del servicio seleccionado
   getSelectedServiceName(): string {
