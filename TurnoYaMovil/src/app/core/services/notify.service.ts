@@ -367,7 +367,7 @@ export class NotifyService {
    * @param event  The SignalR event DTO
    * @param role   'owner' | 'client'
    */
-  async handleAppointmentEvent(event: AppointmentEventDto, role: 'owner' | 'client'): Promise<void> {
+  async handleAppointmentEvent(event: AppointmentEventDto, role: 'owner' | 'employee' | 'client'): Promise<void> {
     // Step 1: Build the item
     const item = this.buildNotificationItem(event);
 
@@ -386,8 +386,8 @@ export class NotifyService {
       return;
     }
 
-    // Owner + new appointment request → actionable alert
-    if (role === 'owner' && event.eventType === 'Created') {
+    // Owner / Employee + new appointment request → actionable alert
+    if ((role === 'owner' || role === 'employee') && event.eventType === 'Created') {
       await this.showActionableAlert(
         `${event.businessName} — ${event.serviceName}\n${event.scheduledDate}`,
         // Accept handler → emit confirmation
@@ -398,15 +398,39 @@ export class NotifyService {
       return;
     }
 
-    // Client + status update → auto-dismiss toast
-    if (role === 'client' && (event.eventType === 'Confirmed' || event.eventType === 'Cancelled')) {
-      const colorMap: Record<string, 'success' | 'danger'> = {
-        Confirmed: 'success',
-        Cancelled: 'danger',
-      };
-      const body = `${event.businessName} — ${event.serviceName}`;
-      await this.showAutoDismissToast(body, colorMap[event.eventType]);
-      return;
+    // Owner / Employee + other relevant status updates
+    if (role === 'owner' || role === 'employee') {
+      if (event.eventType === 'Cancelled') {
+        const body = `Cita cancelada: ${event.businessName} — ${event.serviceName}`;
+        await this.showAutoDismissToast(body, 'danger');
+        return;
+      }
+      // If another employee/owner confirmed or completed
+      if (event.eventType === 'Confirmed' || event.eventType === 'Completed') {
+        const body = `Cita actualizada: ${event.businessName} — ${event.serviceName}`;
+        await this.showAutoDismissToast(body, 'success');
+        return;
+      }
+    }
+
+    // Client + status updates
+    if (role === 'client') {
+      if (event.eventType === 'Confirmed') {
+        await this.showAutoDismissToast(`Cita confirmada: ${event.businessName} — ${event.serviceName}`, 'success');
+        return;
+      }
+      if (event.eventType === 'Cancelled') {
+        await this.showAutoDismissToast(`Cita cancelada: ${event.businessName} — ${event.serviceName}`, 'danger');
+        return;
+      }
+      if (event.eventType === 'Completed') {
+        await this.showAutoDismissToast(`Cita completada: ${event.businessName} — ${event.serviceName}`, 'success');
+        return;
+      }
+      if (event.eventType === 'NoShow') {
+        await this.showAutoDismissToast(`No te presentaste: ${event.businessName} — ${event.serviceName}`, 'warning');
+        return;
+      }
     }
 
     // All other combos: silent update (badge + history already done in step 3)

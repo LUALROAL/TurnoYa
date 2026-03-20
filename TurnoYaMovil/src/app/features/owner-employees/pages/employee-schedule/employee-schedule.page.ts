@@ -25,6 +25,7 @@ import {
   chevronBackOutline,
   chevronForwardOutline,
   closeOutline,
+  cafeOutline
 } from 'ionicons/icons';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -84,7 +85,17 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   ];
 
   constructor() {
-    addIcons({ arrowBack, save, syncOutline, timeOutline, calendarOutline, chevronBackOutline, chevronForwardOutline, closeOutline });
+    addIcons({
+      'arrow-back': arrowBack,
+      'save': save,
+      'sync-outline': syncOutline,
+      'time-outline': timeOutline,
+      'calendar-outline': calendarOutline,
+      'chevron-back-outline': chevronBackOutline,
+      'chevron-forward-outline': chevronForwardOutline,
+      'close-outline': closeOutline,
+      'cafe-outline': cafeOutline
+    });
     this.initForm();
   }
 

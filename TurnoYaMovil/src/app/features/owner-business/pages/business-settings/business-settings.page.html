@@ -31,18 +31,27 @@
       </div>
     </header>
 
-    <!-- Segment/Tabs -->
+    <!-- Tab Navigation (Custom Premium) -->
     <div class="px-4 mt-4">
-      <ion-segment [value]="selectedTab" (ionChange)="onSegmentChange($event)" class="schedule-segment">
-        <ion-segment-button value="general">
-          <ion-icon name="business-outline" class="text-neon-primary text-xl"></ion-icon>
-          <ion-label class="text-text-tertiary">General</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="schedule">
-          <ion-icon name="time-outline" class="text-neon-primary text-xl"></ion-icon>
-          <ion-label class="text-text-tertiary">Horarios</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+      <div class="flex gap-2 p-1 rounded-2xl bg-bg-card/60 backdrop-blur-sm border border-neon-primary/10">
+        <button (click)="setActiveTab('general')"
+          class="flex-1 py-3 px-4 rounded-xl font-mono text-sm transition-all duration-300 flex items-center justify-center gap-2"
+          [class.bg-gradient-to-r]="selectedTab === 'general'" [class.from-neon-primary]="selectedTab === 'general'"
+          [class.to-neon-secondary]="selectedTab === 'general'" [class.text-bg-primary]="selectedTab === 'general'"
+          [class.text-text-secondary]="selectedTab !== 'general'" [class.hover:text-text-primary]="selectedTab !== 'general'">
+          <ion-icon name="business-outline" class="text-lg"></ion-icon>
+          <span>General</span>
+        </button>
+        <button (click)="setActiveTab('schedule')"
+          class="flex-1 py-3 px-4 rounded-xl font-mono text-sm transition-all duration-300 flex items-center justify-center gap-2"
+          [class.bg-gradient-to-r]="selectedTab === 'schedule'" [class.from-neon-primary]="selectedTab === 'schedule'"
+          [class.to-neon-secondary]="selectedTab === 'schedule'" [class.text-bg-primary]="selectedTab === 'schedule'"
+          [class.text-text-secondary]="selectedTab !== 'schedule'"
+          [class.hover:text-text-primary]="selectedTab !== 'schedule'">
+          <ion-icon name="time-outline" class="text-lg"></ion-icon>
+          <span>Horarios</span>
+        </button>
+      </div>
     </div>
 
     <div class="px-4 space-y-6 mt-4 max-w-3xl mx-auto">

@@ -65,36 +65,38 @@ export class SignalRService implements OnDestroy {
    */
   private setupAppointmentEventHandlers(): void {
     const session = this.authSessionService.getSession();
-    const role = (session?.user?.role?.toLowerCase() === 'owner' ? 'owner' : 'client') as 'owner' | 'client';
+    const roleStr = session?.user?.role?.toLowerCase() || 'client';
+    const role = (roleStr === 'owner' || roleStr === 'employee') ? roleStr : 'client';
+    const finalRole = role as 'owner' | 'employee' | 'client';
 
     this.appointmentCreated$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, role);
+        this.notifyService.handleAppointmentEvent(event, finalRole);
       });
 
     this.appointmentConfirmed$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, role);
+        this.notifyService.handleAppointmentEvent(event, finalRole);
       });
 
     this.appointmentCancelled$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, role);
+        this.notifyService.handleAppointmentEvent(event, finalRole);
       });
 
     this.appointmentCompleted$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, role);
+        this.notifyService.handleAppointmentEvent(event, finalRole);
       });
 
     this.appointmentNoShow$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, role);
+        this.notifyService.handleAppointmentEvent(event, finalRole);
       });
   }
 

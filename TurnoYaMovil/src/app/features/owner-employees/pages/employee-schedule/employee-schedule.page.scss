@@ -3,15 +3,16 @@
   height: 100%;
 }
 
-// Skeleton loaders
+// ============================================
+// SKELETON LOADERS
+// ============================================
+
 .skeleton-form-header {
   height: 80px;
-  background: linear-gradient(
-    90deg,
-    rgba(26, 31, 47, 0.5) 25%,
-    rgba(0, 224, 255, 0.1) 50%,
-    rgba(26, 31, 47, 0.5) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 16px;
@@ -20,12 +21,10 @@
 
 .skeleton-form-section {
   height: 300px;
-  background: linear-gradient(
-    90deg,
-    rgba(26, 31, 47, 0.5) 25%,
-    rgba(0, 224, 255, 0.1) 50%,
-    rgba(26, 31, 47, 0.5) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 16px;
@@ -36,22 +35,29 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
 }
 
-// Scrollbar personalizado
+// ============================================
+// SCROLLBAR PERSONALIZADO
+// ============================================
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
 }
+
 ::-webkit-scrollbar-track {
   background: #0A0E17;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #00E0FF;
   border-radius: 4px;
+
   &:hover {
     background: #00F5D4;
   }
@@ -61,39 +67,117 @@ ion-content {
   --background: transparent;
 }
 
-// Estilo para inputs tipo time
-.input-neon {
-  --background: rgba(26, 31, 47, 0.5);
-  --border-color: rgba(0, 224, 255, 0.2);
-  --border-radius: 8px;
-  --padding-start: 12px;
-  --padding-end: 12px;
-  --padding-top: 8px;
-  --padding-bottom: 8px;
-  --color: #FFFFFF;
-  font-family: 'JetBrains Mono', monospace;
-  border: 1px solid rgba(0, 224, 255, 0.2);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+// ============================================
+// INPUTS DE TIEMPO - CORREGIDOS
+// ============================================
 
-  &:focus-within {
-    border-color: #00E0FF;
-    box-shadow: 0 0 15px rgba(0, 224, 255, 0.3);
+.time-field {
+  position: relative;
+
+  label {
+    display: block;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #7086A0;
+    margin-bottom: 0.25rem;
   }
 }
 
-// Checkbox neón (reutilizado)
+.time-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: rgba(10, 14, 23, 0.6);
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    border-color: rgba(0, 224, 255, 0.4);
+    background: rgba(10, 14, 23, 0.8);
+  }
+
+  &:focus-within {
+    border-color: #00E0FF;
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.3);
+
+    .time-icon {
+      color: #00E0FF;
+      filter: drop-shadow(0 0 5px #00E0FF);
+    }
+  }
+
+  .time-input {
+    flex: 1;
+    --padding-start: 12px;
+    --padding-end: 40px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --background: transparent;
+    --color: #FFFFFF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+
+    &::part(native) {
+      padding: 10px 12px;
+      width: 100%;
+      background: transparent;
+
+      &::-webkit-calendar-picker-indicator {
+        display: none !important;
+        -webkit-appearance: none;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+    }
+
+    input {
+      color: #FFFFFF !important;
+      background: transparent !important;
+
+      &::placeholder {
+        color: rgba(112, 134, 160, 0.5) !important;
+      }
+    }
+  }
+
+  .time-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7086A0;
+    font-size: 1.125rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+}
+
+// ============================================
+// CHECKBOX NEÓN
+// ============================================
+
 .checkbox-neon {
   --size: 20px;
   --background-checked: linear-gradient(135deg, #00E0FF, #00F5D4);
   --border-color-checked: transparent;
   --checkmark-color: #03050A;
   --border-color: rgba(0, 224, 255, 0.3);
-  --border-radius: 4px;
+  --border-radius: 6px;
 
   &::part(container) {
     border-width: 2px;
     transition: all 0.3s ease;
+    background: rgba(10, 14, 23, 0.5);
+  }
+
+  &:hover::part(container) {
+    border-color: #00E0FF;
+    box-shadow: 0 0 10px rgba(0, 224, 255, 0.3);
   }
 
   &:checked::part(container) {
@@ -101,19 +185,26 @@ ion-content {
   }
 }
 
-// Botón de fechas bloqueadas más notorio
+// ============================================
+// BOTÓN DE FECHAS BLOQUEADAS
+// ============================================
+
 .blocked-dates-button {
-  --background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-  --border-radius: 12px;
-  --color: #FFFFFF;
-  font-weight: 600;
-  font-size: 16px;
-  text-transform: none;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 142, 83, 0.15));
   border: 2px solid rgba(255, 107, 107, 0.3);
+  border-radius: 1rem;
+  color: #FF8E53;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
   transition: all 0.3s ease;
-  min-height: 48px;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
 
@@ -124,15 +215,16 @@ ion-content {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
   }
 
   &:hover {
-    --background: linear-gradient(135deg, #FF8E53, #FF6B6B);
-    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 142, 83, 0.25));
     border-color: rgba(255, 107, 107, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    color: #FFA06A;
 
     &::before {
       left: 100%;
@@ -141,11 +233,436 @@ ion-content {
 
   &:active {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4);
   }
 
   ion-icon {
-    margin-right: 8px;
-    font-size: 20px;
+    font-size: 1.25rem;
+  }
+}
+
+// ============================================
+// CALENDARIO MODAL - COMPLETAMENTE MEJORADO
+// ============================================
+
+.calendar-modal {
+  --background: transparent;
+  --border-radius: 24px;
+  --width: 90%;
+  --max-width: 450px;
+  --height: auto;
+  --max-height: 85vh;
+  --backdrop-opacity: 0.8;
+
+  &::part(content) {
+    background: transparent;
+  }
+}
+
+.calendar-modal-container {
+  background: linear-gradient(135deg, #1A1F2F, #121826);
+  border: 1px solid rgba(0, 224, 255, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 224, 255, 0.1) inset;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.calendar-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 224, 255, 0.1), transparent);
+  border-bottom: 1px solid rgba(0, 224, 255, 0.2);
+}
+
+.calendar-modal-title {
+  font-size: 1.25rem;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  background: linear-gradient(135deg, #00E0FF, #00F5D4);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+.calendar-modal-close {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.75rem;
+  background: rgba(26, 31, 47, 0.8);
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  ion-icon {
+    font-size: 1.125rem;
+    color: #7086A0;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    border-color: #00E0FF;
+    background: rgba(0, 224, 255, 0.1);
+
+    ion-icon {
+      color: #00E0FF;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.calendar-modal-content {
+  padding: 1.5rem;
+}
+
+.calendar-modal-description {
+  text-align: center;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #7086A0;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(10, 14, 23, 0.5);
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 224, 255, 0.1);
+}
+
+.calendar-nav-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(26, 31, 47, 0.8);
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  ion-icon {
+    font-size: 1.125rem;
+    color: #00E0FF;
+  }
+
+  &:hover {
+    border-color: #00E0FF;
+    background: rgba(0, 224, 255, 0.1);
+    transform: scale(1.05);
+
+    ion-icon {
+      filter: drop-shadow(0 0 5px #00E0FF);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.calendar-month-title {
+  font-size: 1rem;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  padding: 0.5rem 0;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: #00E0FF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 224, 255, 0.05);
+  border-radius: 0.5rem;
+  border-bottom: 2px solid rgba(0, 224, 255, 0.3);
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-day-btn {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.calendar-day-current {
+  background: rgba(26, 31, 47, 0.8);
+  border: 1px solid rgba(0, 224, 255, 0.2);
+  color: #B0C4DE;
+
+  &:hover:not(.calendar-day-blocked) {
+    border-color: #00E0FF;
+    background: rgba(0, 224, 255, 0.1);
+    transform: scale(1.05);
+    color: #FFFFFF;
+    box-shadow: 0 0 15px rgba(0, 224, 255, 0.3);
+  }
+}
+
+.calendar-day-blocked {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  border-color: #ef4444;
+  color: #ef4444;
+  position: relative;
+
+  &::before {
+    content: '✓';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 8px;
+    color: #ef4444;
+    font-weight: bold;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(239, 68, 68, 0.2));
+    border-color: #ef4444;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.calendar-day-other {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(112, 134, 160, 0.4);
+  cursor: default;
+  opacity: 0.5;
+
+  &:hover {
+    transform: none;
+  }
+}
+
+.calendar-footer {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 224, 255, 0.1);
+}
+
+.calendar-footer-text {
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #7086A0;
+
+  strong {
+    color: #00E0FF;
+    font-size: 0.875rem;
+    margin: 0 0.25rem;
+  }
+}
+
+// ============================================
+// BOTONES DE ACCIÓN
+// ============================================
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.sm\:flex-row {
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.bg-bg-tertiary\/50 {
+  background: rgba(18, 24, 38, 0.5);
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-neon-primary\/20 {
+  border-color: rgba(0, 224, 255, 0.2);
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.text-text-secondary {
+  color: #B0C4DE;
+}
+
+.font-display {
+  font-family: 'Syne', sans-serif;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.hover\:border-neon-primary\/50:hover {
+  border-color: rgba(0, 224, 255, 0.5);
+}
+
+.hover\:text-text-primary:hover {
+  color: #FFFFFF;
+}
+
+.disabled\:opacity-50:disabled {
+  opacity: 0.5;
+}
+
+.relative {
+  position: relative;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-neon-primary {
+  --tw-gradient-from: #00E0FF;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 224, 255, 0));
+}
+
+.to-neon-secondary {
+  --tw-gradient-to: #00F5D4;
+}
+
+.opacity-90 {
+  opacity: 0.9;
+}
+
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+.translate-y-full {
+  transform: translateY(100%);
+}
+
+.group:hover .group-hover\:translate-y-0 {
+  transform: translateY(0);
+}
+
+.bg-white\/20 {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.text-bg-primary {
+  color: #03050A;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }

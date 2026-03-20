@@ -6,9 +6,6 @@ import { Subject, takeUntil } from 'rxjs';
 import {
   IonContent,
   IonIcon,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
   IonInput,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -37,9 +34,6 @@ import { OwnerEmployee } from '../../../owner-employees/models';
     ReactiveFormsModule,
     IonContent,
     IonIcon,
-    IonSegment,
-    IonSegmentButton,
-    IonLabel,
     IonInput,
     RouterLink,
   ],
@@ -229,10 +223,12 @@ export class BusinessSettingsPage implements OnInit, OnDestroy {
   }
 
   // Cambio de pestaña
-  onSegmentChange(event: any) {
-    this.selectedTab = event.detail.value;
+  setActiveTab(tab: string) {
+    this.selectedTab = tab;
     if (this.selectedTab === 'schedule' && this.businessId) {
-      this.loadEmployees();
+      if (this.employees.length === 0) {
+        this.loadEmployees();
+      }
     }
   }
 
