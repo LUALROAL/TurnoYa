@@ -5,13 +5,27 @@
 
 // Animaciones personalizadas
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .animation-delay-2000 {
@@ -25,12 +39,10 @@
 // Skeleton loaders
 .skeleton-detail-hero {
   height: 380px;
-  background: linear-gradient(
-    90deg,
-    rgba(26, 31, 47, 0.5) 25%,
-    rgba(0, 224, 255, 0.1) 50%,
-    rgba(26, 31, 47, 0.5) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 16px;
@@ -39,12 +51,10 @@
 
 .skeleton-detail-section {
   height: 200px;
-  background: linear-gradient(
-    90deg,
-    rgba(26, 31, 47, 0.5) 25%,
-    rgba(0, 224, 255, 0.1) 50%,
-    rgba(26, 31, 47, 0.5) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 16px;
@@ -55,6 +65,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -149,9 +160,12 @@ ion-content {
 
 // Animación para el badge verificado
 @keyframes verified-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 10px rgba(0, 224, 255, 0.5);
   }
+
   50% {
     box-shadow: 0 0 20px rgba(0, 224, 255, 0.8);
   }
@@ -159,4 +173,141 @@ ion-content {
 
 .verified-badge {
   animation: verified-pulse 2s infinite;
+}
+
+// ============================================
+// ESTILOS PARA LOS FILTROS (SELECTORES)
+// ============================================
+
+.input-container {
+  position: relative;
+
+  &:focus-within {
+    .input-glow {
+      opacity: 0.2;
+      transform: scale(1.1);
+    }
+
+    .input-scan-line {
+      width: 100%;
+    }
+
+    .icon-glow {
+      filter: drop-shadow(0 0 8px #00E0FF);
+      color: #00E0FF;
+    }
+  }
+}
+
+// Estilo específico para los selectores dentro de las tarjetas
+.input-field-custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--input-bg-color, #0A0E17) !important;
+  border: 1px solid var(--input-border-color, rgba(0, 224, 255, 0.2));
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  min-height: 56px;
+  width: 100%;
+  cursor: pointer;
+
+  &:focus-within {
+    border-color: transparent;
+    transform: scale(1.01);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .icon-glow {
+      filter: drop-shadow(0 0 8px var(--input-neon-color, #00E0FF));
+      color: var(--input-neon-color, #00E0FF);
+    }
+  }
+
+  &:hover:not(:focus-within) {
+    border-color: var(--input-border-hover, rgba(0, 224, 255, 0.3));
+    background: lighten(#0A0E17, 2%) !important;
+  }
+
+  // Estilos específicos para ion-select
+  ion-select {
+    flex: 1;
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+// Asegurar que los iconos dentro de los selectores tengan el color correcto
+ion-select::part(icon) {
+  color: var(--input-neon-color, #00E0FF) !important;
+  opacity: 1 !important;
+}
+
+ion-select::part(text) {
+  color: var(--input-text-color, #FFFFFF) !important;
+}
+
+ion-select::part(placeholder) {
+  color: var(--input-placeholder-color, rgba(112, 134, 160, 0.5)) !important;
+}
+
+// Alineación del selector de filtro para que la flecha quede a la derecha
+.filter-select {
+  --padding-start: 0;
+  --padding-end: 0;
+
+  &::part(container) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  &::part(text),
+  &::part(placeholder) {
+    flex: 1;
+    text-align: left;
+  }
+}
+
+// Animaciones para el scan line
+@keyframes scan {
+  0% {
+    width: 0;
+    left: 50%;
+  }
+
+  50% {
+    width: 100%;
+    left: 0;
+  }
+
+  100% {
+    width: 0;
+    left: 50%;
+  }
+}
+
+.input-scan-line {
+  transition: all 0.7s ease;
+}
+
+.input-container:focus-within .input-scan-line {
+  width: 100%;
+  left: 0;
+}
+
+// Efecto de glow para el fondo
+.input-glow {
+  transition: all 0.3s ease;
+}
+
+.input-container:focus-within .input-glow {
+  opacity: 0.2;
+  transform: scale(1.1);
 }

@@ -24,7 +24,8 @@ import {
   chevronForwardOutline,
   closeOutline,
   cutOutline,
-  chevronDownOutline
+  chevronDownOutline,
+  briefcaseOutline
 } from 'ionicons/icons';
 import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil, catchError, map, forkJoin } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -125,7 +126,8 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       chevronForwardOutline,
       closeOutline,
       cutOutline,
-      chevronDownOutline
+      chevronDownOutline,
+      briefcaseOutline
     });
 
     this.appointmentForm = this.fb.group({
@@ -354,7 +356,7 @@ export class AppointmentCreatePage implements OnInit, OnDestroy {
       const hasClash = this.clientAppointments.some(appt => {
         const apptStart = new Date(appt.scheduledDate).getTime();
         // Fallback a calcular endDate si endpoint no incluyera endDate adecuadamente
-        const safeApptEnd = appt.endDate ? new Date(appt.endDate).getTime() : apptStart + 30 * 60000; 
+        const safeApptEnd = appt.endDate ? new Date(appt.endDate).getTime() : apptStart + 30 * 60000;
 
         // Aplicamos buffer a la cita existente
         const protectedStart = apptStart - buffer * 60000;
