@@ -3,116 +3,17 @@
   height: 100%;
 }
 
-// Animaciones personalizadas
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-1000 {
-  animation-delay: 1s;
-}
-
 // Skeleton loader
 .skeleton-text {
   height: 20px;
   width: 200px;
-  background: linear-gradient(
-    90deg,
-    rgba(26, 31, 47, 0.5) 25%,
-    rgba(0, 224, 255, 0.1) 50%,
-    rgba(26, 31, 47, 0.5) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 8px;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-// Scrollbar personalizado
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0A0E17;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #00E0FF;
-  border-radius: 4px;
-
-  &:hover {
-    background: #00F5D4;
-  }
-}
-
-// Ajustes para Ionic
-ion-content {
-  --background: transparent;
-}
-
-// Estilo para el input nativo
-.input-native {
-  --padding-start: 0;
-  --padding-end: 0;
-  --background: transparent;
-  --color: #FFFFFF;
-  --placeholder-color: rgba(112, 134, 160, 0.5);
-  --placeholder-opacity: 1;
-  --caret-color: #00E0FF;
-}
-
-// Estilo para los selects de Ionic
-ion-select::part(icon) {
-  color: #00E0FF;
-  opacity: 1;
-}
-
-ion-select::part(text) {
-  color: #FFFFFF;
-}
-
-ion-select.ios::part(icon) {
-  color: #00E0FF;
-}
-
-// Estilo para el placeholder
-ion-select::part(placeholder) {
-  color: rgba(112, 134, 160, 0.5);
-}
-
-// Efecto de brillo para los inputs
-.input-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(0, 224, 255, 0.1) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.group:focus-within .input-glow {
-  opacity: 1;
 }
 
 // Avatar con efecto glow
@@ -170,23 +71,12 @@ ion-select::part(placeholder) {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
+    background: linear-gradient(to right,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent);
     transform: rotate(30deg);
     animation: shine 3s infinite;
-  }
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) rotate(30deg);
-  }
-  20%, 100% {
-    transform: translateX(100%) rotate(30deg);
   }
 }
 
@@ -213,4 +103,89 @@ ion-select::part(placeholder) {
   color: #B0C4DE;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
+}
+
+// Efectos de glow para inputs
+.input-container {
+  position: relative;
+
+  &:focus-within {
+    .input-glow {
+      opacity: 0.2;
+      transform: scale(1.1);
+    }
+
+    .input-scan-line {
+      width: 100%;
+    }
+
+    .icon-glow {
+      filter: drop-shadow(0 0 8px #00E0FF);
+      color: #00E0FF;
+    }
+  }
+}
+
+// Alineación del selector de género para que la flecha quede a la derecha
+.gender-select {
+  --padding-start: 0;
+  --padding-end: 0;
+
+  &::part(container) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row; // Forzar fila para que la flecha no baje
+  }
+
+  &::part(text),
+  &::part(placeholder) {
+    flex: 1;
+    text-align: left;
+  }
+}
+
+// Asegurar que el input de fecha nativo se vea bien y sea clickable
+.date-input-wrapper {
+  input[type="date"] {
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    min-height: 24px;
+    width: 100%;
+    background: transparent;
+    color: var(--input-text-color);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+
+  20%,
+  100% {
+    transform: translateX(100%) rotate(30deg);
+  }
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
 }

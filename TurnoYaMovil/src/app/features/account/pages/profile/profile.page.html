@@ -75,7 +75,6 @@
         class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-6">
 
         <!-- Avatar -->
-        <!-- Foto de perfil con opciones -->
         <div class="flex flex-col items-center">
           <div class="relative mb-4">
             <div
@@ -101,7 +100,6 @@
             }
           </div>
 
-          <!-- Botones de acción para foto (cuando hay foto) -->
           @if (photoPreview || existingPhotoBase64) {
           <div class="flex gap-2 mt-2">
             <button type="button" (click)="selectFromGallery()"
@@ -120,20 +118,17 @@
 
         <form [formGroup]="profileForm" class="space-y-4">
 
-          <!-- Email (Read-only) -->
+          <!-- Email (Read-only) - CORREGIDO -->
           <div class="space-y-2">
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               EMAIL
             </label>
             <div class="relative">
               <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
-              <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl">
+              <div class="email-field-container">
                 <ion-icon name="mail-outline" class="text-neon-primary text-xl"></ion-icon>
-                <span class="text-text-primary font-mono text-sm">{{ profile()?.email }}</span>
-                <ion-badge class="ml-3" color="primary">
-                  {{ getRoleLabel(profile()?.role) }}
-                </ion-badge>
+                <span class="email-text">{{ profile()?.email }}</span>
+                <span class="role-badge">{{ getRoleLabel(profile()?.role) }}</span>
               </div>
             </div>
           </div>
@@ -143,15 +138,16 @@
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               NOMBRE *
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="firstName" type="text" placeholder="Tu nombre"
-                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="person-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-input formControlName="firstName" type="text" placeholder="Tu nombre"></ion-input>
               </div>
             </div>
           </div>
@@ -161,15 +157,16 @@
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               APELLIDO *
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="person-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="lastName" type="text" placeholder="Tu apellido"
-                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="person-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-input formControlName="lastName" type="text" placeholder="Tu apellido"></ion-input>
               </div>
             </div>
           </div>
@@ -179,52 +176,70 @@
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               TELÉFONO
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="call-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="phoneNumber" type="tel" placeholder="Tu teléfono"
-                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="call-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-input formControlName="phoneNumber" type="tel" placeholder="Tu teléfono"></ion-input>
               </div>
             </div>
           </div>
 
-          <!-- Gender -->
+          <!-- Gender - SELECTOR MEJORADO PARA MÓVIL -->
           <div class="space-y-2">
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               GÉNERO
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
-              <ion-select formControlName="gender" placeholder="Seleccionar" interface="action-sheet"
-                class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-select-option value="" class="bg-bg-card text-text-primary">No especificar</ion-select-option>
-                <ion-select-option value="M" class="bg-bg-card text-text-primary">Masculino</ion-select-option>
-                <ion-select-option value="F" class="bg-bg-card text-text-primary">Femenino</ion-select-option>
-                <ion-select-option value="Other" class="bg-bg-card text-text-primary">Otro</ion-select-option>
-              </ion-select>
+              <div
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="person-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-select formControlName="gender" placeholder="Selecciona tu género" interface="action-sheet"
+                  label="" label-placement="start" class="flex-1 gender-select"
+                  [interfaceOptions]="{
+                    header: 'Selecciona tu género',
+                    subHeader: 'Elige una opción',
+                    translucent: true,
+                    mode: 'ios'
+                  }">
+                  <ion-select-option value="">No especificar</ion-select-option>
+                  <ion-select-option value="M">Masculino</ion-select-option>
+                  <ion-select-option value="F">Femenino</ion-select-option>
+                  <ion-select-option value="Other">Otro</ion-select-option>
+                </ion-select>
+              </div>
             </div>
           </div>
 
-          <!-- Date of Birth -->
+          <!-- Date of Birth - CALENDARIO MEJORADO -->
           <div class="space-y-2">
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               FECHA DE NACIMIENTO
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="calendar-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="dateOfBirth" type="date"
-                  class="input-native flex-1 bg-transparent text-text-primary focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="calendar-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <div class="flex-1 relative date-input-wrapper">
+                  <input formControlName="dateOfBirth" type="date" class="date-input" placeholder="dd/mm/aaaa">
+                  <ion-icon name="calendar-outline"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 text-neon-primary/70 pointer-events-none"></ion-icon>
+                </div>
               </div>
             </div>
           </div>
@@ -288,15 +303,17 @@
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               CONTRASEÑA ACTUAL *
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="currentPassword" type="password" placeholder="Contraseña actual"
-                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="lock-closed-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-input formControlName="currentPassword" type="password"
+                  placeholder="Contraseña actual"></ion-input>
               </div>
             </div>
           </div>
@@ -306,15 +323,16 @@
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               CONTRASEÑA NUEVA *
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="newPassword" type="password" placeholder="Contraseña nueva"
-                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="lock-closed-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-input formControlName="newPassword" type="password" placeholder="Contraseña nueva"></ion-input>
               </div>
             </div>
           </div>
@@ -324,19 +342,21 @@
             <label class="block text-xs font-mono text-neon-primary tracking-wider">
               CONFIRMAR CONTRASEÑA *
             </label>
-            <div class="relative">
-              <div
-                class="absolute inset-0 bg-neon-primary/5 rounded-xl blur transition-all duration-300 group-focus-within:bg-neon-primary/20">
+            <div class="relative input-container">
+              <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur-xl transition-all duration-500 input-glow">
               </div>
               <div
-                class="relative flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="lock-closed-outline" class="text-neon-primary text-xl"></ion-icon>
-                <ion-input formControlName="confirmPassword" type="password" placeholder="Confirma la contraseña"
-                  class="input-native flex-1 bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body"></ion-input>
+                class="absolute h-[2px] bottom-0 left-1/2 -translate-x-1/2 w-0 bg-gradient-to-r from-transparent via-neon-primary to-transparent transition-all duration-700 input-scan-line">
+              </div>
+              <div class="input-field-custom">
+                <ion-icon name="lock-closed-outline"
+                  class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
+                <ion-input formControlName="confirmPassword" type="password"
+                  placeholder="Confirma la contraseña"></ion-input>
               </div>
             </div>
             @if (passwordForm.errors?.['passwordsMismatch'] && passwordForm.get('confirmPassword')?.touched) {
-            <p class="text-xs text-red-400 font-mono mt-1 flex items-center gap-1">
+            <p class="error-message">
               <ion-icon name="warning-outline" class="text-sm"></ion-icon>
               Las contraseñas no coinciden
             </p>
@@ -347,25 +367,25 @@
           <div class="mt-4 p-4 bg-bg-tertiary/30 rounded-xl border border-neon-primary/10">
             <p class="text-xs font-mono text-neon-primary mb-2">REQUISITOS:</p>
             <ul class="space-y-1">
-              <li class="flex items-center gap-2 text-xs font-mono"
-                [class.text-neon-secondary]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8"
+              <li class="flex items-center gap-2 text-xs font-mono requirement-item"
+                [class.met]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8"
                 [class.text-text-tertiary]="(passwordForm.get('newPassword')?.value?.length || 0) < 8">
                 <ion-icon
                   [name]="(passwordForm.get('newPassword')?.value?.length || 0) >= 8 ? 'checkmark-circle' : 'ellipse-outline'"
                   class="text-sm"></ion-icon>
                 Mínimo 8 caracteres
               </li>
-              <li class="flex items-center gap-2 text-xs font-mono" [class.text-neon-secondary]="hasUpperCase()"
+              <li class="flex items-center gap-2 text-xs font-mono requirement-item" [class.met]="hasUpperCase()"
                 [class.text-text-tertiary]="!hasUpperCase()">
                 <ion-icon [name]="hasUpperCase() ? 'checkmark-circle' : 'ellipse-outline'" class="text-sm"></ion-icon>
                 Una mayúscula
               </li>
-              <li class="flex items-center gap-2 text-xs font-mono" [class.text-neon-secondary]="hasLowerCase()"
+              <li class="flex items-center gap-2 text-xs font-mono requirement-item" [class.met]="hasLowerCase()"
                 [class.text-text-tertiary]="!hasLowerCase()">
                 <ion-icon [name]="hasLowerCase() ? 'checkmark-circle' : 'ellipse-outline'" class="text-sm"></ion-icon>
                 Una minúscula
               </li>
-              <li class="flex items-center gap-2 text-xs font-mono" [class.text-neon-secondary]="hasDigit()"
+              <li class="flex items-center gap-2 text-xs font-mono requirement-item" [class.met]="hasDigit()"
                 [class.text-text-tertiary]="!hasDigit()">
                 <ion-icon [name]="hasDigit() ? 'checkmark-circle' : 'ellipse-outline'" class="text-sm"></ion-icon>
                 Un dígito
@@ -407,7 +427,7 @@
 
       <div
         class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/20 rounded-2xl shadow-2xl p-6 space-y-4">
-        
+
         <div class="flex items-center gap-3 mb-2">
           <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
             <ion-icon name="send" class="text-blue-400 text-xl"></ion-icon>
@@ -419,30 +439,31 @@
         </div>
 
         @if (!telegramCode()) {
-          <button type="button" (click)="onGenerateTelegramCode()" [disabled]="generatingTelegramCode()"
-            class="w-full py-3 px-4 rounded-xl font-display font-medium bg-bg-secondary/50 border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all flex items-center justify-center gap-2">
-            @if (generatingTelegramCode()) {
-              <ion-spinner name="crescent" class="w-5 h-5 text-blue-400"></ion-spinner>
-            } @else {
-              <ion-icon name="link-outline" class="text-xl"></ion-icon>
-              <span>Generar Código de Enlace</span>
-            }
-          </button>
+        <button type="button" (click)="onGenerateTelegramCode()" [disabled]="generatingTelegramCode()"
+          class="w-full py-3 px-4 rounded-xl font-display font-medium bg-bg-secondary/50 border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all flex items-center justify-center gap-2">
+          @if (generatingTelegramCode()) {
+          <ion-spinner name="crescent" class="w-5 h-5 text-blue-400"></ion-spinner>
+          } @else {
+          <ion-icon name="link-outline" class="text-xl"></ion-icon>
+          <span>Generar Código de Enlace</span>
+          }
+        </button>
         } @else {
-          <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
-            <p class="text-xs font-mono text-text-secondary mb-2">Tu código de vinculación es:</p>
-            <div class="text-2xl font-display font-bold text-blue-400 tracking-widest mb-4">
-              {{ telegramCode() }}
-            </div>
-            <button type="button" (click)="openTelegram(telegramCode()!)"
-              class="w-full py-3 px-4 rounded-xl font-display font-semibold bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-lg shadow-blue-500/25 hover:opacity-90 transition-all flex items-center justify-center gap-2">
-              <ion-icon name="paper-plane-outline" class="text-xl"></ion-icon>
-              <span>Abrir en Telegram</span>
-            </button>
-            <p class="text-[10px] font-mono text-text-tertiary mt-3 leading-tight">
-              Abre el bot y presiona INICIAR o envía <br/> <code class="text-neon-secondary">/start {{ telegramCode() }}</code>
-            </p>
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+          <p class="text-xs font-mono text-text-secondary mb-2">Tu código de vinculación es:</p>
+          <div class="text-2xl font-display font-bold text-blue-400 tracking-widest mb-4">
+            {{ telegramCode() }}
           </div>
+          <button type="button" (click)="openTelegram(telegramCode()!)"
+            class="w-full py-3 px-4 rounded-xl font-display font-semibold bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-lg shadow-blue-500/25 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+            <ion-icon name="paper-plane-outline" class="text-xl"></ion-icon>
+            <span>Abrir en Telegram</span>
+          </button>
+          <p class="text-[10px] font-mono text-text-tertiary mt-3 leading-tight">
+            Abre el bot y presiona INICIAR o envía <br /> <code
+              class="text-neon-secondary">/start {{ telegramCode() }}</code>
+          </p>
+        </div>
         }
       </div>
     </div>

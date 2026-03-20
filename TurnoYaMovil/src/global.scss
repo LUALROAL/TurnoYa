@@ -1,12 +1,6 @@
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
 @use "./app/features/auth/styles/auth-shared";
@@ -24,7 +18,7 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* Optional CSS utils */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
@@ -33,14 +27,577 @@
 
 /**
  * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
  */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 /* Tech Pro design tokens */
 @import "./theme/tokens.css";
+
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
+
+:root {
+    --input-bg-color: #0A0E17;
+    --input-text-color: #FFFFFF;
+    --input-placeholder-color: rgba(112, 134, 160, 0.5);
+    --input-neon-color: #00E0FF;
+    --input-neon-secondary: #00F5D4;
+    --input-border-color: rgba(0, 224, 255, 0.2);
+    --input-border-hover: rgba(0, 224, 255, 0.3);
+    --select-option-bg: #1A1F2F;
+    --select-option-hover: #222837;
+    --select-option-selected: #00E0FF;
+    --bg-card: #1A1F2F;
+    --bg-secondary: #0A0E17;
+    --text-secondary: #B0C4DE;
+}
+
+// ============================================
+// RESET DE ESTILOS DE IONIC
+// ============================================
+
+// Reset para ion-input
+ion-input {
+    --highlight-color-focused: transparent !important;
+    --highlight-color-valid: transparent !important;
+    --highlight-color-invalid: transparent !important;
+    --padding-start: 0 !important;
+    --padding-end: 0 !important;
+    --padding-top: 0 !important;
+    --padding-bottom: 0 !important;
+    --background: transparent !important;
+    --color: var(--input-text-color) !important;
+    --placeholder-color: var(--input-placeholder-color) !important;
+    --placeholder-opacity: 1 !important;
+
+    input,
+    textarea {
+        background: transparent !important;
+        color: var(--input-text-color) !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        caret-color: var(--input-neon-color) !important;
+
+        &::placeholder {
+            color: var(--input-placeholder-color) !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 300 !important;
+            opacity: 1 !important;
+        }
+
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus,
+        &:-webkit-autofill:active {
+            -webkit-text-fill-color: var(--input-text-color) !important;
+            -webkit-box-shadow: 0 0 0px 1000px var(--input-bg-color) inset !important;
+            box-shadow: 0 0 0px 1000px var(--input-bg-color) inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+        }
+    }
+}
+
+// ============================================
+// ESTILOS MEJORADOS PARA ION-SELECT (MÓVIL)
+// ============================================
+
+ion-select {
+    --color: var(--input-text-color) !important;
+    --placeholder-color: var(--input-placeholder-color) !important;
+    --placeholder-opacity: 1 !important;
+    --padding-top: 0 !important;
+    --padding-bottom: 0 !important;
+    --padding-start: 0 !important;
+    --padding-end: 0 !important;
+    --background: transparent !important;
+    width: 100%;
+    min-height: 24px;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 16px !important;
+
+    &::part(icon) {
+        color: var(--input-neon-color) !important;
+        opacity: 1 !important;
+        transition: all 0.3s ease;
+        margin-right: 0 !important;
+    }
+
+    &::part(text) {
+        color: var(--input-text-color) !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 16px !important;
+    }
+
+    &::part(placeholder) {
+        color: var(--input-placeholder-color) !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-weight: 300 !important;
+    }
+
+    &.ion-focused {
+        &::part(icon) {
+            transform: rotate(180deg);
+            color: var(--input-neon-secondary) !important;
+        }
+    }
+}
+
+// ============================================
+// ESTILOS PARA ACTION-SHEET (SELECTOR MÓVIL)
+// ============================================
+
+.ion-action-sheet {
+    --backdrop-opacity: 0.7 !important;
+}
+
+.action-sheet-wrapper {
+    padding: 16px !important;
+}
+
+.action-sheet-container {
+    padding: 0 !important;
+}
+
+.action-sheet-group {
+    background: var(--select-option-bg) !important;
+    border: 1px solid var(--input-border-color) !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 224, 255, 0.1) inset !important;
+    margin-bottom: 12px !important;
+
+    &:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+
+.action-sheet-title {
+    color: var(--input-neon-color) !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding: 20px 16px 12px !important;
+    background: linear-gradient(to bottom, rgba(0, 224, 255, 0.05), transparent) !important;
+    border-bottom: 1px solid rgba(0, 224, 255, 0.1) !important;
+
+    .action-sheet-title-inner {
+        justify-content: center !important;
+    }
+}
+
+.action-sheet-button {
+    color: var(--input-text-color) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    padding: 18px 20px !important;
+    background: transparent !important;
+    border-bottom: 1px solid rgba(0, 224, 255, 0.05) !important;
+    transition: all 0.2s ease !important;
+
+    &:last-child {
+        border-bottom: none !important;
+    }
+
+    &.action-sheet-selected {
+        color: #03050A !important;
+        background: linear-gradient(135deg, var(--input-neon-color), var(--input-neon-secondary)) !important;
+        font-weight: 600 !important;
+        position: relative;
+
+        &::before {
+            content: '✓';
+            position: absolute;
+            left: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    }
+
+    &:active {
+        background: var(--select-option-hover) !important;
+    }
+}
+
+.action-sheet-cancel {
+    background: rgba(255, 59, 48, 0.1) !important;
+    color: #ff3b30 !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(255, 59, 48, 0.2) !important;
+    margin-top: 8px !important;
+    border-radius: 12px !important;
+
+    &:active {
+        background: rgba(255, 59, 48, 0.2) !important;
+    }
+}
+
+// ============================================
+// ESTILOS PARA ION-SELECT-OPTION
+// ============================================
+
+ion-select-option {
+    --color: var(--input-text-color) !important;
+    --background: var(--select-option-bg) !important;
+
+    &[value=""] {
+        color: var(--input-placeholder-color) !important;
+        font-style: italic;
+    }
+}
+
+// ============================================
+// ESTILOS PARA INPUT TYPE="DATE" (CALENDARIO MEJORADO)
+// ============================================
+
+input[type="date"] {
+    background: transparent !important;
+    color: var(--input-text-color) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 16px !important;
+    border: none !important;
+    outline: none !important;
+    width: 100%;
+    min-height: 24px;
+    padding: 0 !important;
+
+    &::-webkit-calendar-picker-indicator {
+        background: transparent;
+        color: transparent;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    // Personalización del ícono del calendario
+    &+.calendar-icon {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: var(--input-neon-color);
+        font-size: 20px;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+
+    &:hover+.calendar-icon {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    &::-webkit-datetime-edit {
+        color: var(--input-text-color);
+        padding: 0;
+    }
+
+    &::-webkit-datetime-edit-fields-wrapper {
+        color: var(--input-text-color);
+        padding: 0;
+    }
+
+    &::-webkit-datetime-edit-text {
+        color: var(--input-neon-color);
+        padding: 0 2px;
+        font-weight: 600;
+    }
+
+    &::-webkit-datetime-edit-month-field,
+    &::-webkit-datetime-edit-day-field,
+    &::-webkit-datetime-edit-year-field {
+        color: var(--input-text-color);
+        padding: 0 2px;
+
+        &:focus {
+            background: rgba(0, 224, 255, 0.2);
+            border-radius: 4px;
+            outline: none;
+        }
+    }
+
+    // Placeholder cuando está vacío
+    &:invalid::-webkit-datetime-edit {
+        color: var(--input-placeholder-color);
+    }
+}
+
+// Estilos para el calendario desplegable
+::-webkit-datetime-edit {
+    padding: 0;
+}
+
+::-webkit-inner-spin-button {
+    display: none;
+}
+
+// Personalización del datepicker nativo
+::-webkit-calendar-picker-indicator {
+    background: transparent;
+    color: var(--input-neon-color);
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(0, 224, 255, 0.1);
+    }
+}
+
+// ============================================
+// CLASE UTILITARIA PARA INPUTS PERSONALIZADOS
+// ============================================
+
+.input-field-custom {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: var(--input-bg-color) !important;
+    border: 1px solid var(--input-border-color);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    min-height: 56px;
+    width: 100%;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 1rem;
+        padding: 1px;
+        background: linear-gradient(135deg, transparent, var(--input-neon-color), transparent);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    &,
+    & * {
+        background: transparent;
+    }
+
+    &:focus-within {
+        border-color: transparent;
+        transform: scale(1.01);
+
+        &::before {
+            opacity: 1;
+        }
+
+        .icon-glow {
+            filter: drop-shadow(0 0 8px var(--input-neon-color));
+            color: var(--input-neon-color);
+        }
+    }
+
+    &:hover:not(:focus-within) {
+        border-color: var(--input-border-hover);
+        background: lighten(#0A0E17, 2%) !important;
+    }
+
+    // Estilos específicos para ion-select
+    ion-select {
+        flex: 1;
+        --padding-start: 0;
+        --padding-end: 0;
+    }
+
+    // Estilos específicos para inputs de fecha
+    ion-input[type="date"] {
+        flex: 1;
+        position: relative;
+
+        input {
+            padding-right: 30px !important;
+        }
+    }
+
+    // Icono personalizado para fecha
+    .date-input-wrapper {
+        position: relative;
+        flex: 1;
+
+        input[type="date"] {
+            padding-right: 30px;
+        }
+
+        .custom-calendar-icon {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--input-neon-color);
+            font-size: 20px;
+            pointer-events: none;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+    }
+}
+
+// ============================================
+// ESTILOS PARA EL BADGE DE ROL (CORREGIDO)
+// ============================================
+
+.role-badge-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    padding-left: 8px;
+}
+
+.role-badge {
+    background: linear-gradient(135deg, rgba(0, 224, 255, 0.15), rgba(0, 245, 212, 0.15));
+    border: 1px solid var(--input-neon-color);
+    color: var(--input-neon-color);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// ============================================
+// ESTILOS PARA EL CAMPO DE EMAIL (CORREGIDO)
+// ============================================
+
+.email-field-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: var(--input-bg-color) !important;
+    border: 1px solid var(--input-border-color);
+    border-radius: 1rem;
+    min-height: 56px;
+    width: 100%;
+
+    ion-icon {
+        flex-shrink: 0;
+        color: var(--input-neon-color);
+        font-size: 1.5rem;
+    }
+
+    .email-text {
+        color: var(--input-text-color);
+        font-family: 'Outfit', sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .role-badge {
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+}
+
+// ============================================
+// ANIMACIONES GLOBALES
+// ============================================
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-1000 {
+    animation-delay: 1s;
+}
+
+// ============================================
+// ERRORES Y VALIDACIONES
+// ============================================
+
+.error-message {
+    color: #ef4444;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 4px;
+}
+
+// ============================================
+// SCROLLBAR PERSONALIZADO
+// ============================================
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0A0E17;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00E0FF;
+    border-radius: 4px;
+
+    &:hover {
+        background: #00F5D4;
+    }
+}
