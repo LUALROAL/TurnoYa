@@ -116,7 +116,24 @@ ion-textarea {
 }
 
 // Estilo para el contenido del popover
+// .popover-content {
+//   background: #1A1F2F;
+//   border: 1px solid rgba(0, 224, 255, 0.3);
+//   border-radius: 12px;
+//   box-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
+//   min-width: 280px;
+//   max-width: 350px;
+//   color: #FFFFFF;
+//   overflow: hidden;
+// }
+
 .popover-content {
+  position: fixed;
+  top: 60% !important;
+  left: 50% !important;
+  margin-top: 275px !important;
+  transform: translate(-50%, -50%);
+
   background: #1A1F2F;
   border: 1px solid rgba(0, 224, 255, 0.3);
   border-radius: 12px;
@@ -126,6 +143,7 @@ ion-textarea {
   color: #FFFFFF;
   overflow: hidden;
 }
+
 
 .popover-item {
   cursor: pointer;
