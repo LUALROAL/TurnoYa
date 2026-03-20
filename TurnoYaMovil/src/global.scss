@@ -407,7 +407,7 @@ input[type="date"] {
 
     &:hover:not(:focus-within) {
         border-color: var(--input-border-hover);
-        background: lighten(#0A0E17, 2%) !important;
+        background: #0d121d !important;
     }
 
     // Estilos específicos para ion-select
@@ -612,6 +612,12 @@ input[type="date"] {
     --border-radius: 12px !important;
     --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8) !important;
     font-family: 'Outfit', sans-serif !important;
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    z-index: 20000 !important;
 
     &::part(container) {
         display: flex !important;
@@ -620,20 +626,20 @@ input[type="date"] {
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-radius: 12px;
-        margin-bottom: 24px;
-        margin-left: 16px;
-        margin-right: 16px;
-        width: calc(100% - 32px); // Asegura que el toast flote simétricamente
+        margin-bottom: max(24px, env(safe-area-inset-bottom)) !important;
+        margin-left: 16px !important;
+        margin-right: 16px !important;
+        width: calc(100% - 32px) !important;
     }
 
     &::part(message) {
         font-weight: 600;
-        font-size: 15px;
+        font-size: 14px;
         padding: 16px 16px 16px 0;
         letter-spacing: 0.3px;
-        color: #FFFFFF; // Forzamos texto blanco para máximo contraste
-        text-align: center;
-        flex: 0 1 auto; // Evita que empuje el icono hacia la orilla
+        color: #FFFFFF;
+        text-align: left;
+        flex: 1;
     }
 
     &::part(icon) {
@@ -698,4 +704,80 @@ input[type="date"] {
             filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
         }
     }
+}
+
+/* ==========================================================================
+   NEON ALERTS (SignalR / Actionable)
+   ========================================================================== */
+.alert-neon {
+  --background: rgba(10, 15, 20, 0.95);
+
+  .alert-wrapper {
+    position: absolute !important;
+    bottom: 20px !important;
+    left: 16px !important;
+    right: 16px !important;
+    margin: 0 auto !important;
+    width: calc(100% - 32px) !important;
+    max-width: 450px !important;
+    background: #0a0f14 !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(0, 245, 212, 0.4) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 212, 0.1) !important;
+    transform: translateY(0) !important;
+  }
+
+  &.alert-presentation-not-ready .alert-wrapper {
+    transform: translateY(100%) !important;
+  }
+
+  .alert-head {
+    padding: 20px 20px 10px 20px !important;
+    .alert-title {
+      color: #00F5D4 !important;
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 1.1rem !important;
+      letter-spacing: 0.02em !important;
+      text-transform: uppercase !important;
+      text-shadow: 0 0 10px rgba(0, 245, 212, 0.4) !important;
+    }
+  }
+
+  .alert-message {
+    padding: 0 20px 20px 20px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .alert-button-group {
+    padding: 12px !important;
+    gap: 12px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    .alert-button {
+      flex: 1 !important;
+      border-radius: 14px !important;
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-weight: 600 !important;
+      font-size: 0.85rem !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      height: 48px !important;
+      margin: 0 !important;
+    }
+    .alert-btn-reject {
+      color: #ff3b30 !important;
+      background: rgba(255, 59, 48, 0.1) !important;
+      border: 1px solid rgba(255, 59, 48, 0.2) !important;
+    }
+    .alert-btn-confirm, .alert-btn-accept {
+      color: #00F5D4 !important;
+      background: rgba(0, 245, 212, 0.1) !important;
+      border: 1px solid rgba(0, 245, 212, 0.3) !important;
+    }
+  }
 }

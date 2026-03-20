@@ -10,7 +10,7 @@ import {
   IonSpinner,
   IonAvatar,
   IonSelect,
-  IonSelectOption, IonIcon, IonBadge } from '@ionic/angular/standalone';
+  IonSelectOption, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -46,7 +46,7 @@ type Tab = 'profile' | 'security';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [IonBadge, IonIcon,
+  imports: [IonIcon,
     CommonModule,
     ReactiveFormsModule,
     IonContent,

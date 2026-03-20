@@ -9,26 +9,29 @@
   <div class="relative z-10 pb-20">
     <!-- Header con navegación -->
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <button routerLink="/home" class="w-10 h-10 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
-            <ion-icon name="arrow-back-outline" class="text-xl text-text-primary"></ion-icon>
+      <div class="relative flex items-center justify-between min-h-[44px]">
+        <div class="flex items-center gap-3">
+          <button routerLink="/home" class="w-9 h-9 rounded-full bg-bg-tertiary/50 border border-neon-primary/20 flex items-center justify-center hover:border-neon-primary transition-all duration-300">
+            <ion-icon name="arrow-back-outline" class="text-lg text-text-primary"></ion-icon>
           </button>
-          <div>
-            <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">PANEL DE CONTROL</p>
-            <h1 class="text-2xl font-display font-bold">
-              <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
-                Mis Negocios
-              </span>
-            </h1>
+          <div class="hidden sm:block">
+            <p class="text-[10px] text-text-secondary font-mono tracking-wider mb-0">PANEL</p>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-neon-primary rounded-full animate-ping"></span>
-          <span class="text-xs font-mono text-text-secondary">Owner Mode</span>
+
+        <!-- Role Badge (Centrado) -->
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-neon-primary/30 bg-neon-primary/10 backdrop-blur-sm">
+            <span class="w-1.5 h-1.5 bg-neon-primary rounded-full animate-ping"></span>
+            <span class="text-[10px] font-mono text-neon-primary uppercase tracking-tighter">Owner Mode</span>
+          </div>
         </div>
+
+        <!-- Espacio ocupado por la campana (Derecha) -->
+        <div class="w-11"></div>
       </div>
     </header>
+
 
     <div class="px-4 space-y-6 mt-4">
       <!-- Título de sección -->

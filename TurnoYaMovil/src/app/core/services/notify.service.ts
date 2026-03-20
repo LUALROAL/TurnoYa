@@ -303,6 +303,7 @@ export class NotifyService {
     const alert = await this.alertController.create({
       header: 'Nueva solicitud de turno',
       message,
+      cssClass: 'alert-neon',
       buttons: [
         {
           text: 'Rechazar',
