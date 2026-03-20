@@ -1,13 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { IonicModule } from "@ionic/angular";
+import { IonicModule, ActionSheetController } from "@ionic/angular";
 import { Subject, takeUntil } from "rxjs";
 
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from "../../models";
 import { BusinessService } from "../../services/business.service";
 import { addIcons } from "ionicons";
-import { arrowBackOutline, checkmarkCircleOutline } from "ionicons/icons";
+import { arrowBackOutline, calendarOutline, callOutline, checkmarkCircleOutline, filterOutline, globeOutline, informationCircleOutline, locationOutline, mailOutline, pricetagOutline, starHalfOutline, starOutline, storefrontOutline, timeOutline, mapOutline, navigateOutline, closeOutline } from "ionicons/icons";
 
 @Component({
   selector: "app-business-detail",
@@ -20,6 +20,7 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
 
   private readonly route = inject(ActivatedRoute);
   private readonly businessService = inject(BusinessService);
+  private readonly actionSheetCtrl = inject(ActionSheetController);
   private readonly destroy$ = new Subject<void>();
 
   protected loading = true;
@@ -39,6 +40,21 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
     addIcons({
       arrowBackOutline,
       checkmarkCircleOutline,
+      starOutline,
+      locationOutline,
+      timeOutline,
+      pricetagOutline,
+      callOutline,
+      mailOutline,
+      calendarOutline,
+      informationCircleOutline,
+      storefrontOutline,
+      filterOutline,
+      globeOutline,
+      starHalfOutline,
+      mapOutline,
+      navigateOutline,
+      closeOutline
     });
   }
 
@@ -84,12 +100,42 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
   }
 
   /**
-   * Genera un enlace de WhatsApp con el número y mensaje personalizado
+   * Abre un Action Sheet para permitir elegir entre Google Maps y Waze
    */
-  protected getWhatsAppLink(phone: string, businessName: string): string {
-    const cleanedPhone = phone.replace(/\D/g, '');
-    const message = encodeURIComponent(`Hola, quiero información sobre ${businessName}`);
-    return `https://wa.me/${cleanedPhone}?text=${message}`;
+  async openAddressOptions() {
+    if (!this.business?.address) return;
+
+    // Se asume que businessName y address proveen suficiente contexto geográfico.
+    // También se podría concatenar la ciudad si viniera en el objeto business.
+    const query = `${this.business.name}, ${this.business.address}`;
+    const encodedAddress = encodeURIComponent(query);
+
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Abrir ubicación con',
+      buttons: [
+        {
+          text: 'Google Maps',
+          icon: 'map-outline',
+          handler: () => {
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_system');
+          }
+        },
+        {
+          text: 'Waze',
+          icon: 'navigate-outline',
+          handler: () => {
+            window.open(`https://waze.com/ul?q=${encodedAddress}`, '_system');
+          }
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close-outline',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await actionSheet.present();
   }
 
   private loadBusinessDetail() {

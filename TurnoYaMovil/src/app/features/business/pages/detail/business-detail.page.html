@@ -88,7 +88,7 @@
               <!-- Rating -->
               <div
                 class="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
-                <ion-icon name="star" class="text-sm text-neon-primary"></ion-icon>
+                <ion-icon name="star-half-outline" class="text-sm text-neon-primary"></ion-icon>
                 <span class="text-xs font-mono text-text-primary font-bold">{{ business.averageRating | number:'1.1-1'
                   }}</span>
               </div>
@@ -150,25 +150,24 @@
                 <span class="text-sm">{{ business.email }}</span>
               </div>
 
-              <div class="flex items-center gap-3 text-text-secondary hover:text-neon-primary transition-colors"
+              <!-- <div class="flex items-center gap-3 text-text-secondary hover:text-neon-primary transition-colors"
                 *ngIf="business.website">
                 <div class="w-8 h-8 rounded-full bg-neon-primary/10 flex items-center justify-center">
                   <ion-icon name="globe-outline" class="text-neon-primary"></ion-icon>
                 </div>
                 <span class="text-sm">{{ business.website }}</span>
-              </div>
+              </div> -->
             </div>
 
             <!-- Botón de acción rápida -->
             <div class="mt-4 flex gap-2">
-              <a *ngIf="business?.phone" [href]="getWhatsAppLink(business.phone || '', business.name || '')"
-                target="_blank"
-                class="flex-1 py-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-neon-primary font-mono text-sm hover:border-neon-primary/50 transition-all duration-300 flex items-center justify-center gap-2">
-                <ion-icon name="logo-whatsapp"></ion-icon>
-                WhatsApp
-              </a>
+              <button type="button" *ngIf="business?.address" (click)="openAddressOptions()"
+                class="flex-1 py-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-neon-primary font-mono text-sm hover:border-neon-primary/50 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-r-2">
+                <ion-icon name="location-outline"></ion-icon>
+                Dirección
+              </button>
               <a *ngIf="business?.website" [href]="business.website" target="_blank"
-                class="flex-1 py-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-neon-primary font-mono text-sm hover:border-neon-primary/50 transition-all duration-300 flex items-center justify-center gap-2">
+                class="flex-1 py-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-neon-primary font-mono text-sm hover:border-neon-primary/50 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
                 <ion-icon name="globe-outline"></ion-icon>
                 Visitar web
               </a>
@@ -203,9 +202,8 @@
               <div class="input-field-custom">
                 <ion-icon name="search-outline"
                   class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
-                <ion-select placeholder="Filtrar por servicio" interface="action-sheet"
-                  label="" label-placement="start" class="flex-1 filter-select"
-                  (ionChange)="filterByService($event)" [interfaceOptions]="{
+                <ion-select placeholder="Filtrar por servicio" interface="action-sheet" label="" label-placement="start"
+                  class="flex-1 filter-select" (ionChange)="filterByService($event)" [interfaceOptions]="{
                     header: 'Selecciona un servicio',
                     subHeader: 'Filtra los servicios disponibles',
                     translucent: true,
@@ -281,9 +279,9 @@
               <div class="input-field-custom">
                 <ion-icon name="people-outline"
                   class="text-neon-primary text-xl transition-all duration-300 icon-glow"></ion-icon>
-                <ion-select placeholder="Filtrar por profesional" interface="action-sheet"
-                  label="" label-placement="start" class="flex-1 filter-select"
-                  (ionChange)="filterByEmployee($event)" [interfaceOptions]="{
+                <ion-select placeholder="Filtrar por profesional" interface="action-sheet" label=""
+                  label-placement="start" class="flex-1 filter-select" (ionChange)="filterByEmployee($event)"
+                  [interfaceOptions]="{
                     header: 'Selecciona un profesional',
                     subHeader: 'Filtra los profesionales disponibles',
                     translucent: true,
