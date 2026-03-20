@@ -781,3 +781,14 @@ input[type="date"] {
     }
   }
 }
+/* ============================================
+// FIX PARA OVERLAYS (MODALES)
+// ============================================ */
+ion-modal {
+    --backdrop-opacity: 0.6 !important;
+    z-index: 20002 !important;
+}
+
+.modal-wrapper {
+    z-index: 20003 !important;
+}
