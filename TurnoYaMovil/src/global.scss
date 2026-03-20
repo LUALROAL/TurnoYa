@@ -225,6 +225,8 @@ ion-select {
 }
 
 .action-sheet-cancel {
+    width: 100% !important;
+    max-width: none !important;
     background: rgba(255, 59, 48, 0.1) !important;
     color: #ff3b30 !important;
     font-weight: 600 !important;
