@@ -1,6 +1,8 @@
 import { Injectable, inject } from "@angular/core";
 import { AlertController, ToastController, ModalController } from "@ionic/angular";
 import { BehaviorSubject, Subject } from "rxjs";
+import { addIcons } from "ionicons";
+import { warningOutline, checkmarkCircleOutline, informationCircleOutline } from "ionicons/icons";
 import { AppointmentEventDto } from '../models/appointment-event.model';
 import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
@@ -43,6 +45,7 @@ export class NotifyService {
   private readonly recentEvents = new Map<string, number>();
 
   constructor() {
+    addIcons({ warningOutline, checkmarkCircleOutline, informationCircleOutline });
     this.restoreFromStorage();
   }
 
@@ -53,9 +56,11 @@ export class NotifyService {
   async showError(message: string) {
     const toast = await this.toastController.create({
       message,
-      duration: 3000,
-      position: "top",
+      duration: 4000,
+      position: "bottom",
       color: "danger",
+      icon: "warning-outline",
+      cssClass: "toast-neon toast-neon-danger",
     });
 
     await toast.present();
@@ -64,9 +69,11 @@ export class NotifyService {
   async showSuccess(message: string) {
     const toast = await this.toastController.create({
       message,
-      duration: 2500,
-      position: "top",
+      duration: 3500,
+      position: "bottom",
       color: "success",
+      icon: "checkmark-circle-outline",
+      cssClass: "toast-neon toast-neon-success",
     });
 
     await toast.present();
@@ -326,11 +333,19 @@ export class NotifyService {
    * Used when Client receives appointment status updates.
    */
   async showAutoDismissToast(message: string, color: 'success' | 'warning' | 'danger' = 'success'): Promise<void> {
+    const iconMap: Record<string, string> = {
+      success: 'checkmark-circle-outline',
+      warning: 'warning-outline',
+      danger: 'warning-outline'
+    };
+
     const toast = await this.toastController.create({
       message,
-      duration: 3000,
-      position: 'top',
+      duration: 4000,
+      position: 'bottom',
       color,
+      icon: iconMap[color],
+      cssClass: `toast-neon toast-neon-${color}`,
     });
 
     await toast.present();

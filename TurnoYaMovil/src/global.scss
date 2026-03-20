@@ -603,3 +603,99 @@ input[type="date"] {
         background: #00F5D4;
     }
 }
+
+// ============================================
+// ESTILOS PARA TOASTS (ALERTAS)
+// ============================================
+
+.toast-neon {
+    --border-radius: 12px !important;
+    --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8) !important;
+    font-family: 'Outfit', sans-serif !important;
+
+    &::part(container) {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        margin-left: 16px;
+        margin-right: 16px;
+        width: calc(100% - 32px); // Asegura que el toast flote simétricamente
+    }
+
+    &::part(message) {
+        font-weight: 600;
+        font-size: 15px;
+        padding: 16px 16px 16px 0;
+        letter-spacing: 0.3px;
+        color: #FFFFFF; // Forzamos texto blanco para máximo contraste
+        text-align: center;
+        flex: 0 1 auto; // Evita que empuje el icono hacia la orilla
+    }
+
+    &::part(icon) {
+        font-size: 30px;
+        padding-inline-start: 16px;
+        padding-inline-end: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Variantes por tipo (Danger / Error) */
+    &.toast-neon-danger {
+        --background: #2a0808 !important; // Fondo rojo ultra oscuro
+        --color: #FFFFFF !important;
+
+        &::part(container) {
+            border: 1px solid rgba(239, 68, 68, 0.4) !important;
+            border-left: 4px solid #ef4444 !important; // Borde lateral grueso
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15) !important;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.8) 0%, rgba(42, 8, 8, 0.9) 100%) !important;
+        }
+
+        &::part(icon) {
+            color: #ef4444 !important;
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+        }
+    }
+
+    /* Variantes por tipo (Success) */
+    &.toast-neon-success {
+        --background: #021a15 !important; // Fondo cyan/verde ultra oscuro
+        --color: #FFFFFF !important;
+
+        &::part(container) {
+            border: 1px solid rgba(0, 245, 212, 0.4) !important;
+            border-left: 4px solid #00F5D4 !important; // Borde lateral grueso
+            box-shadow: 0 0 20px rgba(0, 245, 212, 0.15) !important;
+            background: linear-gradient(90deg, rgba(0, 245, 212, 0.8) 0%, rgba(2, 26, 21, 0.9) 100%) !important;
+        }
+
+        &::part(icon) {
+            color: #00F5D4 !important;
+            filter: drop-shadow(0 0 8px rgba(0, 245, 212, 0.8));
+        }
+    }
+
+    /* Variantes por tipo (Warning) */
+    &.toast-neon-warning {
+        --background: #2b1c04 !important; // Fondo ámbar ultra oscuro
+        --color: #FFFFFF !important;
+
+        &::part(container) {
+            border: 1px solid rgba(245, 158, 11, 0.4) !important;
+            border-left: 4px solid #f59e0b !important; // Borde lateral grueso
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.15) !important;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.8) 0%, rgba(43, 28, 4, 0.9) 100%) !important;
+        }
+
+        &::part(icon) {
+            color: #f59e0b !important;
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
+        }
+    }
+}
