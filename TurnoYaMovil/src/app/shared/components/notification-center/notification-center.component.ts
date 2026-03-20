@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trashOutline, closeOutline, checkmarkCircle, timeOutline, alertCircle } from 'ionicons/icons';
+import { trashOutline, closeOutline, checkmarkCircleOutline, timeOutline, alertCircle } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService, NotificationItem } from '../../../core/services/notify.service';
 
@@ -34,7 +34,7 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
     addIcons({
       trashOutline,
       closeOutline,
-      checkmarkCircle,
+      checkmarkCircleOutline,
       timeOutline,
       alertCircle,
     });

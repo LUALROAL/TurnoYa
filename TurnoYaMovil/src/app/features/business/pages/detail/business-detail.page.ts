@@ -6,6 +6,8 @@ import { Subject, takeUntil } from "rxjs";
 
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from "../../models";
 import { BusinessService } from "../../services/business.service";
+import { addIcons } from "ionicons";
+import { arrowBackOutline, checkmarkCircleOutline } from "ionicons/icons";
 
 @Component({
   selector: "app-business-detail",
@@ -15,26 +17,7 @@ import { BusinessService } from "../../services/business.service";
   styleUrls: ["./business-detail.page.scss"],
 })
 export class BusinessDetailPage implements OnInit, OnDestroy {
-      /**
-       * Devuelve el src correcto para una imagen base64 de empleado
-       */
-      getEmployeeImageSrc(photoBase64: string | undefined): string {
-        if (!photoBase64) return '';
-        if (photoBase64.startsWith('data:image')) return photoBase64;
-        if (/^[A-Za-z0-9+/=]+$/.test(photoBase64) && photoBase64.length > 100) {
-          return 'data:image/jpeg;base64,' + photoBase64;
-        }
-        return photoBase64;
-      }
-    /**
-     * Devuelve las iniciales del empleado
-     */
-    getEmployeeInitials(fullName: string): string {
-      if (!fullName) return '';
-      const names = fullName.trim().split(' ');
-      if (names.length === 1) return names[0].substring(0, 2).toUpperCase();
-      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
-    }
+
   private readonly route = inject(ActivatedRoute);
   private readonly businessService = inject(BusinessService);
   private readonly destroy$ = new Subject<void>();
@@ -51,6 +34,13 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
   protected filteredEmployees: BusinessEmployeeItem[] = [];
   protected selectedServiceFilter: string = '';
   protected selectedEmployeeFilter: string = '';
+
+  constructor() {
+    addIcons({
+      arrowBackOutline,
+      checkmarkCircleOutline,
+    });
+  }
 
   ngOnInit() {
     this.loadBusinessDetail();
@@ -155,5 +145,26 @@ export class BusinessDetailPage implements OnInit, OnDestroy {
     } else {
       this.filteredEmployees = this.employees.filter(e => e.id === this.selectedEmployeeFilter);
     }
+  }
+
+  /**
+ * Devuelve el src correcto para una imagen base64 de empleado
+ */
+  getEmployeeImageSrc(photoBase64: string | undefined): string {
+    if (!photoBase64) return '';
+    if (photoBase64.startsWith('data:image')) return photoBase64;
+    if (/^[A-Za-z0-9+/=]+$/.test(photoBase64) && photoBase64.length > 100) {
+      return 'data:image/jpeg;base64,' + photoBase64;
+    }
+    return photoBase64;
+  }
+  /**
+   * Devuelve las iniciales del empleado
+   */
+  getEmployeeInitials(fullName: string): string {
+    if (!fullName) return '';
+    const names = fullName.trim().split(' ');
+    if (names.length === 1) return names[0].substring(0, 2).toUpperCase();
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
   }
 }

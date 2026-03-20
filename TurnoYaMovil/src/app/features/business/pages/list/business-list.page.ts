@@ -6,6 +6,8 @@ import { IonicModule } from "@ionic/angular";
 import { Subject, debounceTime, takeUntil } from "rxjs";
 import { BusinessListItem } from "../../models";
 import { BusinessService } from "../../services/business.service";
+import { addIcons } from "ionicons";
+import { arrowBackOutline, checkmarkCircleOutline, star, searchOutline, locationOutline } from "ionicons/icons";
 
 @Component({
   selector: "app-business-list",
@@ -35,6 +37,16 @@ export class BusinessListPage implements OnInit, OnDestroy {
   protected searchQuery = "";
   protected cityFilter = "";
   protected selectedCategory = "";
+
+  constructor() {
+    addIcons({
+      arrowBackOutline,
+      checkmarkCircleOutline,
+      star,
+      searchOutline,
+      locationOutline
+    });
+  }
 
   ngOnInit() {
     this.setupDebouncedFilters();

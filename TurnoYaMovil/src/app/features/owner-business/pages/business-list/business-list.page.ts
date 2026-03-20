@@ -23,6 +23,7 @@ import {
   checkmarkCircleOutline,
   arrowBackOutline,
   settingsOutline,
+  arrowBack,
 } from 'ionicons/icons';
 import { Subject, switchMap, takeUntil } from 'rxjs';
 import { OwnerBusinessService } from '../../services/owner-business.service';
@@ -69,6 +70,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
       checkmarkCircleOutline,
       arrowBackOutline,
       settingsOutline,
+      arrowBack,
     });
   }
 

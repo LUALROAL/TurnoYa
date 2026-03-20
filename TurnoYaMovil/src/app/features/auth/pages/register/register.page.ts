@@ -3,6 +3,21 @@ import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
+import { addIcons } from "ionicons";
+import {
+  sparklesOutline,
+  personOutline,
+  mailOutline,
+  lockClosedOutline,
+  eyeOutline,
+  eyeOffOutline,
+  checkmarkCircleOutline,
+  checkmarkOutline,
+  warningOutline,
+  syncOutline,
+  personAddOutline,
+  logoGoogle
+} from "ionicons/icons";
 
 import { AuthService } from "../../services/auth.service";
 
@@ -14,6 +29,22 @@ import { AuthService } from "../../services/auth.service";
   styleUrls: ["./register.page.scss"],
 })
 export class RegisterPage {
+  constructor() {
+    addIcons({
+      sparklesOutline,
+      personOutline,
+      mailOutline,
+      lockClosedOutline,
+      eyeOutline,
+      eyeOffOutline,
+      checkmarkCircleOutline,
+      checkmarkOutline,
+      warningOutline,
+      syncOutline,
+      personAddOutline,
+      logoGoogle
+    });
+  }
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);

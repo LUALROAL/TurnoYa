@@ -26,8 +26,7 @@ import {
   closeOutline,
   calendarOutline,
   chatbubbleOutline,
-  checkmarkCircle,
-  closeCircle,
+  closeCircleOutline,
 } from 'ionicons/icons';
 import { AdminUsersService } from '../../services/admin-users.service';
 import {
@@ -107,8 +106,7 @@ export class AdminUsersPage implements OnInit {
       closeOutline,
       calendarOutline,
       chatbubbleOutline,
-      checkmarkCircle,
-      closeCircle,
+      closeCircleOutline,
     });
   }
 

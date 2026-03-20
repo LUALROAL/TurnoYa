@@ -15,7 +15,8 @@ import {
   locationOutline,
   sparklesOutline,
   checkmarkCircle,
-  star
+  star,
+  checkmarkCircleOutline
 } from 'ionicons/icons';
 import { AuthSessionService } from '../core/services/auth-session.service';
 import { Observable, Subscription } from 'rxjs';
@@ -134,7 +135,7 @@ export class HomePage implements OnInit, OnDestroy {
   userRole: string = '';
   constructor(protected authSession: AuthSessionService) {
     this.session$ = this.authSession.session$;
-    
+
     // Register icons used in the template
     addIcons({
       'search-outline': searchOutline,
@@ -148,6 +149,7 @@ export class HomePage implements OnInit, OnDestroy {
       'sparkles-outline': sparklesOutline,
       'checkmark-circle': checkmarkCircle,
       'star': star,
+      'checkmark-circle-outline': checkmarkCircleOutline,
     });
   }
 
@@ -227,7 +229,7 @@ export class HomePage implements OnInit, OnDestroy {
    * Devuelve el rol actual del usuario
    */
 
-   // Métodos auxiliares (pueden usar las propiedades locales)
+  // Métodos auxiliares (pueden usar las propiedades locales)
   protected getUserName(): string {
     return this.userName;
   }
