@@ -87,6 +87,7 @@
             <!-- Popover para Servicio -->
             <ion-popover #servicePopover [cssClass]="'custom-popover'">
               <ng-template>
+                <div class="popover-backdrop" (click)="closeServicePopover()"></div>
                 <div class="popover-content max-h-80 overflow-y-auto p-2">
                   <div class="p-2 border-b border-neon-primary/10 mb-2 flex justify-between items-center">
                     <span class="text-xs font-mono text-neon-primary tracking-wider">SELECCIONA UN SERVICIO</span>
@@ -141,6 +142,7 @@
             <!-- Popover para Profesional -->
             <ion-popover #employeePopover [cssClass]="'custom-popover'">
               <ng-template>
+                <div class="popover-backdrop" (click)="closeEmployeePopover()"></div>
                 <div class="popover-content max-h-80 overflow-y-auto p-2">
                   <div class="p-2 border-b border-neon-primary/10 mb-2 flex justify-between items-center">
                     <span class="text-xs font-mono text-neon-primary tracking-wider">SELECCIONA PROFESIONAL</span>
