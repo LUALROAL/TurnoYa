@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TurnoYa.Application.DTOs.Appointment;
 using TurnoYa.Application.Interfaces;
+using TurnoYa.Core.DTOs;
 using TurnoYa.Core.Entities;
 using TurnoYa.Core.Interfaces;
 using TurnoYa.Infrastructure.Data;
@@ -22,6 +23,7 @@ namespace TurnoYa.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly ITelegramBotService _telegramBotService;
         private readonly IPushNotificationService _pushNotificationService;
+        private readonly INotificationsService _notificationsService;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
@@ -30,7 +32,8 @@ namespace TurnoYa.Infrastructure.Services
             ApplicationDbContext context,
             IMapper mapper,
             ITelegramBotService telegramBotService,
-            IPushNotificationService pushNotificationService)
+            IPushNotificationService pushNotificationService,
+            INotificationsService notificationsService)
         {
             _appointmentRepository = appointmentRepository;
             _employeeRepository = employeeRepository;
@@ -39,6 +42,7 @@ namespace TurnoYa.Infrastructure.Services
             _mapper = mapper;
             _telegramBotService = telegramBotService;
             _pushNotificationService = pushNotificationService;
+            _notificationsService = notificationsService;
         }
 
         public async Task<AppointmentDto> CreateAsync(CreateAppointmentDto dto, Guid userId)
@@ -134,6 +138,29 @@ namespace TurnoYa.Infrastructure.Services
 
             var created = await _appointmentRepository.AddAsync(appointment);
             await tx.CommitAsync();
+
+            // SignalR: Notificar al dueño del negocio en tiempo real (fire-and-forget)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var eventDto = new AppointmentEventDto(
+                        created.Id,
+                        AppointmentEventType.Created,
+                        userId,
+                        businessExistsObj.Id,
+                        businessExistsObj.Name,
+                        service.Name,
+                        created.ScheduledDate,
+                        created.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToBusinessAsync(businessExistsObj.Id, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Create): {ex.Message}");
+                }
+            });
 
             // Notificación vía Telegram
             try
@@ -430,6 +457,30 @@ namespace TurnoYa.Infrastructure.Services
             appointment.Status = AppointmentStatus.Confirmed;
             await _appointmentRepository.UpdateAsync(appointment);
 
+            // SignalR: Notificar al cliente en tiempo real (fire-and-forget)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.Confirmed,
+                        appointment.UserId,
+                        business.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToUserAsync(appointment.UserId, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Confirm): {ex.Message}");
+                }
+            });
+
             await SendStatusNotificationToClientAsync(appointment, "confirmada");
             return true;
         }
@@ -450,6 +501,31 @@ namespace TurnoYa.Infrastructure.Services
             appointment.Status = AppointmentStatus.Cancelled;
             await _appointmentRepository.UpdateAsync(appointment);
 
+            // SignalR: Notificar a ambos (cliente y negocio) en tiempo real (fire-and-forget)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.Cancelled,
+                        appointment.UserId,
+                        business!.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString(),
+                        reason
+                    );
+                    await _notificationsService.BroadcastToBothAsync(appointment.UserId, business.Id, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Cancel): {ex.Message}");
+                }
+            });
+
             await SendStatusNotificationToClientAsync(appointment, "cancelada", reason);
             return true;
         }
@@ -466,6 +542,30 @@ namespace TurnoYa.Infrastructure.Services
 
             appointment.Status = AppointmentStatus.Completed;
             await _appointmentRepository.UpdateAsync(appointment);
+
+            // SignalR: Notificar al cliente en tiempo real (fire-and-forget)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.Completed,
+                        appointment.UserId,
+                        business.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToUserAsync(appointment.UserId, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Complete): {ex.Message}");
+                }
+            });
 
             await SendStatusNotificationToClientAsync(appointment, "completada");
             return true;
@@ -484,6 +584,30 @@ namespace TurnoYa.Infrastructure.Services
 
             appointment.Status = AppointmentStatus.NoShow;
             await _appointmentRepository.UpdateAsync(appointment);
+
+            // SignalR: Notificar al cliente en tiempo real (fire-and-forget)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.NoShow,
+                        appointment.UserId,
+                        business.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToUserAsync(appointment.UserId, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (NoShow): {ex.Message}");
+                }
+            });
 
             await SendStatusNotificationToClientAsync(appointment, "no se presentó");
             return true;

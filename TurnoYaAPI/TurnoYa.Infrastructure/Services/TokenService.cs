@@ -42,6 +42,14 @@ public class TokenService : ITokenService
             new Claim("lastName", user.LastName)
         };
 
+        // AGREGAR business_id claim para dueños de negocios (para SignalR groups)
+        if (user.Role == "Owner" && user.OwnedBusinesses.Any())
+        {
+            // Tomar el primer negocio del owner para SignalR
+            var primaryBusiness = user.OwnedBusinesses.First();
+            claims.Add(new Claim("business_id", primaryBusiness.Id.ToString()));
+        }
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),

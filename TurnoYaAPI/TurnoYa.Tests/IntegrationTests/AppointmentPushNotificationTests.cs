@@ -25,6 +25,7 @@ namespace TurnoYa.Tests.IntegrationTests
         private readonly ApplicationDbContext _context;
         private readonly Mock<ITelegramBotService> _telegramMock;
         private readonly Mock<IPushNotificationService> _pushNotificationMock;
+        private readonly Mock<INotificationsService> _notificationsServiceMock;
         private readonly Mock<IAppointmentRepository> _appointmentRepositoryMock;
         private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
         private readonly Mock<IEmployeeScheduleRepository> _scheduleRepositoryMock;
@@ -49,6 +50,7 @@ namespace TurnoYa.Tests.IntegrationTests
             _appointmentRepositoryMock = new Mock<IAppointmentRepository>();
             _employeeRepositoryMock = new Mock<IEmployeeRepository>();
             _scheduleRepositoryMock = new Mock<IEmployeeScheduleRepository>();
+            _notificationsServiceMock = new Mock<INotificationsService>();
 
             SetupMocks();
 
@@ -59,7 +61,8 @@ namespace TurnoYa.Tests.IntegrationTests
                 _context,
                 new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<Application.Mappings.AppointmentProfile>()).CreateMapper(),
                 _telegramMock.Object,
-                _pushNotificationMock.Object);
+                _pushNotificationMock.Object,
+                _notificationsServiceMock.Object);
 
             SeedTestData();
         }

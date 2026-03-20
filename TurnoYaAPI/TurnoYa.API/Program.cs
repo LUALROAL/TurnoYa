@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using System.Text.Json.Serialization;
 using System.Text;
@@ -17,6 +18,8 @@ using TurnoYa.Core.Interfaces;
 using TurnoYa.Infrastructure.Data;
 using TurnoYa.Infrastructure.Services;
 using TurnoYa.Infrastructure.Repositories;
+using TurnoYa.API.Hubs;
+using TurnoYa.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
@@ -106,6 +109,15 @@ builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
 builder.Services.AddScoped<ITelegramBotService, TelegramBotService>();
 builder.Services.AddScoped<TelegramCallbackHandler>();
 
+// SignalR for Real-Time Notifications
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = builder.Environment.IsDevelopment();
+});
+
+// Notifications Service (SignalR broadcasting)
+builder.Services.AddScoped<INotificationsService, NotificationsService>(); // SignalR broadcasting
+
 // Authentication & JWT
 builder.Services.AddAuthentication(options =>
 {
@@ -123,6 +135,25 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
+    };
+
+    // PERMITIR JWT via query string para SignalR (WebSocket no soporta headers custom)
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            // If the request is for the hub...
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && 
+                path.StartsWithSegments("/hubs/notifications"))
+            {
+                // Read the token from query string
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -175,11 +206,32 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
         policy =>
         {
-            policy.WithOrigins("http://localhost:8100")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
+            policy.WithOrigins(
+                    "http://localhost:8100",     // Angular dev server
+                    "http://localhost:4200",     // Angular alternative
+                    "http://127.0.0.1:8100",     // Alternative localhost
+                    "capacitor://localhost"      // Capacitor mobile app
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed(origin => true); // Allow any origin for SignalR WebSocket
         });
+
+    // SignalR CORS policy (required for WebSocket connections from mobile)
+    options.AddPolicy("SignalRCors", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:8100",
+                "http://localhost:4200",
+                "http://127.0.0.1:8100",
+                "capacitor://localhost"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .SetIsOriginAllowed(origin => true);
+    });
 });
 
 
@@ -195,9 +247,13 @@ app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
+app.UseCors("SignalRCors"); // CORS for SignalR WebSocket connections
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Map SignalR Hub for real-time notifications
+app.MapHub<NotificationsHub>("/hubs/notifications");
 
 app.Run();

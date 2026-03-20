@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   apiBaseUrl: "https://localhost:7187",
-  googleMapsApiKey: "AIzaSyD1wabvDRfYKZYQ3MzPmxeYt_x2k-47lkQ"
+  googleMapsApiKey: "AIzaSyD1wabvDRfYKZYQ3MzPmxeYt_x2k-47lkQ",
+  signalRHubUrl: "/hubs/notifications"
 };
 
 /*
