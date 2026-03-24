@@ -6,6 +6,7 @@ import { AppointmentEventDto } from '../models/appointment-event.model';
 import { AuthSessionService } from './auth-session.service';
 import { NotifyService } from './notify.service';
 import { environment } from '../../../environments/environment';
+import { AppointmentsService } from '../../features/appointments/services/appointments.service';
 
 /** Max reconnection attempts before giving up */
 const MAX_RECONNECT_ATTEMPTS = 5;
@@ -16,6 +17,7 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 export class SignalRService implements OnDestroy {
   private readonly authSessionService = inject(AuthSessionService);
   private readonly notifyService = inject(NotifyService);
+  private readonly appointmentsService = inject(AppointmentsService);
 
   private hubConnection: signalR.HubConnection | null = null;
   private reconnectAttempts = 0;
@@ -54,7 +56,7 @@ export class SignalRService implements OnDestroy {
     // Subscribe to appointment events and forward to NotifyService
     this.setupAppointmentEventHandlers();
 
-    // Subscribe to action events (Accept/Reject) and invoke hub methods
+    // Subscribe to action events (Accept/Reject) and invoke HTTP methods
     this.setupActionEventHandlers();
   }
 
@@ -108,27 +110,39 @@ export class SignalRService implements OnDestroy {
 
   /**
    * Subscribes to appointmentActionEmitted$ from NotifyService
-   * and invokes the corresponding SignalR hub methods.
+   * and invokes the API REST endpoints.
    */
   private setupActionEventHandlers(): void {
     this.notifyService.appointmentActionEmitted$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(async ({ event, action }) => {
-        if (!this.hubConnection || this.hubConnection.state !== signalR.HubConnectionState.Connected) {
-          console.warn('[SignalRService] Cannot send action — not connected');
-          return;
-        }
-
+      .subscribe(({ event, action }) => {
         try {
           if (action === 'accept') {
-            await this.hubConnection.invoke('ConfirmAppointment', event.appointmentId);
-            console.log('[SignalRService] Appointment confirmed via hub:', event.appointmentId);
+            this.appointmentsService.confirm(event.appointmentId).subscribe({
+              next: () => {
+                console.log('[SignalRService] Appointment confirmed via API:', event.appointmentId);
+                this.notifyService.showSuccess('Cita confirmada exitosamente');
+              },
+              error: (err) => {
+                console.error('[SignalRService] Error confirming:', err);
+                this.notifyService.showError('No se pudo confirmar la cita');
+              }
+            });
           } else if (action === 'reject') {
-            await this.hubConnection.invoke('CancelAppointment', event.appointmentId);
-            console.log('[SignalRService] Appointment cancelled via hub:', event.appointmentId);
+            const reason = 'Rechazado por el dueño a través de la notificación';
+            this.appointmentsService.cancel(event.appointmentId, reason).subscribe({
+              next: () => {
+                console.log('[SignalRService] Appointment cancelled via API:', event.appointmentId);
+                this.notifyService.showSuccess('Cita rechazada exitosamente');
+              },
+              error: (err) => {
+                console.error('[SignalRService] Error cancelling:', err);
+                this.notifyService.showError('No se pudo rechazar la cita');
+              }
+            });
           }
         } catch (error) {
-          console.error('[SignalRService] Failed to invoke hub method:', error);
+          console.error('[SignalRService] Failed to invoke API method:', error);
         }
       });
   }
