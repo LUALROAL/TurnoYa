@@ -79,12 +79,12 @@ namespace TurnoYa.Infrastructure.Services
             switch (action.ToLower())
             {
                 case "confirm":
-                    success = await _appointmentService.ConfirmAppointmentAsync(appointmentId, appointment.Business.OwnerId);
+                    success = await _appointmentService.ConfirmAsync(appointmentId, appointment.Business.OwnerId);
                     statusMessage = success ? "Cita confirmada" : "No se pudo confirmar la cita";
                     break;
                 case "cancel":
                     cancellationReason = "Cancelado por el cliente via Telegram";
-                    success = await _appointmentService.CancelAppointmentAsync(appointmentId, appointment.UserId, cancellationReason);
+                    success = await _appointmentService.CancelAsync(appointmentId, appointment.UserId, cancellationReason);
                     statusMessage = success ? "Cita cancelada" : "No se pudo cancelar la cita";
                     break;
                 default:

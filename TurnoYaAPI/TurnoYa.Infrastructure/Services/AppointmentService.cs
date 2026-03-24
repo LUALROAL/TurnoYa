@@ -259,6 +259,32 @@ namespace TurnoYa.Infrastructure.Services
 
             appointment.Status = AppointmentStatus.Confirmed;
             await _appointmentRepository.UpdateAsync(appointment);
+
+            // SignalR: Notificar a ambos (cliente y negocio) en tiempo real
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.Confirmed,
+                        appointment.UserId,
+                        business.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToBothAsync(appointment.UserId, business.Id, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Confirm): {ex.Message}");
+                }
+            });
+
+            await SendStatusNotificationToClientAsync(appointment, "confirmada");
             return true;
         }
 
@@ -282,12 +308,40 @@ namespace TurnoYa.Infrastructure.Services
             var minCancellationHours = settings?.FreeCancellationHours ?? 24;
             var hoursUntilAppointment = (appointment.ScheduledDate - DateTime.UtcNow).TotalHours;
 
-            if (hoursUntilAppointment < minCancellationHours)
+            // Restricción de tiempo solo para clientes, los dueños pueden cancelar cuando gusten
+            if (!isOwner && hoursUntilAppointment < minCancellationHours)
                 throw new InvalidOperationException("No se puede cancelar dentro del tiempo mínimo permitido.");
 
             appointment.Status = AppointmentStatus.Cancelled;
             // Opcional: guardar motivo en StatusHistory (pendiente de implementar)
             await _appointmentRepository.UpdateAsync(appointment);
+
+            // SignalR: Notificar a ambos (cliente y negocio) en tiempo real
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.Cancelled,
+                        appointment.UserId,
+                        business!.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString(),
+                        reason
+                    );
+                    await _notificationsService.BroadcastToBothAsync(appointment.UserId, business.Id, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Cancel): {ex.Message}");
+                }
+            });
+
+            await SendStatusNotificationToClientAsync(appointment, "cancelada", reason);
             return true;
         }
 
@@ -303,6 +357,32 @@ namespace TurnoYa.Infrastructure.Services
 
             appointment.Status = AppointmentStatus.Completed;
             await _appointmentRepository.UpdateAsync(appointment);
+
+            // SignalR: Notificar a ambos (cliente y negocio) en tiempo real
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.Completed,
+                        appointment.UserId,
+                        business.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToBothAsync(appointment.UserId, business.Id, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (Complete): {ex.Message}");
+                }
+            });
+
+            await SendStatusNotificationToClientAsync(appointment, "completada");
             return true;
         }
 
@@ -319,6 +399,32 @@ namespace TurnoYa.Infrastructure.Services
 
             appointment.Status = AppointmentStatus.NoShow;
             await _appointmentRepository.UpdateAsync(appointment);
+
+            // SignalR: Notificar a ambos (cliente y negocio) en tiempo real
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var service = await _context.Services.FindAsync(appointment.ServiceId);
+                    var eventDto = new AppointmentEventDto(
+                        appointment.Id,
+                        AppointmentEventType.NoShow,
+                        appointment.UserId,
+                        business.Id,
+                        business.Name,
+                        service?.Name ?? "N/A",
+                        appointment.ScheduledDate,
+                        appointment.Status.ToString()
+                    );
+                    await _notificationsService.BroadcastToBothAsync(appointment.UserId, business.Id, eventDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error en SignalR broadcast (NoShow): {ex.Message}");
+                }
+            });
+
+            await SendStatusNotificationToClientAsync(appointment, "no se presentó");
             return true;
         }
 
@@ -444,174 +550,6 @@ namespace TurnoYa.Infrastructure.Services
             return $"AP-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}";
         }
 
-        public async Task<bool> ConfirmAppointmentAsync(Guid id, Guid ownerId)
-        {
-            var appointment = await _appointmentRepository.GetByIdAsync(id);
-            if (appointment == null) return false;
-
-            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
-            if (business == null || business.OwnerId != ownerId) return false;
-
-            if (appointment.Status != AppointmentStatus.Pending) return false;
-
-            appointment.Status = AppointmentStatus.Confirmed;
-            await _appointmentRepository.UpdateAsync(appointment);
-
-            // SignalR: Notificar al cliente en tiempo real (fire-and-forget)
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var service = await _context.Services.FindAsync(appointment.ServiceId);
-                    var eventDto = new AppointmentEventDto(
-                        appointment.Id,
-                        AppointmentEventType.Confirmed,
-                        appointment.UserId,
-                        business.Id,
-                        business.Name,
-                        service?.Name ?? "N/A",
-                        appointment.ScheduledDate,
-                        appointment.Status.ToString()
-                    );
-                    await _notificationsService.BroadcastToUserAsync(appointment.UserId, eventDto);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error en SignalR broadcast (Confirm): {ex.Message}");
-                }
-            });
-
-            await SendStatusNotificationToClientAsync(appointment, "confirmada");
-            return true;
-        }
-
-        public async Task<bool> CancelAppointmentAsync(Guid id, Guid requesterId, string? reason)
-        {
-            var appointment = await _appointmentRepository.GetByIdAsync(id);
-            if (appointment == null) return false;
-
-            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
-            bool isOwner = business?.OwnerId == requesterId;
-
-            if (!isOwner && appointment.UserId != requesterId) return false;
-
-            if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Completed)
-                return false;
-
-            appointment.Status = AppointmentStatus.Cancelled;
-            await _appointmentRepository.UpdateAsync(appointment);
-
-            // SignalR: Notificar a ambos (cliente y negocio) en tiempo real (fire-and-forget)
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var service = await _context.Services.FindAsync(appointment.ServiceId);
-                    var eventDto = new AppointmentEventDto(
-                        appointment.Id,
-                        AppointmentEventType.Cancelled,
-                        appointment.UserId,
-                        business!.Id,
-                        business.Name,
-                        service?.Name ?? "N/A",
-                        appointment.ScheduledDate,
-                        appointment.Status.ToString(),
-                        reason
-                    );
-                    await _notificationsService.BroadcastToBothAsync(appointment.UserId, business.Id, eventDto);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error en SignalR broadcast (Cancel): {ex.Message}");
-                }
-            });
-
-            await SendStatusNotificationToClientAsync(appointment, "cancelada", reason);
-            return true;
-        }
-
-        public async Task<bool> CompleteAppointmentAsync(Guid id, Guid ownerId)
-        {
-            var appointment = await _appointmentRepository.GetByIdAsync(id);
-            if (appointment == null) return false;
-
-            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
-            if (business == null || business.OwnerId != ownerId) return false;
-
-            if (appointment.Status != AppointmentStatus.Confirmed) return false;
-
-            appointment.Status = AppointmentStatus.Completed;
-            await _appointmentRepository.UpdateAsync(appointment);
-
-            // SignalR: Notificar al cliente en tiempo real (fire-and-forget)
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var service = await _context.Services.FindAsync(appointment.ServiceId);
-                    var eventDto = new AppointmentEventDto(
-                        appointment.Id,
-                        AppointmentEventType.Completed,
-                        appointment.UserId,
-                        business.Id,
-                        business.Name,
-                        service?.Name ?? "N/A",
-                        appointment.ScheduledDate,
-                        appointment.Status.ToString()
-                    );
-                    await _notificationsService.BroadcastToUserAsync(appointment.UserId, eventDto);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error en SignalR broadcast (Complete): {ex.Message}");
-                }
-            });
-
-            await SendStatusNotificationToClientAsync(appointment, "completada");
-            return true;
-        }
-
-        public async Task<bool> MarkAsNoShowAppointmentAsync(Guid id, Guid ownerId)
-        {
-            var appointment = await _appointmentRepository.GetByIdAsync(id);
-            if (appointment == null) return false;
-
-            var business = await _context.Businesses.FindAsync(appointment.BusinessId);
-            if (business == null || business.OwnerId != ownerId) return false;
-
-            if (appointment.Status != AppointmentStatus.Confirmed && appointment.Status != AppointmentStatus.Pending)
-                return false;
-
-            appointment.Status = AppointmentStatus.NoShow;
-            await _appointmentRepository.UpdateAsync(appointment);
-
-            // SignalR: Notificar al cliente en tiempo real (fire-and-forget)
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var service = await _context.Services.FindAsync(appointment.ServiceId);
-                    var eventDto = new AppointmentEventDto(
-                        appointment.Id,
-                        AppointmentEventType.NoShow,
-                        appointment.UserId,
-                        business.Id,
-                        business.Name,
-                        service?.Name ?? "N/A",
-                        appointment.ScheduledDate,
-                        appointment.Status.ToString()
-                    );
-                    await _notificationsService.BroadcastToUserAsync(appointment.UserId, eventDto);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error en SignalR broadcast (NoShow): {ex.Message}");
-                }
-            });
-
-            await SendStatusNotificationToClientAsync(appointment, "no se presentó");
-            return true;
-        }
 
         private async Task SendStatusNotificationToClientAsync(Appointment appointment, string statusText, string? reason = null)
         {
