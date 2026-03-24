@@ -8,10 +8,10 @@ namespace TurnoYa.Application.DTOs.Auth;
 public class UpdateUserRoleDto
 {
     /// <summary>
-    /// Nuevo rol del usuario (Customer, BusinessOwner, Employee, Admin)
+    /// Nuevo rol del usuario (Customer, OwnerBusiness, Employee, Admin)
     /// </summary>
     [Required(ErrorMessage = "El rol es requerido")]
-    [RegularExpression("^(Customer|BusinessOwner|Employee|Admin)$", 
-        ErrorMessage = "El rol debe ser: Customer, BusinessOwner, Employee o Admin")]
+    [RegularExpression("^(Customer|OwnerBusiness|Employee|Admin)$", 
+        ErrorMessage = "El rol debe ser: Customer, OwnerBusiness, Employee o Admin")]
     public string Role { get; set; } = string.Empty;
 }

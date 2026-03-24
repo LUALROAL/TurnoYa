@@ -59,44 +59,50 @@ export class SignalRService implements OnDestroy {
   }
 
   /**
-   * Subscribes to all 5 appointment event subjects from SignalR
-   * and forwards them to NotifyService.handleAppointmentEvent().
-   * The role is determined by the user's session (owner vs client).
+   * Obtiene el rol actual del usuario en tiempo real desde la sesión.
    */
-  private setupAppointmentEventHandlers(): void {
+  private getCurrentRole(): 'owner' | 'employee' | 'client' {
     const session = this.authSessionService.getSession();
     const roleStr = session?.user?.role?.toLowerCase() || 'client';
-    const role = (roleStr === 'owner' || roleStr === 'employee') ? roleStr : 'client';
-    const finalRole = role as 'owner' | 'employee' | 'client';
+    const role = (roleStr === 'owner' || roleStr === 'ownerbusiness' || roleStr === 'employee') ? 
+                 (roleStr === 'ownerbusiness' ? 'owner' : roleStr) : 'client';
+    return role as 'owner' | 'employee' | 'client';
+  }
 
+  /**
+   * Subscribes to all 5 appointment event subjects from SignalR
+   * and forwards them to NotifyService.handleAppointmentEvent().
+   * The role is determined dynamically when the event arrives.
+   */
+  private setupAppointmentEventHandlers(): void {
     this.appointmentCreated$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, finalRole);
+        this.notifyService.handleAppointmentEvent(event, this.getCurrentRole());
       });
 
     this.appointmentConfirmed$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, finalRole);
+        this.notifyService.handleAppointmentEvent(event, this.getCurrentRole());
       });
 
     this.appointmentCancelled$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, finalRole);
+        this.notifyService.handleAppointmentEvent(event, this.getCurrentRole());
       });
 
     this.appointmentCompleted$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, finalRole);
+        this.notifyService.handleAppointmentEvent(event, this.getCurrentRole());
       });
 
     this.appointmentNoShow$
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
-        this.notifyService.handleAppointmentEvent(event, finalRole);
+        this.notifyService.handleAppointmentEvent(event, this.getCurrentRole());
       });
   }
 
@@ -245,27 +251,27 @@ export class SignalRService implements OnDestroy {
     if (!this.hubConnection) return;
 
     this.hubConnection.on('AppointmentCreated', (event: AppointmentEventDto) => {
-      console.debug('[SignalRService] AppointmentCreated', event);
+      console.log('[SignalRService] AppointmentCreated', event);
       this.appointmentCreated$.next(event);
     });
 
     this.hubConnection.on('AppointmentConfirmed', (event: AppointmentEventDto) => {
-      console.debug('[SignalRService] AppointmentConfirmed', event);
+      console.log('[SignalRService] AppointmentConfirmed', event);
       this.appointmentConfirmed$.next(event);
     });
 
     this.hubConnection.on('AppointmentCancelled', (event: AppointmentEventDto) => {
-      console.debug('[SignalRService] AppointmentCancelled', event);
+      console.log('[SignalRService] AppointmentCancelled', event);
       this.appointmentCancelled$.next(event);
     });
 
     this.hubConnection.on('AppointmentCompleted', (event: AppointmentEventDto) => {
-      console.debug('[SignalRService] AppointmentCompleted', event);
+      console.log('[SignalRService] AppointmentCompleted', event);
       this.appointmentCompleted$.next(event);
     });
 
     this.hubConnection.on('AppointmentNoShow', (event: AppointmentEventDto) => {
-      console.debug('[SignalRService] AppointmentNoShow', event);
+      console.log('[SignalRService] AppointmentNoShow', event);
       this.appointmentNoShow$.next(event);
     });
   }

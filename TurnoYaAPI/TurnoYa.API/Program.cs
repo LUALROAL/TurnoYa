@@ -113,10 +113,14 @@ builder.Services.AddScoped<TelegramCallbackHandler>();
 builder.Services.AddSignalR(options =>
 {
     options.EnableDetailedErrors = builder.Environment.IsDevelopment();
+})
+.AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 // Notifications Service (SignalR broadcasting)
-builder.Services.AddScoped<INotificationsService, NotificationsService>(); // SignalR broadcasting
+builder.Services.AddSingleton<INotificationsService, NotificationsService>(); // SignalR broadcasting
 
 // Authentication & JWT
 builder.Services.AddAuthentication(options =>

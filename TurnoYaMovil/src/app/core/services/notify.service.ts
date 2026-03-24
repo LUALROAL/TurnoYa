@@ -368,12 +368,14 @@ export class NotifyService {
    * @param role   'owner' | 'client'
    */
   async handleAppointmentEvent(event: AppointmentEventDto, role: 'owner' | 'employee' | 'client'): Promise<void> {
+    console.log(`[NotifyService] INCOMING EVENT: ${event.eventType} | Target Role: ${role}`);
+    
     // Step 1: Build the item
     const item = this.buildNotificationItem(event);
 
     // Step 2: Deduplicate
     if (this.isDuplicate(event.eventType, event.appointmentId)) {
-      console.debug('[NotifyService] Dropping duplicate event:', event.eventType, event.appointmentId);
+      console.log('[NotifyService] Dropping duplicate event:', event.eventType, event.appointmentId);
       return;
     }
 
@@ -382,12 +384,15 @@ export class NotifyService {
 
     // Step 4: Show UI only if app was visible
     if (!this.wasAppVisible()) {
-      console.debug('[NotifyService] App was hidden — notification saved, badge updated silently');
-      return;
+      console.log('[NotifyService] App was hidden — notification saved, badge updated silently. visibilityState:', document.visibilityState);
+      return; 
     }
+
+    console.log(`[NotifyService] Passed deduplication and visibility check. Role is: ${role}`);
 
     // Owner / Employee + new appointment request → actionable alert
     if ((role === 'owner' || role === 'employee') && event.eventType === 'Created') {
+      console.log('[NotifyService] Showing Actionable Alert to Owner!');
       await this.showActionableAlert(
         `${event.businessName} — ${event.serviceName}\n${event.scheduledDate}`,
         // Accept handler → emit confirmation
@@ -434,7 +439,7 @@ export class NotifyService {
     }
 
     // All other combos: silent update (badge + history already done in step 3)
-    console.debug('[NotifyService] Silent notification — badge updated:', item.title);
+    console.log('[NotifyService] Silent notification — badge updated:', item.title);
   }
 
   /**

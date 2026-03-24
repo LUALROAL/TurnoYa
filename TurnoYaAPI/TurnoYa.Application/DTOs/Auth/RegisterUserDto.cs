@@ -12,7 +12,7 @@ public class RegisterUserDto
     public string LastName { get; set; } = string.Empty;
     public string? Phone { get; set; }
     /// <summary>
-    /// Rol inicial del usuario (Customer | BusinessOwner)
+    /// Rol inicial del usuario (Customer | OwnerBusiness)
     /// </summary>
     public string Role { get; set; } = "Customer";
 }

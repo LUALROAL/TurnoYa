@@ -39,7 +39,13 @@ export class PushNotificationService {
     }
 
     try {
-      // Verificar si estamos en un dispositivo real
+      // Verificar si estamos en un dispositivo real (evitar cuelgues en web)
+      const { Capacitor } = await import('@capacitor/core');
+      if (!Capacitor.isNativePlatform()) {
+        console.log('[PushNotificationService] Skipping push init on web platform');
+        return;
+      }
+
       const permission = await PushNotifications.checkPermissions();
       
       if (permission.receive === 'prompt') {

@@ -97,6 +97,7 @@ public class AuthService : IAuthService
     {
         // Buscar usuario por email
         var user = await _context.Users
+            .Include(u => u.OwnedBusinesses)
             .FirstOrDefaultAsync(u => u.Email.ToLower() == loginDto.Email.ToLower());
 
         if (user == null)
@@ -169,7 +170,9 @@ public class AuthService : IAuthService
         }
 
         // Buscar usuario
-        var user = await _context.Users.FindAsync(userId);
+        var user = await _context.Users
+            .Include(u => u.OwnedBusinesses)
+            .FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null || !user.IsActive)
         {
             throw new UnauthorizedAccessException("Usuario no encontrado o inactivo");
@@ -257,10 +260,10 @@ public class AuthService : IAuthService
         }
 
         // Validar que el rol sea válido
-        var validRoles = new[] { "Customer", "BusinessOwner", "Employee", "Admin" };
+        var validRoles = new[] { "Customer", "OwnerBusiness", "Employee", "Admin" };
         if (!validRoles.Contains(newRole))
         {
-            throw new ArgumentException("Rol inválido. Debe ser: Customer, BusinessOwner, Employee o Admin");
+            throw new ArgumentException("Rol inválido. Debe ser: Customer, OwnerBusiness, Employee o Admin");
         }
 
         // Buscar usuario
@@ -278,9 +281,9 @@ public class AuthService : IAuthService
             return _mapper.Map<UserDto>(user);
         }
 
-        // Para usuarios normales, solo permitir cambio entre Customer y BusinessOwner
-        if ((user.Role == "Customer" || user.Role == "BusinessOwner") &&
-            (newRole == "Customer" || newRole == "BusinessOwner"))
+        // Para usuarios normales, solo permitir cambio entre Customer y OwnerBusiness
+        if ((user.Role == "Customer" || user.Role == "OwnerBusiness") &&
+            (newRole == "Customer" || newRole == "OwnerBusiness"))
         {
             user.Role = newRole;
             await _context.SaveChangesAsync();

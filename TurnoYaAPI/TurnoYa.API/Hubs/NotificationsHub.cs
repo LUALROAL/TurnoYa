@@ -25,7 +25,7 @@ public class NotificationsHub : Hub
     {
         var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                      ?? Context.User?.FindFirst("sub")?.Value;
-        var businessId = Context.User?.FindFirst("business_id")?.Value;
+        var businessIds = Context.User?.FindAll("business_id")?.Select(c => c.Value).ToList();
 
         if (!string.IsNullOrEmpty(userId))
         {
@@ -34,14 +34,19 @@ public class NotificationsHub : Hub
             _logger.LogInformation("Client connected: {ConnectionId} joined group {Group}", 
                 Context.ConnectionId, groupName);
         }
-        else if (!string.IsNullOrEmpty(businessId))
+
+        if (businessIds != null && businessIds.Any())
         {
-            var groupName = $"business:{businessId}";
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-            _logger.LogInformation("Client connected: {ConnectionId} joined group {Group}", 
-                Context.ConnectionId, groupName);
+            foreach (var bId in businessIds)
+            {
+                var groupName = $"business:{bId}";
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+                _logger.LogInformation("Dueño {UserId} unido a SignalR: {ConnectionId} escuchando {Group}", 
+                    userId, Context.ConnectionId, groupName);
+            }
         }
-        else
+
+        if (string.IsNullOrEmpty(userId) && (businessIds == null || !businessIds.Any()))
         {
             _logger.LogWarning("Client connected: {ConnectionId} but no userId/businessId claims found", 
                 Context.ConnectionId);
