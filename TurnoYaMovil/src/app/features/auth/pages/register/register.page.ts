@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectorRef } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
@@ -48,6 +48,7 @@ export class RegisterPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected readonly form = this.formBuilder.group({
     fullName: ["", [Validators.required, Validators.minLength(3)]],
@@ -97,6 +98,14 @@ export class RegisterPage {
    * Login/Registro con Google
    */
   protected async googleLogin(): Promise<void> {
+    // Validar que acepten los términos y condiciones
+    const acceptTerms = this.form.get('acceptTerms')?.value;
+    if (!acceptTerms) {
+      this.errorMessage = 'Debes aceptar los términos y condiciones para continuar';
+      this.cdr.detectChanges();
+      return;
+    }
+
     if (this.loading) return;
 
     this.loading = true;

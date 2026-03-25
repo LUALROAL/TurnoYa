@@ -270,7 +270,9 @@
               type="button" 
               (click)="googleLogin()"
               [disabled]="loading"
-              class="group relative overflow-hidden rounded-lg cursor-pointer disabled:opacity-50">
+              class="group relative overflow-hidden rounded-lg cursor-pointer disabled:opacity-50"
+              [class.opacity-50]="!form.get('acceptTerms')?.value"
+              [class.cursor-not-allowed]="!form.get('acceptTerms')?.value">
               <div
                 class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               </div>
