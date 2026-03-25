@@ -76,6 +76,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   selectedPhotoFile: File | null = null;
   photoPreview: string | null = null;
   existingPhotoBase64: string | null = null;
+  googlePhotoUrl: string | null = null;
     // Guardamos la referencia de la función para poder eliminarla correctamente
   private refreshHandler = () => this.loadProfile();
   constructor(
@@ -176,7 +177,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       next: (profile) => {
         this.profile.set(profile);
         this.populateProfileForm(profile);
-        this.existingPhotoBase64 = profile.photoBase64 || null; // 👈 NUEVA LÍNEA
+        this.existingPhotoBase64 = profile.photoBase64 || null;
+        this.googlePhotoUrl = profile.googlePhotoUrl || null;
         this.loading.set(false);
       },
       error: (err) => {

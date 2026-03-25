@@ -23,4 +23,6 @@ public class UserProfileDto
     public int CompletedAppointments { get; set; }
     public DateTime CreatedAt { get; set; }
     public string? PhotoBase64 { get; set; } // 👈 NUEVO
+    public string? GoogleId { get; set; } // Google OAuth ID
+    public string? GooglePhotoUrl { get; set; } // Google profile photo URL
 }

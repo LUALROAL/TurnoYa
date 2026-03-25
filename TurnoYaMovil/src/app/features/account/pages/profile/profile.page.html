@@ -87,12 +87,14 @@
               } @else if (existingPhotoBase64) {
               <img [src]="'data:image/jpeg;base64,' + existingPhotoBase64" alt="Foto de perfil"
                 class="w-full h-full object-cover" />
+              } @else if (googlePhotoUrl) {
+              <img [src]="googlePhotoUrl" alt="Foto de Google" class="w-full h-full object-cover" />
               } @else {
               <span class="text-2xl font-display font-bold text-bg-primary">{{ profile()?.firstName?.charAt(0) }}{{
                 profile()?.lastName?.charAt(0) }}</span>
               }
             </div>
-            @if (!photoPreview && !existingPhotoBase64) {
+            @if (!photoPreview && !existingPhotoBase64 && !googlePhotoUrl) {
             <button type="button" (click)="takePhoto()"
               class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-neon-primary flex items-center justify-center text-bg-primary hover:scale-110 transition-transform">
               <ion-icon name="camera-outline"></ion-icon>
@@ -100,7 +102,7 @@
             }
           </div>
 
-          @if (photoPreview || existingPhotoBase64) {
+          @if (photoPreview || existingPhotoBase64 || googlePhotoUrl) {
           <div class="flex gap-2 mt-2">
             <button type="button" (click)="selectFromGallery()"
               class="px-3 py-1 rounded-lg bg-bg-tertiary/50 border border-neon-primary/20 text-xs font-mono text-text-secondary hover:border-neon-primary/50 transition-all">

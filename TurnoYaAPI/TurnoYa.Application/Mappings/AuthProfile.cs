@@ -47,9 +47,21 @@ public class AuthProfile : Profile
         // User → UserProfileDto
         CreateMap<User, UserProfileDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            .ForMember(dest => dest.PhotoBase64, opt => opt.MapFrom(src => src.PhotoData != null ? Convert.ToBase64String(src.PhotoData) : null));
+            .ForMember(dest => dest.PhotoBase64, opt => opt.MapFrom(src => src.PhotoData != null ? Convert.ToBase64String(src.PhotoData) : null))
+            .ForMember(dest => dest.GoogleId, opt => opt.MapFrom(src => src.GoogleId))
+            .ForMember(dest => dest.GooglePhotoUrl, opt => opt.MapFrom(src => src.GooglePhotoUrl));
 
         // User → UserManageDto (para admin)
-        // Se construye manualmente en el servicio
+        CreateMap<User, UserManageDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role ?? "Customer"))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+            .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.IsEmailVerified))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.NoShowCount, opt => opt.MapFrom(src => src.TotalNoShows))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName ?? ""))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName ?? ""))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email ?? ""))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber ?? src.Phone));
     }
 }
