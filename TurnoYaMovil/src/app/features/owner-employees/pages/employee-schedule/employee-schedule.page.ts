@@ -9,11 +9,6 @@ import {
   IonInput,
   IonCheckbox,
   IonModal,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -42,11 +37,6 @@ import { EmployeeWorkingHoursDto, WorkingHoursDto, DayScheduleDto } from '../../
     IonInput,
     IonCheckbox,
     IonModal,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
   ],
   templateUrl: './employee-schedule.page.html',
   styleUrls: ['./employee-schedule.page.scss'],
