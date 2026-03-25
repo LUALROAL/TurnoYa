@@ -47,3 +47,6 @@ TurnoYaMovil/ios/App/build/
 nul
 Thumbs.db
 Desktop.ini
+
+secret/
+*.json
