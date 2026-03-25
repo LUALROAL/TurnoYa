@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { finalize, Observable, shareReplay, tap, throwError } from "rxjs";
 import { Capacitor } from "@capacitor/core";
 import { GoogleSignIn } from "@capawesome/capacitor-google-sign-in";
@@ -28,7 +29,8 @@ export class AuthService {
 
   constructor(
     private readonly api: ApiService,
-    private readonly session: AuthSessionService
+    private readonly session: AuthSessionService,
+    private readonly router: Router
   ) {}
 
   /**
@@ -324,7 +326,7 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<AuthResponseDto> {
+  login(email: string, password: string, rememberMe: boolean = false): Observable<AuthResponseDto> {
     const payload: LoginRequestDto = {
       email,
       password,
@@ -343,7 +345,7 @@ export class AuthService {
             lastName: response.user.lastName,
             role: response.user.role,
           },
-        });
+        }, rememberMe);
       })
     );
   }
@@ -466,6 +468,32 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Retorna la ruta según el rol del usuario
+   * @param role - Rol del usuario (Customer, BusinessOwner, Professional, Admin)
+   */
+  getRouteByRole(role?: string): string {
+    switch (role) {
+      case 'BusinessOwner':
+        return '/home';
+      case 'Professional':
+        return '/professional/home';
+      case 'Admin':
+        return '/home';
+      case 'Customer':
+      default:
+        return '/home';
+    }
+  }
+
+  /**
+   * Cierra la sesión del usuario, limpia el storage y navega a login
+   */
+  logout(): void {
+    this.session.clearSession();
+    this.router.navigate(['/auth/login']);
   }
 }
 

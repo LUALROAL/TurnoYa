@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, ChangeDetectorRef } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { IonicModule } from "@ionic/angular";
+import { IonicModule, ToastController } from "@ionic/angular";
 import { addIcons } from "ionicons";
 import {
   sparklesOutline,
@@ -16,7 +16,8 @@ import {
   warningOutline,
   syncOutline,
   personAddOutline,
-  logoGoogle
+  logoGoogle,
+  informationCircleOutline
 } from "ionicons/icons";
 
 import { AuthService } from "../../services/auth.service";
@@ -29,7 +30,7 @@ import { AuthService } from "../../services/auth.service";
   styleUrls: ["./register.page.scss"],
 })
 export class RegisterPage {
-  constructor() {
+  constructor(private toastController: ToastController) {
     addIcons({
       sparklesOutline,
       personOutline,
@@ -42,7 +43,8 @@ export class RegisterPage {
       warningOutline,
       syncOutline,
       personAddOutline,
-      logoGoogle
+      logoGoogle,
+      informationCircleOutline
     });
   }
   private readonly formBuilder = inject(FormBuilder);
@@ -60,6 +62,9 @@ export class RegisterPage {
   protected loading = false;
   protected showPassword = false;
   protected errorMessage = '';
+
+  // Bandera para prevenir race condition en Google Auth
+  private googleAuthInProgress = false;
 
   // Métodos auxiliares para la fortaleza de contraseña
   protected get passwordLength(): number {
@@ -106,48 +111,114 @@ export class RegisterPage {
       return;
     }
 
-    if (this.loading) return;
+    // Prevenir race condition
+    if (this.loading || this.googleAuthInProgress) return;
 
     this.loading = true;
+    this.googleAuthInProgress = true;
     this.errorMessage = '';
 
     try {
       const observable = await this.authService.googleLogin(acceptTerms);
       observable.subscribe({
-        next: () => {
+        next: (response) => {
           this.loading = false;
+          this.googleAuthInProgress = false;
           // Redirigir al home correcto según el rol
-          void this.router.navigateByUrl("/auth/login");
+          const route = this.authService.getRouteByRole(response.user.role);
+          void this.router.navigateByUrl(route);
         },
         error: (error: any) => {
           this.loading = false;
+          this.googleAuthInProgress = false;
           console.error("Google login error:", error);
           
-          // Analizar el error para dar un mensaje más específico
-          let errorMsg = error.message || 'Error al iniciar sesión con Google';
+          // Analizar el tipo de error
+          const errorMsg = (error.message || '').toLowerCase();
           
-          // Si el error menciona "origin" o "403", es problema de configuración
-          if (errorMsg.toLowerCase().includes('origin') || errorMsg.toLowerCase().includes('403')) {
-            errorMsg = 'Error de configuración de Google. Contacta al administrador.';
+          // Si el usuario canceló, no mostrar error
+          if (errorMsg.includes('cancelado') || errorMsg.includes('cancelled') || errorMsg.includes('cancel')) {
+            return;
           }
           
-          this.errorMessage = errorMsg;
+          // Error de red - conexión fallida
+          if (errorMsg.includes('conexión') || errorMsg.includes('connection') || errorMsg.includes('network') || errorMsg.includes('timeout')) {
+            this.errorMessage = 'Error de conexión. Verificá tu internet e intentá de nuevo.';
+            this.cdr.detectChanges();
+            return;
+          }
+          
+          // Si el error menciona "origin" o "403", es problema de configuración
+          if (errorMsg.includes('origin') || errorMsg.includes('403')) {
+            this.errorMessage = 'Error de configuración de Google. Contacta al administrador.';
+          } else {
+            this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+          }
+          
           this.cdr.detectChanges();
         },
       });
     } catch (error: any) {
       this.loading = false;
+      this.googleAuthInProgress = false;
       console.error("Google login exception:", error);
       
-      let errorMsg = error.message || 'Error al iniciar sesión con Google';
+      const errorMsg = (error.message || '').toLowerCase();
       
-      if (errorMsg.toLowerCase().includes('origin') || errorMsg.toLowerCase().includes('403')) {
-        errorMsg = 'Error de configuración de Google. Contacta al administrador.';
+      // Si el usuario canceló, no mostrar error
+      if (errorMsg.includes('cancelado') || errorMsg.includes('cancelled') || errorMsg.includes('cancel')) {
+        return;
       }
       
-      this.errorMessage = errorMsg;
+      // Error de red
+      if (errorMsg.includes('conexión') || errorMsg.includes('connection') || errorMsg.includes('network') || errorMsg.includes('timeout')) {
+        this.errorMessage = 'Error de conexión. Verificá tu internet e intentá de nuevo.';
+        this.cdr.detectChanges();
+        return;
+      }
+      
+      if (errorMsg.includes('origin') || errorMsg.includes('403')) {
+        this.errorMessage = 'Error de configuración de Google. Contacta al administrador.';
+      } else {
+        this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+      }
+      
       this.cdr.detectChanges();
     }
+  }
+
+  /**
+   * Muestra un toast con el mensaje especificado
+   */
+  protected async showToast(message: string, duration: number = 3000): Promise<void> {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: duration,
+      position: 'bottom',
+      color: 'medium',
+      cssClass: 'custom-toast',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+    await toast.present();
+  }
+
+  /**
+   * Handle para el link "Términos y Condiciones" - Placeholder
+   */
+  protected onTermsAndConditions(): void {
+    this.showToast('Términos en desarrollo. Próximamente disponible.', 3000);
+  }
+
+  /**
+   * Handle para el link "Política de Privacidad" - Placeholder
+   */
+  protected onPrivacyPolicy(): void {
+    this.showToast('Política de privacidad en desarrollo. Próximamente disponible.', 3000);
   }
 
   protected submit() {

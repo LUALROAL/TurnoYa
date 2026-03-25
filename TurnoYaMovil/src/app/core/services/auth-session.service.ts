@@ -64,18 +64,23 @@ export class AuthSessionService {
   }
 
   /**
-   * Guarda la sesión en localStorage y emite el nuevo valor
+   * Guarda la sesión en storage según el flag rememberMe
+   * @param session - Datos de la sesión
+   * @param rememberMe - Si true, usa localStorage (persiste entre sesiones)
+   *                     Si false, usa sessionStorage (se limpia al cerrar navegador)
    */
-  setSession(session: AuthSession): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(session));
+  setSession(session: AuthSession, rememberMe: boolean = false): void {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(this.storageKey, JSON.stringify(session));
     this.sessionSubject.next(session);
   }
 
   /**
-   * Elimina la sesión y emite null
+   * Elimina la sesión de ambos storages y emite null
    */
   clearSession(): void {
     localStorage.removeItem(this.storageKey);
+    sessionStorage.removeItem(this.storageKey);
     this.sessionSubject.next(null);
   }
 }

@@ -173,11 +173,12 @@
                 <span class="font-mono text-xs">Recordar acceso</span>
               </label>
 
-              <a href="#"
-                class="text-neon-primary hover:text-neon-secondary transition-colors duration-300 font-mono text-xs flex items-center gap-1">
+              <!-- Link "¿Olvidaste tu contraseña?" - Placeholder con handler -->
+              <button type="button" (click)="onForgotPassword()"
+                class="text-neon-primary hover:text-neon-secondary transition-colors duration-300 font-mono text-xs flex items-center gap-1 bg-transparent border-none cursor-pointer">
                 <ion-icon name="help-circle-outline" class="text-sm"></ion-icon>
                 ¿Olvidaste?
-              </a>
+              </button>
             </div>
 
             <!-- Mensaje de Error -->
@@ -250,6 +251,14 @@
               class="text-neon-primary hover:text-neon-secondary transition-colors duration-300 font-mono font-semibold ml-1">
               Crear cuenta
             </a>
+          </p>
+
+          <!-- Términos y Condiciones - Placeholder -->
+          <p class="mt-4 text-center text-text-tertiary text-xs">
+            <button type="button" (click)="onTermsAndConditions()"
+              class="text-text-tertiary hover:text-neon-primary transition-colors duration-300 font-mono bg-transparent border-none cursor-pointer underline">
+              Términos y Condiciones
+            </button>
           </p>
         </div>
       </div>
