@@ -44,11 +44,11 @@
           <!-- Búsqueda -->
           <div class="space-y-2">
             <label class="block text-xs font-mono text-neon-primary tracking-wider">BUSCAR</label>
-            <div class="relative">
+            <div class="relative input-container">
               <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
               <div
-                class="relative flex items-center gap-3 px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                <ion-icon name="search-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                class="input-field-custom">
+                <ion-icon name="search-outline" class="text-neon-primary text-xl flex-shrink-0 icon-glow"></ion-icon>
                 <input type="text" placeholder="Buscar por email, nombre..." (input)="onSearchChange($event)"
                   class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
               </div>
@@ -59,12 +59,12 @@
           <div class="flex flex-wrap items-end gap-3">
             <div class="flex-1 min-w-[200px] space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">FILTRAR POR ROL</label>
-              <div class="relative">
+              <div class="relative input-container">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
                 <button type="button" (click)="openRolePopover($event)"
-                  class="relative w-full flex items-center gap-3 px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300 text-left">
-                  <ion-icon name="funnel-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
-                  <span class="flex-1 font-body truncate">
+                  class="input-field-custom text-left">
+                  <ion-icon name="funnel-outline" class="text-neon-primary text-xl flex-shrink-0 icon-glow"></ion-icon>
+                  <span class="flex-1 font-body truncate text-text-primary">
                     {{ getSelectedRoleLabel() }}
                   </span>
                   <ion-icon name="chevron-down-outline" class="text-neon-primary text-lg flex-shrink-0"></ion-icon>
@@ -239,10 +239,10 @@
             <!-- Campo de rol (ion-select estilizado) -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">ROL</label>
-              <div class="relative">
+              <div class="relative input-container">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
                 <ion-select formControlName="role" interface="action-sheet"
-                  class="relative w-full px-4 py-3 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl text-text-primary focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
+                  class="input-field-custom">
                   <ion-select-option value="Customer" class="bg-bg-card text-text-primary">Cliente</ion-select-option>
                   <ion-select-option value="Owner" class="bg-bg-card text-text-primary">Propietario</ion-select-option>
                   <ion-select-option value="Admin" class="bg-bg-card text-text-primary">Administrador</ion-select-option>
@@ -253,7 +253,7 @@
             <!-- Botones de acción -->
             <div class="flex gap-3 pt-4">
               <button type="submit" [disabled]="updatingUser()"
-                class="flex-1 py-3 px-4 bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary font-display font-semibold rounded-xl hover:shadow-neon transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2">
+                class="flex-1 py-3 px-4 bg-gradient-to-r from-neon-primary to-neon-secondary text-bg-primary font-display font-semibold rounded-xl hover:shadow-neon transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 save-button">
                 @if (updatingUser()) {
                   <ion-spinner name="crescent" class="w-4 h-4"></ion-spinner>
                 }
@@ -288,11 +288,10 @@
             <!-- Razón del bloqueo -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">RAZÓN (opcional)</label>
-              <div class="relative">
+              <div class="relative input-container">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
-                <div
-                  class="relative flex items-center gap-3 px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                  <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                <div class="input-field-custom">
+                  <ion-icon name="chatbubble-outline" class="text-neon-primary text-xl flex-shrink-0 icon-glow"></ion-icon>
                   <input type="text" formControlName="blockReason" placeholder="Indique la razón"
                     class="w-full bg-transparent text-text-primary placeholder-text-tertiary/50 focus:outline-none font-body" />
                 </div>
@@ -302,11 +301,10 @@
             <!-- Fecha hasta bloquear -->
             <div class="space-y-2">
               <label class="block text-xs font-mono text-neon-primary tracking-wider">BLOQUEAR HASTA (opcional)</label>
-              <div class="relative">
+              <div class="relative input-container">
                 <div class="absolute inset-0 bg-neon-primary/5 rounded-xl blur"></div>
-                <div
-                  class="relative flex items-center gap-3 px-4 py-2 bg-bg-secondary/50 border border-neon-primary/20 rounded-xl focus-within:border-neon-primary focus-within:shadow-neon transition-all duration-300">
-                  <ion-icon name="calendar-outline" class="text-neon-primary text-xl flex-shrink-0"></ion-icon>
+                <div class="input-field-custom">
+                  <ion-icon name="calendar-outline" class="text-neon-primary text-xl flex-shrink-0 icon-glow"></ion-icon>
                   <input type="datetime-local" formControlName="blockUntil"
                     class="w-full bg-transparent text-text-primary focus:outline-none font-body [color-scheme:dark]" />
                 </div>

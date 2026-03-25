@@ -1,9 +1,11 @@
+@use "sass:color";
+
 :host {
   display: block;
   height: 100%;
 }
 
-// Animaciones (copiadas de appointment-create)
+// Animaciones personalizadas
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-5px); }
@@ -14,8 +16,35 @@
   50% { opacity: 0.6; }
 }
 
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes save-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 224, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 224, 255, 0.6); }
+}
+
 .animation-delay-2000 {
   animation-delay: 2s;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+// Skeleton loader
+.skeleton-form {
+  height: 600px;
+  background: linear-gradient(90deg,
+      rgba(26, 31, 47, 0.5) 25%,
+      rgba(0, 224, 255, 0.1) 50%,
+      rgba(26, 31, 47, 0.5) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 224, 255, 0.1);
 }
 
 // Scrollbar personalizado
@@ -89,6 +118,32 @@ ion-select {
   }
 }
 
+// Efecto de brillo para los inputs
+.input-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 224, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.group:focus-within .input-glow {
+  opacity: 1;
+}
+
+// Estilo para el input nativo
+.input-native {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: #FFFFFF;
+  --placeholder-color: rgba(112, 134, 160, 0.5);
+  --placeholder-opacity: 1;
+  --caret-color: #00E0FF;
+}
+
 // Estilo para inputs tipo datetime-local
 input[type="datetime-local"] {
   color-scheme: dark;
@@ -99,6 +154,100 @@ input[type="datetime-local"] {
     &:hover {
       opacity: 1;
     }
+  }
+}
+
+// Input field custom con efectos neon
+.input-field-custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--input-bg-color, #0A0E17) !important;
+  border: 1px solid var(--input-border-color, rgba(0, 224, 255, 0.2));
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  min-height: 56px;
+  width: 100%;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent, var(--input-neon-color, #00E0FF), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &:focus-within {
+    border-color: transparent;
+    transform: scale(1.01);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .icon-glow {
+      filter: drop-shadow(0 0 8px var(--input-neon-color, #00E0FF));
+      color: var(--input-neon-color, #00E0FF);
+    }
+  }
+
+  &:hover:not(:focus-within) {
+    border-color: var(--input-border-hover, rgba(0, 224, 255, 0.3));
+    background: color.adjust(#0A0E17, $lightness: 2%) !important;
+  }
+}
+
+// Validación visual
+.valid-field {
+  border-color: #00F5D4 !important;
+  box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
+}
+
+.invalid-field {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+// Mensajes de error
+.error-message {
+  color: #ef4444;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+// Efecto de carga
+.saving-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 5, 10, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+
+  p {
+    color: #00E0FF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    animation: pulse 1.5s infinite;
   }
 }
 
