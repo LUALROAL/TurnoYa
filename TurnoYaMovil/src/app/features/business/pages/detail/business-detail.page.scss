@@ -1,3 +1,5 @@
+@use "sass:color";
+
 :host {
   display: block;
   height: 100%;
@@ -230,7 +232,7 @@ ion-content {
 
   &:hover:not(:focus-within) {
     border-color: var(--input-border-hover, rgba(0, 224, 255, 0.3));
-    background: lighten(#0A0E17, 2%) !important;
+    background: color.adjust(#0A0E17, $lightness: 2%) !important;
   }
 
   // Estilos específicos para ion-select
