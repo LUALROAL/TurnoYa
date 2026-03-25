@@ -4,6 +4,7 @@
  */
 
 @use "./app/features/auth/styles/auth-shared";
+@import "theme/variables";
 
 @tailwind base;
 @tailwind components;
@@ -30,27 +31,26 @@
  */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
-/* Tech Pro design tokens */
-@import "./theme/tokens.css";
+/* Tech Pro design tokens - MIGRATED to variables.scss */
 
 // ============================================
 // VARIABLES GLOBALES
 // ============================================
 
 :root {
-    --input-bg-color: #0A0E17;
-    --input-text-color: #FFFFFF;
-    --input-placeholder-color: rgba(112, 134, 160, 0.5);
-    --input-neon-color: #00E0FF;
-    --input-neon-secondary: #00F5D4;
-    --input-border-color: rgba(0, 224, 255, 0.2);
+    --input-bg-color: var(--ion-color-bg-secondary);
+    --input-text-color: var(--ion-color-text-primary);
+    --input-placeholder-color: var(--ion-color-text-tertiary);
+    --input-neon-color: var(--ion-color-neon-primary);
+    --input-neon-secondary: var(--ion-color-neon-secondary);
+    --input-border-color: var(--ion-color-border-primary);
     --input-border-hover: rgba(0, 224, 255, 0.3);
-    --select-option-bg: #1A1F2F;
-    --select-option-hover: #222837;
-    --select-option-selected: #00E0FF;
-    --bg-card: #1A1F2F;
-    --bg-secondary: #0A0E17;
-    --text-secondary: #B0C4DE;
+    --select-option-bg: var(--ion-color-bg-card);
+    --select-option-hover: var(--ion-color-bg-card-hover);
+    --select-option-selected: var(--ion-color-neon-primary);
+    --bg-card: var(--ion-color-bg-card);
+    --bg-secondary: var(--ion-color-bg-secondary);
+    --text-secondary: var(--ion-color-text-secondary);
 }
 
 // ============================================
@@ -75,15 +75,15 @@ ion-input {
     textarea {
         background: transparent !important;
         color: var(--input-text-color) !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-size: 16px !important;
-        line-height: 1.5 !important;
+        font-family: var(--ion-font-family-body) !important;
+        font-size: var(--ion-font-size-base) !important;
+        line-height: var(--ion-line-height-normal) !important;
         caret-color: var(--input-neon-color) !important;
 
         &::placeholder {
             color: var(--input-placeholder-color) !important;
-            font-family: 'Outfit', sans-serif !important;
-            font-weight: 300 !important;
+            font-family: var(--ion-font-family-body) !important;
+            font-weight: var(--ion-font-weight-light) !important;
             opacity: 1 !important;
         }
 
@@ -114,26 +114,26 @@ ion-select {
     --background: transparent !important;
     width: 100%;
     min-height: 24px;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 16px !important;
+    font-family: var(--ion-font-family-body) !important;
+    font-size: var(--ion-font-size-base) !important;
 
     &::part(icon) {
         color: var(--input-neon-color) !important;
         opacity: 1 !important;
-        transition: all 0.3s ease;
+        transition: var(--ion-transition-normal);
         margin-right: 0 !important;
     }
 
     &::part(text) {
         color: var(--input-text-color) !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-size: 16px !important;
+        font-family: var(--ion-font-family-body) !important;
+        font-size: var(--ion-font-size-base) !important;
     }
 
     &::part(placeholder) {
         color: var(--input-placeholder-color) !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-weight: 300 !important;
+        font-family: var(--ion-font-family-body) !important;
+        font-weight: var(--ion-font-weight-light) !important;
     }
 
     &.ion-focused {
@@ -153,7 +153,7 @@ ion-select {
 }
 
 .action-sheet-wrapper {
-    padding: 16px !important;
+    padding: var(--ion-spacing-md) !important;
 }
 
 .action-sheet-container {
@@ -163,11 +163,11 @@ ion-select {
 .action-sheet-group {
     background: var(--select-option-bg) !important;
     border: 1px solid var(--input-border-color) !important;
-    border-radius: 24px !important;
+    border-radius: var(--ion-border-radius-lg) !important;
     overflow: hidden !important;
-    backdrop-filter: blur(20px) !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 224, 255, 0.1) inset !important;
-    margin-bottom: 12px !important;
+    backdrop-filter: blur(var(--ion-backdrop-blur-lg)) !important;
+    box-shadow: var(--ion-box-shadow-lg), 0 0 0 1px rgba(0, 224, 255, 0.1) inset !important;
+    margin-bottom: var(--ion-spacing-sm) !important;
 
     &:last-child {
         margin-bottom: 0 !important;
@@ -176,12 +176,12 @@ ion-select {
 
 .action-sheet-title {
     color: var(--input-neon-color) !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    font-family: var(--ion-font-family-mono) !important;
     font-size: 13px !important;
-    font-weight: 600 !important;
+    font-weight: var(--ion-font-weight-semibold) !important;
     text-transform: uppercase !important;
     letter-spacing: 1px !important;
-    padding: 20px 16px 12px !important;
+    padding: var(--ion-spacing-lg) var(--ion-spacing-md) var(--ion-spacing-sm) !important;
     background: linear-gradient(to bottom, rgba(0, 224, 255, 0.05), transparent) !important;
     border-bottom: 1px solid rgba(0, 224, 255, 0.1) !important;
 
@@ -192,28 +192,28 @@ ion-select {
 
 .action-sheet-button {
     color: var(--input-text-color) !important;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 17px !important;
-    font-weight: 500 !important;
-    padding: 18px 20px !important;
+    font-family: var(--ion-font-family-body) !important;
+    font-size: var(--ion-font-size-base) !important;
+    font-weight: var(--ion-font-weight-medium) !important;
+    padding: var(--ion-spacing-md) var(--ion-spacing-lg) !important;
     background: transparent !important;
     border-bottom: 1px solid rgba(0, 224, 255, 0.05) !important;
-    transition: all 0.2s ease !important;
+    transition: var(--ion-transition-fast) !important;
 
     &:last-child {
         border-bottom: none !important;
     }
 
     &.action-sheet-selected {
-        color: #03050A !important;
+        color: var(--ion-color-text-inverse) !important;
         background: linear-gradient(135deg, var(--input-neon-color), var(--input-neon-secondary)) !important;
-        font-weight: 600 !important;
+        font-weight: var(--ion-font-weight-semibold) !important;
         position: relative;
 
         &::before {
             content: '✓';
             position: absolute;
-            left: 20px;
+            left: var(--ion-spacing-lg);
             font-size: 18px;
             font-weight: bold;
         }
@@ -228,11 +228,11 @@ ion-select {
     width: 100% !important;
     max-width: none !important;
     background: rgba(255, 59, 48, 0.1) !important;
-    color: #ff3b30 !important;
-    font-weight: 600 !important;
+    color: var(--ion-color-danger) !important;
+    font-weight: var(--ion-font-weight-semibold) !important;
     border: 1px solid rgba(255, 59, 48, 0.2) !important;
     margin-top: 0 !important;
-    border-radius: 12px !important;
+    border-radius: var(--ion-border-radius-sm) !important;
 
     &:active {
         background: rgba(255, 59, 48, 0.2) !important;
@@ -260,8 +260,8 @@ ion-select-option {
 input[type="date"] {
     background: transparent !important;
     color: var(--input-text-color) !important;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 16px !important;
+    font-family: var(--ion-font-family-body) !important;
+    font-size: var(--ion-font-size-base) !important;
     border: none !important;
     outline: none !important;
     width: 100%;
@@ -289,9 +289,9 @@ input[type="date"] {
         transform: translateY(-50%);
         pointer-events: none;
         color: var(--input-neon-color);
-        font-size: 20px;
+        font-size: var(--ion-font-size-lg);
         opacity: 0.7;
-        transition: all 0.3s ease;
+        transition: var(--ion-transition-normal);
     }
 
     &:hover+.calendar-icon {
@@ -312,7 +312,7 @@ input[type="date"] {
     &::-webkit-datetime-edit-text {
         color: var(--input-neon-color);
         padding: 0 2px;
-        font-weight: 600;
+        font-weight: var(--ion-font-weight-semibold);
     }
 
     &::-webkit-datetime-edit-month-field,
@@ -323,7 +323,7 @@ input[type="date"] {
 
         &:focus {
             background: rgba(0, 224, 255, 0.2);
-            border-radius: 4px;
+            border-radius: var(--ion-border-radius-xs);
             outline: none;
         }
     }
@@ -362,12 +362,12 @@ input[type="date"] {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.875rem 1rem;
+    gap: var(--ion-spacing-sm);
+    padding: var(--ion-spacing-sm) var(--ion-spacing-md);
     background: var(--input-bg-color) !important;
     border: 1px solid var(--input-border-color);
-    border-radius: 1rem;
-    transition: all 0.3s ease;
+    border-radius: var(--ion-border-radius-md);
+    transition: var(--ion-transition-normal);
     min-height: 56px;
     width: 100%;
 
@@ -375,14 +375,14 @@ input[type="date"] {
         content: '';
         position: absolute;
         inset: 0;
-        border-radius: 1rem;
+        border-radius: var(--ion-border-radius-md);
         padding: 1px;
         background: linear-gradient(135deg, transparent, var(--input-neon-color), transparent);
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: var(--ion-transition-normal);
         pointer-events: none;
     }
 
@@ -442,10 +442,10 @@ input[type="date"] {
             top: 50%;
             transform: translateY(-50%);
             color: var(--input-neon-color);
-            font-size: 20px;
+            font-size: var(--ion-font-size-lg);
             pointer-events: none;
             opacity: 0.7;
-            transition: all 0.3s ease;
+            transition: var(--ion-transition-normal);
         }
     }
 }
@@ -465,14 +465,14 @@ input[type="date"] {
     background: linear-gradient(135deg, rgba(0, 224, 255, 0.15), rgba(0, 245, 212, 0.15));
     border: 1px solid var(--input-neon-color);
     color: var(--input-neon-color);
-    padding: 4px 12px;
-    border-radius: 20px;
+    padding: var(--ion-spacing-xs) var(--ion-spacing-md);
+    border-radius: var(--ion-border-radius-xl);
     font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
+    font-family: var(--ion-font-family-mono);
+    font-weight: var(--ion-font-weight-semibold);
     letter-spacing: 0.5px;
     white-space: nowrap;
-    box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
+    box-shadow: var(--ion-box-shadow-neon);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -485,11 +485,11 @@ input[type="date"] {
 .email-field-container {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.875rem 1rem;
+    gap: var(--ion-spacing-sm);
+    padding: var(--ion-spacing-sm) var(--ion-spacing-md);
     background: var(--input-bg-color) !important;
     border: 1px solid var(--input-border-color);
-    border-radius: 1rem;
+    border-radius: var(--ion-border-radius-md);
     min-height: 56px;
     width: 100%;
 
@@ -501,9 +501,9 @@ input[type="date"] {
 
     .email-text {
         color: var(--input-text-color);
-        font-family: 'Outfit', sans-serif;
-        font-size: 16px;
-        line-height: 1.5;
+        font-family: var(--ion-font-family-body);
+        font-size: var(--ion-font-size-base);
+        line-height: var(--ion-line-height-normal);
         flex: 1;
         min-width: 0;
         overflow: hidden;
@@ -530,18 +530,6 @@ input[type="date"] {
 
     50% {
         transform: translateY(-10px);
-    }
-}
-
-@keyframes pulse-glow {
-
-    0%,
-    100% {
-        opacity: 0.3;
-    }
-
-    50% {
-        opacity: 0.6;
     }
 }
 
@@ -572,14 +560,14 @@ input[type="date"] {
 // ============================================
 
 .error-message {
-    color: #ef4444;
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    color: var(--ion-color-danger);
+    font-size: var(--ion-font-size-sm);
+    font-family: var(--ion-font-family-mono);
     margin-top: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 0 4px;
+    padding: 0 var(--ion-spacing-xs);
 }
 
 // ============================================
@@ -592,15 +580,15 @@ input[type="date"] {
 }
 
 ::-webkit-scrollbar-track {
-    background: #0A0E17;
+    background: var(--ion-color-bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #00E0FF;
-    border-radius: 4px;
+    background: var(--ion-color-neon-primary);
+    border-radius: var(--ion-border-radius-xs);
 
     &:hover {
-        background: #00F5D4;
+        background: var(--ion-color-neon-secondary);
     }
 }
 
@@ -609,43 +597,43 @@ input[type="date"] {
 // ============================================
 
 .toast-neon {
-    --border-radius: 12px !important;
-    --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8) !important;
-    font-family: 'Outfit', sans-serif !important;
+    --border-radius: var(--ion-border-radius-sm) !important;
+    --box-shadow: var(--ion-box-shadow-lg) !important;
+    font-family: var(--ion-font-family-body) !important;
     position: fixed !important;
-    bottom: 20px !important;
+    bottom: var(--ion-spacing-lg) !important;
     left: 0 !important;
     right: 0 !important;
     top: auto !important;
-    z-index: 20000 !important;
+    z-index: var(--ion-z-index-modal) !important;
 
     &::part(container) {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border-radius: 12px;
+        backdrop-filter: blur(var(--ion-backdrop-blur-lg)) !important;
+        -webkit-backdrop-filter: blur(var(--ion-backdrop-blur-lg)) !important;
+        border-radius: var(--ion-border-radius-sm);
         margin-bottom: max(24px, env(safe-area-inset-bottom)) !important;
-        margin-left: 16px !important;
-        margin-right: 16px !important;
+        margin-left: var(--ion-spacing-md) !important;
+        margin-right: var(--ion-spacing-md) !important;
         width: calc(100% - 32px) !important;
     }
 
     &::part(message) {
-        font-weight: 600;
-        font-size: 14px;
-        padding: 16px 16px 16px 0;
+        font-weight: var(--ion-font-weight-semibold);
+        font-size: var(--ion-font-size-sm);
+        padding: var(--ion-spacing-md) var(--ion-spacing-md) var(--ion-spacing-md) 0;
         letter-spacing: 0.3px;
-        color: #FFFFFF;
+        color: var(--ion-color-text-primary);
         text-align: left;
         flex: 1;
     }
 
     &::part(icon) {
         font-size: 30px;
-        padding-inline-start: 16px;
-        padding-inline-end: 12px;
+        padding-inline-start: var(--ion-spacing-md);
+        padding-inline-end: var(--ion-spacing-sm);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -653,54 +641,54 @@ input[type="date"] {
 
     /* Variantes por tipo (Danger / Error) */
     &.toast-neon-danger {
-        --background: #2a0808 !important; // Fondo rojo ultra oscuro
-        --color: #FFFFFF !important;
+        --background: var(--ion-color-danger-shade) !important;
+        --color: var(--ion-color-text-primary) !important;
 
         &::part(container) {
             border: 1px solid rgba(239, 68, 68, 0.4) !important;
-            border-left: 4px solid #ef4444 !important; // Borde lateral grueso
+            border-left: 4px solid var(--ion-color-danger) !important;
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.15) !important;
-            background: linear-gradient(90deg, rgba(239, 68, 68, 0.8) 0%, rgba(42, 8, 8, 0.9) 100%) !important;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.8) 0%, var(--ion-color-danger-shade) 100%) !important;
         }
 
         &::part(icon) {
-            color: #ef4444 !important;
+            color: var(--ion-color-danger) !important;
             filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
         }
     }
 
     /* Variantes por tipo (Success) */
     &.toast-neon-success {
-        --background: #021a15 !important; // Fondo cyan/verde ultra oscuro
-        --color: #FFFFFF !important;
+        --background: var(--ion-color-success-shade) !important;
+        --color: var(--ion-color-text-primary) !important;
 
         &::part(container) {
             border: 1px solid rgba(0, 245, 212, 0.4) !important;
-            border-left: 4px solid #00F5D4 !important; // Borde lateral grueso
+            border-left: 4px solid var(--ion-color-success) !important;
             box-shadow: 0 0 20px rgba(0, 245, 212, 0.15) !important;
-            background: linear-gradient(90deg, rgba(0, 245, 212, 0.8) 0%, rgba(2, 26, 21, 0.9) 100%) !important;
+            background: linear-gradient(90deg, rgba(0, 245, 212, 0.8) 0%, var(--ion-color-success-shade) 100%) !important;
         }
 
         &::part(icon) {
-            color: #00F5D4 !important;
+            color: var(--ion-color-success) !important;
             filter: drop-shadow(0 0 8px rgba(0, 245, 212, 0.8));
         }
     }
 
     /* Variantes por tipo (Warning) */
     &.toast-neon-warning {
-        --background: #2b1c04 !important; // Fondo ámbar ultra oscuro
-        --color: #FFFFFF !important;
+        --background: var(--ion-color-warning-shade) !important;
+        --color: var(--ion-color-text-primary) !important;
 
         &::part(container) {
             border: 1px solid rgba(245, 158, 11, 0.4) !important;
-            border-left: 4px solid #f59e0b !important; // Borde lateral grueso
+            border-left: 4px solid var(--ion-color-warning) !important;
             box-shadow: 0 0 20px rgba(245, 158, 11, 0.15) !important;
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.8) 0%, rgba(43, 28, 4, 0.9) 100%) !important;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.8) 0%, var(--ion-color-warning-shade) 100%) !important;
         }
 
         &::part(icon) {
-            color: #f59e0b !important;
+            color: var(--ion-color-warning) !important;
             filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
         }
     }
@@ -714,18 +702,18 @@ input[type="date"] {
 
   .alert-wrapper {
     position: absolute !important;
-    bottom: 20px !important;
-    left: 16px !important;
-    right: 16px !important;
+    bottom: var(--ion-spacing-lg) !important;
+    left: var(--ion-spacing-md) !important;
+    right: var(--ion-spacing-md) !important;
     margin: 0 auto !important;
     width: calc(100% - 32px) !important;
     max-width: 450px !important;
-    background: #0a0f14 !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    background: var(--ion-color-bg-secondary) !important;
+    backdrop-filter: blur(var(--ion-backdrop-blur-lg)) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(var(--ion-backdrop-blur-lg)) saturate(180%) !important;
     border: 1px solid rgba(0, 245, 212, 0.4) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 212, 0.1) !important;
+    border-radius: var(--ion-border-radius-xl) !important;
+    box-shadow: var(--ion-box-shadow-lg), 0 0 20px rgba(0, 245, 212, 0.1) !important;
     transform: translateY(0) !important;
   }
 
@@ -734,11 +722,11 @@ input[type="date"] {
   }
 
   .alert-head {
-    padding: 20px 20px 10px 20px !important;
+    padding: var(--ion-spacing-lg) var(--ion-spacing-lg) var(--ion-spacing-sm) !important;
     .alert-title {
-      color: #00F5D4 !important;
-      font-family: 'Space Grotesk', sans-serif !important;
-      font-weight: 700 !important;
+      color: var(--ion-color-success) !important;
+      font-family: var(--ion-font-family-display) !important;
+      font-weight: var(--ion-font-weight-bold) !important;
       font-size: 1.1rem !important;
       letter-spacing: 0.02em !important;
       text-transform: uppercase !important;
@@ -747,25 +735,25 @@ input[type="date"] {
   }
 
   .alert-message {
-    padding: 0 20px 20px 20px !important;
+    padding: 0 var(--ion-spacing-lg) var(--ion-spacing-lg) !important;
     color: rgba(255, 255, 255, 0.9) !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--ion-font-family-body) !important;
     font-size: 0.9rem !important;
-    line-height: 1.6 !important;
+    line-height: var(--ion-line-height-relaxed) !important;
   }
 
   .alert-button-group {
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
-    padding: 16px 20px !important;
-    gap: 16px !important;
+    padding: var(--ion-spacing-md) var(--ion-spacing-lg) !important;
+    gap: var(--ion-spacing-md) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
     .alert-button {
       flex: 0 1 45% !important;
-      border-radius: 14px !important;
-      font-family: 'Space Grotesk', sans-serif !important;
-      font-weight: 600 !important;
+      border-radius: var(--ion-border-radius-md) !important;
+      font-family: var(--ion-font-family-display) !important;
+      font-weight: var(--ion-font-weight-semibold) !important;
       font-size: 0.85rem !important;
       text-transform: uppercase !important;
       letter-spacing: 0.05em !important;
@@ -773,12 +761,12 @@ input[type="date"] {
       margin: 0 !important;
     }
     .alert-btn-reject {
-      color: #ff3b30 !important;
+      color: var(--ion-color-danger) !important;
       background: rgba(255, 59, 48, 0.1) !important;
       border: 1px solid rgba(255, 59, 48, 0.2) !important;
     }
     .alert-btn-confirm, .alert-btn-accept {
-      color: #00F5D4 !important;
+      color: var(--ion-color-success) !important;
       background: rgba(0, 245, 212, 0.1) !important;
       border: 1px solid rgba(0, 245, 212, 0.3) !important;
     }
@@ -789,9 +777,9 @@ input[type="date"] {
 // ============================================ */
 ion-modal {
     --backdrop-opacity: 0.6 !important;
-    z-index: 20002 !important;
+    z-index: var(--ion-z-index-modal-backdrop) !important;
 }
 
 .modal-wrapper {
-    z-index: 20003 !important;
+    z-index: var(--ion-z-index-modal) !important;
 }

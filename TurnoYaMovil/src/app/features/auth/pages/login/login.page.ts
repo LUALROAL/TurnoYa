@@ -3,6 +3,21 @@ import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
+import { addIcons } from "ionicons";
+import {
+  calendarNumberOutline,
+  mailOutline,
+  alertCircleOutline,
+  lockClosedOutline,
+  eyeOutline,
+  eyeOffOutline,
+  checkmarkOutline,
+  helpCircleOutline,
+  warningOutline,
+  syncOutline,
+  arrowForwardOutline,
+  logoGoogle
+} from "ionicons/icons";
 
 import { AuthService } from "../../services/auth.service";
 
@@ -14,10 +29,28 @@ import { AuthService } from "../../services/auth.service";
   styleUrls: ["./login.page.scss"],
 })
 export class LoginPage {
+  constructor() {
+    addIcons({
+      calendarNumberOutline,
+      mailOutline,
+      alertCircleOutline,
+      lockClosedOutline,
+      eyeOutline,
+      eyeOffOutline,
+      checkmarkOutline,
+      helpCircleOutline,
+      warningOutline,
+      syncOutline,
+      arrowForwardOutline,
+      logoGoogle
+    });
+  }
+
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+
 
   protected readonly form = this.formBuilder.group({
     email: ["", [Validators.required, Validators.email]],

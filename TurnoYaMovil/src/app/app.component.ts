@@ -37,9 +37,9 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly appListeners: { remove: () => void }[] = [];
 
   constructor(
-    private readonly pushNotificationService: PushNotificationService,
-    private readonly signalRService: SignalRService,
-    private readonly authSessionService: AuthSessionService,
+    public readonly pushNotificationService: PushNotificationService,
+    public readonly signalRService: SignalRService,
+    public readonly authSessionService: AuthSessionService,
   ) {}
 
   async ngOnInit(): Promise<void> {

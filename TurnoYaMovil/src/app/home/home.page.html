@@ -7,8 +7,7 @@
     </div>
 
     <div class="absolute inset-0" style="background-image:
-      linear-gradient(rgba(0, 224, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 224, 255, 0.03) 1px, transparent 1px);
+      var(--ion-grid-primary), var(--ion-grid-secondary);
       background-size: 40px 40px;">
     </div>
   </div>
@@ -32,7 +31,7 @@
         <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <span
             class="px-3 py-1 text-[10px] font-mono rounded-full border border-neon-primary/30 bg-neon-primary/10 backdrop-blur-sm text-neon-primary shadow-neon inline-flex items-center gap-1.5 whitespace-nowrap">
-            <span class="w-1.5 h-1.5 bg-neon-primary rounded-full animate-pulse shadow-[0_0_8px_#00F5D4]"></span>
+            <span class="w-1.5 h-1.5 bg-neon-primary rounded-full animate-pulse" style="box-shadow: var(--ion-shadow-neon-pulse)"></span>
             {{ getRoleLabel(userRole) }}
           </span>
         </div>
