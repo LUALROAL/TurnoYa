@@ -116,18 +116,37 @@ export class RegisterPage {
       observable.subscribe({
         next: () => {
           this.loading = false;
-          void this.router.navigateByUrl("/app/home");
+          // Redirigir al home correcto según el rol
+          void this.router.navigateByUrl("/auth/login");
         },
-        error: (error) => {
+        error: (error: any) => {
           this.loading = false;
           console.error("Google login error:", error);
-          this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+          
+          // Analizar el error para dar un mensaje más específico
+          let errorMsg = error.message || 'Error al iniciar sesión con Google';
+          
+          // Si el error menciona "origin" o "403", es problema de configuración
+          if (errorMsg.toLowerCase().includes('origin') || errorMsg.toLowerCase().includes('403')) {
+            errorMsg = 'Error de configuración de Google. Contacta al administrador.';
+          }
+          
+          this.errorMessage = errorMsg;
+          this.cdr.detectChanges();
         },
       });
     } catch (error: any) {
       this.loading = false;
       console.error("Google login exception:", error);
-      this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+      
+      let errorMsg = error.message || 'Error al iniciar sesión con Google';
+      
+      if (errorMsg.toLowerCase().includes('origin') || errorMsg.toLowerCase().includes('403')) {
+        errorMsg = 'Error de configuración de Google. Contacta al administrador.';
+      }
+      
+      this.errorMessage = errorMsg;
+      this.cdr.detectChanges();
     }
   }
 
@@ -154,13 +173,42 @@ export class RegisterPage {
       },
       error: (error) => {
         this.loading = false;
-        if (error.status === 400) {
-          this.errorMessage = error.error?.message || 'El correo ya está registrado o los datos son inválidos.';
-        } else if (error.status === 0) {
+        console.log("Register error:", error);
+        
+        // El error puede tener diferentes estructuras
+        let errorMessage = '';
+        let status = error.status;
+        
+        // Extraer el mensaje del error
+        if (typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.error?.error) {
+          errorMessage = error.error.error;
+        } else if (error.error?.title) {
+          errorMessage = error.error.title;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        console.log("Status:", status, "Message:", errorMessage);
+        
+        // Verificar si es error de email duplicado (cualquiera sea el status)
+        const lowerMessage = errorMessage.toLowerCase();
+        if (lowerMessage.includes('email') || 
+            lowerMessage.includes('correo') || 
+            lowerMessage.includes('registrado') ||
+            lowerMessage.includes('ya está') ||
+            lowerMessage.includes('ya está registrado')) {
+          this.errorMessage = 'El correo electrónico ya está registrado. Intenta iniciar sesión.';
+        } else if (status === 0 || status === null || status === undefined) {
           this.errorMessage = 'No se pudo conectar con el servidor.';
         } else {
-          this.errorMessage = error.error?.message || 'Ocurrió un error. Inténtalo de nuevo.';
+          this.errorMessage = errorMessage || 'Ocurrió un error. Inténtalo de nuevo.';
         }
+        
+        this.cdr.detectChanges();
       },
     });
   }

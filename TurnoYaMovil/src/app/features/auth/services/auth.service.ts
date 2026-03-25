@@ -76,34 +76,112 @@ export class AuthService {
    * Este flujo devuelve el JWT (id_token) directamente
    */
   private async initializeWebGoogleSignIn(): Promise<void> {
+    // Si ya está inicializado, no hacer nada
+    if (this.googleInitialized && (window as any).google?.accounts?.id) {
+      return;
+    }
+
     return new Promise((resolve, reject) => {
-      // Verificar que el script de Google esté disponible
-      if (!(window as any).google?.accounts?.id) {
-        reject(new Error("Google Identity Services no está disponible. Asegúrate de cargar el script de g_id_onload"));
+      // Intentar cargar el script si no está disponible
+      this.loadGoogleScript().then(() => {
+        // Verificar nuevamente después de cargar
+        if (!(window as any).google?.accounts?.id) {
+          reject(new Error("Google Identity Services no está disponible. Recarga la página e intenta nuevamente."));
+          return;
+        }
+
+        try {
+          // Configurar el cliente de Google Identity Services para web
+          (window as any).google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: (response: any) => {
+              // Este callback recibe el JWT (credential) directamente
+              console.log("Google One Tap callback:", response);
+              // Guardar la respuesta para que performWebGoogleSignIn la use
+              this.pendingGoogleCredential = response.credential;
+            },
+            auto_select: false,
+            cancel_on_tap_outside: false,
+          });
+
+          console.log("Google Sign-In (web) initialized successfully");
+          this.googleInitialized = true;
+          resolve();
+        } catch (error) {
+          console.error("Error initializing Google Sign-In (web):", error);
+          reject(new Error("No se pudo inicializar Google Sign-In"));
+        }
+      }).catch((error) => {
+        console.error("Error loading Google script:", error);
+        reject(new Error("No se pudo cargar el script de Google. Verifica tu conexión a internet."));
+      });
+    });
+  }
+
+  /**
+   * Carga el script de Google Identity Services si no está cargado
+   */
+  private loadGoogleScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Si ya está cargado, resolver inmediatamente
+      if ((window as any).google?.accounts?.id) {
+        resolve();
         return;
       }
 
-      try {
-        // Configurar el cliente de Google Identity Services para web
-        (window as any).google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response: any) => {
-            // Este callback recibe el JWT (credential) directamente
-            console.log("Google One Tap callback:", response);
-            // Guardar la respuesta para que performWebGoogleSignIn la use
-            this.pendingGoogleCredential = response.credential;
-          },
-          auto_select: false,
-          cancel_on_tap_outside: false,
-        });
-
-        console.log("Google Sign-In (web) initialized successfully");
-        this.googleInitialized = true;
-        resolve();
-      } catch (error) {
-        console.error("Error initializing Google Sign-In (web):", error);
-        reject(error);
+      // Si ya existe el script, esperar a que esté listo
+      const existingScript = document.querySelector('script[src*="gsi/client"]');
+      if (existingScript) {
+        // El script existe, esperar un poco a que se ejecute
+        setTimeout(() => {
+          if ((window as any).google?.accounts?.id) {
+            resolve();
+          } else {
+            // Intentar cargar de nuevo
+            this.loadGoogleScriptFromSource().then(resolve).catch(reject);
+          }
+        }, 500);
+        return;
       }
+
+      // Cargar el script
+      this.loadGoogleScriptFromSource().then(resolve).catch(reject);
+    });
+  }
+
+  /**
+   * Carga el script de Google desde el CDN
+   */
+  private loadGoogleScriptFromSource(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Verificar si ya se cargó mientras tanto
+      if ((window as any).google?.accounts?.id) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        console.log("Google script loaded successfully");
+        // Esperar un poco a que Google inicialice
+        setTimeout(() => {
+          if ((window as any).google?.accounts?.id) {
+            resolve();
+          } else {
+            reject(new Error("Script cargado pero Google no está disponible"));
+          }
+        }, 300);
+      };
+      
+      script.onerror = () => {
+        reject(new Error("Error al cargar el script de Google"));
+      };
+
+      document.head.appendChild(script);
     });
   }
 
