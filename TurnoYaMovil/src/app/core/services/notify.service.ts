@@ -41,6 +41,9 @@ export class NotifyService {
   /** Unread notification count — used by AppHeaderComponent badge */
   readonly unreadCount$ = new BehaviorSubject<number>(0);
 
+  /** Emitted whenever a notification is processed (saved/shown). Can be used to auto-reload pages */
+  readonly notificationReceived$ = new Subject<void>();
+
   /** Map for 30s deduplication window: eventKey -> timestamp */
   private readonly recentEvents = new Map<string, number>();
 
@@ -381,6 +384,9 @@ export class NotifyService {
 
     // Step 3: Save to history (always — even if app was hidden)
     this.saveToHistory(item);
+
+    // Auto-reload data on active views
+    this.notificationReceived$.next();
 
     // Step 4: Show UI only if app was visible
     if (!this.wasAppVisible()) {

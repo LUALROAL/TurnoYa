@@ -71,6 +71,13 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
     }
 
     this.loadAppointments();
+
+    // Auto-reload on any new SignalR notification
+    this.notify.notificationReceived$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadAppointments();
+      });
   }
 
   ngOnDestroy(): void {
