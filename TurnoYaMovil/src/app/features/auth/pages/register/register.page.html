@@ -266,7 +266,11 @@
 
           <!-- Botones Sociales -->
           <div class="grid grid-cols-1 gap-4">
-            <button type="button" class="group relative overflow-hidden rounded-lg">
+            <button 
+              type="button" 
+              (click)="googleLogin()"
+              [disabled]="loading"
+              class="group relative overflow-hidden rounded-lg cursor-pointer disabled:opacity-50">
               <div
                 class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               </div>

@@ -231,14 +231,14 @@
 
           <!-- Botones Sociales con efecto hover -->
           <div class="grid grid-cols-1 gap-4">
-            <button type="button" class="group relative overflow-hidden rounded-lg">
+            <button type="button" (click)="googleLogin()" [disabled]="googleLoading" class="group relative overflow-hidden rounded-lg">
               <div
                 class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               </div>
               <div
                 class="relative flex items-center justify-center gap-2 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
-                <ion-icon name="logo-google" class="text-xl text-neon-primary"></ion-icon>
-                <span class="text-text-secondary text-sm font-mono">Google</span>
+                <ion-icon [name]="googleLoading ? 'sync-outline' : 'logo-google'" class="text-xl text-neon-primary" [class.animate-spin]="googleLoading"></ion-icon>
+                <span class="text-text-secondary text-sm font-mono">{{ googleLoading ? 'Conectando...' : 'Google' }}</span>
               </div>
             </button>
           </div>

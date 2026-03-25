@@ -31,7 +31,8 @@ import {
   trashOutline,
   send,
   linkOutline,
-  paperPlaneOutline
+  paperPlaneOutline,
+  logoGoogle
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService, } from '../../services/user.service';
@@ -40,6 +41,7 @@ import { Router } from '@angular/router';
 import { AuthSessionService } from '../../../../core/services/auth-session.service';
 import { AppPhoto, PhotoService } from 'src/app/features/owner-business/services/photo.service';
 import { UserProfileDto, UpdateUserProfileDto } from '../../models/user-profile.model';
+import { AuthService } from '../../../auth/services/auth.service';
 
 type Tab = 'profile' | 'security';
 
@@ -81,7 +83,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     private notify: NotifyService,
     private fb: FormBuilder,
     private router: Router,
-    private authSession: AuthSessionService
+    private authSession: AuthSessionService,
+    private authService: AuthService
   ) {
     addIcons({
       arrowBackOutline,
@@ -102,7 +105,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       trashOutline,
       send,
       linkOutline,
-      paperPlaneOutline
+      paperPlaneOutline,
+      logoGoogle
     });
 
     this.profileForm = this.createProfileForm();
@@ -445,5 +449,44 @@ private base64ToFile(base64: string, filename: string, mimeType: string): File {
     }
     
     window.open(url, '_blank');
+  }
+
+  // Google Link
+  linkingGoogle = signal(false);
+
+  async onLinkGoogle(): Promise<void> {
+    if (this.linkingGoogle()) {
+      return;
+    }
+
+    // Verificar si el usuario ya tiene Google vinculado
+    if (this.profile()?.googleId) {
+      this.notify.showAutoDismissToast('Ya tienes una cuenta de Google vinculada', 'success');
+      return;
+    }
+
+    this.linkingGoogle.set(true);
+
+    try {
+      const observable = await this.authService.linkGoogle();
+      observable.subscribe({
+        next: () => {
+          this.linkingGoogle.set(false);
+          this.notify.showSuccess('Cuenta de Google vinculada correctamente');
+          this.loadProfile(); // Recargar perfil para actualizar datos
+        },
+        error: (err) => {
+          this.linkingGoogle.set(false);
+          if (!err.message?.includes('cancelado')) {
+            this.notify.showError(err.message || 'Error al vincular cuenta de Google');
+          }
+        }
+      });
+    } catch (err: any) {
+      this.linkingGoogle.set(false);
+      if (!err.message?.includes('cancelado')) {
+        this.notify.showError(err.message || 'Error al vincular cuenta de Google');
+      }
+    }
   }
 }

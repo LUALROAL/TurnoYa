@@ -17,3 +17,15 @@ export interface RefreshTokenRequestDto {
   token: string;
   refreshToken: string;
 }
+
+export interface GoogleLoginRequestDto {
+  idToken: string;
+  fullName?: string;
+  givenName?: string;
+  familyName?: string;
+  imageUrl?: string;
+}
+
+export interface LinkGoogleRequestDto {
+  idToken: string;
+}

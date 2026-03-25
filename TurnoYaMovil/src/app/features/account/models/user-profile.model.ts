@@ -17,6 +17,9 @@ export interface UserProfileDto {
   averageRating: number;
   completedAppointments: number;
   createdAt: string;
+  // Google integration
+  googleId?: string;
+  googlePhotoUrl?: string;
 }
 
 export interface UpdateUserProfileDto {

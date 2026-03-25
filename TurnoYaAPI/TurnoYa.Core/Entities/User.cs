@@ -29,6 +29,10 @@ public class User : BaseEntity
     public string? TelegramLinkingCode { get; set; }
     public DateTime? TelegramLinkingCodeExpiry { get; set; }
 
+    // Integración de Google
+    public string? GoogleId { get; set; }
+    public string? GooglePhotoUrl { get; set; }
+
     public ICollection<Business> OwnedBusinesses { get; set; } = new List<Business>();
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();

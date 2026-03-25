@@ -89,8 +89,37 @@ export class RegisterPage {
     return this.passwordLength >= 8;
   }
 
-  protected togglePasswordVisibility() {
+  protected   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  /**
+   * Login/Registro con Google
+   */
+  protected async googleLogin(): Promise<void> {
+    if (this.loading) return;
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    try {
+      const observable = await this.authService.googleLogin();
+      observable.subscribe({
+        next: () => {
+          this.loading = false;
+          void this.router.navigateByUrl("/app/home");
+        },
+        error: (error) => {
+          this.loading = false;
+          console.error("Google login error:", error);
+          this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+        },
+      });
+    } catch (error: any) {
+      this.loading = false;
+      console.error("Google login exception:", error);
+      this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+    }
   }
 
   protected submit() {

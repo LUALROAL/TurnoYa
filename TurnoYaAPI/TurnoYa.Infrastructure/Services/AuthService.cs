@@ -1,6 +1,8 @@
 using AutoMapper;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TurnoYa.Application.DTOs.Auth;
 using TurnoYa.Application.Interfaces;
 using TurnoYa.Core.Entities;
@@ -18,19 +20,22 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IPushNotificationService _pushNotificationService;
+    private readonly IConfiguration _configuration;
 
     public AuthService(
         ApplicationDbContext context,
         ITokenService tokenService,
         IMapper mapper,
         IPasswordHasher<User> passwordHasher,
-        IPushNotificationService pushNotificationService)
+        IPushNotificationService pushNotificationService,
+        IConfiguration configuration)
     {
         _context = context;
         _tokenService = tokenService;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
         _pushNotificationService = pushNotificationService;
+        _configuration = configuration;
     }
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterUserDto registerDto)
@@ -293,5 +298,185 @@ public class AuthService : IAuthService
         {
             throw new UnauthorizedAccessException("Solo se permite cambiar entre Cliente y Dueño de Negocio");
         }
+    }
+
+    public async Task<AuthResponseDto> GoogleLoginAsync(GoogleLoginDto googleLoginDto)
+    {
+        // Validar el token de Google
+        var googleClientId = _configuration["Google:ClientId"] 
+            ?? throw new InvalidOperationException("Google Client ID no configurado");
+
+        GoogleJsonWebSignature.Payload? payload;
+        try
+        {
+            var validationSettings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { googleClientId }
+            };
+            payload = await GoogleJsonWebSignature.ValidateAsync(googleLoginDto.IdToken, validationSettings);
+        }
+        catch (Exception ex)
+        {
+            throw new UnauthorizedAccessException($"Token de Google inválido: {ex.Message}");
+        }
+
+        if (string.IsNullOrEmpty(payload.Email))
+        {
+            throw new UnauthorizedAccessException("El token de Google no contiene email");
+        }
+
+        // Buscar usuario por Google ID o por email
+        var user = await _context.Users
+            .Include(u => u.OwnedBusinesses)
+            .FirstOrDefaultAsync(u => u.GoogleId == payload.Subject || u.Email.ToLower() == payload.Email.ToLower());
+
+        if (user == null)
+        {
+            // Registrar nuevo usuario con Google
+            user = new User
+            {
+                Email = payload.Email.ToLower(),
+                FirstName = !string.IsNullOrEmpty(googleLoginDto.GivenName) 
+                    ? googleLoginDto.GivenName 
+                    : (payload.Name?.Split(' ').FirstOrDefault() ?? "Usuario"),
+                LastName = !string.IsNullOrEmpty(googleLoginDto.FamilyName) 
+                    ? googleLoginDto.FamilyName 
+                    : (payload.Name?.Split(' ').Skip(1).FirstOrDefault() ?? ""),
+                GoogleId = payload.Subject,
+                GooglePhotoUrl = !string.IsNullOrEmpty(googleLoginDto.ImageUrl) 
+                    ? googleLoginDto.ImageUrl 
+                    : payload.Picture,
+                Role = "Customer",
+                IsEmailVerified = true, // Google verifica el email
+                IsActive = true,
+                AverageRating = 0,
+                TotalNoShows = 0,
+                PasswordHash = _passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()) // Password aleatorio
+            };
+
+            _context.Users.Add(user);
+        }
+        else
+        {
+            // Actualizar datos de Google si el usuario existe pero no tiene Google vinculado
+            if (string.IsNullOrEmpty(user.GoogleId))
+            {
+                user.GoogleId = payload.Subject;
+                if (!string.IsNullOrEmpty(googleLoginDto.ImageUrl))
+                {
+                    user.GooglePhotoUrl = googleLoginDto.ImageUrl;
+                }
+                else if (!string.IsNullOrEmpty(payload.Picture))
+                {
+                    user.GooglePhotoUrl = payload.Picture;
+                }
+            }
+        }
+
+        user.LastLogin = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        // Verificar si el usuario está activo
+        if (!user.IsActive)
+        {
+            throw new UnauthorizedAccessException("Usuario inactivo");
+        }
+
+        // Generar tokens
+        var accessToken = _tokenService.GenerateAccessToken(user);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        // Revocar tokens anteriores y crear uno nuevo
+        var oldTokens = await _context.RefreshTokens
+            .Where(rt => rt.UserId == user.Id && rt.RevokedAt == null)
+            .ToListAsync();
+
+        foreach (var oldToken in oldTokens)
+        {
+            oldToken.RevokedAt = DateTime.UtcNow;
+        }
+
+        var refreshTokenEntity = new RefreshToken
+        {
+            UserId = user.Id,
+            Token = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        // Preparar respuesta
+        var userDto = _mapper.Map<UserDto>(user);
+        return new AuthResponseDto
+        {
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresIn = 86400,
+            User = userDto
+        };
+    }
+
+    public async Task LinkGoogleAccountAsync(string userId, LinkGoogleDto linkGoogleDto)
+    {
+        if (!Guid.TryParse(userId, out var userGuid))
+        {
+            throw new ArgumentException("ID de usuario inválido");
+        }
+
+        // Validar el token de Google
+        var googleClientId = _configuration["Google:ClientId"] 
+            ?? throw new InvalidOperationException("Google Client ID no configurado");
+
+        GoogleJsonWebSignature.Payload? payload;
+        try
+        {
+            var validationSettings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { googleClientId }
+            };
+            payload = await GoogleJsonWebSignature.ValidateAsync(linkGoogleDto.IdToken, validationSettings);
+        }
+        catch (Exception ex)
+        {
+            throw new UnauthorizedAccessException($"Token de Google inválido: {ex.Message}");
+        }
+
+        if (string.IsNullOrEmpty(payload.Email))
+        {
+            throw new UnauthorizedAccessException("El token de Google no contiene email");
+        }
+
+        // Buscar el usuario actual
+        var user = await _context.Users.FindAsync(userGuid);
+        if (user == null)
+        {
+            throw new InvalidOperationException("Usuario no encontrado");
+        }
+
+        // Verificar si otro usuario ya tiene vinculado este Google ID
+        var existingGoogleUser = await _context.Users
+            .FirstOrDefaultAsync(u => u.GoogleId == payload.Subject && u.Id != userGuid);
+
+        if (existingGoogleUser != null)
+        {
+            throw new InvalidOperationException("Esta cuenta de Google ya está vinculada a otro usuario");
+        }
+
+        // Verificar si el email de Google coincide con el email del usuario
+        if (user.Email.ToLower() != payload.Email.ToLower())
+        {
+            throw new InvalidOperationException("El email de la cuenta de Google debe coincidir con el email de tu cuenta");
+        }
+
+        // Vincular la cuenta de Google
+        user.GoogleId = payload.Subject;
+        if (!string.IsNullOrEmpty(payload.Picture))
+        {
+            user.GooglePhotoUrl = payload.Picture;
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

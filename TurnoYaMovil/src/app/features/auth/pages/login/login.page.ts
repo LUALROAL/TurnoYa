@@ -59,6 +59,7 @@ export class LoginPage {
   });
 
   protected loading = false;
+  protected googleLoading = false;
   protected showPassword = false;
   protected errorMessage = '';
 
@@ -98,6 +99,38 @@ export class LoginPage {
         }
       },
     });
+  }
+
+  protected async googleLogin(): Promise<void> {
+    if (this.googleLoading) {
+      return;
+    }
+
+    this.googleLoading = true;
+    this.errorMessage = '';
+
+    try {
+      const observable = await this.authService.googleLogin();
+      observable.subscribe({
+        next: response => {
+          this.googleLoading = false;
+          const returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || this.resolveRouteByRole(response.user.role);
+          void this.router.navigateByUrl(returnUrl);
+        },
+        error: (error) => {
+          this.googleLoading = false;
+          // No mostrar error si el usuario canceló
+          if (!error.message?.includes('cancelado')) {
+            this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+          }
+        },
+      });
+    } catch (error: any) {
+      this.googleLoading = false;
+      if (!error.message?.includes('cancelado')) {
+        this.errorMessage = error.message || 'Error al iniciar sesión con Google';
+      }
+    }
   }
 
   private resolveRouteByRole(role: string) {

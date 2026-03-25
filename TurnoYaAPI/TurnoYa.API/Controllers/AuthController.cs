@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
             var problemDetails = CreateProblemDetails(
                 StatusCodes.Status500InternalServerError,
                 "Error interno del servidor",
-                "Ocurrió un error inesperado al registrar el usuario");
+                $"Ocurrió un error inesperado al registrar el usuario. Detalle: {ex.Message}");
             return StatusCode(500, problemDetails);
         }
     }
@@ -103,7 +103,7 @@ public class AuthController : ControllerBase
             var problemDetails = CreateProblemDetails(
                 StatusCodes.Status500InternalServerError,
                 "Error interno del servidor",
-                "Ocurrió un error inesperado al iniciar sesión");
+                $"Ocurrió un error inesperado al iniciar sesión. Detalle: {ex.Message}");
             return StatusCode(500, problemDetails);
         }
     }
@@ -237,6 +237,121 @@ public class AuthController : ControllerBase
                 StatusCodes.Status500InternalServerError,
                 "Error interno del servidor",
                 "Ocurrió un error inesperado al actualizar el rol");
+            return StatusCode(500, problemDetails);
+        }
+    }
+
+    /// <summary>
+    /// Inicia sesión o registra un usuario mediante Google Sign-In
+    /// </summary>
+    /// <param name="dto">Token de Google y datos del usuario</param>
+    /// <returns>Token de autenticación y datos del usuario</returns>
+    [HttpPost("google")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<AuthResponseDto>> GoogleLogin([FromBody] GoogleLoginDto dto)
+    {
+        try
+        {
+            var response = await _authService.GoogleLoginAsync(dto);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Error de autenticación con Google");
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status401Unauthorized,
+                "Autenticación de Google fallida",
+                ex.Message);
+            return Unauthorized(problemDetails);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Error en operación de Google: {Message}", ex.Message);
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status400BadRequest,
+                "Error de operación",
+                ex.Message);
+            return BadRequest(problemDetails);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error inesperado en autenticación con Google");
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status500InternalServerError,
+                "Error interno del servidor",
+                "Ocurrió un error inesperado al autenticarse con Google");
+            return StatusCode(500, problemDetails);
+        }
+    }
+
+    /// <summary>
+    /// Vincula una cuenta de Google a un usuario existente autenticado
+    /// </summary>
+    /// <param name="dto">Token de Google para vincular</param>
+    /// <returns>Sin contenido</returns>
+    [HttpPost("link-google")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> LinkGoogleAccount([FromBody] LinkGoogleDto dto)
+    {
+        try
+        {
+            // Obtener el ID del usuario desde los claims del token JWT
+            var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                var problemDetails = CreateProblemDetails(
+                    StatusCodes.Status401Unauthorized,
+                    "Usuario no autenticado",
+                    "No se pudo identificar al usuario");
+                return Unauthorized(problemDetails);
+            }
+
+            await _authService.LinkGoogleAccountAsync(userId, dto);
+            return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Argumento inválido al vincular cuenta de Google");
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status400BadRequest,
+                "Argumento inválido",
+                ex.Message);
+            return BadRequest(problemDetails);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Error al vincular cuenta de Google: {Message}", ex.Message);
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status400BadRequest,
+                "Error de operación",
+                ex.Message);
+            return BadRequest(problemDetails);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Error de autenticación al vincular cuenta de Google");
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status401Unauthorized,
+                "Autenticación de Google fallida",
+                ex.Message);
+            return Unauthorized(problemDetails);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error inesperado al vincular cuenta de Google");
+            var problemDetails = CreateProblemDetails(
+                StatusCodes.Status500InternalServerError,
+                "Error interno del servidor",
+                "Ocurrió un error inesperado al vincular la cuenta de Google");
             return StatusCode(500, problemDetails);
         }
     }

@@ -43,4 +43,18 @@ public interface IAuthService
     /// <param name="requestorRole">Rol del usuario que solicita el cambio</param>
     /// <returns>Usuario actualizado</returns>
     Task<UserDto> UpdateUserRoleAsync(string userId, string newRole, string requestorRole);
+
+    /// <summary>
+    /// Autentica o registra un usuario mediante Google Sign-In
+    /// </summary>
+    /// <param name="googleLoginDto">Token de Google y datos del usuario</param>
+    /// <returns>Respuesta con token de autenticación y datos del usuario</returns>
+    Task<AuthResponseDto> GoogleLoginAsync(GoogleLoginDto googleLoginDto);
+
+    /// <summary>
+    /// Vincula una cuenta de Google a un usuario existente autenticado
+    /// </summary>
+    /// <param name="userId">ID del usuario actual</param>
+    /// <param name="linkGoogleDto">Token de Google para vincular</param>
+    Task LinkGoogleAccountAsync(string userId, LinkGoogleDto linkGoogleDto);
 }
