@@ -21,6 +21,9 @@ using TurnoYa.Infrastructure.Repositories;
 using TurnoYa.API.Hubs;
 using TurnoYa.API.Services;
 
+// Cargar variables de entorno desde .env local
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 

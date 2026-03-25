@@ -50,3 +50,4 @@ Desktop.ini
 
 secret/
 *.json
+*.env
