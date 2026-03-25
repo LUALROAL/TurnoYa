@@ -29,4 +29,9 @@ public class GoogleLoginDto
     /// URL de la foto de perfil del usuario
     /// </summary>
     public string? ImageUrl { get; set; }
+
+    /// <summary>
+    /// Fecha de aceptación de términos y condiciones (enviada desde el cliente)
+    /// </summary>
+    public DateTime? TermsAcceptedAt { get; set; }
 }

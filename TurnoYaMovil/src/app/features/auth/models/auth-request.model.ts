@@ -11,6 +11,7 @@ export interface RegisterRequestDto {
   lastName: string;
   phone?: string;
   role: "Customer" | "BusinessOwner";
+  termsAcceptedAt?: string; // ISO date string
 }
 
 export interface RefreshTokenRequestDto {
@@ -24,6 +25,7 @@ export interface GoogleLoginRequestDto {
   givenName?: string;
   familyName?: string;
   imageUrl?: string;
+  termsAcceptedAt?: string; // ISO date string
 }
 
 export interface LinkGoogleRequestDto {

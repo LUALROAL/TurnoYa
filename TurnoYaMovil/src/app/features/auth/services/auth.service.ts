@@ -270,7 +270,7 @@ export class AuthService {
     );
   }
 
-  register(fullName: string, email: string, password: string): Observable<AuthResponseDto> {
+  register(fullName: string, email: string, password: string, termsAccepted: boolean = false): Observable<AuthResponseDto> {
     const [firstName, ...lastNameParts] = fullName.trim().split(" ").filter(Boolean);
     const lastName = lastNameParts.join(" ").trim();
 
@@ -281,6 +281,7 @@ export class AuthService {
       firstName: firstName ?? "Usuario",
       lastName: lastName || "TurnoYa",
       role: "Customer",
+      termsAcceptedAt: termsAccepted ? new Date().toISOString() : undefined,
     };
 
     return this.api.post<AuthResponseDto>("/api/auth/register", payload);
@@ -325,7 +326,7 @@ export class AuthService {
     return this.refreshInFlight$;
   }
 
-  async googleLogin(): Promise<Observable<AuthResponseDto>> {
+  async googleLogin(termsAccepted: boolean = false): Promise<Observable<AuthResponseDto>> {
     try {
       // Inicializar Google Sign-In según la plataforma
       await this.initializeGoogleSignIn();
@@ -339,6 +340,7 @@ export class AuthService {
         givenName: result.givenName,
         familyName: result.familyName,
         imageUrl: result.imageUrl,
+        termsAcceptedAt: termsAccepted ? new Date().toISOString() : undefined,
       };
 
       // Enviar al backend

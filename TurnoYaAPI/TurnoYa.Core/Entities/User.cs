@@ -33,6 +33,9 @@ public class User : BaseEntity
     public string? GoogleId { get; set; }
     public string? GooglePhotoUrl { get; set; }
 
+    // Términos y condiciones
+    public DateTime? TermsAcceptedAt { get; set; }
+
     public ICollection<Business> OwnedBusinesses { get; set; } = new List<Business>();
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();

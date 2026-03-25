@@ -15,4 +15,9 @@ public class RegisterUserDto
     /// Rol inicial del usuario (Customer | OwnerBusiness)
     /// </summary>
     public string Role { get; set; } = "Customer";
+    
+    /// <summary>
+    /// Fecha de aceptación de términos y condiciones (enviada desde el cliente)
+    /// </summary>
+    public DateTime? TermsAcceptedAt { get; set; }
 }

@@ -61,7 +61,8 @@ public class AuthService : IAuthService
             IsEmailVerified = false,
             IsActive = true,
             AverageRating = 0,
-            TotalNoShows = 0
+            TotalNoShows = 0,
+            TermsAcceptedAt = registerDto.TermsAcceptedAt
         };
 
         // Hash de la contraseña
@@ -351,7 +352,8 @@ public class AuthService : IAuthService
                 IsActive = true,
                 AverageRating = 0,
                 TotalNoShows = 0,
-                PasswordHash = _passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()) // Password aleatorio
+                PasswordHash = _passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()), // Password aleatorio
+                TermsAcceptedAt = googleLoginDto.TermsAcceptedAt
             };
 
             _context.Users.Add(user);

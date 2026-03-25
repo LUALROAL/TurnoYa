@@ -99,7 +99,7 @@ export class RegisterPage {
    */
   protected async googleLogin(): Promise<void> {
     // Validar que acepten los términos y condiciones
-    const acceptTerms = this.form.get('acceptTerms')?.value;
+    const acceptTerms = !!this.form.get('acceptTerms')?.value;
     if (!acceptTerms) {
       this.errorMessage = 'Debes aceptar los términos y condiciones para continuar';
       this.cdr.detectChanges();
@@ -112,7 +112,7 @@ export class RegisterPage {
     this.errorMessage = '';
 
     try {
-      const observable = await this.authService.googleLogin();
+      const observable = await this.authService.googleLogin(acceptTerms);
       observable.subscribe({
         next: () => {
           this.loading = false;
@@ -143,10 +143,11 @@ export class RegisterPage {
     }
 
     const normalizedFullName = fullName.trim().toUpperCase();
+    const acceptTerms = !!this.form.get('acceptTerms')?.value;
 
     this.loading = true;
     this.errorMessage = '';
-    this.authService.register(normalizedFullName, email, password).subscribe({
+    this.authService.register(normalizedFullName, email, password, acceptTerms).subscribe({
       next: () => {
         this.loading = false;
         void this.router.navigateByUrl("/auth/login");
