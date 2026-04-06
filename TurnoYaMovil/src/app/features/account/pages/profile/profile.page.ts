@@ -33,7 +33,8 @@ import {
   linkOutline,
   paperPlaneOutline,
   logoGoogle,
-  downloadOutline
+  downloadOutline,
+  logOutOutline
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService, } from '../../services/user.service';
@@ -95,7 +96,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       personOutline,
       callOutline,
       calendarOutline,
-      lockClosedOutline,
       saveOutline,
       shieldOutline,
       syncOutline,
@@ -110,7 +110,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       linkOutline,
       paperPlaneOutline,
       logoGoogle,
-      downloadOutline
+      downloadOutline,
+      logOutOutline
     });
 
     this.profileForm = this.createProfileForm();
@@ -182,19 +183,19 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.profile.set(profile);
         this.populateProfileForm(profile);
         this.existingPhotoBase64 = profile.photoBase64 || null;
-        
+
         // Prioridad: googlePhotoUrl > photoUrl (como fallback)
         const newGooglePhotoUrl = profile.googlePhotoUrl || profile.photoUrl || null;
         this.googlePhotoUrl.set(newGooglePhotoUrl);
-        
+
         console.log('[Profile] googlePhotoUrl asignado:', newGooglePhotoUrl);
-        
+
         // No intentamos cargar la imagen directamente desde Google (CORS/429)
         // En su lugar, mostraremos la URL en la UI y ofreceremos opción de importarla
-        
+
         // Forzar actualización de la vista
         this.cdr.detectChanges();
-        
+
         this.loading.set(false);
       },
       error: (err) => {
@@ -456,7 +457,7 @@ private base64ToFile(base64: string, filename: string, mimeType: string): File {
     // tg:// funciona en móviles y envía el comando automáticamente
     // Fallback a https://t.me en desktop
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+
     let url: string;
     if (isMobile) {
       // tg:// abre Telegram y envía el comando automáticamente
@@ -465,7 +466,7 @@ private base64ToFile(base64: string, filename: string, mimeType: string): File {
       // Desktop: usar t.me que prellena el mensaje
       url = `https://t.me/turnoya_colombia_bot?start=${code}`;
     }
-    
+
     window.open(url, '_blank');
   }
 
@@ -520,7 +521,7 @@ private base64ToFile(base64: string, filename: string, mimeType: string): File {
 
     // Mostrar mensaje de carga
     this.notify.showSuccess('Importando foto de Google...');
-    
+
     this.userService.importGooglePhoto(googlePhotoUrl)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
