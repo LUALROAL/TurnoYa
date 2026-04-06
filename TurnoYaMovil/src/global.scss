@@ -783,3 +783,10 @@ ion-modal {
 .modal-wrapper {
     z-index: var(--ion-z-index-modal) !important;
 }
+
+/* ============================================
+// FIX PARA ESPACIO DE BOTTOM NAVIGATION BAR
+// ============================================ */
+ion-content {
+    --padding-bottom: 90px !important;
+}
