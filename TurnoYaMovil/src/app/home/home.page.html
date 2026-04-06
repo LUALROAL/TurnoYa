@@ -14,26 +14,31 @@
 
   <div class="relative z-10 pb-8">
     <!-- Header mejorado con efecto glass -->
-    <!-- Header mejorado con efecto glass -->
     <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
       <div class="relative flex items-center justify-between min-h-[44px]">
-        <!-- Saludo (Izquierda) -->
-        <div class="max-w-[150px]">
-          <p class="text-[10px] text-text-secondary font-mono tracking-widest mb-0.5 uppercase opacity-70">HOLA DE NUEVO</p>
-          <h1 class="text-xl font-display font-bold leading-none truncate">
-            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
-              {{ getUserName() }}
-            </span>
-          </h1>
-        </div>
-
-        <!-- Badge de rol (Centrado) -->
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <span
-            class="px-3 py-1 text-[10px] font-mono rounded-full border border-neon-primary/30 bg-neon-primary/10 backdrop-blur-sm text-neon-primary shadow-neon inline-flex items-center gap-1.5 whitespace-nowrap">
-            <span class="w-1.5 h-1.5 bg-neon-primary rounded-full animate-pulse" style="box-shadow: var(--ion-shadow-neon-pulse)"></span>
-            {{ getRoleLabel(userRole) }}
-          </span>
+        <!-- Saludo con avatar (Izquierda) -->
+        <div class="flex items-center gap-3">
+          <!-- Avatar del usuario -->
+          <div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-neon-primary to-neon-secondary flex-shrink-0">
+            @if (userPhotoUrl) {
+            <img [src]="userPhotoUrl" alt="Foto de perfil" class="w-full h-full object-cover" />
+            } @else {
+            <div class="w-full h-full flex items-center justify-center bg-bg-card">
+              <span class="text-sm font-bold text-neon-primary">{{ getUserInitials() }}</span>
+            </div>
+            }
+          </div>
+          <!-- Nombre y rol -->
+          <div class="max-w-[150px]">
+            <!-- <p class="text-[10px] text-text-secondary font-mono tracking-widest mb-0.5 uppercase opacity-70">HOLA DE NUEVO</p> -->
+            <h1 class="text-xl font-display font-bold leading-none truncate">
+              <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+                {{ getUserName() }}
+              </span>
+            </h1>
+            <!-- Rol debajo del nombre -->
+            <span class="text-[10px] font-mono text-neon-secondary">{{ getRoleLabel(userRole) }}</span>
+          </div>
         </div>
 
         <!-- Espacio ocupado por la campana (Derecha) -->

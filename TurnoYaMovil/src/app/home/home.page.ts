@@ -22,6 +22,8 @@ import {
 import { AuthSessionService } from '../core/services/auth-session.service';
 import { Observable, Subscription } from 'rxjs';
 import { AuthSession } from '../core/models/auth-session.model';
+import { UserService } from '../features/account/services/user.service';
+import { UserProfileDto } from '../features/account/models/user-profile.model';
 
 type QuickAccessItem = {
   title: string;
@@ -149,7 +151,12 @@ export class HomePage implements OnInit, OnDestroy {
   session$: Observable<AuthSession | null>;
   userName: string = 'Usuario';
   userRole: string = '';
-  constructor(protected authSession: AuthSessionService) {
+  userPhotoUrl: string | null = null;
+  
+  constructor(
+    protected authSession: AuthSessionService,
+    private userService: UserService
+  ) {
     this.session$ = this.authSession.session$;
 
     // Register icons used in the template
@@ -193,6 +200,37 @@ export class HomePage implements OnInit, OnDestroy {
       } else {
         this.userName = 'Usuario';
         this.userRole = '';
+      }
+    });
+
+    // Cargar datos del perfil para la foto
+    this.loadUserProfile();
+  }
+
+  /**
+   * Carga el perfil del usuario para obtener la foto
+   */
+  private loadUserProfile(): void {
+    if (!this.authSession.hasValidSession()) {
+      return;
+    }
+
+    this.userService.getProfile().subscribe({
+      next: (profile) => {
+        // Prioridad: photoBase64 > googlePhotoUrl > photoUrl
+        if (profile.photoBase64) {
+          this.userPhotoUrl = 'data:image/jpeg;base64,' + profile.photoBase64;
+        } else if (profile.googlePhotoUrl) {
+          this.userPhotoUrl = profile.googlePhotoUrl;
+        } else if (profile.photoUrl) {
+          this.userPhotoUrl = profile.photoUrl;
+        } else {
+          this.userPhotoUrl = null;
+        }
+      },
+      error: (err) => {
+        console.error('Error loading profile in home:', err);
+        this.userPhotoUrl = null;
       }
     });
   }
@@ -249,6 +287,18 @@ export class HomePage implements OnInit, OnDestroy {
   // Métodos auxiliares (pueden usar las propiedades locales)
   protected getUserName(): string {
     return this.userName;
+  }
+
+  /**
+   * Obtiene las iniciales del usuario para mostrar cuando no hay foto
+   */
+  protected getUserInitials(): string {
+    const name = this.userName || 'Usuario';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
   }
 
   getUserRole(): string {
