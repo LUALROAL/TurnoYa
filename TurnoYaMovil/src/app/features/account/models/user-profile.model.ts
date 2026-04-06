@@ -7,7 +7,7 @@ export interface UserProfileDto {
   phoneNumber?: string;
   phone?: string;
   photoUrl?: string;
-  photoBase64?: string;  // 👈 AGREGAR ESTA LÍNEA
+  photoBase64?: string;
   dateOfBirth?: string;
   gender?: string;
   role: string;

@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TurnoYa.Application.DTOs.Auth;
 using TurnoYa.Application.Interfaces;
@@ -16,17 +17,20 @@ namespace TurnoYa.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ILogger<UserService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public UserService(
             IUserRepository userRepository,
             IMapper mapper,
             IPasswordHasher<User> passwordHasher,
-            ILogger<UserService> logger)
+            ILogger<UserService> logger,
+            IHttpClientFactory httpClientFactory)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<UserProfileDto> GetUserProfileAsync(string userId)
@@ -164,6 +168,51 @@ namespace TurnoYa.Infrastructure.Services
             }
 
             return count;
+        }
+
+        public async Task<UserProfileDto> ImportGooglePhotoAsync(string userId, string googlePhotoUrl)
+        {
+            var user = await _userRepository.GetByIdAsync(new Guid(userId))
+                ?? throw new InvalidOperationException("Usuario no encontrado");
+
+            try
+            {
+                // Descargar la imagen desde la URL de Google
+                var client = _httpClientFactory.CreateClient();
+                client.Timeout = TimeSpan.FromSeconds(30);
+                
+                var response = await client.GetAsync(googlePhotoUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Error al descargar foto de Google: {StatusCode}", response.StatusCode);
+                    throw new InvalidOperationException("No se pudo descargar la foto de Google");
+                }
+
+                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                
+                // Validar que sea una imagen
+                if (imageBytes.Length == 0 || imageBytes.Length > 5 * 1024 * 1024) // Max 5MB
+                {
+                    throw new InvalidOperationException("La imagen es inválida o demasiado grande");
+                }
+
+                // Guardar en PhotoData
+                user.PhotoData = imageBytes;
+                await _userRepository.UpdateAsync(user);
+
+                _logger.LogInformation("Foto de Google importada correctamente para usuario: {UserId}", userId);
+
+                return _mapper.Map<UserProfileDto>(user);
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al importar foto de Google para usuario: {UserId}", userId);
+                throw new InvalidOperationException("Error al importar la foto de Google", ex);
+            }
         }
     }
 }

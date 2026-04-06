@@ -87,14 +87,13 @@
               } @else if (existingPhotoBase64) {
               <img [src]="'data:image/jpeg;base64,' + existingPhotoBase64" alt="Foto de perfil"
                 class="w-full h-full object-cover" />
-              } @else if (googlePhotoUrl) {
-              <img [src]="googlePhotoUrl" alt="Foto de Google" class="w-full h-full object-cover" />
               } @else {
+              <!-- Fallback: siempre mostrar iniciales si no hay foto -->
               <span class="text-2xl font-display font-bold text-bg-primary">{{ profile()?.firstName?.charAt(0) }}{{
                 profile()?.lastName?.charAt(0) }}</span>
               }
             </div>
-            @if (!photoPreview && !existingPhotoBase64 && !googlePhotoUrl) {
+            @if (!photoPreview && !existingPhotoBase64) {
             <button type="button" (click)="takePhoto()"
               class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-neon-primary flex items-center justify-center text-bg-primary hover:scale-110 transition-transform">
               <ion-icon name="camera-outline"></ion-icon>
@@ -102,7 +101,7 @@
             }
           </div>
 
-          @if (photoPreview || existingPhotoBase64 || googlePhotoUrl) {
+          @if (photoPreview || existingPhotoBase64) {
           <div class="flex gap-2 mt-2">
             <button type="button" (click)="selectFromGallery()"
               class="px-3 py-1 rounded-lg bg-bg-tertiary/50 border border-neon-primary/20 text-xs font-mono text-text-secondary hover:border-neon-primary/50 transition-all">
@@ -499,8 +498,19 @@
             </div>
             @if (profile()?.googlePhotoUrl) {
             <div class="flex justify-center mb-2">
-              <img [src]="profile()?.googlePhotoUrl" alt="Google Photo" class="w-16 h-16 rounded-full border-2 border-green-500/30">
+              <!-- Usar un iframe para evitar CORS -->
+              <img [src]="profile()?.googlePhotoUrl" 
+                   alt="Google Photo" 
+                   class="w-16 h-16 rounded-full border-2 border-green-500/30">
             </div>
+            <p class="text-xs text-text-tertiary mb-2">Foto de Google (no disponible por CORS)</p>
+            <button type="button" (click)="importGooglePhoto()"
+              class="px-3 py-1 rounded-lg bg-green-500/20 border border-green-500/30 text-xs font-mono text-green-400 hover:bg-green-500/30 transition-all">
+              <ion-icon name="download-outline" class="text-sm mr-1"></ion-icon>
+              Importar foto
+            </button>
+            } @else {
+            <p class="text-xs text-text-tertiary">Sin foto de Google</p>
             }
           </div>
           } @else {

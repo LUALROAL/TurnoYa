@@ -69,9 +69,19 @@ export class UserService {
   }
 
   /**
-   * Genera el código para vincular Telegram
-   */
+    * Genera el código para vincular Telegram
+    */
   generateTelegramCode(): Observable<{code: string}> {
     return this.http.post<{code: string}>(`${this.apiUrl}/telegram-link`, {});
+  }
+
+  /**
+   * Importa la foto de Google y la guarda en el perfil del usuario
+   * El backend descarga la imagen y la guarda en PhotoData
+   */
+  importGooglePhoto(googlePhotoUrl: string): Observable<UserProfileDto> {
+    return this.http.post<UserProfileDto>(`${this.apiUrl}/me/import-google-photo`, {
+      googlePhotoUrl
+    });
   }
 }

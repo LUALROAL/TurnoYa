@@ -48,6 +48,7 @@ public class AuthProfile : Profile
         CreateMap<User, UserProfileDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
             .ForMember(dest => dest.PhotoBase64, opt => opt.MapFrom(src => src.PhotoData != null ? Convert.ToBase64String(src.PhotoData) : null))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.PhotoUrl))
             .ForMember(dest => dest.GoogleId, opt => opt.MapFrom(src => src.GoogleId))
             .ForMember(dest => dest.GooglePhotoUrl, opt => opt.MapFrom(src => src.GooglePhotoUrl));
 

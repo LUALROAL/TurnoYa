@@ -47,4 +47,12 @@ public interface IUserService
     /// </summary>
     /// <returns>Número de códigos eliminados</returns>
     Task<int> CleanupExpiredLinkingCodesAsync();
+
+    /// <summary>
+    /// Importa la foto de Google y la guarda en PhotoData del usuario
+    /// </summary>
+    /// <param name="userId">ID del usuario autenticado</param>
+    /// <param name="googlePhotoUrl">URL de la foto de Google</param>
+    /// <returns>Perfil actualizado con la nueva foto</returns>
+    Task<UserProfileDto> ImportGooglePhotoAsync(string userId, string googlePhotoUrl);
 }

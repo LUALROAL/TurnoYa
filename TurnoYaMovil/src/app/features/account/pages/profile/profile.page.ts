@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -32,7 +32,8 @@ import {
   send,
   linkOutline,
   paperPlaneOutline,
-  logoGoogle
+  logoGoogle,
+  downloadOutline
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService, } from '../../services/user.service';
@@ -63,6 +64,7 @@ type Tab = 'profile' | 'security';
 export class ProfilePage implements OnInit, OnDestroy {
   protected profile = signal<UserProfileDto | null>(null);
   protected loading = signal(true);
+  protected googlePhotoUrl = signal<string | null>(null);
   protected updatingProfile = signal(false);
   protected changingPassword = signal(false);
   protected activeTab: Tab = 'profile';
@@ -76,8 +78,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   selectedPhotoFile: File | null = null;
   photoPreview: string | null = null;
   existingPhotoBase64: string | null = null;
-  googlePhotoUrl: string | null = null;
-    // Guardamos la referencia de la función para poder eliminarla correctamente
+  // Guardamos la referencia de la función para poder eliminarla correctamente
   private refreshHandler = () => this.loadProfile();
   constructor(
     private userService: UserService,
@@ -85,7 +86,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private authSession: AuthSessionService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       arrowBackOutline,
@@ -107,7 +109,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       send,
       linkOutline,
       paperPlaneOutline,
-      logoGoogle
+      logoGoogle,
+      downloadOutline
     });
 
     this.profileForm = this.createProfileForm();
@@ -175,10 +178,23 @@ export class ProfilePage implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (profile) => {
+        console.log('[Profile] Datos recibidos del servidor:', profile);
         this.profile.set(profile);
         this.populateProfileForm(profile);
         this.existingPhotoBase64 = profile.photoBase64 || null;
-        this.googlePhotoUrl = profile.googlePhotoUrl || null;
+        
+        // Prioridad: googlePhotoUrl > photoUrl (como fallback)
+        const newGooglePhotoUrl = profile.googlePhotoUrl || profile.photoUrl || null;
+        this.googlePhotoUrl.set(newGooglePhotoUrl);
+        
+        console.log('[Profile] googlePhotoUrl asignado:', newGooglePhotoUrl);
+        
+        // No intentamos cargar la imagen directamente desde Google (CORS/429)
+        // En su lugar, mostraremos la URL en la UI y ofreceremos opción de importarla
+        
+        // Forzar actualización de la vista
+        this.cdr.detectChanges();
+        
         this.loading.set(false);
       },
       error: (err) => {
@@ -490,5 +506,35 @@ private base64ToFile(base64: string, filename: string, mimeType: string): File {
         this.notify.showError(err.message || 'Error al vincular cuenta de Google');
       }
     }
+  }
+
+  /**
+   * Importa la foto de Google y la guarda en el perfil del usuario
+   */
+  importGooglePhoto(): void {
+    const googlePhotoUrl = this.profile()?.googlePhotoUrl;
+    if (!googlePhotoUrl) {
+      this.notify.showError('No hay foto de Google para importar');
+      return;
+    }
+
+    // Mostrar mensaje de carga
+    this.notify.showSuccess('Importando foto de Google...');
+    
+    this.userService.importGooglePhoto(googlePhotoUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedProfile: UserProfileDto) => {
+          this.profile.set(updatedProfile);
+          this.existingPhotoBase64 = updatedProfile.photoBase64 || null;
+          this.googlePhotoUrl.set(null); // Limpiar la URL de Google
+          this.notify.showSuccess('Foto importada correctamente');
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error('Error importing Google photo:', err);
+          this.notify.showError(err.error?.detail || 'Error al importar la foto');
+        }
+      });
   }
 }

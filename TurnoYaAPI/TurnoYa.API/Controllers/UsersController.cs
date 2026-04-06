@@ -260,4 +260,37 @@ public class UsersController : ControllerBase
             return StatusCode(500, CreateProblemDetails(500, "Error del servidor", "No se pudo generar el código de vinculación."));
         }
     }
+
+    /// <summary>
+    /// Importa la foto de Google y la guarda en el perfil del usuario
+    /// </summary>
+    [HttpPost("me/import-google-photo")]
+    [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<UserProfileDto>> ImportGooglePhoto([FromBody] ImportGooglePhotoDto dto)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(dto.GooglePhotoUrl))
+            {
+                return BadRequest(CreateProblemDetails(400, "URL requerida", "Se requiere la URL de la foto de Google"));
+            }
+
+            var userId = GetUserId();
+            var updatedProfile = await _userService.ImportGooglePhotoAsync(userId, dto.GooglePhotoUrl);
+            return Ok(updatedProfile);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Usuario no autenticado");
+            return Unauthorized(CreateProblemDetails(401, "No autorizado", ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al importar foto de Google");
+            return StatusCode(500, CreateProblemDetails(500, "Error del servidor", "No se pudo importar la foto de Google"));
+        }
+    }
 }
