@@ -50,7 +50,6 @@ import { ProfessionalService, AcceptInvitationResponse } from '../../../professi
     IonContent,
     IonIcon,
     IonModal,
-    IonButton,
     IonSpinner,
   ],
 })
@@ -71,7 +70,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
   protected businesses: OwnerBusiness[] = [];
   protected loading = true;
   protected isEmpty = false;
-  
+
   constructor() {
     addIcons({
       addOutline,
@@ -100,14 +99,14 @@ export class BusinessListPage implements OnInit, OnDestroy {
     // Verificar si hay query params para abrir modal de join
     const action = this.route.snapshot.queryParams['action'];
     this.isJoinMode = action === 'join';
-    
+
     if (this.isJoinMode) {
       // Abrir modal después de un pequeño delay para que cargue la vista
       setTimeout(() => {
         this.openJoinModal();
       }, 500);
     }
-    
+
     this.loadMyBusinesses();
   }
 
@@ -234,7 +233,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
           if (response.success) {
             this.notify.showSuccess('Te has asociado al negocio correctamente');
             this.closeJoinModal();
-            
+
             // Refresh user profile to get updated role
             this.userService.refreshUserProfile().subscribe({
               next: () => {

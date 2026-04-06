@@ -81,20 +81,20 @@ export class HomePage implements OnInit, OnDestroy {
       icon: 'shield-checkmark-outline',
       route: '/admin/users',
     },
-    {
-      title: 'Trabajo',
-      subtitle: 'Donde trabajo',
-      icon: 'people-outline',
-      route: '/businesses',
-      queryParams: { role: 'employee' },
-    },
-    {
-      title: 'Asociarme',
-      subtitle: 'Unirse a un negocio',
-      icon: 'link-outline',
-      route: '/owner/businesses',
-      queryParams: { action: 'join' },
-    },
+    // {
+    //   title: 'Trabajo',
+    //   subtitle: 'Donde trabajo',
+    //   icon: 'people-outline',
+    //   route: '/businesses',
+    //   queryParams: { role: 'employee' },
+    // },
+    // {
+    //   title: 'Asociarme',
+    //   subtitle: 'Unirse a un negocio',
+    //   icon: 'link-outline',
+    //   route: '/owner/businesses',
+    //   queryParams: { action: 'join' },
+    // },
   ];
 
   protected loadingRecommendations = true;
