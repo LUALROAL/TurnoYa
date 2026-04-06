@@ -47,6 +47,25 @@ namespace TurnoYa.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Appointment>> GetByEmployeeIdAsync(Guid employeeId, DateTime? from = null, DateTime? to = null)
+        {
+            var query = _context.Appointments
+                .Include(a => a.User)
+                .Include(a => a.Business)
+                .Include(a => a.Service)
+                .Include(a => a.Employee)
+                .Where(a => a.EmployeeId == employeeId);
+
+            if (from.HasValue)
+                query = query.Where(a => a.ScheduledDate >= from.Value);
+            if (to.HasValue)
+                query = query.Where(a => a.ScheduledDate <= to.Value);
+
+            return await query
+                .OrderByDescending(a => a.ScheduledDate)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Appointment>> GetByBusinessIdAsync(Guid businessId, DateTime? from = null, DateTime? to = null)
         {
             var query = _context.Appointments

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using TurnoYa.Application.DTOs.Employee;
 using TurnoYa.Application.Interfaces;
 using TurnoYa.Core.Entities;
@@ -15,15 +17,19 @@ namespace TurnoYa.Application.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IBusinessRepository _businessRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<EmployeeService> _logger;
+        private const int InvitationTokenExpiryDays = 7;
 
         public EmployeeService(
             IEmployeeRepository employeeRepository,
             IBusinessRepository businessRepository,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<EmployeeService> logger)
         {
             _employeeRepository = employeeRepository;
             _businessRepository = businessRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<EmployeeDto>> GetByBusinessIdAsync(Guid businessId)
@@ -36,6 +42,12 @@ namespace TurnoYa.Application.Services
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
             return employee == null ? null : _mapper.Map<EmployeeDto>(employee);
+        }
+
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeesByUserIdAsync(Guid userId)
+        {
+            var employees = await _employeeRepository.GetByUserIdAsync(userId);
+            return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
         }
 
         public async Task<EmployeeDto> CreateAsync(Guid businessId, Guid ownerId, CreateEmployeeDto dto, byte[]? photoData = null)
@@ -157,6 +169,140 @@ namespace TurnoYa.Application.Services
             }
 
             await _employeeRepository.DeleteAsync(id);
+        }
+
+        public async Task<InvitationResponseDto> GenerateInvitationAsync(Guid employeeId, Guid ownerId)
+        {
+            var employee = await _employeeRepository.GetByIdAsync(employeeId);
+            if (employee == null)
+                throw new KeyNotFoundException("Empleado no encontrado");
+
+            if (employee.Business?.OwnerId != ownerId)
+                throw new UnauthorizedAccessException("No autorizado para generar invitación para este empleado");
+
+            // Generate secure token (long para seguridad)
+            var token = GenerateSecureToken();
+            // Generate short code (6 chars, easy to share)
+            var shortCode = GenerateShortCode();
+            
+            employee.InvitationCode = shortCode;
+            employee.InvitationToken = token;
+            employee.InvitationTokenExpiry = DateTime.UtcNow.AddDays(InvitationTokenExpiryDays);
+            employee.IsInvitationUsed = false;
+
+            await _employeeRepository.UpdateAsync(employee);
+            _logger.LogInformation("Invitación generada para empleado {EmployeeId}, código: {ShortCode}", employeeId, shortCode);
+
+            // Generate invitation link - web URL that works in browser AND mobile app
+            var webBaseUrl = "https://turnoya.app/auth/accept-invitation"; // Web and Capacitor browser
+            var deepLinkBase = "turnoya://auth/accept-invitation"; // Native mobile app deep link
+            
+            // Generate both URLs - frontend can use appropriate one based on platform
+            var webInvitationLink = $"{webBaseUrl}?token={token}&employeeId={employeeId}";
+            var mobileInvitationLink = $"{deepLinkBase}?token={token}&employeeId={employeeId}";
+            
+            // Return web URL as primary (works everywhere), with mobile as alternative
+            // The frontend should use the web URL and handle deep linking if needed
+            var invitationLink = webInvitationLink;
+
+            return new InvitationResponseDto(
+                invitationLink,
+                shortCode,
+                employee.InvitationTokenExpiry.Value,
+                employee.Name,
+                employee.Id
+            );
+        }
+
+        /// <summary>
+        /// Genera un código corto de 6 caracteres para compartir fácilmente
+        /// </summary>
+        private string GenerateShortCode()
+        {
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Sin vocales para evitar palabras
+            var random = new Random();
+            var code = new char[6];
+            for (int i = 0; i < 6; i++)
+            {
+                code[i] = chars[random.Next(chars.Length)];
+            }
+            return new string(code);
+        }
+
+        public async Task<AcceptInvitationResponseDto> AcceptInvitationAsync(AcceptInvitationDto dto)
+        {
+            // Find employee by token
+            var employee = await _employeeRepository.GetByInvitationTokenAsync(dto.Token);
+            if (employee == null)
+                return new AcceptInvitationResponseDto(false, "Token de invitación inválido.", null);
+
+            // Validate token
+            if (employee.IsInvitationUsed)
+                return new AcceptInvitationResponseDto(false, "Esta invitación ya ha sido utilizada.", null);
+
+            if (employee.InvitationTokenExpiry.HasValue && employee.InvitationTokenExpiry.Value < DateTime.UtcNow)
+                return new AcceptInvitationResponseDto(false, "El enlace de invitación ha expirado. Solicitá uno nuevo a tu empleador.", null);
+
+            if (employee.InvitationToken != dto.Token)
+                return new AcceptInvitationResponseDto(false, "Token de invitación inválido.", null);
+
+            // Link the user to the employee
+            if (dto.UserId.HasValue)
+            {
+                employee.UserId = dto.UserId.Value;
+            }
+            
+            employee.IsInvitationUsed = true;
+            employee.InvitationToken = null;
+            employee.InvitationTokenExpiry = null;
+            employee.IsActive = true;
+
+            await _employeeRepository.UpdateAsync(employee);
+            _logger.LogInformation("Empleado {EmployeeId} vinculado a usuario {UserId}", employee.Id, dto.UserId);
+
+            return new AcceptInvitationResponseDto(true, "Empleado vinculado exitosamente.", employee.Id);
+        }
+
+        /// <summary>
+        /// Acepta una invitación usando el código corto
+        /// </summary>
+        public async Task<AcceptInvitationResponseDto> AcceptInvitationByCodeAsync(string code, Guid userId)
+        {
+            var employee = await _employeeRepository.GetByInvitationCodeAsync(code);
+            if (employee == null)
+                return new AcceptInvitationResponseDto(false, "Código de invitación inválido.", null);
+
+            if (employee.IsInvitationUsed)
+                return new AcceptInvitationResponseDto(false, "Este código ya ha sido utilizado.", null);
+
+            if (employee.InvitationTokenExpiry.HasValue && employee.InvitationTokenExpiry.Value < DateTime.UtcNow)
+                return new AcceptInvitationResponseDto(false, "El código de invitación ha expirado. Solicitá uno nuevo a tu empleador.", null);
+
+            // Link the user to the employee
+            employee.UserId = userId;
+            employee.IsInvitationUsed = true;
+            employee.InvitationToken = null;
+            employee.InvitationCode = null;
+            employee.InvitationTokenExpiry = null;
+            employee.IsActive = true;
+
+            await _employeeRepository.UpdateAsync(employee);
+            _logger.LogInformation("Empleado {EmployeeId} vinculado a usuario {UserId} por código {Code}", employee.Id, userId, code);
+
+            return new AcceptInvitationResponseDto(true, "Te has asociado al negocio exitosamente.", employee.Id);
+        }
+
+        public async Task<Employee?> GetByInvitationTokenAsync(string token)
+        {
+            return await _employeeRepository.GetByInvitationTokenAsync(token);
+        }
+
+        private static string GenerateSecureToken()
+        {
+            var bytes = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(bytes);
+            return Convert.ToBase64String(bytes);
         }
 
         private static void ValidateBusinessServices(IEnumerable<Guid> requestedServiceIds, IEnumerable<Guid> businessServiceIds)

@@ -236,6 +236,12 @@ namespace TurnoYa.Infrastructure.Services
             return _mapper.Map<IEnumerable<AppointmentDto>>(appointments);
         }
 
+        public async Task<IEnumerable<AppointmentDto>> GetByEmployeeAsync(Guid employeeId, DateTime? from = null, DateTime? to = null)
+        {
+            var appointments = await _appointmentRepository.GetByEmployeeIdAsync(employeeId, from, to);
+            return _mapper.Map<IEnumerable<AppointmentDto>>(appointments);
+        }
+
         public async Task<IEnumerable<AppointmentDto>> GetBusinessAsync(Guid businessId, Guid ownerId, DateTime? from = null, DateTime? to = null)
         {
             // Verificar que el usuario sea el due�o del negocio

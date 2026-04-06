@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Component, OnDestroy, OnInit, inject } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
 import { Subject, debounceTime, takeUntil } from "rxjs";
 import { BusinessListItem } from "../../models";
@@ -20,6 +20,11 @@ export class BusinessListPage implements OnInit, OnDestroy {
   private readonly businessService = inject(BusinessService);
   private readonly destroy$ = new Subject<void>();
   private readonly filtersChange$ = new Subject<void>();
+  private readonly route = inject(ActivatedRoute);
+
+  // Modo: 'all' = todos los negocios, 'employee' = negocios donde es empleado
+  protected mode: 'all' | 'employee' = 'all';
+  protected pageTitle = 'Negocios';
 
   // Sugerencias de ciudades
   protected citySuggestions: string[] = [];
@@ -49,10 +54,18 @@ export class BusinessListPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.setupDebouncedFilters();
-    this.loadCategories();
-    this.loadCities();
-    this.loadBusinesses();
+    // Verificar si es modo empleado
+    const role = this.route.snapshot.queryParams['role'];
+    if (role === 'employee') {
+      this.mode = 'employee';
+      this.pageTitle = 'Donde Trabajo';
+      this.loadEmployeeBusinesses();
+    } else {
+      this.setupDebouncedFilters();
+      this.loadCategories();
+      this.loadCities();
+      this.loadBusinesses();
+    }
   }
 
   ngOnDestroy() {
@@ -226,6 +239,27 @@ export class BusinessListPage implements OnInit, OnDestroy {
 
     this.businessService
       .getAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (businesses: BusinessListItem[]) => {
+          this.businesses = businesses.filter((business: BusinessListItem) => business.isActive);
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  /**
+   * Carga los negocios donde el usuario es empleado
+   */
+  private loadEmployeeBusinesses() {
+    this.loading = true;
+    this.searching = false;
+
+    this.businessService
+      .getAsEmployee()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (businesses: BusinessListItem[]) => {

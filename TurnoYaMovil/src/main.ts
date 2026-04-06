@@ -24,6 +24,10 @@ const routes: Routes = [
     loadComponent: () => import('./app/features/auth/pages/register/register.page').then(m => m.RegisterPage),
   },
   {
+    path: 'auth/accept-invitation',
+    loadComponent: () => import('./app/features/auth/pages/accept-invitation/accept-invitation.page').then(m => m.AcceptInvitationPage),
+  },
+  {
     path: 'home',
     loadComponent: () => import('./app/home/home.page').then(m => m.HomePage),
     canActivate: [authGuard],
@@ -116,9 +120,30 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'owner/businesses/:businessId/employees/:employeeId/permissions',
+    loadComponent: () => import('./app/features/owner-employees/pages/employee-permissions/employee-permissions.page').then(m => m.EmployeePermissionsPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'admin/users',
     loadComponent: () => import('./app/features/admin/pages/admin-users/admin-users.page').then(m => m.AdminUsersPage),
     canActivate: [adminGuard],
+  },
+  // Professional routes
+  {
+    path: 'professional/home',
+    loadComponent: () => import('./app/features/professional/pages/home/home.page').then(m => m.ProfessionalHomePage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'professional/appointments',
+    loadComponent: () => import('./app/features/professional/pages/appointments/appointments.page').then(m => m.ProfessionalAppointmentsPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'professional/schedule',
+    loadComponent: () => import('./app/features/professional/pages/schedule/schedule.page').then(m => m.ProfessionalSchedulePage),
+    canActivate: [authGuard],
   },
 ];
 

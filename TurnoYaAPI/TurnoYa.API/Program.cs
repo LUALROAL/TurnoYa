@@ -100,6 +100,8 @@ builder.Services.AddScoped<IBusinessScheduleService, BusinessScheduleService>();
 builder.Services.AddScoped<IEmployeeScheduleService, EmployeeScheduleService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IEmployeePermissionRepository, EmployeePermissionRepository>();
+builder.Services.AddScoped<IEmployeePermissionService, EmployeePermissionService>();
 
 // Registro de IBusinessService
 builder.Services.AddScoped<IBusinessService, BusinessService>();

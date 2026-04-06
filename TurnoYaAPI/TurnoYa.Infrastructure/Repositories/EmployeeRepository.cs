@@ -33,6 +33,37 @@ namespace TurnoYa.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<IEnumerable<Employee>> GetByUserIdAsync(Guid userId)
+        {
+            return await _context.Employees
+                .Include(e => e.Business)
+                .Include(e => e.EmployeeServices)
+                .Where(e => e.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<Employee?> GetByInvitationTokenAsync(string token)
+        {
+            return await _context.Employees
+                .Include(e => e.Business)
+                .FirstOrDefaultAsync(e => 
+                    e.InvitationToken == token && 
+                    !e.IsInvitationUsed &&
+                    e.InvitationTokenExpiry != null &&
+                    e.InvitationTokenExpiry > DateTime.UtcNow);
+        }
+
+        public async Task<Employee?> GetByInvitationCodeAsync(string code)
+        {
+            return await _context.Employees
+                .Include(e => e.Business)
+                .FirstOrDefaultAsync(e => 
+                    e.InvitationCode == code && 
+                    !e.IsInvitationUsed &&
+                    e.InvitationTokenExpiry != null &&
+                    e.InvitationTokenExpiry > DateTime.UtcNow);
+        }
+
         public async Task<Employee> AddAsync(Employee employee)
         {
             _context.Employees.Add(employee);

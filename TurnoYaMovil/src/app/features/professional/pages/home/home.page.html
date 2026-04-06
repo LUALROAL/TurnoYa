@@ -1,0 +1,134 @@
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
+    <div class="absolute inset-0"
+      style="background-image: linear-gradient(rgba(0,224,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.03) 1px, transparent 1px); background-size:40px 40px;">
+    </div>
+  </div>
+
+  <div class="relative z-10 pb-20">
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            PANEL DE EMPLEADO
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              Mi Panel
+            </span>
+          </h1>
+          <p class="text-text-secondary text-sm mt-1">Gestiona tus citas y horario</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="px-4 space-y-6 mt-4">
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-2 gap-4">
+        <button routerLink="/professional/appointments"
+          class="bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl p-4 flex flex-col items-center gap-2 hover:border-neon-primary transition-all duration-300">
+          <div class="w-12 h-12 rounded-full bg-neon-primary/10 flex items-center justify-center">
+            <ion-icon name="calendar-outline" class="text-2xl text-neon-primary"></ion-icon>
+          </div>
+          <span class="text-text-primary font-medium text-sm">Citas</span>
+        </button>
+
+        <button routerLink="/professional/schedule"
+          class="bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl p-4 flex flex-col items-center gap-2 hover:border-neon-primary transition-all duration-300">
+          <div class="w-12 h-12 rounded-full bg-neon-primary/10 flex items-center justify-center">
+            <ion-icon name="time-outline" class="text-2xl text-neon-primary"></ion-icon>
+          </div>
+          <span class="text-text-primary font-medium text-sm">Horario</span>
+        </button>
+      </div>
+
+      <!-- Today's Appointments -->
+      <div class="space-y-3">
+        <h2 class="text-lg font-display font-bold text-text-primary">
+          Citas de <span class="text-neon-primary">Hoy</span>
+        </h2>
+        
+        @if (loading) {
+          <div class="grid grid-cols-1 gap-3">
+            @for (i of [1, 2, 3]; track i) {
+              <div class="skeleton-card"></div>
+            }
+          </div>
+        } @else if (todayAppointments.length === 0) {
+          <div class="relative group overflow-hidden rounded-2xl border border-neon-primary/10 p-8 text-center">
+            <div class="absolute inset-0 bg-gradient-to-br from-neon-primary/5 to-transparent"></div>
+            <ion-icon name="calendar-clear-outline" class="text-5xl text-text-secondary mb-3"></ion-icon>
+            <p class="text-text-secondary">No tienes citas programadas para hoy</p>
+          </div>
+        } @else {
+          <div class="space-y-3">
+            @for (appointment of todayAppointments; track appointment.id) {
+              <div class="bg-bg-tertiary/50 border border-neon-primary/10 rounded-xl p-4">
+                <div class="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 class="text-text-primary font-bold">{{ appointment.serviceName }}</h3>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                      [class.bg-neon-primary/20]="appointment.status === 'Pending'"
+                      [class.text-neon-primary]="appointment.status === 'Pending'"
+                      [class.bg-green-500/20]="appointment.status === 'Confirmed'"
+                      [class.text-green-400]="appointment.status === 'Confirmed'"
+                      [class.bg-blue-500/20]="appointment.status === 'Completed'"
+                      [class.text-blue-400]="appointment.status === 'Completed'">
+                      {{ getStatusLabel(appointment.status) }}
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="space-y-1 text-sm text-text-secondary">
+                  <p class="flex items-center gap-2">
+                    <ion-icon name="person-outline" class="text-neon-primary"></ion-icon>
+                    {{ appointment.userName }}
+                  </p>
+                  <p class="flex items-center gap-2">
+                    <ion-icon name="time-outline" class="text-neon-primary"></ion-icon>
+                    {{ formatTime(appointment.scheduledDate) }}
+                  </p>
+                  <p class="flex items-center gap-2">
+                    <ion-icon name="business-outline" class="text-neon-primary"></ion-icon>
+                    {{ appointment.businessName }}
+                  </p>
+                </div>
+                
+                @if (appointment.status === 'Pending' && canAccept) {
+                  <div class="flex gap-2 mt-3 pt-3 border-t border-neon-primary/10">
+                    <ion-button size="small" fill="solid" color="success" class="flex-1"
+                      (click)="acceptAppointment(appointment)">
+                      Aceptar
+                    </ion-button>
+                    <ion-button size="small" fill="outline" color="danger" class="flex-1"
+                      (click)="rejectAppointment(appointment)">
+                      Rechazar
+                    </ion-button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-gradient-to-br from-neon-primary to-neon-secondary rounded-xl p-4 text-center">
+          <p class="text-3xl font-display font-bold text-white">{{ todayAppointments.length }}</p>
+          <p class="text-white/80 text-sm">Citas hoy</p>
+        </div>
+        <div class="bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl p-4 text-center">
+          <p class="text-3xl font-display font-bold text-neon-primary">{{ upcomingCount }}</p>
+          <p class="text-text-secondary text-sm">Próximas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

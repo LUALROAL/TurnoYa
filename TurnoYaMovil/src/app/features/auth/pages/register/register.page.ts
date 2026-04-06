@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, ChangeDetectorRef } from "@angular/core";
+import { Component, inject, ChangeDetectorRef, OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { Router, RouterLink, ActivatedRoute } from "@angular/router";
 import { IonicModule, ToastController } from "@ionic/angular";
 import { addIcons } from "ionicons";
 import {
@@ -21,6 +21,7 @@ import {
 } from "ionicons/icons";
 
 import { AuthService } from "../../services/auth.service";
+import { ProfessionalService, AcceptInvitationResponse } from "../../../professional/services/professional.service";
 
 @Component({
   selector: "app-register",
@@ -29,7 +30,7 @@ import { AuthService } from "../../services/auth.service";
   templateUrl: "./register.page.html",
   styleUrls: ["./register.page.scss"],
 })
-export class RegisterPage {
+export class RegisterPage implements OnInit {
   constructor(private toastController: ToastController) {
     addIcons({
       sparklesOutline,
@@ -47,9 +48,12 @@ export class RegisterPage {
       informationCircleOutline
     });
   }
+
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly professionalService = inject(ProfessionalService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   protected readonly form = this.formBuilder.group({
@@ -62,6 +66,24 @@ export class RegisterPage {
   protected loading = false;
   protected showPassword = false;
   protected errorMessage = '';
+  protected invitedMessage = '';
+  protected pendingInvitationToken: string | null = null;
+
+  async ngOnInit(): Promise<void> {
+    // Verificar si hay un token de invitación pendiente
+    this.pendingInvitationToken = sessionStorage.getItem('pendingInvitationToken');
+    
+    // Verificar query params para mensaje de invitación
+    const queryParams = this.route.snapshot.queryParams;
+    if (queryParams['invited'] === 'true' && queryParams['message']) {
+      this.invitedMessage = queryParams['message'];
+    }
+    
+    // Limpiar el token de sesión después de leerlo
+    if (this.pendingInvitationToken) {
+      sessionStorage.removeItem('pendingInvitationToken');
+    }
+  }
 
   // Bandera para prevenir race condition en Google Auth
   private googleAuthInProgress = false;
@@ -240,7 +262,13 @@ export class RegisterPage {
     this.authService.register(normalizedFullName, email, password, acceptTerms).subscribe({
       next: () => {
         this.loading = false;
-        void this.router.navigateByUrl("/auth/login");
+        
+        // Si hay un token de invitación pendiente, intentar vincular al empleado
+        if (this.pendingInvitationToken) {
+          this.acceptInvitationAfterRegister();
+        } else {
+          void this.router.navigateByUrl("/auth/login");
+        }
       },
       error: (error) => {
         this.loading = false;
@@ -279,7 +307,36 @@ export class RegisterPage {
           this.errorMessage = errorMessage || 'Ocurrió un error. Inténtalo de nuevo.';
         }
         
-        this.cdr.detectChanges();
+            this.cdr.detectChanges();
+      },
+    });
+  }
+
+  /**
+   * Acepta la invitación después de un registro exitoso
+   */
+  private acceptInvitationAfterRegister(): void {
+    if (!this.pendingInvitationToken) return;
+
+    this.professionalService.acceptInvitation(this.pendingInvitationToken).subscribe({
+      next: (response: AcceptInvitationResponse) => {
+        this.loading = false;
+        
+        if (response.success) {
+          // Redirigir al panel de profesional
+          void this.router.navigate(['/professional/home']);
+        } else {
+          // La invitación falló pero el usuario ya está registrado
+          this.errorMessage = response.message || 'La invitación no pudo ser procesada. Podrás acceder desde tu panel.';
+          //仍然导航到登录页面
+          void this.router.navigateByUrl("/auth/login");
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        // 即使邀请失败，用户也已注册
+        console.error('Accept invitation error:', error);
+        void this.router.navigateByUrl("/auth/login");
       },
     });
   }

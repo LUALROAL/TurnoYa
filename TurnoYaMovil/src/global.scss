@@ -4,7 +4,7 @@
  */
 
 @use "./app/features/auth/styles/auth-shared";
-@import "theme/variables";
+@use "theme/variables";
 
 @tailwind base;
 @tailwind components;

@@ -48,4 +48,11 @@ export class BusinessService {
   getSettings(id: string): Observable<BusinessSettingsResponse> {
     return this.api.get<BusinessSettingsResponse>(`/api/business/${id}/settings`);
   }
+
+  /**
+   * Obtiene los negocios donde el usuario actual es empleado (no owner)
+   */
+  getAsEmployee(): Observable<BusinessListItem[]> {
+    return this.api.get<BusinessListItem[]>("/api/business/as-employee");
+  }
 }

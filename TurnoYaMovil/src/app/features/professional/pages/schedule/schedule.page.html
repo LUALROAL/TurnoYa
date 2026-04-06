@@ -1,0 +1,96 @@
+<ion-content class="bg-bg-primary" [fullscreen]="true">
+  <!-- Fondo con partículas animadas -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-30 animate-pulse-slow"></div>
+    <div
+      class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gradient-radial opacity-20 animate-pulse-slow animation-delay-2000">
+    </div>
+    <div class="absolute inset-0"
+      style="background-image: linear-gradient(rgba(0,224,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.03) 1px, transparent 1px); background-size:40px 40px;">
+    </div>
+  </div>
+
+  <div class="relative z-10 pb-20">
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-bg-primary/80 backdrop-blur-xl border-b border-neon-primary/10 px-4 py-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
+            MI HORARIO
+          </p>
+          <h1 class="text-2xl font-display font-bold">
+            <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
+              Disponibilidad
+            </span>
+          </h1>
+        </div>
+      </div>
+    </header>
+
+    <div class="px-4 space-y-6 mt-4">
+      <!-- Info card -->
+      <div class="relative overflow-hidden rounded-2xl border border-neon-primary/10 p-4">
+        <div class="absolute inset-0 bg-gradient-to-br from-neon-primary/5 to-transparent"></div>
+        <div class="relative flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-neon-primary/20 flex items-center justify-center flex-shrink-0">
+            <ion-icon name="information-circle-outline" class="text-xl text-neon-primary"></ion-icon>
+          </div>
+          <div>
+            <p class="text-text-primary font-medium text-sm">Horario configurado por el dueño</p>
+            <p class="text-text-secondary text-xs mt-1">Contacta con tu empleador para modificar tu disponibilidad</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Week schedule -->
+      <div class="space-y-3">
+        <h2 class="text-lg font-display font-bold text-text-primary">
+          Esta <span class="text-neon-primary">Semana</span>
+        </h2>
+        
+        <div class="bg-bg-tertiary/30 rounded-xl border border-neon-primary/10 overflow-hidden">
+          @for (day of weekDays; track day.name) {
+            <div class="p-4 flex items-center justify-between border-b border-neon-primary/10 last:border-b-0"
+              [class.bg-neon-primary/5]="day.isToday">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                  [class.bg-neon-primary]="day.isToday"
+                  [class.bg-bg-tertiary]="!day.isToday">
+                  <span class="text-sm font-medium"
+                    [class.text-white]="day.isToday"
+                    [class.text-text-secondary]="!day.isToday">
+                    {{ day.name.charAt(0) }}
+                  </span>
+                </div>
+                <span class="text-text-primary font-medium">{{ day.name }}</span>
+              </div>
+              
+              @if (day.hasSchedule) {
+                <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">
+                  {{ day.timeRange }}
+                </span>
+              } @else {
+                <span class="text-text-secondary text-sm">Sin horario</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Leyenda -->
+      <div class="space-y-2">
+        <h3 class="text-sm font-medium text-text-secondary">Leyenda</h3>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-neon-primary"></div>
+            <span class="text-xs text-text-secondary">Día actual</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            <span class="text-xs text-text-secondary">Con horario</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

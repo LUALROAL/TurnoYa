@@ -21,5 +21,9 @@ namespace TurnoYa.Application.Interfaces
         Task<IEnumerable<string>> GetCitiesAsync();
         Task<BusinessSettingsDto?> GetSettingsAsync(Guid businessId);
         Task<BusinessSettingsDto?> UpdateSettingsAsync(Guid businessId, BusinessSettingsDto dto, Guid userId);
+        /// <summary>
+        /// Obtiene los negocios donde el usuario es empleado (no owner)
+        /// </summary>
+        Task<IEnumerable<BusinessListDto>> GetBusinessesAsEmployeeAsync(Guid userId);
     }
 }

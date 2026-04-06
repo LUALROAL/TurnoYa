@@ -81,7 +81,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           <ng-container *ngFor="let item of quickAccessItems">
-            <button *ngIf="item.route !== '/admin/users' || isAdmin()" [routerLink]="item.route"
+            <button *ngIf="item.route !== '/admin/users' || isAdmin()" [routerLink]="item.route" [queryParams]="item.queryParams"
               class="group relative overflow-hidden">
               <div
                 class="absolute -inset-0.5 bg-gradient-glow rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">

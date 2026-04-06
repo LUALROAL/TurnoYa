@@ -1,0 +1,77 @@
+<ion-content class="ion-padding">
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="text-center">
+        <ion-spinner name="crescent" class="text-neon-primary mb-4" style="transform: scale(1.5);"></ion-spinner>
+        <p class="text-text-secondary font-mono text-sm">Procesando invitación...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error && !loading) {
+      <div class="w-full max-w-md">
+        <div class="relative group overflow-hidden rounded-xl">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl opacity-30"></div>
+          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-red-500/30 rounded-xl p-6 flex flex-col items-center gap-4 text-center">
+            <ion-icon name="close-circle-outline" class="text-red-500 text-5xl"></ion-icon>
+            <div>
+              <h2 class="text-text-primary font-display font-semibold text-xl mb-2">No se pudo aceptar la invitación</h2>
+              <p class="text-text-secondary">{{ error }}</p>
+            </div>
+            <div class="flex gap-3 mt-2">
+              <ion-button routerLink="/auth/login" fill="outline" class="text-neon-primary border-neon-primary">
+                <ion-icon slot="start" name="log-in-outline"></ion-icon>
+                Iniciar Sesión
+              </ion-button>
+              <ion-button routerLink="/auth/register" color="primary">
+                <ion-icon slot="start" name="person-add-outline"></ion-icon>
+                Registrarse
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Success State -->
+    @if (success && !loading) {
+      <div class="w-full max-w-md">
+        <div class="relative group overflow-hidden rounded-xl">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-xl opacity-30"></div>
+          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-neon-primary/30 rounded-xl p-6 flex flex-col items-center gap-4 text-center">
+            <ion-icon name="checkmark-circle-outline" class="text-neon-primary text-5xl animate-pulse"></ion-icon>
+            <div>
+              <h2 class="text-text-primary font-display font-semibold text-xl mb-2">¡Invitación aceptada!</h2>
+              <p class="text-text-secondary">Ahora tienes acceso al panel de empleado. Serás redirigido en breve...</p>
+            </div>
+            <ion-button routerLink="/professional/home" color="primary">
+              <ion-icon slot="start" name="home-outline"></ion-icon>
+              Ir al Panel
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- No Token State -->
+    @if (!token && !loading) {
+      <div class="w-full max-w-md">
+        <div class="relative group overflow-hidden rounded-xl">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-xl opacity-30"></div>
+          <div class="relative bg-bg-card/90 backdrop-blur-xl border border-orange-500/30 rounded-xl p-6 flex flex-col items-center gap-4 text-center">
+            <ion-icon name="warning-outline" class="text-orange-500 text-5xl"></ion-icon>
+            <div>
+              <h2 class="text-text-primary font-display font-semibold text-xl mb-2">Enlace inválido</h2>
+              <p class="text-text-secondary">Este enlace de invitación no es válido o ha expirado.</p>
+            </div>
+            <ion-button routerLink="/auth/login" color="primary">
+              <ion-icon slot="start" name="log-in-outline"></ion-icon>
+              Ir a Iniciar Sesión
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</ion-content>

@@ -10,6 +10,7 @@ namespace TurnoYa.Application.Interfaces
         Task<AppointmentDto> CreateAsync(CreateAppointmentDto dto, Guid userId);
         Task<AppointmentDto?> GetByIdAsync(Guid id, Guid requesterId);
         Task<IEnumerable<AppointmentDto>> GetMyAsync(Guid userId, DateTime? from = null, DateTime? to = null);
+        Task<IEnumerable<AppointmentDto>> GetByEmployeeAsync(Guid employeeId, DateTime? from = null, DateTime? to = null);
         Task<IEnumerable<AppointmentDto>> GetBusinessAsync(Guid businessId, Guid ownerId, DateTime? from = null, DateTime? to = null);
         Task<bool> ConfirmAsync(Guid id, Guid ownerId);
         Task<bool> CancelAsync(Guid id, Guid requesterId, string? reason);

@@ -1,0 +1,7 @@
+/* Los estilos ya están en el HTML usando Tailwind CSS */
+/* Aquí solo mantenemos estilos adicionales si son necesarios */
+
+.toggle-custom {
+  --handle-background: var(--ion-color-neon-primary);
+  --background-checked: var(--ion-color-neon-primary);
+}

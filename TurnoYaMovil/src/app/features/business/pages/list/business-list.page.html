@@ -23,11 +23,11 @@
         </button>
         <div>
           <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-            MARKETPLACE
+            {{ mode === 'employee' ? 'MIS EMPLEOS' : 'MARKETPLACE' }}
           </p>
           <h1 class="text-2xl font-display font-bold">
             <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
-              Negocios
+              {{ pageTitle }}
             </span>
           </h1>
         </div>
@@ -38,11 +38,19 @@
       <!-- Título de sección mejorado -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
-          Explora opciones <span class="text-neon-primary">cerca de ti</span>
+          @if (mode === 'employee') {
+            <span class="text-neon-primary">Negocios donde trabajas</span>
+          } @else {
+            Explora opciones <span class="text-neon-primary">cerca de ti</span>
+          }
         </h2>
         <p class="text-text-secondary font-mono text-sm flex items-center gap-2">
           <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
-          Encuentra negocios por categoría y ciudad
+          @if (mode === 'employee') {
+            Los negocios donde tienes vínculo laboral
+          } @else {
+            Encuentra negocios por categoría y ciudad
+          }
           <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
         </p>
       </div>

@@ -16,7 +16,8 @@ import {
   sparklesOutline,
   checkmarkCircle,
   star,
-  checkmarkCircleOutline
+  checkmarkCircleOutline,
+  peopleOutline
 } from 'ionicons/icons';
 import { AuthSessionService } from '../core/services/auth-session.service';
 import { Observable, Subscription } from 'rxjs';
@@ -27,6 +28,7 @@ type QuickAccessItem = {
   subtitle: string;
   icon: string;
   route?: string;
+  queryParams?: Record<string, string>;
 };
 
 type RecommendedBusiness = {
@@ -78,6 +80,20 @@ export class HomePage implements OnInit, OnDestroy {
       subtitle: 'Gestionar usuarios',
       icon: 'shield-checkmark-outline',
       route: '/admin/users',
+    },
+    {
+      title: 'Trabajo',
+      subtitle: 'Donde trabajo',
+      icon: 'people-outline',
+      route: '/businesses',
+      queryParams: { role: 'employee' },
+    },
+    {
+      title: 'Asociarme',
+      subtitle: 'Unirse a un negocio',
+      icon: 'link-outline',
+      route: '/owner/businesses',
+      queryParams: { action: 'join' },
     },
   ];
 
@@ -150,6 +166,7 @@ export class HomePage implements OnInit, OnDestroy {
       'checkmark-circle': checkmarkCircle,
       'star': star,
       'checkmark-circle-outline': checkmarkCircleOutline,
+      'people-outline': peopleOutline,
     });
   }
 

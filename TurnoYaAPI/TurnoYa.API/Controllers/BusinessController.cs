@@ -402,4 +402,20 @@ public class BusinessController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Obtiene los negocios donde el usuario actual es empleado (no owner)
+    /// </summary>
+    [HttpGet("as-employee")]
+    [ProducesResponseType(typeof(IEnumerable<BusinessListDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<BusinessListDto>>> GetAsEmployee()
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            return Forbid();
+
+        var userId = Guid.Parse(userIdClaim.Value);
+        var businesses = await _businessService.GetBusinessesAsEmployeeAsync(userId);
+        return Ok(businesses);
+    }
+
 }

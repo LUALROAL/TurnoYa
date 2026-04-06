@@ -16,12 +16,14 @@ namespace TurnoYa.Infrastructure.Services
         private readonly IBusinessRepository _businessRepository;
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public BusinessService(IBusinessRepository businessRepository, ApplicationDbContext context, IMapper mapper)
+        public BusinessService(IBusinessRepository businessRepository, ApplicationDbContext context, IMapper mapper, IEmployeeRepository employeeRepository)
         {
             _businessRepository = businessRepository;
             _context = context;
             _mapper = mapper;
+            _employeeRepository = employeeRepository;
         }
 
         public async Task<IEnumerable<BusinessListDto>> GetAllAsync()
@@ -243,6 +245,28 @@ namespace TurnoYa.Infrastructure.Services
                     await _context.SaveChangesAsync();
                 }
             }
+        }
+
+        /// <summary>
+        /// Obtiene los negocios donde el usuario es empleado (no owner)
+        /// </summary>
+        public async Task<IEnumerable<BusinessListDto>> GetBusinessesAsEmployeeAsync(Guid userId)
+        {
+            // Obtener empleados del usuario
+            var employees = await _employeeRepository.GetByUserIdAsync(userId);
+            
+            if (employees == null || !employees.Any())
+            {
+                return Enumerable.Empty<BusinessListDto>();
+            }
+
+            // Obtener los negocios de esos empleados
+            var businessIds = employees.Select(e => e.BusinessId).Distinct().ToList();
+            var businesses = await _context.Businesses
+                .Where(b => businessIds.Contains(b.Id))
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<BusinessListDto>>(businesses);
         }
     }
 }

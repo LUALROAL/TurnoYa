@@ -37,14 +37,33 @@
       <!-- Título de sección -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
-          Gestiona tus <span class="text-neon-primary">Negocios</span>
+          @if (isJoinMode) {
+            Asociarme a un Negocio
+          } @else {
+            Gestiona tus <span class="text-neon-primary">Negocios</span>
+          }
         </h2>
         <p class="text-text-secondary font-mono text-sm flex items-center gap-2">
           <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
-          Crea y administra los negocios que ofreces en TurnoYa
+          @if (isJoinMode) {
+            Ingresa el código que te dio el dueño del negocio
+          } @else {
+            Crea y administra los negocios que ofreces en TurnoYa
+          }
           <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
         </p>
       </div>
+
+      <!-- Botón flotante de Asociarme (siempre visible) -->
+      <button type="button" (click)="openJoinModal()"
+              class="relative w-full py-4 bg-bg-card/80 backdrop-blur-xl border border-purple-500/30 rounded-xl flex items-center justify-center gap-3 hover:border-purple-500/60 transition-all duration-300">
+        <ion-icon name="link-outline" class="text-2xl text-purple-400"></ion-icon>
+        <div class="text-left">
+          <p class="text-text-primary font-display font-semibold">Asociarme a un Negocio</p>
+          <p class="text-text-secondary text-xs font-mono">Ingresa el código que te dio el empleador</p>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="text-purple-400"></ion-icon>
+      </button>
 
       <!-- Loading skeleton -->
       @if (loading) {
@@ -220,7 +239,17 @@
 
   <!-- FAB -->
   @if (!loading && !isEmpty) {
-    <div class="fixed bottom-6 right-6 z-30">
+    <div class="fixed bottom-6 right-6 z-30 flex gap-3">
+      <!-- Botón Asociarme -->
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+        <button (click)="openJoinModal()"
+                class="relative w-14 h-14 rounded-full bg-bg-card/90 border border-purple-500/50 flex items-center justify-center hover:scale-110 transition-transform duration-300">
+          <ion-icon name="link-outline" class="text-2xl text-purple-400"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Botón Crear -->
       <div class="relative group">
         <div class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
         <button [routerLink]="['/owner/businesses/create']"
@@ -230,4 +259,58 @@
       </div>
     </div>
   }
+
+  <!-- Modal para asociarse a un negocio -->
+  <ion-modal [isOpen]="showJoinModal" (didDismiss)="closeJoinModal()" [breakpoints]="[0, 0.5]" [initialBreakpoint]="0.5" [backdropDismiss]="true">
+    <ng-template>
+      <div class="bg-bg-primary h-full" style="position: relative; z-index: 9999;">
+        <div class="p-6 space-y-6">
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-display font-bold text-text-primary">
+              Asociarme a un Negocio
+            </h2>
+            <button (click)="closeJoinModal()" class="w-10 h-10 rounded-full bg-bg-tertiary/50 flex items-center justify-center">
+              <ion-icon name="close-outline" class="text-xl text-text-primary"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Descripción -->
+          <p class="text-text-secondary text-sm">
+            Ingresa el código de 6 caracteres que te proporcionó el dueño del negocio para asociarte como empleado.
+          </p>
+
+          <!-- Input de código -->
+          <div class="space-y-2" style="position: relative; z-index: 10000;">
+            <label class="text-text-secondary font-mono text-xs">CÓDIGO DE ASOCIACIÓN</label>
+            <input type="text" 
+                   [(ngModel)]="joinCode"
+                   (ngModelChange)="joinCode = $event.toUpperCase()"
+                   maxlength="6"
+                   placeholder="ABC123"
+                   style="z-index: 10001; position: relative; width: 100%; background: #1a1a2e; border: 1px solid rgba(0, 224, 255, 0.3); border-radius: 12px; padding: 12px 16px; font-size: 24px; text-align: center; color: #00E0FF; letter-spacing: 0.5em; outline: none;"
+                   onfocus="this.style.borderColor='rgba(0, 224, 255, 0.8)';"
+                   onblur="this.style.borderColor='rgba(0, 224, 255, 0.3)';">
+          </div>
+
+          <!-- Botón -->
+          <button (click)="joinBusiness()" 
+                  [disabled]="joinLoading || joinCode.length !== 6"
+                  style="z-index: 10000; position: relative; width: 100%; padding: 12px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;"
+                  [style.background]="joinCode.length === 6 && !joinLoading ? 'linear-gradient(to right, #00E0FF, #00FFD0)' : '#1a1a2e'"
+                  [style.color]="joinCode.length === 6 && !joinLoading ? '#0a0a0f' : '#666'"
+                  [style.opacity]="joinLoading || joinCode.length !== 6 ? '0.5' : '1'"
+                  [style.cursor]="joinLoading || joinCode.length !== 6 ? 'not-allowed' : 'pointer'">
+            @if (joinLoading) {
+              <ion-spinner name="crescent"></ion-spinner>
+              <span>Asociando...</span>
+            } @else {
+              <ion-icon name="link-outline"></ion-icon>
+              <span>Asociarme</span>
+            }
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

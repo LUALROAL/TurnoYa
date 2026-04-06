@@ -13,13 +13,36 @@ namespace TurnoYa.Core.Entities
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? PhotoUrl { get; set; }
-        public byte[]? PhotoData { get; set; } // Nueva propiedad para almacenar la imagen
+        public byte[]? PhotoData { get; set; }
         public bool IsActive { get; set; }
+
+        // Invitation system
+
+        /// <summary>
+        /// Código corto de 6 caracteres para compartir fácilmente (ej: ABC123)
+        /// </summary>
+        public string? InvitationCode { get; set; }
+
+        /// <summary>
+        /// Token único para invitación de empleado. Se genera cuando el owner crea un enlace de invitación.
+        /// </summary>
+        public string? InvitationToken { get; set; }
+
+        /// <summary>
+        /// Fecha de expiración del token de invitación. Por defecto, 7 días después de la generación.
+        /// </summary>
+        public DateTime? InvitationTokenExpiry { get; set; }
+
+        /// <summary>
+        /// Indica si el token de invitación ya fue utilizado por un empleado.
+        /// </summary>
+        public bool IsInvitationUsed { get; set; }
 
         public Business? Business { get; set; }
         public User? User { get; set; }
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public ICollection<EmployeeServiceAssignment> EmployeeServices { get; set; } = new List<EmployeeServiceAssignment>();
         public EmployeeSchedule? Schedule { get; set; }
+        public EmployeePermission? Permissions { get; set; }
     }
 }

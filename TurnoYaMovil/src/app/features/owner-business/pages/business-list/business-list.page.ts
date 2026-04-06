@@ -1,9 +1,13 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import {
   IonContent,
   IonIcon,
+  IonModal,
+  IonButton,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -24,12 +28,15 @@ import {
   arrowBackOutline,
   settingsOutline,
   arrowBack,
+  linkOutline,
+  closeOutline,
 } from 'ionicons/icons';
 import { Subject, switchMap, takeUntil } from 'rxjs';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { OwnerBusiness } from '../../models';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { UserService } from 'src/app/features/account/services/user.service';
+import { ProfessionalService, AcceptInvitationResponse } from '../../../professional/services/professional.service';
 
 @Component({
   selector: 'app-business-list',
@@ -38,20 +45,33 @@ import { UserService } from 'src/app/features/account/services/user.service';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterLink,
     IonContent,
     IonIcon,
+    IonModal,
+    IonButton,
+    IonSpinner,
   ],
 })
 export class BusinessListPage implements OnInit, OnDestroy {
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
+  private readonly professionalService = inject(ProfessionalService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly userService = inject(UserService);
+
+  // Modal state for joining business
+  protected showJoinModal = false;
+  protected joinCode = '';
+  protected joinLoading = false;
+  protected isJoinMode = false;
 
   protected businesses: OwnerBusiness[] = [];
   protected loading = true;
   protected isEmpty = false;
-  private userService = inject(UserService); // inyecta
+  
   constructor() {
     addIcons({
       addOutline,
@@ -71,10 +91,23 @@ export class BusinessListPage implements OnInit, OnDestroy {
       arrowBackOutline,
       settingsOutline,
       arrowBack,
+      linkOutline,
+      closeOutline,
     });
   }
 
   ngOnInit() {
+    // Verificar si hay query params para abrir modal de join
+    const action = this.route.snapshot.queryParams['action'];
+    this.isJoinMode = action === 'join';
+    
+    if (this.isJoinMode) {
+      // Abrir modal después de un pequeño delay para que cargue la vista
+      setTimeout(() => {
+        this.openJoinModal();
+      }, 500);
+    }
+    
     this.loadMyBusinesses();
   }
 
@@ -164,5 +197,64 @@ export class BusinessListPage implements OnInit, OnDestroy {
   getImageSrc(base64: string | undefined): string {
     if (!base64) return '';
     return base64.startsWith('data:image') ? base64 : 'data:image/jpeg;base64,' + base64;
+  }
+
+  // ===== MÉTODOS PARA ASOCIARSE A UN NEGOCIO =====
+
+  protected openJoinModal(): void {
+    console.log('Opening join modal...');
+    this.showJoinModal = true;
+    this.joinCode = '';
+  }
+
+  protected closeJoinModal(): void {
+    this.showJoinModal = false;
+    this.joinCode = '';
+  }
+
+  protected joinBusiness(): void {
+    console.log('Joining business with code:', this.joinCode);
+    if (!this.joinCode.trim()) {
+      this.notify.showError('Ingresa el código de asociación');
+      return;
+    }
+
+    const code = this.joinCode.trim().toUpperCase();
+    if (code.length !== 6) {
+      this.notify.showError('El código debe tener 6 caracteres');
+      return;
+    }
+
+    this.joinLoading = true;
+    this.professionalService.acceptInvitationByCode(code)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: AcceptInvitationResponse) => {
+          this.joinLoading = false;
+          if (response.success) {
+            this.notify.showSuccess('Te has asociado al negocio correctamente');
+            this.closeJoinModal();
+            
+            // Refresh user profile to get updated role
+            this.userService.refreshUserProfile().subscribe({
+              next: () => {
+                // Recargar la lista de negocios
+                this.loadMyBusinesses();
+              },
+              error: (err) => {
+                console.error('Error refreshing profile:', err);
+                this.loadMyBusinesses();
+              }
+            });
+          } else {
+            this.notify.showError(response.message);
+          }
+        },
+        error: (error) => {
+          this.joinLoading = false;
+          console.error('Error joining business:', error);
+          this.notify.showError('No se pudo completar la asociación. Verifica el código.');
+        },
+      });
   }
 }

@@ -125,29 +125,34 @@ export class AuthService {
    */
   private loadGoogleScript(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Si ya está cargado, resolver inmediatamente
+      // Si ya está cargado y funcional, resolver inmediatamente
       if ((window as any).google?.accounts?.id) {
         resolve();
         return;
       }
 
-      // Si ya existe el script, esperar a que esté listo
+      // Si existe el script pero Google no está disponible, intentar removerlo y recargar
       const existingScript = document.querySelector('script[src*="gsi/client"]');
       if (existingScript) {
-        // El script existe, esperar un poco a que se ejecute
-        setTimeout(() => {
-          if ((window as any).google?.accounts?.id) {
-            resolve();
-          } else {
-            // Intentar cargar de nuevo
-            this.loadGoogleScriptFromSource().then(resolve).catch(reject);
-          }
-        }, 500);
-        return;
+        console.log("Existing Google script found, removing and reloading...");
+        existingScript.remove();
       }
 
-      // Cargar el script
-      this.loadGoogleScriptFromSource().then(resolve).catch(reject);
+      // Limpiar cualquier estado previo de Google
+      this.clearGoogleState();
+      
+      // Cargar el script fresco
+      this.loadGoogleScriptFromSource()
+        .then(resolve)
+        .catch((error) => {
+          // Si falla, intentar una vez más después de un pequeño delay
+          console.log("First attempt failed, retrying...", error);
+          setTimeout(() => {
+            this.loadGoogleScriptFromSource()
+              .then(resolve)
+              .catch(reject);
+          }, 1000);
+        });
     });
   }
 
@@ -162,14 +167,24 @@ export class AuthService {
         return;
       }
 
+      // Remover cualquier script previo de Google que pueda estar corrupto
+      const oldScript = document.querySelector('script[src*="gsi/client"]');
+      if (oldScript) {
+        oldScript.remove();
+      }
+
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
       
+      let resolved = false;
+      
       script.onload = () => {
+        if (resolved) return;
+        resolved = true;
         console.log("Google script loaded successfully");
-        // Esperar un poco a que Google inicialice
+        // Esperar a que Google inicialice
         setTimeout(() => {
           if ((window as any).google?.accounts?.id) {
             resolve();
@@ -180,6 +195,8 @@ export class AuthService {
       };
       
       script.onerror = () => {
+        if (resolved) return;
+        resolved = true;
         reject(new Error("Error al cargar el script de Google"));
       };
 
@@ -492,8 +509,31 @@ export class AuthService {
    * Cierra la sesión del usuario, limpia el storage y navega a login
    */
   logout(): void {
+    // Limpiar estado de Google Sign-In antes de logout
+    this.clearGoogleState();
+    
     this.session.clearSession();
     this.router.navigate(['/auth/login']);
+  }
+
+  /**
+   * Limpia el estado de Google Identity Services
+   * Necesario para poder hacer login nuevamente después de un logout
+   */
+  private clearGoogleState(): void {
+    try {
+      // Deshabilitar auto-select y cerrar sesión de Google
+      if ((window as any).google?.accounts?.id) {
+        (window as any).google.accounts.id.disableAutoSelect();
+        (window as any).google.accounts.id.cancel();
+        console.log("Google state cleared for new login");
+      }
+      // Resetear flag de inicialización
+      this.googleInitialized = false;
+      this.pendingGoogleCredential = null;
+    } catch (error) {
+      console.warn("Error clearing Google state:", error);
+    }
   }
 }
 

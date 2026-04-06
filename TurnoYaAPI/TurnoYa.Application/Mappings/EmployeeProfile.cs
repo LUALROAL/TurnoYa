@@ -28,6 +28,21 @@ namespace TurnoYa.Application.Mappings
                 .ForMember(dest => dest.PhotoData, opt => opt.MapFrom(src => src.PhotoBase64 != null ? Convert.FromBase64String(src.PhotoBase64) : null))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Mapping for EmployeeWithPermissionsDto
+            CreateMap<Employee, EmployeeWithPermissionsDto>()
+                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.Permissions != null 
+                    ? new EmployeePermissionsDto(
+                        src.Permissions.EmployeeId,
+                        src.Permissions.CanViewAppointments,
+                        src.Permissions.CanAcceptAppointments,
+                        src.Permissions.CanRejectAppointments,
+                        src.Permissions.CanCancelAppointments,
+                        src.Permissions.CanRescheduleAppointments,
+                        src.Permissions.CanManageSchedule,
+                        src.Permissions.CanViewServices,
+                        src.Permissions.CanManageServices)
+                    : null));
         }
 
         private static string GetFirstName(string fullName)

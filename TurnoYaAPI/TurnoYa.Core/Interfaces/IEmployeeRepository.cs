@@ -8,7 +8,10 @@ namespace TurnoYa.Core.Interfaces
     public interface IEmployeeRepository
     {
         Task<IEnumerable<Employee>> GetByBusinessIdAsync(Guid businessId);
+        Task<IEnumerable<Employee>> GetByUserIdAsync(Guid userId);
         Task<Employee?> GetByIdAsync(Guid id);
+        Task<Employee?> GetByInvitationTokenAsync(string token);
+        Task<Employee?> GetByInvitationCodeAsync(string code);
         Task<Employee> AddAsync(Employee employee);
         Task<Employee> UpdateAsync(Employee employee);
         Task DeleteAsync(Guid id);

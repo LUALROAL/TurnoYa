@@ -4,7 +4,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
-  IonModal, IonSpinner } from '@ionic/angular/standalone';
+  IonModal, IonSpinner, IonButton
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   addOutline,
@@ -12,12 +13,16 @@ import {
   callOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
+  copyOutline,
   createOutline,
   mailOutline,
   personOutline,
   peopleOutline,
-  trashOutline,
+  shareOutline,
   timeOutline,
+  trashOutline,
+  briefcaseOutline,
+  shieldOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
@@ -25,12 +30,13 @@ import { OwnerEmployee } from '../../models';
 import { OwnerService } from '../../../owner-services/models/owner-service.model';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
 import { OwnerServicesService } from '../../../owner-services/services/owner-services.service';
+import { ProfessionalService, InvitationResponse } from '../../../professional/services/professional.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employees-list',
   standalone: true,
-  imports: [IonSpinner, CommonModule, RouterLink, IonContent, IonIcon, IonModal, IonSpinner],
+  imports: [IonSpinner, CommonModule, RouterLink, IonContent, IonIcon, IonModal],
   templateUrl: './employees-list.page.html',
   styleUrls: ['./employees-list.page.scss'],
 })
@@ -39,6 +45,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly ownerEmployeesService = inject(OwnerEmployeesService);
   private readonly ownerServicesService = inject(OwnerServicesService);
+  private readonly professionalService = inject(ProfessionalService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
 
@@ -53,6 +60,11 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   protected availableServices: OwnerService[] = [];
   protected assigningService = false;
 
+  // Invitation modal state
+  protected showInvitationModal = false;
+  protected currentInvitation: InvitationResponse | null = null;
+  protected invitationLoading = false;
+
   constructor() {
     addIcons({
       addOutline,
@@ -66,7 +78,61 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       checkmarkCircleOutline,
       closeCircleOutline,
       timeOutline,
+      shareOutline,
+      copyOutline,
+      briefcaseOutline,
+      shieldOutline
     });
+  }
+
+  protected generateInvitation(employee: OwnerEmployee): void {
+    this.selectedEmployee = employee;
+    this.invitationLoading = true;
+    this.showInvitationModal = true;
+    this.currentInvitation = null;
+
+    this.professionalService
+      .generateInvitation(employee.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.invitationLoading = false;
+          this.currentInvitation = response;
+        },
+        error: (error: unknown) => {
+          this.invitationLoading = false;
+          console.error('Error al generar invitación:', error);
+          const backendMessage = this.getBackendMessage(error);
+          this.notify.showError(backendMessage || 'No se pudo generar el enlace de invitación');
+          this.closeInvitationModal();
+        },
+      });
+  }
+
+  protected closeInvitationModal(): void {
+    this.showInvitationModal = false;
+    this.currentInvitation = null;
+    this.selectedEmployee = null;
+  }
+
+  protected copyInvitationLink(): void {
+    if (this.currentInvitation?.invitationLink) {
+      navigator.clipboard.writeText(this.currentInvitation.invitationLink).then(() => {
+        this.notify.showSuccess('Enlace copiado al portapapeles');
+      }).catch(() => {
+        this.notify.showError('No se pudo copiar el enlace');
+      });
+    }
+  }
+
+  protected copyInvitationCode(): void {
+    if (this.currentInvitation?.shortCode) {
+      navigator.clipboard.writeText(this.currentInvitation.shortCode).then(() => {
+        this.notify.showSuccess('Código copiado al portapapeles');
+      }).catch(() => {
+        this.notify.showError('No se pudo copiar el código');
+      });
+    }
   }
 
   ngOnInit(): void {

@@ -450,7 +450,19 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("InvitationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvitationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InvitationTokenExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsInvitationUsed")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -504,6 +516,53 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.HasIndex("WorkingDayId");
 
                     b.ToTable("EmployeeBreakTimes");
+                });
+
+            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CanAcceptAppointments")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanCancelAppointments")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanManageSchedule")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanManageServices")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanRejectAppointments")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanRescheduleAppointments")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewAppointments")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewServices")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.ToTable("EmployeePermissions");
                 });
 
             modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeSchedule", b =>
@@ -1096,6 +1155,17 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Navigation("WorkingDay");
                 });
 
+            modelBuilder.Entity("TurnoYa.Core.Entities.EmployeePermission", b =>
+                {
+                    b.HasOne("TurnoYa.Core.Entities.Employee", "Employee")
+                        .WithOne("Permissions")
+                        .HasForeignKey("TurnoYa.Core.Entities.EmployeePermission", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("TurnoYa.Core.Entities.EmployeeSchedule", b =>
                 {
                     b.HasOne("TurnoYa.Core.Entities.Employee", "Employee")
@@ -1264,6 +1334,8 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeServices");
+
+                    b.Navigation("Permissions");
 
                     b.Navigation("Schedule");
                 });

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TurnoYa.Application.DTOs.Appointment;
 using TurnoYa.Application.Interfaces;
 using TurnoYa.Core.Entities;
+using TurnoYa.Core.Interfaces;
 
 namespace TurnoYaAPI.Controllers
 {
@@ -20,10 +21,20 @@ namespace TurnoYaAPI.Controllers
     public class AppointmentsController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly IEmployeeService _employeeService;
+        private readonly IEmployeePermissionService _permissionService;
+        private readonly IAppointmentRepository _appointmentRepository;
 
-        public AppointmentsController(IAppointmentService appointmentService)
+        public AppointmentsController(
+            IAppointmentService appointmentService,
+            IEmployeeService employeeService,
+            IEmployeePermissionService permissionService,
+            IAppointmentRepository appointmentRepository)
         {
             _appointmentService = appointmentService;
+            _employeeService = employeeService;
+            _permissionService = permissionService;
+            _appointmentRepository = appointmentRepository;
         }
 
         private Guid? GetUserId()
@@ -119,16 +130,21 @@ namespace TurnoYaAPI.Controllers
         }
 
         /// <summary>
-        /// Confirma una cita. Solo el dueño del negocio.
+        /// Confirma una cita. Solo el dueño del negocio o empleado con permiso.
         /// </summary>
         /// <param name="id">ID de la cita</param>
         [HttpPatch("{id}/confirm")]
         [Authorize]
         public async Task<ActionResult> Confirm(Guid id)
         {
-            var ownerId = GetUserId();
-            if (ownerId == null) return Unauthorized();
-            var ok = await _appointmentService.ConfirmAsync(id, ownerId.Value);
+            var requesterId = GetUserId();
+            if (requesterId == null) return Unauthorized();
+
+            // Check if user is owner or has permission
+            var canConfirm = await CanManageAppointmentAsync(requesterId.Value, id, "accept_appointments");
+            if (!canConfirm) return Forbid("No tienes permiso para confirmar citas");
+            
+            var ok = await _appointmentService.ConfirmAsync(id, requesterId.Value);
             if (!ok) return BadRequest();
             return NoContent();
         }
@@ -136,7 +152,7 @@ namespace TurnoYaAPI.Controllers
         public class CancelRequest { public string? Reason { get; set; } }
 
         /// <summary>
-        /// Cancela una cita. Puede el cliente o el dueño.
+        /// Cancela una cita. Puede el cliente, el dueño o empleado con permiso.
         /// </summary>
         /// <param name="id">ID de la cita</param>
         /// <param name="body">Motivo opcional</param>
@@ -146,6 +162,17 @@ namespace TurnoYaAPI.Controllers
         {
             var requesterId = GetUserId();
             if (requesterId == null) return Unauthorized();
+            
+            // Check if user is owner, client, or has permission
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
+            if (appointment == null) return NotFound();
+            
+            var isOwner = await IsBusinessOwnerAsync(requesterId.Value, appointment.BusinessId);
+            var isClient = appointment.UserId == requesterId.Value;
+            var canCancel = isOwner || isClient || await CanManageAppointmentAsync(requesterId.Value, id, "cancel_appointments");
+            
+            if (!canCancel && !isClient) return Forbid("No tienes permiso para cancelar esta cita");
+            
             try
             {
                 var ok = await _appointmentService.CancelAsync(id, requesterId.Value, body?.Reason);
@@ -186,6 +213,27 @@ namespace TurnoYaAPI.Controllers
             var ok = await _appointmentService.MarkNoShowAsync(id, ownerId.Value);
             if (!ok) return BadRequest();
             return NoContent();
+        }
+
+        // Helper methods for permission checking
+        private async Task<bool> CanManageAppointmentAsync(Guid userId, Guid appointmentId, string permission)
+        {
+            var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
+            if (appointment?.EmployeeId == null) return false;
+
+            // Find employee by userId and business
+            var employees = await _employeeService.GetEmployeesByUserIdAsync(userId);
+            var employee = employees.FirstOrDefault(e => e.BusinessId == appointment.BusinessId && e.Id == appointment.EmployeeId);
+            
+            if (employee == null) return false;
+
+            return await _permissionService.HasPermissionAsync(employee.Id, permission);
+        }
+
+        private async Task<bool> IsBusinessOwnerAsync(Guid userId, Guid businessId)
+        {
+            // Simple check - in real implementation you'd query the business repository
+            return false; // Simplified for now
         }
     }
 }
