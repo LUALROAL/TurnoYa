@@ -38,8 +38,29 @@
   }
 }
 
-// Estilos para el checkbox personalizado
-.group:has(input:checked) .border-border-secondary {
+// Estilos para los checkboxes personalizados - separados por ID único
+// Checkbox de "Recordar acceso"
+#rememberMe:checked ~ .remember-checkbox {
   border-color: #00E0FF;
   background: rgba(0, 224, 255, 0.1);
+}
+
+#rememberMe:checked ~ .check-icon {
+  opacity: 1;
+}
+
+// Checkbox de "Términos y Condiciones"
+#acceptTerms:checked ~ .terms-checkbox {
+  border-color: #00E0FF;
+  background: rgba(0, 224, 255, 0.1);
+}
+
+#acceptTerms:checked ~ .terms-check-icon {
+  opacity: 1;
+}
+
+// Estilo para cuando el checkbox está deshabilitado
+input[type="checkbox"]:disabled + div {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

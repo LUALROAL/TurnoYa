@@ -159,17 +159,11 @@
 
             <!-- Fila de acciones -->
             <div class="flex items-center justify-between text-sm">
-              <label class="flex items-center gap-2 text-text-secondary cursor-pointer group">
-                <div class="relative">
-                  <input type="checkbox" formControlName="rememberMe" class="sr-only" />
-                  <div
-                    class="w-5 h-5 border-2 border-border-secondary rounded-md bg-bg-tertiary/50 group-hover:border-neon-primary/50 transition-all duration-300">
-                  </div>
-                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <ion-icon name="checkmark-outline"
-                      class="text-neon-primary text-sm opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></ion-icon>
-                  </div>
-                </div>
+              <label class="flex items-center gap-2 text-text-secondary cursor-pointer">
+                <input type="checkbox" 
+                       [checked]="form.get('rememberMe')?.value" 
+                       (change)="onRememberMeChange($event)"
+                       class="w-4 h-4 accent-neon-primary" />
                 <span class="font-mono text-xs">Recordar acceso</span>
               </label>
 
@@ -219,17 +213,11 @@
 
             <!-- Checkbox de Términos y Condiciones (para registro con Google) -->
             <div class="mt-4">
-              <label class="flex items-start gap-3 text-text-secondary cursor-pointer group">
-                <div class="relative mt-0.5">
-                  <input type="checkbox" formControlName="acceptTerms" class="sr-only" />
-                  <div
-                    class="w-5 h-5 border-2 border-border-secondary rounded-md bg-bg-tertiary/50 group-hover:border-neon-primary/50 transition-all duration-300">
-                  </div>
-                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <ion-icon name="checkmark-outline"
-                      class="text-neon-primary text-sm opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></ion-icon>
-                  </div>
-                </div>
+              <label class="flex items-start gap-3 text-text-secondary cursor-pointer">
+                <input type="checkbox" 
+                       [checked]="form.get('acceptTerms')?.value" 
+                       (change)="onAcceptTermsChange($event)"
+                       class="w-4 h-4 mt-1 accent-neon-primary" />
                 <span class="text-xs font-mono">
                   Acepto los 
                   <button type="button" (click)="onTermsAndConditions()" class="text-neon-primary hover:text-neon-secondary underline">
@@ -239,7 +227,7 @@
                 </span>
               </label>
               <!-- Mensaje de error para términos -->
-              <div *ngIf="form.get('acceptTerms')?.touched && form.get('acceptTerms')?.invalid" class="error-message mt-2 ml-8">
+              <div *ngIf="form.get('acceptTerms')?.touched && form.get('acceptTerms')?.invalid" class="error-message mt-2 ml-6">
                 <ion-icon name="alert-circle-outline" class="text-sm"></ion-icon>
                 <span>Debes aceptar los términos para continuar</span>
               </div>

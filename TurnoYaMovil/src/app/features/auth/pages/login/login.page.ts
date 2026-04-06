@@ -73,6 +73,22 @@ export class LoginPage {
     this.showPassword = !this.showPassword;
   }
 
+  /**
+   * Maneja el cambio del checkbox de recordar acceso
+   */
+  protected onRememberMeChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.form.get('rememberMe')?.setValue(target.checked);
+  }
+
+  /**
+   * Maneja el cambio del checkbox de términos
+   */
+  protected onAcceptTermsChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.form.get('acceptTerms')?.setValue(target.checked);
+  }
+
   protected submit() {
     if (this.form.invalid || this.loading) {
       this.form.markAllAsTouched();
