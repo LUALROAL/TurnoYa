@@ -3,4 +3,8 @@
     <app-header></app-header>
   }
   <ion-router-outlet></ion-router-outlet>
+  
+  @if (authSessionService.hasValidSession()) {
+    <app-bottom-nav></app-bottom-nav>
+  }
 </ion-app>

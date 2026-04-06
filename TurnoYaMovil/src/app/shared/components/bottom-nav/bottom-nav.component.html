@@ -1,0 +1,78 @@
+<nav class="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-3 bg-bg-primary/80 backdrop-blur-xl border-t border-neon-primary/10">
+  <ul class="flex items-center justify-around">
+    
+    <!-- Inicio / Home -->
+    <li>
+      <a routerLink="/home" routerLinkActive="active-nav" class="nav-item group relative flex flex-col items-center gap-1 p-2">
+        <ion-icon name="home-outline" class="text-2xl text-text-tertiary transition-colors duration-300"></ion-icon>
+        <span class="text-[10px] font-mono text-text-tertiary transition-colors duration-300">Inicio</span>
+        <div class="active-indicator absolute -bottom-1 w-1 h-1 rounded-full bg-neon-primary opacity-0 transition-opacity duration-300"></div>
+      </a>
+    </li>
+
+    <!-- Explorar / Negocios -->
+    <li>
+      <a routerLink="/businesses" routerLinkActive="active-nav" class="nav-item group relative flex flex-col items-center gap-1 p-2">
+        <ion-icon name="storefront-outline" class="text-2xl text-text-tertiary transition-colors duration-300"></ion-icon>
+        <span class="text-[10px] font-mono text-text-tertiary transition-colors duration-300">Explorar</span>
+        <div class="active-indicator absolute -bottom-1 w-1 h-1 rounded-full bg-neon-primary opacity-0 transition-opacity duration-300"></div>
+      </a>
+    </li>
+
+    <!-- Mis Citas -->
+    <li>
+      <a routerLink="/appointments" routerLinkActive="active-nav" class="nav-item group relative flex flex-col items-center gap-1 p-2">
+        <ion-icon name="calendar-clear-outline" class="text-2xl text-text-tertiary transition-colors duration-300"></ion-icon>
+        <span class="text-[10px] font-mono text-text-tertiary transition-colors duration-300">Citas</span>
+        <div class="active-indicator absolute -bottom-1 w-1 h-1 rounded-full bg-neon-primary opacity-0 transition-opacity duration-300"></div>
+      </a>
+    </li>
+
+    <!-- Mis Negocios (Solo dueños y admins) -->
+    @if (isOwner || isAdmin) {
+      <li>
+        <a routerLink="/owner/businesses" routerLinkActive="active-nav" class="nav-item group relative flex flex-col items-center gap-1 p-2">
+          <ion-icon name="business-outline" class="text-2xl text-text-tertiary transition-colors duration-300"></ion-icon>
+          <span class="text-[10px] font-mono text-text-tertiary transition-colors duration-300">Mis Locales</span>
+          <div class="active-indicator absolute -bottom-1 w-1 h-1 rounded-full bg-neon-primary opacity-0 transition-opacity duration-300"></div>
+        </a>
+      </li>
+    }
+
+    <!-- Perfil -->
+    <li>
+      <a [routerLink]="['/profile']" routerLinkActive="active-nav" class="nav-item group relative flex flex-col items-center gap-1 p-2">
+        <ion-icon name="person-circle-outline" class="text-2xl text-text-tertiary transition-colors duration-300"></ion-icon>
+        <span class="text-[10px] font-mono text-text-tertiary transition-colors duration-300">Perfil</span>
+        <div class="active-indicator absolute -bottom-1 w-1 h-1 rounded-full bg-neon-primary opacity-0 transition-opacity duration-300"></div>
+      </a>
+    </li>
+
+    <!-- Admin (Solo Admin) -->
+    @if (isAdmin) {
+      <li>
+        <a routerLink="/admin/users" routerLinkActive="active-nav" class="nav-item group relative flex flex-col items-center gap-1 p-2">
+          <ion-icon name="shield-checkmark-outline" class="text-2xl text-text-tertiary transition-colors duration-300"></ion-icon>
+          <span class="text-[10px] font-mono text-text-tertiary transition-colors duration-300">Admin</span>
+          <div class="active-indicator absolute -bottom-1 w-1 h-1 rounded-full bg-neon-primary opacity-0 transition-opacity duration-300"></div>
+        </a>
+      </li>
+    }
+
+  </ul>
+
+  <!-- Tailwind CSS para los estados activos -->
+  <style>
+    .active-nav ion-icon {
+      color: var(--ion-color-neon-primary, #00ffff) !important;
+      filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+    }
+    .active-nav span {
+      color: var(--ion-color-neon-primary, #00ffff) !important;
+    }
+    .active-nav .active-indicator {
+      opacity: 1;
+      box-shadow: 0 0 10px 2px var(--ion-color-neon-primary, #00ffff);
+    }
+  </style>
+</nav>

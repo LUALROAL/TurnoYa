@@ -7,6 +7,7 @@ import { PushNotificationService } from './core/services/push-notification.servi
 import { SignalRService } from './core/services/signalr.service';
 import { AuthSessionService } from './core/services/auth-session.service';
 import { AppHeaderComponent } from './shared/components/app-header/app-header.component';
+import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
 
 /** Extiende el tipo App de @capacitor/app con los eventos disponibles en v8 */
 type AppWithEvents = typeof App;
@@ -30,7 +31,7 @@ async function addAppListener(
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [IonicModule, RouterModule, AppHeaderComponent],
+  imports: [IonicModule, RouterModule, AppHeaderComponent, BottomNavComponent],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
