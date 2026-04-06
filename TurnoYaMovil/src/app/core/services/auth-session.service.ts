@@ -17,16 +17,52 @@ export class AuthSessionService {
   constructor() {}
 
   /**
-   * Carga la sesión desde localStorage (solo se usa internamente)
+   * Carga la sesión desde localStorage o sessionStorage (solo se usa internamente)
+   * Busca primero en sessionStorage (sesión actual), luego en localStorage (rememberMe)
    */
   private loadSession(): AuthSession | null {
-    const raw = localStorage.getItem(this.storageKey);
+    // Primero buscar en sessionStorage (sesión sin rememberMe)
+    let raw = sessionStorage.getItem(this.storageKey);
+    if (raw) {
+      try {
+        const session = JSON.parse(raw) as AuthSession;
+        // Verificar que el token no esté expirado
+        if (!this.isSessionExpired(session)) {
+          return session;
+        }
+      } catch {
+        // Continuar buscando en localStorage
+      }
+    }
+
+    // Luego buscar en localStorage (sesión con rememberMe)
+    raw = localStorage.getItem(this.storageKey);
     if (!raw) return null;
+    
     try {
-      return JSON.parse(raw) as AuthSession;
+      const session = JSON.parse(raw) as AuthSession;
+      // Verificar que el token no esté expirado
+      if (!this.isSessionExpired(session)) {
+        return session;
+      }
+      // Si expiró, limpiar ambos storages
+      this.clearSession();
+      return null;
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Verifica si una sesión específica está expirada
+   */
+  private isSessionExpired(session: AuthSession): boolean {
+    if (!session?.accessToken || !session.expiresAt) return true;
+
+    const expiresAt = new Date(session.expiresAt).getTime();
+    if (Number.isNaN(expiresAt)) return true;
+
+    return Date.now() >= expiresAt;
   }
 
   /**

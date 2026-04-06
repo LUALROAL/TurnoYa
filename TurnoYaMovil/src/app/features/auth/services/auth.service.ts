@@ -362,7 +362,7 @@ export class AuthService {
             lastName: response.user.lastName,
             role: response.user.role,
           },
-        }, rememberMe);
+        }, rememberMe); // ← Ahora usa el flag correctamente
       })
     );
   }
@@ -454,7 +454,7 @@ export class AuthService {
               lastName: response.user.lastName,
               role: response.user.role,
             },
-          });
+          }, true); // ← Google login siempre persiste en localStorage
         })
       );
     } catch (error: any) {

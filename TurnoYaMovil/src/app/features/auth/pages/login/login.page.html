@@ -265,9 +265,17 @@
                 class="absolute inset-0 bg-gradient-to-r from-neon-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               </div>
               <div
-                class="relative flex items-center justify-center gap-2 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
-                <ion-icon [name]="googleLoading ? 'sync-outline' : 'logo-google'" class="text-xl text-neon-primary" [class.animate-spin]="googleLoading"></ion-icon>
-                <span class="text-text-secondary text-sm font-mono">{{ googleLoading ? 'Conectando...' : 'Google' }}</span>
+                class="relative flex items-center justify-center gap-3 py-3 px-4 bg-bg-tertiary/50 border border-border-secondary rounded-lg hover:border-neon-primary/50 transition-all duration-300">
+                <!-- Google "G" Logo stylizado -->
+                <span class="text-lg font-bold" style="font-family: Arial, sans-serif;">
+                  <span style="color: #4285F4;">G</span>
+                  <span style="color: #EA4335;">o</span>
+                  <span style="color: #FBBC05;">o</span>
+                  <span style="color: #4285F4;">g</span>
+                  <span style="color: #34A853;">l</span>
+                  <span style="color: #EA4335;">e</span>
+                </span>
+                <span class="text-text-secondary text-sm font-mono">{{ googleLoading ? 'Conectando...' : 'Continuar con Google' }}</span>
               </div>
             </button>
           </div>
