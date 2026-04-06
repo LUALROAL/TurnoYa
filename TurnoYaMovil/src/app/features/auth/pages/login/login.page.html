@@ -216,6 +216,34 @@
                 class="absolute inset-0 border-2 border-transparent group-hover:border-white/20 rounded-xl transition-all duration-300">
               </div>
             </button>
+
+            <!-- Checkbox de Términos y Condiciones (para registro con Google) -->
+            <div class="mt-4">
+              <label class="flex items-start gap-3 text-text-secondary cursor-pointer group">
+                <div class="relative mt-0.5">
+                  <input type="checkbox" formControlName="acceptTerms" class="sr-only" />
+                  <div
+                    class="w-5 h-5 border-2 border-border-secondary rounded-md bg-bg-tertiary/50 group-hover:border-neon-primary/50 transition-all duration-300">
+                  </div>
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <ion-icon name="checkmark-outline"
+                      class="text-neon-primary text-sm opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></ion-icon>
+                  </div>
+                </div>
+                <span class="text-xs font-mono">
+                  Acepto los 
+                  <button type="button" (click)="onTermsAndConditions()" class="text-neon-primary hover:text-neon-secondary underline">
+                    Términos y Condiciones
+                  </button>
+                  para registrarme con Google
+                </span>
+              </label>
+              <!-- Mensaje de error para términos -->
+              <div *ngIf="form.get('acceptTerms')?.touched && form.get('acceptTerms')?.invalid" class="error-message mt-2 ml-8">
+                <ion-icon name="alert-circle-outline" class="text-sm"></ion-icon>
+                <span>Debes aceptar los términos para continuar</span>
+              </div>
+            </div>
           </form>
 
           <!-- Divisor con estilo futurista -->

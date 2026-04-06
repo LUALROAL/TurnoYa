@@ -58,6 +58,7 @@ export class LoginPage {
     email: ["", [Validators.required, Validators.email]],
     password: ["", [Validators.required, Validators.minLength(8)]],
     rememberMe: [false],
+    acceptTerms: [false, [Validators.requiredTrue]],
   });
 
   protected loading = false;
@@ -118,6 +119,13 @@ export class LoginPage {
   }
 
   protected async googleLogin(): Promise<void> {
+    // Validar que acepten los términos y condiciones (solo para nuevos usuarios)
+    const acceptTerms = !!this.form.get('acceptTerms')?.value;
+    if (!acceptTerms) {
+      this.errorMessage = 'Debes aceptar los términos y condiciones para registrarte con Google';
+      return;
+    }
+
     // Prevenir race condition - si ya hay un login en proceso, salir
     if (this.googleLoading || this.googleAuthInProgress) {
       return;
@@ -128,7 +136,7 @@ export class LoginPage {
     this.errorMessage = '';
 
     try {
-      const observable = await this.authService.googleLogin();
+      const observable = await this.authService.googleLogin(acceptTerms);
       observable.subscribe({
         next: response => {
           this.googleLoading = false;
