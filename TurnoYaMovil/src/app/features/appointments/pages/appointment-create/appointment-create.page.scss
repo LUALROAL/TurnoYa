@@ -158,6 +158,18 @@ ion-textarea {
   overflow: hidden;
 }
 
+// Estilo para checkbox en popover
+.checkbox-neon {
+  border: 2px solid rgba(0, 224, 255, 0.3);
+  background: transparent;
+}
+
+.checkbox-neon-checked {
+  border: 2px solid #00E0FF;
+  background: linear-gradient(135deg, #00E0FF, #00F5D4);
+  box-shadow: 0 0 10px rgba(0, 224, 255, 0.4);
+}
+
 
 .popover-item {
   cursor: pointer;
