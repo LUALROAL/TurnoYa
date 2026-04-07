@@ -24,17 +24,20 @@ namespace TurnoYaAPI.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IEmployeePermissionService _permissionService;
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IBusinessService _businessService;
 
         public AppointmentsController(
             IAppointmentService appointmentService,
             IEmployeeService employeeService,
             IEmployeePermissionService permissionService,
-            IAppointmentRepository appointmentRepository)
+            IAppointmentRepository appointmentRepository,
+            IBusinessService businessService)
         {
             _appointmentService = appointmentService;
             _employeeService = employeeService;
             _permissionService = permissionService;
             _appointmentRepository = appointmentRepository;
+            _businessService = businessService;
         }
 
         private Guid? GetUserId()
@@ -142,7 +145,7 @@ namespace TurnoYaAPI.Controllers
 
             // Check if user is owner or has permission
             var canConfirm = await CanManageAppointmentAsync(requesterId.Value, id, "accept_appointments");
-            if (!canConfirm) return Forbid("No tienes permiso para confirmar citas");
+            if (!canConfirm) return StatusCode(403, new { message = "No tienes permiso para confirmar citas" });
             
             var ok = await _appointmentService.ConfirmAsync(id, requesterId.Value);
             if (!ok) return BadRequest();
@@ -171,7 +174,7 @@ namespace TurnoYaAPI.Controllers
             var isClient = appointment.UserId == requesterId.Value;
             var canCancel = isOwner || isClient || await CanManageAppointmentAsync(requesterId.Value, id, "cancel_appointments");
             
-            if (!canCancel && !isClient) return Forbid("No tienes permiso para cancelar esta cita");
+            if (!canCancel && !isClient) return StatusCode(403, new { message = "No tienes permiso para cancelar esta cita" });
             
             try
             {
@@ -219,7 +222,16 @@ namespace TurnoYaAPI.Controllers
         private async Task<bool> CanManageAppointmentAsync(Guid userId, Guid appointmentId, string permission)
         {
             var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
-            if (appointment?.EmployeeId == null) return false;
+            if (appointment == null) return false;
+
+            // Check if user is the business owner - they can always manage appointments
+            var businesses = await _businessService.GetByOwnerIdAsync(userId);
+            var isOwner = businesses.Any(b => b.Id == appointment.BusinessId);
+            if (isOwner) return true;
+
+            // If not owner, check if user is an employee with the permission
+            // Only proceed if the appointment has an employee assigned
+            if (appointment.EmployeeId == null) return false;
 
             // Find employee by userId and business
             var employees = await _employeeService.GetEmployeesByUserIdAsync(userId);
@@ -232,8 +244,8 @@ namespace TurnoYaAPI.Controllers
 
         private async Task<bool> IsBusinessOwnerAsync(Guid userId, Guid businessId)
         {
-            // Simple check - in real implementation you'd query the business repository
-            return false; // Simplified for now
+            var businesses = await _businessService.GetByOwnerIdAsync(userId);
+            return businesses.Any(b => b.Id == businessId);
         }
     }
 }
