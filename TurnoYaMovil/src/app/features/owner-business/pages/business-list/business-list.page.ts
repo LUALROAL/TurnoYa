@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import {
   IonContent,
   IonIcon,
@@ -59,6 +59,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
   private readonly professionalService = inject(ProfessionalService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly userService = inject(UserService);
 
   // Modal state for joining business
@@ -108,6 +109,14 @@ export class BusinessListPage implements OnInit, OnDestroy {
     }
 
     this.loadMyBusinesses();
+  }
+
+  protected handleBack(): void {
+    if (this.showJoinModal) {
+      this.closeJoinModal();
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
   ngOnDestroy() {

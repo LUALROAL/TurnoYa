@@ -790,3 +790,17 @@ ion-modal {
 ion-content {
     --padding-bottom: 90px !important;
 }
+
+/* ============================================
+// CLASES PARA MODALES CENTRADOS 
+// ============================================ */
+ion-modal.centered-modal {
+    --width: 90%;
+    --min-width: 250px;
+    --max-width: 450px;
+    --height: fit-content;
+    --border-radius: 16px;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(168, 85, 247, 0.3) inset;
+    align-items: center;
+    justify-content: center;
+}

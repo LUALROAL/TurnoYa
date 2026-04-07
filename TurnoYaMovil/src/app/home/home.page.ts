@@ -17,7 +17,8 @@ import {
   checkmarkCircle,
   star,
   checkmarkCircleOutline,
-  peopleOutline
+  peopleOutline,
+  linkOutline
 } from 'ionicons/icons';
 import { AuthSessionService } from '../core/services/auth-session.service';
 import { Observable, Subscription } from 'rxjs';
@@ -53,36 +54,36 @@ type RecommendedBusiness = {
 })
 export class HomePage implements OnInit, OnDestroy {
   protected readonly quickAccessItems: QuickAccessItem[] = [
-    {
-      title: 'Negocios',
-      subtitle: 'Explorar servicios',
-      icon: 'storefront-outline',
-      route: '/businesses',
-    },
+    // {
+    //   title: 'Negocios',
+    //   subtitle: 'Explorar servicios',
+    //   icon: 'storefront-outline',
+    //   route: '/businesses',
+    // },
     {
       title: 'Mis Negocios',
       subtitle: 'Gestionar mis locales',
       icon: 'business-outline',
       route: '/owner/businesses',
     },
-    {
-      title: 'Mis citas',
-      subtitle: 'Ver agenda',
-      icon: 'calendar-clear-outline',
-      route: '/appointments',
-    },
-    {
-      title: 'Perfil',
-      subtitle: 'Editar cuenta',
-      icon: 'person-circle-outline',
-      route: '/profile',
-    },
-    {
-      title: 'Administración',
-      subtitle: 'Gestionar usuarios',
-      icon: 'shield-checkmark-outline',
-      route: '/admin/users',
-    },
+    // {
+    //   title: 'Mis citas',
+    //   subtitle: 'Ver agenda',
+    //   icon: 'calendar-clear-outline',
+    //   route: '/appointments',
+    // },
+    // {
+    //   title: 'Perfil',
+    //   subtitle: 'Editar cuenta',
+    //   icon: 'person-circle-outline',
+    //   route: '/profile',
+    // },
+    // {
+    //   title: 'Administración',
+    //   subtitle: 'Gestionar usuarios',
+    //   icon: 'shield-checkmark-outline',
+    //   route: '/admin/users',
+    // },
     // {
     //   title: 'Trabajo',
     //   subtitle: 'Donde trabajo',
@@ -90,13 +91,13 @@ export class HomePage implements OnInit, OnDestroy {
     //   route: '/businesses',
     //   queryParams: { role: 'employee' },
     // },
-    // {
-    //   title: 'Asociarme',
-    //   subtitle: 'Unirse a un negocio',
-    //   icon: 'link-outline',
-    //   route: '/owner/businesses',
-    //   queryParams: { action: 'join' },
-    // },
+    {
+      title: 'Asociarme',
+      subtitle: 'Unirse a un negocio',
+      icon: 'link-outline',
+      route: '/owner/businesses',
+      queryParams: { action: 'join' },
+    },
   ];
 
   protected loadingRecommendations = true;
@@ -152,7 +153,7 @@ export class HomePage implements OnInit, OnDestroy {
   userName: string = 'Usuario';
   userRole: string = '';
   userPhotoUrl: string | null = null;
-  
+
   constructor(
     protected authSession: AuthSessionService,
     private userService: UserService
@@ -174,6 +175,7 @@ export class HomePage implements OnInit, OnDestroy {
       'star': star,
       'checkmark-circle-outline': checkmarkCircleOutline,
       'people-outline': peopleOutline,
+      'link-outline': linkOutline,
     });
   }
 
