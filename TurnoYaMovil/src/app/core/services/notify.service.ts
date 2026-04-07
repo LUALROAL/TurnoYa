@@ -93,19 +93,17 @@ export class NotifyService {
   async openNotificationCenter(): Promise<void> {
     // Don't open if a modal is already active
     if (this.activeModal) {
+      console.debug('[NotifyService] Modal already active, skipping');
       return;
     }
 
+    console.debug('[NotifyService] Creating notification modal...');
+    
     const modal = await this.modalController.create({
       component: NotificationCenterComponent,
-      componentProps: {
-        // Pass any initial data here if needed
-      },
-      breakpoints: [0, 0.75, 1], // Modal height options: 0%, 75%, 100%
-      initialBreakpoint: 0.75,    // Start at 75% height
-      handle: true,              // Show drag handle
-      backdropDismiss: true,      // Allow closing by tapping backdrop
-      cssClass: 'notification-center-modal',
+      componentProps: {},
+      backdropDismiss: true,
+      cssClass: 'notification-modal',
     });
 
     this.activeModal = modal;
@@ -113,6 +111,7 @@ export class NotifyService {
     // Clear reference when modal is dismissed
     modal.onDidDismiss().then(() => {
       this.activeModal = null;
+      console.debug('[NotifyService] Modal dismissed');
     });
 
     await modal.present();

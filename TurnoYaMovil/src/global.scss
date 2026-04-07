@@ -698,80 +698,86 @@ input[type="date"] {
    NEON ALERTS (SignalR / Actionable)
    ========================================================================== */
 .alert-neon {
-  --background: rgba(10, 15, 20, 0.95);
+    --background: rgba(10, 15, 20, 0.95);
 
-  .alert-wrapper {
-    position: absolute !important;
-    bottom: var(--ion-spacing-lg) !important;
-    left: var(--ion-spacing-md) !important;
-    right: var(--ion-spacing-md) !important;
-    margin: 0 auto !important;
-    width: calc(100% - 32px) !important;
-    max-width: 450px !important;
-    background: var(--ion-color-bg-secondary) !important;
-    backdrop-filter: blur(var(--ion-backdrop-blur-lg)) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(var(--ion-backdrop-blur-lg)) saturate(180%) !important;
-    border: 1px solid rgba(0, 245, 212, 0.4) !important;
-    border-radius: var(--ion-border-radius-xl) !important;
-    box-shadow: var(--ion-box-shadow-lg), 0 0 20px rgba(0, 245, 212, 0.1) !important;
-    transform: translateY(0) !important;
-  }
-
-  &.alert-presentation-not-ready .alert-wrapper {
-    transform: translateY(100%) !important;
-  }
-
-  .alert-head {
-    padding: var(--ion-spacing-lg) var(--ion-spacing-lg) var(--ion-spacing-sm) !important;
-    .alert-title {
-      color: var(--ion-color-success) !important;
-      font-family: var(--ion-font-family-display) !important;
-      font-weight: var(--ion-font-weight-bold) !important;
-      font-size: 1.1rem !important;
-      letter-spacing: 0.02em !important;
-      text-transform: uppercase !important;
-      text-shadow: 0 0 10px rgba(0, 245, 212, 0.4) !important;
+    .alert-wrapper {
+        position: absolute !important;
+        bottom: var(--ion-spacing-lg) !important;
+        left: var(--ion-spacing-md) !important;
+        right: var(--ion-spacing-md) !important;
+        margin: 0 auto !important;
+        width: calc(100% - 32px) !important;
+        max-width: 450px !important;
+        background: var(--ion-color-bg-secondary) !important;
+        backdrop-filter: blur(var(--ion-backdrop-blur-lg)) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(var(--ion-backdrop-blur-lg)) saturate(180%) !important;
+        border: 1px solid rgba(0, 245, 212, 0.4) !important;
+        border-radius: var(--ion-border-radius-xl) !important;
+        box-shadow: var(--ion-box-shadow-lg), 0 0 20px rgba(0, 245, 212, 0.1) !important;
+        transform: translateY(0) !important;
     }
-  }
 
-  .alert-message {
-    padding: 0 var(--ion-spacing-lg) var(--ion-spacing-lg) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-family: var(--ion-font-family-body) !important;
-    font-size: 0.9rem !important;
-    line-height: var(--ion-line-height-relaxed) !important;
-  }
+    &.alert-presentation-not-ready .alert-wrapper {
+        transform: translateY(100%) !important;
+    }
 
-  .alert-button-group {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    padding: var(--ion-spacing-md) var(--ion-spacing-lg) !important;
-    gap: var(--ion-spacing-md) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-    .alert-button {
-      flex: 0 1 45% !important;
-      border-radius: var(--ion-border-radius-md) !important;
-      font-family: var(--ion-font-family-display) !important;
-      font-weight: var(--ion-font-weight-semibold) !important;
-      font-size: 0.85rem !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.05em !important;
-      height: 48px !important;
-      margin: 0 !important;
+    .alert-head {
+        padding: var(--ion-spacing-lg) var(--ion-spacing-lg) var(--ion-spacing-sm) !important;
+
+        .alert-title {
+            color: var(--ion-color-success) !important;
+            font-family: var(--ion-font-family-display) !important;
+            font-weight: var(--ion-font-weight-bold) !important;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.02em !important;
+            text-transform: uppercase !important;
+            text-shadow: 0 0 10px rgba(0, 245, 212, 0.4) !important;
+        }
     }
-    .alert-btn-reject {
-      color: var(--ion-color-danger) !important;
-      background: rgba(255, 59, 48, 0.1) !important;
-      border: 1px solid rgba(255, 59, 48, 0.2) !important;
+
+    .alert-message {
+        padding: 0 var(--ion-spacing-lg) var(--ion-spacing-lg) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-family: var(--ion-font-family-body) !important;
+        font-size: 0.9rem !important;
+        line-height: var(--ion-line-height-relaxed) !important;
     }
-    .alert-btn-confirm, .alert-btn-accept {
-      color: var(--ion-color-success) !important;
-      background: rgba(0, 245, 212, 0.1) !important;
-      border: 1px solid rgba(0, 245, 212, 0.3) !important;
+
+    .alert-button-group {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        padding: var(--ion-spacing-md) var(--ion-spacing-lg) !important;
+        gap: var(--ion-spacing-md) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+
+        .alert-button {
+            flex: 0 1 45% !important;
+            border-radius: var(--ion-border-radius-md) !important;
+            font-family: var(--ion-font-family-display) !important;
+            font-weight: var(--ion-font-weight-semibold) !important;
+            font-size: 0.85rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            height: 48px !important;
+            margin: 0 !important;
+        }
+
+        .alert-btn-reject {
+            color: var(--ion-color-danger) !important;
+            background: rgba(255, 59, 48, 0.1) !important;
+            border: 1px solid rgba(255, 59, 48, 0.2) !important;
+        }
+
+        .alert-btn-confirm,
+        .alert-btn-accept {
+            color: var(--ion-color-success) !important;
+            background: rgba(0, 245, 212, 0.1) !important;
+            border: 1px solid rgba(0, 245, 212, 0.3) !important;
+        }
     }
-  }
 }
+
 /* ============================================
 // FIX PARA OVERLAYS (MODALES)
 // ============================================ */
@@ -785,6 +791,41 @@ ion-modal {
 }
 
 /* ============================================
+// MODAL DE NOTIFICACIONES
+// ============================================ */
+
+// Estilos para el modal de notificaciones
+ion-modal.notification-modal {
+    --backdrop-opacity: 0.5;
+    z-index: 20000 !important;
+}
+
+ion-modal.notification-modal::part(content) {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: #0a0a0f !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+// Forzar que el componente interior llene la caja
+ion-modal.notification-modal app-notification-center {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    width: 100% !important;
+    background: transparent !important;
+}
+
+
+/* ============================================
 // FIX PARA ESPACIO DE BOTTOM NAVIGATION BAR
 // ============================================ */
 ion-content {
@@ -792,7 +833,7 @@ ion-content {
 }
 
 /* ============================================
-// CLASES PARA MODALES CENTRADOS 
+// CLASES PARA MODALES CENTRADOS
 // ============================================ */
 ion-modal.centered-modal {
     --width: 90%;

@@ -19,6 +19,7 @@ import { NotifyService, NotificationItem } from '../../../core/services/notify.s
   imports: [IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonToolbar, NgClass],
   templateUrl: './notification-center.component.html',
   styleUrl: './notification-center.component.scss',
+  host: { class: 'ion-page' }
 })
 export class NotificationCenterComponent implements OnInit, OnDestroy {
   private readonly notifyService = inject(NotifyService);

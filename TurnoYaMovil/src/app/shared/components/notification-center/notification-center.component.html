@@ -5,12 +5,12 @@
   <ion-toolbar>
     <div class="flex items-center justify-between px-4 py-2">
       <h2 class="text-xl font-display font-bold text-neon-primary tracking-tight m-0">Notificaciones</h2>
-      
+
       <div class="flex items-center gap-2">
         <!-- Clear all button (only visible if there are notifications) -->
         @if (notifications.length > 0) {
-          <ion-button 
-            fill="clear" 
+          <ion-button
+            fill="clear"
             size="small"
             (click)="clearAll()"
             class="text-danger"
@@ -19,10 +19,10 @@
             <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
           </ion-button>
         }
-        
+
         <!-- Close button -->
-        <ion-button 
-          fill="clear" 
+        <ion-button
+          fill="clear"
           size="small"
           (click)="close()"
           aria-label="Cerrar"
@@ -48,8 +48,8 @@
       <div class="relative mb-6">
         <div class="absolute inset-0 bg-gradient-glow rounded-full blur-xl opacity-50"></div>
         <div class="relative w-20 h-20 rounded-2xl bg-bg-card/80 backdrop-blur-sm border border-neon-primary/20 flex items-center justify-center">
-          <ion-icon 
-            name="notifications-outline" 
+          <ion-icon
+            name="notifications-outline"
             class="text-4xl text-neon-primary/70"
           ></ion-icon>
         </div>
@@ -65,7 +65,7 @@
   @if (!isLoading && notifications.length > 0) {
     <div class="notification-list">
       @for (notification of notifications; track notification.id) {
-        <div 
+        <div
           class="notification-item group"
           [class.unread]="!notification.read"
           (click)="onNotificationTap(notification)"
@@ -86,7 +86,7 @@
               <h4 class="text-sm font-display font-semibold text-text-primary truncate m-0">
                 {{ notification.title }}
               </h4>
-              <span 
+              <span
                 class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full whitespace-nowrap"
                 [ngClass]="getEventTypeClass(notification.eventType)"
               >
@@ -108,8 +108,8 @@
 
           <!-- Read checkmark (only for read items) -->
           @if (notification.read) {
-            <ion-icon 
-              name="checkmark-circle-outline" 
+            <ion-icon
+              name="checkmark-circle-outline"
               class="text-success text-lg ml-2 flex-shrink-0 opacity-60"
             ></ion-icon>
           }
