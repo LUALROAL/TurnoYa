@@ -1,0 +1,50 @@
+# ============================================
+# .dockerignore para TurnoYa
+# Excluye archivos innecesarios del build
+# ============================================
+
+# Archivos de Git
+.git
+.gitignore
+
+# No excluir el código fuente
+!TurnoYaAPI/**
+!TurnoYaMovil/src/**
+
+# Archivos que no necesitamos en el build
+**/.vs
+**/.vscode
+**/obj
+**/bin
+**/*.user
+**/*.suo
+
+# Documentación
+documentacion/
+documentacion_Api/
+docs/
+
+# Secretos (no incluir en imagen)
+secret/
+**/*.json
+!TurnoYaAPI/TurnoYa.API/appsettings*.json
+
+# Tests
+TurnoYaAPI/TurnoYa.Tests/
+
+# Scripts
+TurnoYaAPI/scripts/
+add-blocked-dates-column.sql
+
+# Frontend (se construye aparte)
+TurnoYaMovil/www/
+TurnoYaMovil/node_modules/
+TurnoYaMovil/platforms/
+TurnoYaMovil/plugins/
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
