@@ -572,6 +572,11 @@ export class BusinessFormPage implements OnInit, OnDestroy {
     this.categorySuggestions = this.categories.filter(cat =>
       cat.toLowerCase().includes(searchTerm)
     );
+
+    // FIX: Garantizar que la opción 'Otro' siempre sea visible si no hubo match
+    if (!this.categorySuggestions.some(cat => cat.toLowerCase() === 'otro' || cat.toLowerCase() === 'otros')) {
+      this.categorySuggestions.push('Otro');
+    }
   }
 
   onCategoryFocus(): void {
