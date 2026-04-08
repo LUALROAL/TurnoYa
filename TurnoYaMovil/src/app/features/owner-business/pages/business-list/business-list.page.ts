@@ -30,6 +30,8 @@ import {
   arrowBack,
   linkOutline,
   closeOutline,
+  personOutline,
+  briefcaseOutline,
 } from 'ionicons/icons';
 import { Subject, switchMap, takeUntil } from 'rxjs';
 import { OwnerBusinessService } from '../../services/owner-business.service';
@@ -93,6 +95,8 @@ export class BusinessListPage implements OnInit, OnDestroy {
       arrowBack,
       linkOutline,
       closeOutline,
+      personOutline,
+      briefcaseOutline,
     });
   }
 

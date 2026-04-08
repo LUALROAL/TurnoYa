@@ -111,7 +111,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       paperPlaneOutline,
       logoGoogle,
       downloadOutline,
-      logOutOutline
+      logOutOutline,
+      lockClosedOutline
     });
 
     this.profileForm = this.createProfileForm();

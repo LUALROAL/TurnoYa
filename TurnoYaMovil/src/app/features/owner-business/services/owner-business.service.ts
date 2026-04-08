@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, throwError } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthSessionService } from '../../../core/services/auth-session.service';
 import {
@@ -10,6 +10,8 @@ import {
 import { BusinessSettings } from '../models/business-settings.model';
 import { HttpHeaders } from '@angular/common/http';
 import { WorkingHoursDto } from '../models/business-schedule.models';
+import { BusinessService } from '../../business/services/business.service';
+import { BusinessListItem } from '../../business/models';
 
 @Injectable({
   providedIn: 'root',
@@ -17,9 +19,11 @@ import { WorkingHoursDto } from '../models/business-schedule.models';
 export class OwnerBusinessService {
   private readonly api = inject(ApiService);
   private readonly session = inject(AuthSessionService);
+  private readonly businessService = inject(BusinessService);
 
   /**
    * Get all businesses owned by the authenticated user
+   * Combines businesses where user is owner and where user is employee
    */
   getMyBusinesses(): Observable<OwnerBusiness[]> {
     const currentSession = this.session.getSession();
@@ -29,7 +33,81 @@ export class OwnerBusinessService {
       throw new Error('No hay sesión de usuario activa');
     }
 
-    return this.api.get<OwnerBusiness[]>(`/api/business/owner/${ownerId}`);
+    // Call both endpoints in parallel
+    const ownerRequest = this.api.get<OwnerBusiness[]>(`/api/business/owner/${ownerId}`);
+    const employeeRequest = this.businessService.getAsEmployee();
+
+    return forkJoin([ownerRequest, employeeRequest]).pipe(
+      map(([ownerBusinesses, employeeBusinesses]) => {
+        return this.combineAndDeduplicate(ownerBusinesses, employeeBusinesses);
+      }),
+      catchError((error) => {
+        // If one endpoint fails, try to return just the working one
+        console.error('Error fetching businesses:', error);
+        // Re-throw the error to let the component handle it
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Combines and deduplicates businesses from both endpoints
+   * Priority: 'owner' when a business appears in both lists
+   */
+  private combineAndDeduplicate(
+    ownerBusinesses: OwnerBusiness[],
+    employeeBusinesses: BusinessListItem[]
+  ): OwnerBusiness[] {
+    // Transform employee businesses to OwnerBusiness format with 'employee' type
+    const employeeBusinessesTransformed: OwnerBusiness[] = employeeBusinesses.map(
+      (item): OwnerBusiness => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        address: item.address,
+        city: item.city,
+        department: '',
+        averageRating: item.averageRating,
+        totalReviews: item.totalReviews,
+        isActive: item.isActive,
+        createdAt: '',
+        ownerId: '',
+        ownerName: '',
+        images: item.imageBase64
+          ? [
+              {
+                id: '',
+                imagePath: '',
+                imageBase64: item.imageBase64,
+                createdAt: '',
+              },
+            ]
+          : undefined,
+        relationshipType: 'employee',
+      })
+    );
+
+    // Combine both lists
+    const allBusinesses: OwnerBusiness[] = [
+      ...ownerBusinesses.map((b) => ({ ...b, relationshipType: 'owner' as const })),
+      ...employeeBusinessesTransformed,
+    ];
+
+    // Deduplicate by business ID, keeping 'owner' priority
+    const seen = new Map<string, OwnerBusiness>();
+    for (const business of allBusinesses) {
+      const existing = seen.get(business.id);
+      if (!existing) {
+        seen.set(business.id, business);
+      } else {
+        // If existing is 'owner' or current is 'owner', keep 'owner'
+        if (business.relationshipType === 'owner') {
+          seen.set(business.id, business);
+        }
+      }
+    }
+
+    return Array.from(seen.values());
   }
 
   /**

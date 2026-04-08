@@ -22,6 +22,8 @@ export interface OwnerBusiness {
   ownerId: string;
   ownerName: string;
   images?: BusinessImage[];
+  /** Tipo de relación del usuario con el negocio: 'owner' (dueño) o 'employee' (empleado) */
+  relationshipType?: 'owner' | 'employee';
 }
 
 /**
