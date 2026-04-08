@@ -12,6 +12,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { WorkingHoursDto } from '../models/business-schedule.models';
 import { BusinessService } from '../../business/services/business.service';
 import { BusinessListItem } from '../../business/models';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class OwnerBusinessService {
   private readonly api = inject(ApiService);
   private readonly session = inject(AuthSessionService);
   private readonly businessService = inject(BusinessService);
+  private readonly authService = inject(AuthService);
 
   /**
    * Get all businesses owned by the authenticated user
@@ -39,6 +41,15 @@ export class OwnerBusinessService {
 
     return forkJoin([ownerRequest, employeeRequest]).pipe(
       map(([ownerBusinesses, employeeBusinesses]) => {
+        // Lógica de permisos: empleado > owner > wildcard
+        // Si tiene negocios como empleado → usar esos permisos
+        if (employeeBusinesses.length > 0 && employeeBusinesses[0].permissions) {
+          this.authService.setPermissions(employeeBusinesses[0].permissions);
+        } else if (ownerBusinesses.length > 0) {
+          // Es owner pero no tiene negocios como empleado → darle todos los permisos
+          this.authService.setPermissions({ '*': true });
+        }
+        
         return this.combineAndDeduplicate(ownerBusinesses, employeeBusinesses);
       }),
       catchError((error) => {

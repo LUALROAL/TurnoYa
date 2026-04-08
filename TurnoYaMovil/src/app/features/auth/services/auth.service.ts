@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { finalize, Observable, shareReplay, tap, throwError } from "rxjs";
 import { Capacitor } from "@capacitor/core";
 import { GoogleSignIn } from "@capawesome/capacitor-google-sign-in";
+import { signal } from "@angular/core";
 
 import { ApiService } from "../../../core/services/api.service";
 import { AuthSessionService } from "../../../core/services/auth-session.service";
@@ -18,6 +19,9 @@ import {
 // Client ID de Google - actualizado para web y móvil
 const GOOGLE_CLIENT_ID = "504093820497-06quvb9dkvfkfn9ts06256id729gcjt4.apps.googleusercontent.com";
 
+// Tipo para permisos del empleado
+export type Permissions = Record<string, boolean>;
+
 @Injectable({
   providedIn: "root",
 })
@@ -26,6 +30,9 @@ export class AuthService {
   private googleInitialized = false;
   private googleClient: any = null; // Para web
   private pendingGoogleCredential: string | null = null; // Para web - guarda el JWT del One Tap
+
+  // Signal para almacenar permisos del empleado (por negocio)
+  permissions = signal<Permissions>({});
 
   constructor(
     private readonly api: ApiService,
@@ -512,8 +519,42 @@ export class AuthService {
     // Limpiar estado de Google Sign-In antes de logout
     this.clearGoogleState();
     
+    // Limpiar permisos
+    this.permissions.set({});
+    
     this.session.clearSession();
     this.router.navigate(['/auth/login']);
+  }
+
+  /**
+   * Verifica si el empleado tiene un permiso específico
+   * El wildcard '*' significa acceso total
+   */
+  hasPermission(permission: string): boolean {
+    const currentPermissions = this.permissions();
+    
+    // El wildcard '*' significa acceso total
+    if (currentPermissions['*'] === true) {
+      return true;
+    }
+    
+    // Verificar el permiso específico
+    return currentPermissions[permission] === true;
+  }
+
+  /**
+   * Establece los permisos del empleado (usado después de cargar negocios como empleado)
+   * Normaliza las claves a minúsculas para coincidir con el frontend
+   */
+  setPermissions(permissions: Permissions): void {
+    // Normalizar claves a minúsculas para que coincidan con las usadas en templates HTML
+    // El backend envía "CanViewAppointments" pero el frontend usa "canViewAppointments"
+    const normalizedPermissions: Permissions = {};
+    for (const [key, value] of Object.entries(permissions)) {
+      const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+      normalizedPermissions[normalizedKey] = value;
+    }
+    this.permissions.set(normalizedPermissions);
   }
 
   /**

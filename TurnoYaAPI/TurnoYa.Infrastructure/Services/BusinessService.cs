@@ -17,13 +17,20 @@ namespace TurnoYa.Infrastructure.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeePermissionService _permissionService;
 
-        public BusinessService(IBusinessRepository businessRepository, ApplicationDbContext context, IMapper mapper, IEmployeeRepository employeeRepository)
+        public BusinessService(
+            IBusinessRepository businessRepository, 
+            ApplicationDbContext context, 
+            IMapper mapper, 
+            IEmployeeRepository employeeRepository,
+            IEmployeePermissionService permissionService)
         {
             _businessRepository = businessRepository;
             _context = context;
             _mapper = mapper;
             _employeeRepository = employeeRepository;
+            _permissionService = permissionService;
         }
 
         public async Task<IEnumerable<BusinessListDto>> GetAllAsync()
@@ -266,7 +273,35 @@ namespace TurnoYa.Infrastructure.Services
                 .Where(b => businessIds.Contains(b.Id))
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<BusinessListDto>>(businesses);
+            // Mapear a DTOs
+            var dtos = _mapper.Map<IEnumerable<BusinessListDto>>(businesses).ToList();
+
+            // Cargar permisos para cada empleado y asignar al negocio correspondiente
+            foreach (var employee in employees)
+            {
+                var businessDto = dtos.FirstOrDefault(b => b.Id == employee.BusinessId);
+                if (businessDto != null)
+                {
+                    var permissions = await _permissionService.GetPermissionsAsync(employee.Id);
+                    if (permissions != null)
+                    {
+                        // Convertir EmployeePermissionsDto a Dictionary<string, bool>
+                        businessDto.Permissions = new Dictionary<string, bool>
+                        {
+                            { "CanViewAppointments", permissions.CanViewAppointments },
+                            { "CanAcceptAppointments", permissions.CanAcceptAppointments },
+                            { "CanRejectAppointments", permissions.CanRejectAppointments },
+                            { "CanCancelAppointments", permissions.CanCancelAppointments },
+                            { "CanRescheduleAppointments", permissions.CanRescheduleAppointments },
+                            { "CanManageSchedule", permissions.CanManageSchedule },
+                            { "CanViewServices", permissions.CanViewServices },
+                            { "CanManageServices", permissions.CanManageServices }
+                        };
+                    }
+                }
+            }
+
+            return dtos;
         }
     }
 }

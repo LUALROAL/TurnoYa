@@ -8,5 +8,7 @@ export interface BusinessListItem {
   totalReviews: number;
   isActive: boolean;
   distance: number | null;
-  imageBase64?: string; // 👈 NUEVO
+  imageBase64?: string;
+  // Permisos del empleado para este negocio
+  permissions?: Record<string, boolean>;
 }

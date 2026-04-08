@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TurnoYa.Application.DTOs.Business;
 
 /// <summary>
@@ -15,4 +17,7 @@ public class BusinessListDto
     public bool IsActive { get; set; }
     public decimal? Distance { get; set; } // En kilómetros
     public string? ImageBase64 { get; set; } // 👈 NUEVO: imagen en base64
+    
+    // NUEVO: Permisos del empleado para este negocio
+    public Dictionary<string, bool>? Permissions { get; set; }
 }

@@ -39,6 +39,7 @@ import { OwnerBusiness } from '../../models';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { UserService } from 'src/app/features/account/services/user.service';
 import { ProfessionalService, AcceptInvitationResponse } from '../../../professional/services/professional.service';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-business-list',
@@ -53,6 +54,7 @@ import { ProfessionalService, AcceptInvitationResponse } from '../../../professi
     IonIcon,
     IonModal,
     IonSpinner,
+    HasPermissionDirective,
   ],
 })
 export class BusinessListPage implements OnInit, OnDestroy {
