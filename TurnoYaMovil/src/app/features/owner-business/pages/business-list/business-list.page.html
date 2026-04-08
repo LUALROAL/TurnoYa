@@ -205,9 +205,9 @@
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                       <ion-icon name="construct-outline" class="text-sm"></ion-icon> Servicios
                     </button>
-                    <button *appHasPermission="'canViewEmployees'" [routerLink]="['/owner/businesses', business.id, 'employees']"
+                    <button *ngIf="canViewEmployees(business)" [routerLink]="['/owner/businesses', business.id, 'employees']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
-                      <ion-icon name="people-outline" class="text-sm"></ion-icon> Empleados
+                      <ion-icon [name]="getEmployeeButtonIcon(business)" class="text-sm"></ion-icon> {{ getEmployeeButtonText(business) }}
                     </button>
                     <button *appHasPermission="'canViewAppointments'" [routerLink]="['/owner/businesses', business.id, 'appointments']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">

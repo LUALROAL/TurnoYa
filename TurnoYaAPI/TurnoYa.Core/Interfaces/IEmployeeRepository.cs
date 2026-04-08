@@ -12,6 +12,7 @@ namespace TurnoYa.Core.Interfaces
         Task<Employee?> GetByIdAsync(Guid id);
         Task<Employee?> GetByInvitationTokenAsync(string token);
         Task<Employee?> GetByInvitationCodeAsync(string code);
+        Task<Employee?> GetByUserIdAndBusinessIdAsync(Guid userId, Guid businessId);
         Task<Employee> AddAsync(Employee employee);
         Task<Employee> UpdateAsync(Employee employee);
         Task DeleteAsync(Guid id);

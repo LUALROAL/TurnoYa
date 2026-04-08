@@ -47,6 +47,38 @@ public class EmployeesController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Obtiene el perfil del empleado autenticado para un negocio específico
+    /// </summary>
+    /// <param name="businessId">ID del negocio</param>
+    /// <returns>Perfil del empleado</returns>
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<EmployeeDto>> GetMyProfile([FromQuery] Guid businessId)
+    {
+        try
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
+
+            var employee = await _employeeService.GetByUserIdAndBusinessIdAsync(userId, businessId);
+            if (employee == null)
+                return NotFound(new { message = "No tienes un perfil de empleado en este negocio" });
+
+            return Ok(employee);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener perfil del empleado");
+            return StatusCode(500, new { message = "Error interno del servidor" });
+        }
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<EmployeeDto>> GetById(Guid id)
     {

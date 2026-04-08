@@ -40,6 +40,7 @@ import { NotifyService } from '../../../../core/services/notify.service';
 import { UserService } from 'src/app/features/account/services/user.service';
 import { ProfessionalService, AcceptInvitationResponse } from '../../../professional/services/professional.service';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-business-list',
@@ -65,6 +66,7 @@ export class BusinessListPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
 
   // Modal state for joining business
   protected showJoinModal = false;
@@ -223,16 +225,23 @@ export class BusinessListPage implements OnInit, OnDestroy {
     return this.businesses.some(b => b.relationshipType === 'owner');
   }
 
-  // ===== MÉTODO PARA VERIFICAR SI PUEDE GESTIONAR EMPLEADOS (VIEW + ser owner) =====
-  // El botón de empleados se muestra si: es owner O tiene permiso canViewEmployees
+  // ===== MÉTODO PARA EL BOTÓN DE EMPLEADOS =====
   protected canViewEmployees(business: OwnerBusiness): boolean {
-    return business.relationshipType === 'owner' || this.hasPermission('canViewEmployees');
+    // Ahora todos pueden ver el botón (el owner ve la lista, el empleado ver su propio perfil)
+    return true;
+  }
+
+  protected getEmployeeButtonText(business: OwnerBusiness): string {
+    return business.relationshipType === 'owner' || this.hasPermission('canViewEmployees') ? 'Empleados' : 'Empleado';
+  }
+
+  protected getEmployeeButtonIcon(business: OwnerBusiness): string {
+    return business.relationshipType === 'owner' || this.hasPermission('canViewEmployees') ? 'people-outline' : 'person-outline';
   }
 
   private hasPermission(permission: string): boolean {
-    // Por ahora retorna false - la directiva *appHasPermission maneja la verificación real
-    // Este método es para lógica adicional si se necesita
-    return false;
+    // Usa AuthService para verificar permisos del empleado
+    return this.authService.hasPermission(permission);
   }
 
   // ===== MÉTODOS PARA ASOCIARSE A UN NEGOCIO =====

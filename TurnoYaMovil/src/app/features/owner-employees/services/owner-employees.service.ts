@@ -18,6 +18,10 @@ export class OwnerEmployeesService {
     return this.api.get<OwnerEmployee[]>(`/api/employees/business/${businessId}`);
   }
 
+  getMyEmployeeProfile(businessId: string): Observable<OwnerEmployee> {
+    return this.api.get<OwnerEmployee>(`/api/employees/me?businessId=${businessId}`);
+  }
+
   getById(employeeId: string): Observable<OwnerEmployee> {
     return this.api.get<OwnerEmployee>(`/api/employees/${employeeId}`);
   }

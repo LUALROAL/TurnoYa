@@ -297,6 +297,12 @@ namespace TurnoYa.Application.Services
             return await _employeeRepository.GetByInvitationTokenAsync(token);
         }
 
+        public async Task<EmployeeDto?> GetByUserIdAndBusinessIdAsync(Guid userId, Guid businessId)
+        {
+            var employee = await _employeeRepository.GetByUserIdAndBusinessIdAsync(userId, businessId);
+            return employee == null ? null : _mapper.Map<EmployeeDto>(employee);
+        }
+
         private static string GenerateSecureToken()
         {
             var bytes = new byte[32];

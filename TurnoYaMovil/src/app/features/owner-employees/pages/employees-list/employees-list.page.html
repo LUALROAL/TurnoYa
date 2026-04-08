@@ -21,11 +21,11 @@
           </button>
           <div>
             <p class="text-text-secondary font-mono text-xs tracking-wider mb-1">
-              GESTIÓN DE EMPLEADOS
+              {{ isOwnProfile ? 'PERFIL DE EMPLEADO' : 'GESTIÓN DE EMPLEADOS' }}
             </p>
             <h1 class="text-2xl font-display font-bold">
               <span class="bg-gradient-to-r from-neon-primary to-neon-secondary bg-clip-text text-transparent">
-                Equipo del Negocio
+                {{ isOwnProfile ? 'Mis Datos' : 'Equipo del Negocio' }}
               </span>
             </h1>
           </div>
@@ -37,11 +37,19 @@
       <!-- Título de sección -->
       <div class="space-y-2">
         <h2 class="text-2xl font-display font-bold text-text-primary">
-          Tu <span class="text-neon-primary">equipo</span> de trabajo
+          @if (isOwnProfile) {
+            Tu <span class="text-neon-primary">perfil</span> profesional
+          } @else {
+            Tu <span class="text-neon-primary">equipo</span> de trabajo
+          }
         </h2>
         <p class="text-text-secondary font-mono text-sm flex items-center gap-2">
           <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
-          Administra los profesionales que ofrecen servicios en tu negocio
+          @if (isOwnProfile) {
+            Visualiza tus horarios de trabajo, servicios y permisos asignados
+          } @else {
+            Administra los profesionales que ofrecen servicios en tu negocio
+          }
           <span class="w-1 h-1 bg-neon-primary rounded-full animate-ping"></span>
         </p>
       </div>
@@ -63,15 +71,19 @@
           <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-neon-primary/10 flex items-center justify-center">
             <ion-icon name="people-outline" class="text-5xl text-neon-primary"></ion-icon>
           </div>
-          <h3 class="text-2xl font-display font-bold text-text-primary mb-3">Aún no tienes empleados</h3>
+          <h3 class="text-2xl font-display font-bold text-text-primary mb-3">
+            {{ isOwnProfile ? 'Perfil no encontrado' : 'Aún no tienes empleados' }}
+          </h3>
           <p class="text-text-secondary font-mono text-sm max-w-md mx-auto mb-6">
-            Agrega tu equipo para asignar citas y disponibilidad.
+            {{ isOwnProfile ? 'No se pudo cargar tu perfil de empleado.' : 'Agrega tu equipo para asignar citas y disponibilidad.' }}
           </p>
-          <button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
-            <ion-icon name="add-outline"></ion-icon>
-            Crear empleado
-          </button>
+          @if (!isOwnProfile) {
+            <button [routerLink]="['/owner/businesses', businessId, 'employees', 'create']"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full text-bg-primary font-display font-semibold hover:shadow-neon transition-all duration-300 transform hover:scale-105">
+              <ion-icon name="add-outline"></ion-icon>
+              Crear empleado
+            </button>
+          }
         </div>
       </div>
       }
@@ -249,7 +261,7 @@
   </div>
 
   <!-- Floating action button -->
-  @if (!loading && !isEmpty) {
+  @if (!loading && !isEmpty && !isOwnProfile) {
   <div class="fixed bottom-28 right-6 z-30">
     <div class="relative group">
       <div

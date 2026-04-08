@@ -92,5 +92,13 @@ namespace TurnoYa.Infrastructure.Repositories
         {
             return await _context.Employees.AnyAsync(e => e.Id == id);
         }
+
+        public async Task<Employee?> GetByUserIdAndBusinessIdAsync(Guid userId, Guid businessId)
+        {
+            return await _context.Employees
+                .Include(e => e.Business)
+                .Include(e => e.EmployeeServices)
+                .FirstOrDefaultAsync(e => e.UserId == userId && e.BusinessId == businessId);
+        }
     }
 }

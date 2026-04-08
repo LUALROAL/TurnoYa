@@ -20,5 +20,6 @@ namespace TurnoYa.Application.Interfaces
         Task<AcceptInvitationResponseDto> AcceptInvitationAsync(AcceptInvitationDto dto);
         Task<AcceptInvitationResponseDto> AcceptInvitationByCodeAsync(string code, Guid userId);
         Task<Employee?> GetByInvitationTokenAsync(string token);
+        Task<EmployeeDto?> GetByUserIdAndBusinessIdAsync(Guid userId, Guid businessId);
     }
 }

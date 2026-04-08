@@ -25,6 +25,7 @@ import {
   shieldOutline,
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthSessionService } from '../../../../core/services/auth-session.service';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { OwnerEmployee } from '../../models';
 import { OwnerService } from '../../../owner-services/models/owner-service.model';
@@ -32,6 +33,7 @@ import { OwnerEmployeesService } from '../../services/owner-employees.service';
 import { OwnerServicesService } from '../../../owner-services/services/owner-services.service';
 import { ProfessionalService, InvitationResponse } from '../../../professional/services/professional.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-employees-list',
@@ -47,6 +49,9 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly ownerServicesService = inject(OwnerServicesService);
   private readonly professionalService = inject(ProfessionalService);
   private readonly notify = inject(NotifyService);
+  private readonly authSession = inject(AuthSessionService);
+  private readonly authService = inject(AuthService);
+
   private readonly destroy$ = new Subject<void>();
 
   protected businessId = '';
@@ -56,9 +61,10 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   protected selectedEmployee: OwnerEmployee | null = null;
   protected showServicesModal = false;
   protected showAddServiceModal = false;
-  protected serviceNameMap: Map<string, string> = new Map(); // Cache de IDs a nombres
+  protected serviceNameMap: Map<string, string> = new Map();
   protected availableServices: OwnerService[] = [];
   protected assigningService = false;
+  protected isOwnProfile = false;
 
   // Invitation modal state
   protected showInvitationModal = false;
@@ -370,7 +376,44 @@ export class EmployeesListPage implements OnInit, OnDestroy {
 
   private loadEmployees(): void {
     this.loading = true;
+    const canViewAll = this.authService.hasPermission('canViewEmployees');
+    this.isOwnProfile = !canViewAll;
 
+    if (this.isOwnProfile) {
+      this.loadOwnProfile();
+    } else {
+      this.loadEmployeesList();
+    }
+  }
+
+  private loadOwnProfile(): void {
+    this.ownerEmployeesService
+      .getMyEmployeeProfile(this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (employee: OwnerEmployee) => {
+          this.employees = [employee];
+          this.isEmpty = false;
+          this.loadServices();
+          this.loading = false;
+        },
+        error: (error: unknown) => {
+          console.error('Error al cargar perfil de empleado:', error);
+          if (this.isHttpError(error, 404)) {
+            this.notify.showError('No tienes un perfil de empleado en este negocio');
+            this.employees = [];
+            this.isEmpty = true;
+          } else {
+            this.notify.showError('No se pudo cargar tu perfil de empleado');
+            this.employees = [];
+            this.isEmpty = true;
+          }
+          this.loading = false;
+        },
+      });
+  }
+
+  private loadEmployeesList(): void {
     this.ownerEmployeesService
       .getByBusinessId(this.businessId)
       .pipe(takeUntil(this.destroy$))
@@ -391,6 +434,11 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       });
   }
 
+  private isHttpError(error: unknown, status: number): boolean {
+    const maybeError = error as { status?: number };
+    return maybeError?.status === status;
+  }
+
   private loadServices(): void {
     this.ownerServicesService
       .getByBusinessId(this.businessId)
@@ -407,3 +455,5 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       });
   }
 }
+
+
