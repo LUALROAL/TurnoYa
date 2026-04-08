@@ -213,6 +213,28 @@ export class BusinessListPage implements OnInit, OnDestroy {
     return base64.startsWith('data:image') ? base64 : 'data:image/jpeg;base64,' + base64;
   }
 
+  // ===== MÉTODO PARA VERIFICAR SI ES OWNER =====
+  protected isOwner(business: OwnerBusiness): boolean {
+    return business.relationshipType === 'owner';
+  }
+
+  // ===== MÉTODO PARA VERIFICAR SI TIENE ALGÚN NEGOCIO COMO OWNER =====
+  protected get hasAnyOwnerBusiness(): boolean {
+    return this.businesses.some(b => b.relationshipType === 'owner');
+  }
+
+  // ===== MÉTODO PARA VERIFICAR SI PUEDE GESTIONAR EMPLEADOS (VIEW + ser owner) =====
+  // El botón de empleados se muestra si: es owner O tiene permiso canViewEmployees
+  protected canViewEmployees(business: OwnerBusiness): boolean {
+    return business.relationshipType === 'owner' || this.hasPermission('canViewEmployees');
+  }
+
+  private hasPermission(permission: string): boolean {
+    // Por ahora retorna false - la directiva *appHasPermission maneja la verificación real
+    // Este método es para lógica adicional si se necesita
+    return false;
+  }
+
   // ===== MÉTODOS PARA ASOCIARSE A UN NEGOCIO =====
 
   protected openJoinModal(): void {

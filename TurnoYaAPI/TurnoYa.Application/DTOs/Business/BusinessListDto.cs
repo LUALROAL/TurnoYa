@@ -20,4 +20,7 @@ public class BusinessListDto
     
     // NUEVO: Permisos del empleado para este negocio
     public Dictionary<string, bool>? Permissions { get; set; }
+    
+    // NUEVO: Tipo de relación del usuario con el negocio
+    public string? RelationshipType { get; set; } // "owner" o "employee"
 }

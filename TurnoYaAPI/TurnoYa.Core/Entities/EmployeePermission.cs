@@ -63,5 +63,12 @@ namespace TurnoYa.Core.Entities
         /// Navigation property al empleado.
         /// </summary>
         public Employee? Employee { get; set; }
+        
+        // Employee management permissions
+        
+        /// <summary>
+        /// Permite ver la lista de empleados del negocio.
+        /// </summary>
+        public bool CanViewEmployees { get; set; }
     }
 }

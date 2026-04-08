@@ -114,7 +114,7 @@ namespace TurnoYaAPI.Controllers
         }
 
         /// <summary>
-        /// Lista las citas de un negocio. Requiere ser el dueño del negocio.
+        /// Lista las citas de un negocio. Requiere ser el dueño del negocio o filtrar por empleado.
         /// </summary>
         /// <param name="businessId">ID del negocio</param>
         /// <param name="from">Fecha inicial opcional</param>
@@ -124,12 +124,36 @@ namespace TurnoYaAPI.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetBusiness(Guid businessId, [FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] AppointmentStatus? status)
         {
-            var ownerId = GetUserId();
-            if (ownerId == null) return Unauthorized();
-            var list = await _appointmentService.GetBusinessAsync(businessId, ownerId.Value, from, to);
-            if (status.HasValue)
-                list = list.Where(a => a.Status == status.Value);
-            return Ok(list);
+            var userId = GetUserId();
+            if (userId == null) return Unauthorized();
+
+            // Verificar si el usuario es owner del negocio
+            var isOwner = await IsBusinessOwnerAsync(userId.Value, businessId);
+
+            if (isOwner)
+            {
+                // Owner ve todas las citas del negocio
+                var list = await _appointmentService.GetBusinessAsync(businessId, userId.Value, from, to);
+                if (status.HasValue)
+                    list = list.Where(a => a.Status == status.Value);
+                return Ok(list);
+            }
+            else
+            {
+                // Empleado: filtrar por employeeId
+                var employees = await _employeeService.GetEmployeesByUserIdAsync(userId.Value);
+                var employee = employees.FirstOrDefault(e => e.BusinessId == businessId);
+                
+                if (employee == null)
+                {
+                    return StatusCode(403, new { message = "No eres empleado de este negocio" });
+                }
+
+                var list = await _appointmentService.GetByEmployeeAsync(employee.Id, from, to);
+                if (status.HasValue)
+                    list = list.Where(a => a.Status == status.Value);
+                return Ok(list);
+            }
         }
 
         /// <summary>

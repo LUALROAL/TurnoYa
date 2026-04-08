@@ -38,7 +38,8 @@ namespace TurnoYa.Application.Services
                 permission.CanRescheduleAppointments,
                 permission.CanManageSchedule,
                 permission.CanViewServices,
-                permission.CanManageServices
+                permission.CanManageServices,
+                permission.CanViewEmployees
             );
         }
 
@@ -63,7 +64,8 @@ namespace TurnoYa.Application.Services
                     CanRescheduleAppointments = dto.CanRescheduleAppointments,
                     CanManageSchedule = dto.CanManageSchedule,
                     CanViewServices = dto.CanViewServices,
-                    CanManageServices = dto.CanManageServices
+                    CanManageServices = dto.CanManageServices,
+                    CanViewEmployees = dto.CanViewEmployees
                 };
                 await _permissionRepository.CreateAsync(permission);
                 _logger.LogInformation("Permisos creados para empleado {EmployeeId}", employeeId);
@@ -78,6 +80,7 @@ namespace TurnoYa.Application.Services
                 existingPermission.CanManageSchedule = dto.CanManageSchedule;
                 existingPermission.CanViewServices = dto.CanViewServices;
                 existingPermission.CanManageServices = dto.CanManageServices;
+                existingPermission.CanViewEmployees = dto.CanViewEmployees;
                 
                 await _permissionRepository.UpdateAsync(existingPermission);
                 _logger.LogInformation("Permisos actualizados para empleado {EmployeeId}", employeeId);
@@ -93,7 +96,8 @@ namespace TurnoYa.Application.Services
                 permission.CanRescheduleAppointments,
                 permission.CanManageSchedule,
                 permission.CanViewServices,
-                permission.CanManageServices
+                permission.CanManageServices,
+                permission.CanViewEmployees
             );
         }
 
@@ -112,6 +116,7 @@ namespace TurnoYa.Application.Services
                 "manage_schedule" => permissions.CanManageSchedule,
                 "view_services" => permissions.CanViewServices,
                 "manage_services" => permissions.CanManageServices,
+                "canviewemployees" => permissions.CanViewEmployees,
                 _ => false
             };
         }

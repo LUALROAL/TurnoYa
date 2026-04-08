@@ -54,24 +54,17 @@
         </p>
       </div>
 
-      <!-- Botón flotante de Asociarme (siempre visible) -->
-      <button type="button" (click)="openJoinModal()"
-              class="relative w-full py-4 bg-bg-card/80 backdrop-blur-xl border border-purple-500/30 rounded-xl flex items-center justify-center gap-3 hover:border-purple-500/60 transition-all duration-300">
-        <ion-icon name="link-outline" class="text-2xl text-purple-400"></ion-icon>
-        <div class="text-left">
-          <p class="text-text-primary font-display font-semibold">Asociarme a un Negocio</p>
-          <p class="text-text-secondary text-xs font-mono">Ingresa el código que te dio el empleador</p>
-        </div>
-        <ion-icon name="chevron-forward-outline" class="text-purple-400"></ion-icon>
-      </button>
-
-      <!-- Loading skeleton -->
-      @if (loading) {
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          @for (i of [1, 2, 3]; track i) {
-            <div class="skeleton-card"></div>
-          }
-        </section>
+      <!-- Botón flotante de Asociarme (solo owner) -->
+      @if (hasAnyOwnerBusiness) {
+        <button type="button" (click)="openJoinModal()"
+                class="relative w-full py-4 bg-bg-card/80 backdrop-blur-xl border border-purple-500/30 rounded-xl flex items-center justify-center gap-3 hover:border-purple-500/60 transition-all duration-300">
+          <ion-icon name="link-outline" class="text-2xl text-purple-400"></ion-icon>
+          <div class="text-left">
+            <p class="text-text-primary font-display font-semibold">Asociarme a un Negocio</p>
+            <p class="text-text-secondary text-xs font-mono">Ingresa el código que te dio el empleador</p>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="text-purple-400"></ion-icon>
+        </button>
       }
 
       <!-- Empty state -->
@@ -204,6 +197,7 @@
                       <ion-icon name="eye-outline" class="text-sm"></ion-icon> Ver
                     </button>
                     <button [routerLink]="['/owner/businesses', business.id, 'edit']"
+                            *ngIf="isOwner(business)"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                       <ion-icon name="create-outline" class="text-sm"></ion-icon> Editar
                     </button>
@@ -211,7 +205,7 @@
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                       <ion-icon name="construct-outline" class="text-sm"></ion-icon> Servicios
                     </button>
-                    <button *appHasPermission="'canViewAppointments'" [routerLink]="['/owner/businesses', business.id, 'employees']"
+                    <button *appHasPermission="'canViewEmployees'" [routerLink]="['/owner/businesses', business.id, 'employees']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                       <ion-icon name="people-outline" class="text-sm"></ion-icon> Empleados
                     </button>
@@ -219,14 +213,15 @@
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                       <ion-icon name="calendar-outline" class="text-sm"></ion-icon> Agenda
                     </button>
-                    <button *appHasPermission="'*'" [routerLink]="['/owner/businesses', business.id, 'settings']"
+                    <button *ngIf="isOwner(business)" [routerLink]="['/owner/businesses', business.id, 'settings']"
                             class="flex items-center justify-center gap-1 py-2 px-3 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                       <ion-icon name="settings-outline" class="text-sm"></ion-icon> Configurar
                     </button>
                   </div>
 
-                  <!-- Botón activar/desactivar -->
+                  <!-- Botón activar/desactivar (solo owner) -->
                   <button (click)="toggleBusinessStatus(business, $event)"
+                          *ngIf="isOwner(business)"
                           class="w-full mt-2 py-3 rounded-xl font-mono text-sm transition-all duration-300 flex items-center justify-center gap-2"
                           [class.bg-gradient-to-r]="!business.isActive"
                           [class.from-neon-primary]="!business.isActive"
@@ -253,7 +248,8 @@
   <!-- FAB -->
   @if (!loading && !isEmpty) {
     <div class="fixed bottom-28 right-6 z-30 flex gap-3">
-      <!-- Botón Asociarme -->
+      <!-- Botón Asociarme (solo owner) -->
+      @if (hasAnyOwnerBusiness) {
       <div class="relative group">
         <div class="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
         <button (click)="openJoinModal()"
@@ -261,8 +257,10 @@
           <ion-icon name="link-outline" class="text-2xl text-purple-400"></ion-icon>
         </button>
       </div>
+      }
 
-      <!-- Botón Crear -->
+      <!-- Botón Crear (solo owner) -->
+      @if (hasAnyOwnerBusiness) {
       <div class="relative group">
         <div class="absolute -inset-0.5 bg-gradient-glow rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
         <button [routerLink]="['/owner/businesses/create']"
@@ -270,6 +268,7 @@
           <ion-icon name="add-outline" class="text-2xl text-bg-primary"></ion-icon>
         </button>
       </div>
+      }
     </div>
   }
 

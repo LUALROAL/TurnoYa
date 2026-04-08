@@ -41,7 +41,8 @@ namespace TurnoYa.Application.Mappings
                         src.Permissions.CanRescheduleAppointments,
                         src.Permissions.CanManageSchedule,
                         src.Permissions.CanViewServices,
-                        src.Permissions.CanManageServices)
+                        src.Permissions.CanManageServices,
+                        src.Permissions.CanViewEmployees)
                     : null));
         }
 

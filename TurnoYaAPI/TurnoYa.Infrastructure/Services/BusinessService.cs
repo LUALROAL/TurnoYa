@@ -49,7 +49,15 @@ namespace TurnoYa.Infrastructure.Services
         public async Task<IEnumerable<BusinessListDto>> GetByOwnerIdAsync(Guid ownerId)
         {
             var businesses = await _businessRepository.GetByOwnerIdAsync(ownerId);
-            return _mapper.Map<IEnumerable<BusinessListDto>>(businesses);
+            var dtos = _mapper.Map<IEnumerable<BusinessListDto>>(businesses).ToList();
+            
+            // Asignar tipo de relación "owner" a todos los negocios
+            foreach (var dto in dtos)
+            {
+                dto.RelationshipType = "owner";
+            }
+            
+            return dtos;
         }
 
         public async Task<IEnumerable<BusinessListDto>> GetNearbyAsync(double latitude, double longitude, double radiusKm)
@@ -285,17 +293,21 @@ namespace TurnoYa.Infrastructure.Services
                     var permissions = await _permissionService.GetPermissionsAsync(employee.Id);
                     if (permissions != null)
                     {
+                        // Asignar tipo de relación
+                        businessDto.RelationshipType = "employee";
+                        
                         // Convertir EmployeePermissionsDto a Dictionary<string, bool>
                         businessDto.Permissions = new Dictionary<string, bool>
                         {
-                            { "CanViewAppointments", permissions.CanViewAppointments },
-                            { "CanAcceptAppointments", permissions.CanAcceptAppointments },
-                            { "CanRejectAppointments", permissions.CanRejectAppointments },
-                            { "CanCancelAppointments", permissions.CanCancelAppointments },
-                            { "CanRescheduleAppointments", permissions.CanRescheduleAppointments },
-                            { "CanManageSchedule", permissions.CanManageSchedule },
-                            { "CanViewServices", permissions.CanViewServices },
-                            { "CanManageServices", permissions.CanManageServices }
+                            { "canViewAppointments", permissions.CanViewAppointments },
+                            { "canAcceptAppointments", permissions.CanAcceptAppointments },
+                            { "canRejectAppointments", permissions.CanRejectAppointments },
+                            { "canCancelAppointments", permissions.CanCancelAppointments },
+                            { "canRescheduleAppointments", permissions.CanRescheduleAppointments },
+                            { "canManageSchedule", permissions.CanManageSchedule },
+                            { "canViewServices", permissions.CanViewServices },
+                            { "canManageServices", permissions.CanManageServices },
+                            { "canViewEmployees", permissions.CanViewEmployees }
                         };
                     }
                 }

@@ -11,7 +11,8 @@ namespace TurnoYa.Application.DTOs.Employee
         bool CanRescheduleAppointments,
         bool CanManageSchedule,
         bool CanViewServices,
-        bool CanManageServices
+        bool CanManageServices,
+        bool CanViewEmployees
     );
 
     public record UpdateEmployeePermissionsDto(
@@ -22,7 +23,8 @@ namespace TurnoYa.Application.DTOs.Employee
         bool CanRescheduleAppointments,
         bool CanManageSchedule,
         bool CanViewServices,
-        bool CanManageServices
+        bool CanManageServices,
+        bool CanViewEmployees
     );
 
     public record EmployeePermissionsResponseDto(
