@@ -2,6 +2,7 @@ using Moq;
 using TurnoYa.Application.DTOs.Employee;
 using TurnoYa.Application.Interfaces;
 using TurnoYa.Core.Entities;
+using TurnoYa.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using System;

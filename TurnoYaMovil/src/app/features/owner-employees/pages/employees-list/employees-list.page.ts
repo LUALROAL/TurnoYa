@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
-  IonModal, IonSpinner, IonButton
+  IonModal, IonSpinner, IonButton, AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -15,6 +15,7 @@ import {
   closeCircleOutline,
   copyOutline,
   createOutline,
+  linkOutline,
   mailOutline,
   personOutline,
   peopleOutline,
@@ -53,6 +54,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly authSession = inject(AuthSessionService);
   private readonly authService = inject(AuthService);
   private readonly ownerBusinessService = inject(OwnerBusinessService);
+  private readonly alertController = inject(AlertController);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -89,7 +91,8 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       shareOutline,
       copyOutline,
       briefcaseOutline,
-      shieldOutline
+      shieldOutline,
+      linkOutline
     });
   }
 
@@ -141,6 +144,46 @@ export class EmployeesListPage implements OnInit, OnDestroy {
         this.notify.showError('No se pudo copiar el código');
       });
     }
+  }
+
+  protected unlinkEmployee(employee: OwnerEmployee): void {
+    this.alertController.create({
+      header: 'Desvincular Empleado',
+      message: `¿Está seguro que desea desvincular a ${employee.firstName} ${employee.lastName}? El empleado perderá acceso al negocio.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          handler: () => {
+            this.executeUnlink(employee);
+          },
+        },
+      ],
+    }).then(alert => alert.present());
+  }
+
+  private executeUnlink(employee: OwnerEmployee): void {
+    this.ownerEmployeesService
+      .unlink(employee.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (unlinkedEmployee) => {
+          // Actualizar el empleado en la lista local
+          const idx = this.employees.findIndex(e => e.id === employee.id);
+          if (idx !== -1) {
+            this.employees[idx] = unlinkedEmployee;
+          }
+          this.notify.showSuccess(`${employee.firstName} ha sido desvinculado del negocio`);
+        },
+        error: (error: unknown) => {
+          console.error('Error al desvincular empleado:', error);
+          const backendMessage = this.getBackendMessage(error);
+          this.notify.showError(backendMessage || 'No se pudo desvincular el empleado');
+        },
+      });
   }
 
   ngOnInit(): void {
@@ -207,12 +250,24 @@ export class EmployeesListPage implements OnInit, OnDestroy {
     if (!this.selectedEmployee) {
       return;
     }
-    const confirmed = confirm(
-      `¿Deseas quitar el servicio "${this.getServiceName(serviceId)}" de este empleado?`
-    );
-    if (confirmed) {
-      this.unassignService(serviceId);
-    }
+    const serviceName = this.getServiceName(serviceId);
+    this.alertController.create({
+      header: 'Quitar Servicio',
+      message: `¿Deseas quitar el servicio "${serviceName}" de este empleado?`,
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          handler: () => {
+            this.unassignService(serviceId);
+          },
+        },
+      ],
+    }).then(alert => alert.present());
   }
 
   private unassignService(serviceId: string): void {
@@ -344,14 +399,27 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   }
 
   protected deleteEmployee(employee: OwnerEmployee): void {
-    const confirmed = confirm(
-      `¿Estás seguro de eliminar al empleado "${employee.firstName} ${employee.lastName}"? Esta acción no se puede deshacer.`
-    );
+    this.alertController.create({
+      header: 'Eliminar Empleado',
+      message: `¿Estás seguro de eliminar a "${employee.firstName} ${employee.lastName}"? Esta acción no se puede deshacer.`,
+      cssClass: 'custom-alert danger-alert',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          cssClass: 'alert-button-danger',
+          handler: () => {
+            this.executeDelete(employee);
+          },
+        },
+      ],
+    }).then(alert => alert.present());
+  }
 
-    if (!confirmed) {
-      return;
-    }
-
+  private executeDelete(employee: OwnerEmployee): void {
     this.ownerEmployeesService
       .delete(employee.id)
       .pipe(takeUntil(this.destroy$))

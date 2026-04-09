@@ -1,6 +1,7 @@
 export interface OwnerEmployee {
   id: string;
   businessId: string;
+  userId?: string; // Para determinar isLinked
   firstName: string;
   lastName: string;
   fullName?: string;
@@ -12,6 +13,7 @@ export interface OwnerEmployee {
   photoBase64?: string; // Nueva propiedad
   serviceIds: string[];
   isActive: boolean;
+  isLinked?: boolean; // Campo calculado desde el backend
   createdAt: string;
   updatedAt: string;
 }

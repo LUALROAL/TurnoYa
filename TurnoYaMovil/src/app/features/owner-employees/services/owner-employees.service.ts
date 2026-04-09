@@ -66,6 +66,13 @@ export class OwnerEmployeesService {
     return this.api.delete<void>(`/api/employees/${employeeId}`);
   }
 
+  /**
+   * Desvincula un empleado del negocio
+   */
+  unlink(employeeId: string): Observable<OwnerEmployee> {
+    return this.api.post<OwnerEmployee>(`/api/employees/${employeeId}/unlink`, {});
+  }
+
   // ===== MÉTODOS PARA HORARIOS DE EMPLEADO =====
 
   /**

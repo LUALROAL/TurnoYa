@@ -39,6 +39,12 @@ namespace TurnoYa.Tests.UnitTests
             );
         }
 
+        private void SetupMapperForEmployee(Employee employee, EmployeeDto dto)
+        {
+            _mapperMock.Setup(m => m.Map<EmployeeDto>(It.IsAny<Employee>()))
+                .Returns(dto);
+        }
+
         [Fact]
         public async Task GenerateInvitationAsync_WhenEmployeeExists_ReturnsInvitationLink()
         {
@@ -302,6 +308,221 @@ namespace TurnoYa.Tests.UnitTests
 
             // Assert
             Assert.Null(result);
+        }
+
+        // =====================================================
+        // UnlinkAsync Tests
+        // =====================================================
+
+        [Fact]
+        public async Task UnlinkAsync_WhenEmployeeExists_UserLinked_ResetsUserIdToEmpty()
+        {
+            // Arrange
+            var employeeId = Guid.NewGuid();
+            var ownerId = Guid.NewGuid();
+            var userId = Guid.NewGuid(); // El usuario vinculado actualmente
+            var businessId = Guid.NewGuid();
+
+            var business = new Business
+            {
+                Id = businessId,
+                OwnerId = ownerId,
+                Name = "Test Business"
+            };
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                BusinessId = businessId,
+                Business = business,
+                Name = "John Doe",
+                UserId = userId, // Usuario vinculado
+                IsInvitationUsed = true,
+                InvitationCode = "INV123",
+                InvitationToken = "TOKEN123",
+                InvitationTokenExpiry = DateTime.UtcNow.AddDays(7)
+            };
+
+            _employeeRepositoryMock
+                .Setup(r => r.GetByIdAsync(employeeId))
+                .ReturnsAsync(employee);
+
+            _employeeRepositoryMock
+                .Setup(r => r.UpdateAsync(It.IsAny<Employee>()))
+                .ReturnsAsync((Employee e) => e);
+
+            // Setup mapper to return a valid DTO
+            var expectedDto = new EmployeeDto
+            {
+                Id = employeeId,
+                BusinessId = businessId,
+                UserId = Guid.Empty, // Expected after unlink
+                FirstName = "John",
+                LastName = "Doe"
+            };
+            SetupMapperForEmployee(employee, expectedDto);
+
+            // Act
+            var result = await _service.UnlinkAsync(employeeId, ownerId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(Guid.Empty, result.UserId); // UserId debe estar vacío
+        }
+
+        [Fact]
+        public async Task UnlinkAsync_ResetsInvitationFields_ToDefaultValues()
+        {
+            // Arrange
+            var employeeId = Guid.NewGuid();
+            var ownerId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var businessId = Guid.NewGuid();
+
+            var business = new Business
+            {
+                Id = businessId,
+                OwnerId = ownerId,
+                Name = "Test Business"
+            };
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                BusinessId = businessId,
+                Business = business,
+                Name = "John Doe",
+                UserId = userId,
+                IsInvitationUsed = true,
+                InvitationCode = "INV123",
+                InvitationToken = "TOKEN123",
+                InvitationTokenExpiry = DateTime.UtcNow.AddDays(7)
+            };
+
+            Employee? capturedEmployee = null;
+            _employeeRepositoryMock
+                .Setup(r => r.GetByIdAsync(employeeId))
+                .ReturnsAsync(employee);
+
+            _employeeRepositoryMock
+                .Setup(r => r.UpdateAsync(It.IsAny<Employee>()))
+                .ReturnsAsync((Employee e) => { capturedEmployee = e; return e; });
+
+            // Act
+            await _service.UnlinkAsync(employeeId, ownerId);
+
+            // Assert - verificar que los campos fueron reseteados en el entity
+            Assert.NotNull(capturedEmployee);
+            Assert.Equal(Guid.Empty, capturedEmployee.UserId);
+            Assert.False(capturedEmployee.IsInvitationUsed);
+            Assert.Null(capturedEmployee.InvitationCode);
+            Assert.Null(capturedEmployee.InvitationToken);
+            Assert.Null(capturedEmployee.InvitationTokenExpiry);
+        }
+
+        [Fact]
+        public async Task UnlinkAsync_WhenEmployeeNotFound_ThrowsKeyNotFoundException()
+        {
+            // Arrange
+            var employeeId = Guid.NewGuid();
+            var ownerId = Guid.NewGuid();
+
+            _employeeRepositoryMock
+                .Setup(r => r.GetByIdAsync(employeeId))
+                .ReturnsAsync((Employee?)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+                _service.UnlinkAsync(employeeId, ownerId));
+        }
+
+        [Fact]
+        public async Task UnlinkAsync_WhenNotOwnerOrEmployee_ThrowsUnauthorizedAccessException()
+        {
+            // Arrange
+            var employeeId = Guid.NewGuid();
+            var randomUserId = Guid.NewGuid(); // Usuario que no es owner ni el empleado vinculado
+            var ownerId = Guid.NewGuid();
+            var businessId = Guid.NewGuid();
+            var linkedUserId = Guid.NewGuid(); // Usuario diferente al que hace la solicitud
+
+            var business = new Business
+            {
+                Id = businessId,
+                OwnerId = ownerId,
+                Name = "Test Business"
+            };
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                BusinessId = businessId,
+                Business = business,
+                Name = "John Doe",
+                UserId = linkedUserId, // Usuario vinculado
+                IsInvitationUsed = true
+            };
+
+            _employeeRepositoryMock
+                .Setup(r => r.GetByIdAsync(employeeId))
+                .ReturnsAsync(employee);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+                _service.UnlinkAsync(employeeId, randomUserId));
+        }
+
+        [Fact]
+        public async Task UnlinkAsync_WhenEmployeeSelfUnlinks_IsAllowed()
+        {
+            // Arrange
+            var employeeId = Guid.NewGuid();
+            var userId = Guid.NewGuid(); // El propio empleado
+            var ownerId = Guid.NewGuid();
+            var businessId = Guid.NewGuid();
+
+            var business = new Business
+            {
+                Id = businessId,
+                OwnerId = ownerId,
+                Name = "Test Business"
+            };
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                BusinessId = businessId,
+                Business = business,
+                Name = "John Doe",
+                UserId = userId, // El propio usuario
+                IsInvitationUsed = true
+            };
+
+            _employeeRepositoryMock
+                .Setup(r => r.GetByIdAsync(employeeId))
+                .ReturnsAsync(employee);
+
+            _employeeRepositoryMock
+                .Setup(r => r.UpdateAsync(It.IsAny<Employee>()))
+                .ReturnsAsync((Employee e) => e);
+
+            // Setup mapper to return a valid DTO
+            var expectedDto = new EmployeeDto
+            {
+                Id = employeeId,
+                BusinessId = businessId,
+                UserId = Guid.Empty,
+                FirstName = "John",
+                LastName = "Doe"
+            };
+            SetupMapperForEmployee(employee, expectedDto);
+
+            // Act - El empleado se desvincular a sí mismo
+            var result = await _service.UnlinkAsync(employeeId, userId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(Guid.Empty, result.UserId);
         }
     }
 }

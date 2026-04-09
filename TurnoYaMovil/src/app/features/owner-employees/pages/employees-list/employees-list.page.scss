@@ -159,3 +159,18 @@ button {
     opacity: 0.5;
   }
 }
+
+// Estilos para AlertController estilizado
+.alert-button-danger {
+  --color: #ef4444 !important;
+  --color-activated: #dc2626 !important;
+  --background: transparent !important;
+  --background-activated: rgba(239, 68, 68, 0.1) !important;
+}
+
+.danger-alert {
+  --background: #1a1f2e !important;
+  --header-color: #f87171 !important;
+  --message-color: #94a3b8 !important;
+  --border-radius: 16px !important;
+}

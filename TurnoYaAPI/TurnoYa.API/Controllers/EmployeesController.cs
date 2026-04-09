@@ -325,6 +325,44 @@ public class EmployeesController : ControllerBase
     }
 
     /// <summary>
+    /// Desvincula un empleado del negocio, eliminando su asociación con el usuario
+    /// </summary>
+    /// <param name="id">ID del empleado a desvincular</param>
+    /// <returns>Empleado desvinculado</returns>
+    [HttpPost("{id}/unlink")]
+    [Authorize]
+    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<EmployeeDto>> Unlink(Guid id)
+    {
+        try
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized(new { message = "No se pudo obtener el ID del usuario" });
+
+            var employee = await _employeeService.UnlinkAsync(id, userId);
+            return Ok(employee);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al desvincular empleado {EmployeeId}", id);
+            return StatusCode(500, new { message = "Error interno del servidor" });
+        }
+    }
+
+    /// <summary>
     /// Obtiene los permisos de un empleado
     /// </summary>
     /// <param name="id">ID del empleado</param>

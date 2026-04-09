@@ -6,7 +6,7 @@ namespace TurnoYa.Core.Entities
     public class Employee : BaseEntity
     {
         public Guid BusinessId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; } // Nullable - null cuando el empleado no está vinculado
         public string Name { get; set; } = string.Empty;
         public string? Position { get; set; }
         public string? Bio { get; set; }

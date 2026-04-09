@@ -158,7 +158,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Employee>(e =>
         {
             e.HasOne(emp => emp.Business).WithMany(b => b.Employees).HasForeignKey(emp => emp.BusinessId).OnDelete(DeleteBehavior.Cascade);
-            e.HasOne(emp => emp.User).WithMany().HasForeignKey(emp => emp.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(emp => emp.User).WithMany().HasForeignKey(emp => emp.UserId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne(emp => emp.Permissions).WithOne(p => p.Employee).HasForeignKey<EmployeePermission>(p => p.EmployeeId).OnDelete(DeleteBehavior.Cascade);
         });
 

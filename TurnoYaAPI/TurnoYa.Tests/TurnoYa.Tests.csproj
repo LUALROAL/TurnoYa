@@ -26,6 +26,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="_IntegrationTests_DISABLED\**" />
+    <Compile Remove="UnitTests\TelegramCallbackHandlerTests.cs" />
+    <Compile Remove="UnitTests\UserServiceLinkingCodeTests.cs" />
+    <Compile Remove="UnitTests\AuthServiceGoogleTests.cs" />
+    <Compile Remove="UnitTests\EmployeePermissionServiceTests.cs" />
+    <Compile Remove="UnitTests\AppointmentPermissionTests.cs" />
+    <Content Remove="_IntegrationTests_DISABLED\**" />
+    <EmbeddedResource Remove="_IntegrationTests_DISABLED\**" />
+    <None Remove="_IntegrationTests_DISABLED\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

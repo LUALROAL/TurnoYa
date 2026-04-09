@@ -211,7 +211,7 @@
                 </button>
 
                 <!-- Permisos -->
-                <button [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'permissions']"
+                <button *ngIf="!isOwnProfile" [routerLink]="['/owner/businesses', businessId, 'employees', employee.id, 'permissions']"
                   class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                   <ion-icon name="shield-outline" class="text-sm"></ion-icon>
                   <span class="hidden sm:inline">Permisos</span>
@@ -225,7 +225,7 @@
                 </button>
 
                 <!-- Activar/Desactivar -->
-                <button (click)="toggleEmployeeStatus(employee)"
+                <button *ngIf="!isOwnProfile" (click)="toggleEmployeeStatus(employee)"
                   class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border rounded-lg text-xs font-mono transition-all duration-300"
                   [class.border-neon-primary/20]="!employee.isActive" [class.text-text-secondary]="!employee.isActive"
                   [class.hover:border-neon-primary/50]="!employee.isActive"
@@ -237,15 +237,22 @@
                   <span class="hidden sm:inline">{{ employee.isActive ? 'Desactivar' : 'Activar' }}</span>
                 </button>
 
-                <!-- Invitar -->
-                <button (click)="generateInvitation(employee)"
+                <!-- Botón Invitar (solo si NO tiene userId = no está vinculado) -->
+                <button *ngIf="!isOwnProfile && !employee.userId" (click)="generateInvitation(employee)"
                   class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-neon-primary/20 rounded-lg text-xs font-mono text-text-secondary hover:border-neon-primary/50 hover:text-neon-primary transition-all duration-300">
                   <ion-icon name="share-outline" class="text-sm"></ion-icon>
                   <span class="hidden sm:inline">Invitar</span>
                 </button>
 
+                <!-- Botón Desvincular (solo si SÍ tiene userId = está vinculado) -->
+                <button *ngIf="!isOwnProfile && employee.userId" (click)="unlinkEmployee(employee)"
+                  class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300">
+                  <ion-icon name="link-outline" class="text-sm"></ion-icon>
+                  <span class="hidden sm:inline">Desvincular</span>
+                </button>
+
                 <!-- Eliminar -->
-                <button (click)="deleteEmployee(employee)"
+                <button *ngIf="!isOwnProfile" (click)="deleteEmployee(employee)"
                   class="flex items-center justify-center gap-1 py-1.5 px-2 bg-bg-tertiary/50 border border-red-500/20 rounded-lg text-xs font-mono text-red-400 hover:border-red-500/50 hover:bg-red-500/10 transition-all duration-300">
                   <ion-icon name="trash-outline" class="text-sm"></ion-icon>
                   <span class="hidden sm:inline">Eliminar</span>

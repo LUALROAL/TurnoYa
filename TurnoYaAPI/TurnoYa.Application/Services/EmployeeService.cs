@@ -61,7 +61,7 @@ namespace TurnoYa.Application.Services
 
             var employee = _mapper.Map<Employee>(dto);
             employee.BusinessId = businessId;
-            employee.UserId = ownerId;
+            employee.UserId = null; // No vinculado hasta que acepte la invitación
             employee.Name = $"{dto.FirstName} {dto.LastName}".Trim();
             employee.CreatedAt = DateTime.UtcNow;
             employee.UpdatedAt = DateTime.UtcNow;
@@ -301,6 +301,36 @@ namespace TurnoYa.Application.Services
         {
             var employee = await _employeeRepository.GetByUserIdAndBusinessIdAsync(userId, businessId);
             return employee == null ? null : _mapper.Map<EmployeeDto>(employee);
+        }
+
+        /// <summary>
+        /// Desvincula un empleado del negocio, eliminando la asociación con el usuario
+        /// </summary>
+        public async Task<EmployeeDto> UnlinkAsync(Guid employeeId, Guid requestingUserId)
+        {
+            var employee = await _employeeRepository.GetByIdAsync(employeeId);
+            if (employee == null)
+                throw new KeyNotFoundException("Empleado no encontrado");
+
+            // Verificar autorización: solo el owner del negocio o el propio empleado puede desvincular
+            var isOwner = employee.Business?.OwnerId == requestingUserId;
+            var isEmployee = employee.UserId.HasValue && employee.UserId.Value == requestingUserId;
+
+            if (!isOwner && !isEmployee)
+                throw new UnauthorizedAccessException("No autorizado para desvincular este empleado");
+
+            // Restear campos de vinculación
+            employee.UserId = null;
+            employee.IsInvitationUsed = false;
+            employee.InvitationCode = null;
+            employee.InvitationToken = null;
+            employee.InvitationTokenExpiry = null;
+            employee.UpdatedAt = DateTime.UtcNow;
+
+            await _employeeRepository.UpdateAsync(employee);
+            _logger.LogInformation("Empleado {EmployeeId} desvinculado por usuario {UserId}", employeeId, requestingUserId);
+
+            return _mapper.Map<EmployeeDto>(employee);
         }
 
         private static string GenerateSecureToken()

@@ -21,5 +21,8 @@ namespace TurnoYa.Application.Interfaces
         Task<AcceptInvitationResponseDto> AcceptInvitationByCodeAsync(string code, Guid userId);
         Task<Employee?> GetByInvitationTokenAsync(string token);
         Task<EmployeeDto?> GetByUserIdAndBusinessIdAsync(Guid userId, Guid businessId);
+        
+        // Unlink method - desvincula un empleado del usuario
+        Task<EmployeeDto> UnlinkAsync(Guid employeeId, Guid requestingUserId);
     }
 }

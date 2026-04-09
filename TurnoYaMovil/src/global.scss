@@ -845,3 +845,91 @@ ion-modal.centered-modal {
     align-items: center;
     justify-content: center;
 }
+
+/* ============================================
+// ESTILOS PARA CUSTOM-ALERT (AlertController)
+// ============================================ */
+.custom-alert {
+    --background: var(--ion-color-bg-secondary) !important;
+    --header-color: var(--ion-color-neon-primary) !important;
+    --message-color: var(--ion-color-text-secondary) !important;
+    --border-radius: 16px !important;
+    --backdrop-opacity: 0.7 !important;
+
+    .alert-wrapper {
+        background: var(--ion-color-bg-secondary) !important;
+        border: 1px solid rgba(0, 224, 255, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 224, 255, 0.1) !important;
+    }
+
+    .alert-head {
+        padding: var(--ion-spacing-lg) var(--ion-spacing-lg) var(--ion-spacing-sm) !important;
+        border-bottom: 1px solid rgba(0, 224, 255, 0.1) !important;
+
+        .alert-title {
+            color: var(--ion-color-neon-primary) !important;
+            font-family: var(--ion-font-family-display) !important;
+            font-weight: var(--ion-font-weight-bold) !important;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.02em !important;
+            text-transform: uppercase !important;
+        }
+    }
+
+    .alert-message {
+        padding: var(--ion-spacing-md) var(--ion-spacing-lg) !important;
+        color: var(--ion-color-text-secondary) !important;
+        font-family: var(--ion-font-family-body) !important;
+        font-size: 0.95rem !important;
+        line-height: var(--ion-line-height-relaxed) !important;
+    }
+
+    .alert-button-group {
+        padding: var(--ion-spacing-md) var(--ion-spacing-lg) var(--ion-spacing-lg) !important;
+        gap: var(--ion-spacing-md) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+
+        .alert-button {
+            border-radius: var(--ion-border-radius-md) !important;
+            font-family: var(--ion-font-family-display) !important;
+            font-weight: var(--ion-font-weight-semibold) !important;
+            font-size: 0.9rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            height: 44px !important;
+            margin: 0 !important;
+            min-width: 100px !important;
+
+            &[role="cancel"] {
+                color: var(--ion-color-text-secondary) !important;
+                background: rgba(255, 255, 255, 0.05) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+
+            &:not([role="cancel"]) {
+                color: var(--ion-color-neon-primary) !important;
+                background: rgba(0, 224, 255, 0.1) !important;
+                border: 1px solid rgba(0, 224, 255, 0.3) !important;
+            }
+        }
+    }
+}
+
+// Variante danger para custom-alert
+.danger-alert {
+    .alert-wrapper {
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.1) !important;
+    }
+
+    .alert-head .alert-title {
+        color: var(--ion-color-danger) !important;
+    }
+
+    .alert-button-group .alert-button:not([role="cancel"]) {
+        color: var(--ion-color-danger) !important;
+        background: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    }
+}

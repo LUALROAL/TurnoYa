@@ -6,6 +6,7 @@ namespace TurnoYa.Application.DTOs.Employee
     {
         public Guid Id { get; set; }
         public Guid BusinessId { get; set; }
+        public Guid? UserId { get; set; } // Nullable - null cuando no está vinculado
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";
@@ -19,5 +20,8 @@ namespace TurnoYa.Application.DTOs.Employee
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        
+        // Campo calculado que indica si el empleado está vinculado a un usuario
+        public bool IsLinked => UserId.HasValue && UserId.Value != Guid.Empty;
     }
 }
