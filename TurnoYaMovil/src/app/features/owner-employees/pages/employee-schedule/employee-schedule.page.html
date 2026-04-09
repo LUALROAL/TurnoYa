@@ -128,7 +128,7 @@
               <button type="button" (click)="openBlockedDatesModal()"
                 class="blocked-dates-button w-full py-4 px-6 text-text-primary font-display font-semibold">
                 <ion-icon name="calendar-outline"></ion-icon>
-                Gestionar fechas bloqueadas ({{ blockedDates.length }} fechas)
+                {{ canEdit ? 'Gestionar fechas bloqueadas' : 'Ver fechas bloqueadas' }} ({{ blockedDates.length }} fechas)
               </button>
             </div>
           </div>
@@ -137,8 +137,9 @@
         <div class="flex flex-col sm:flex-row gap-3 pt-4">
           <button type="button" (click)="onCancel()" [disabled]="saving"
             class="flex-1 py-4 px-6 bg-bg-tertiary/50 border border-neon-primary/20 rounded-xl text-text-secondary font-display font-semibold hover:border-neon-primary/50 hover:text-text-primary transition-all duration-300 disabled:opacity-50">
-            Cancelar
+            {{ canEdit ? 'Cancelar' : 'Volver' }}
           </button>
+          @if (canEdit) {
           <button type="submit" [disabled]="!employeeId || scheduleForm.invalid || saving"
             class="relative flex-1 group overflow-hidden rounded-xl disabled:opacity-50">
             <div
@@ -154,6 +155,7 @@
               <span>{{ saving ? 'GUARDANDO...' : 'GUARDAR HORARIO' }}</span>
             </div>
           </button>
+          }
         </div>
       </form>
       }
@@ -199,7 +201,7 @@
           <!-- Días del mes -->
           <div class="calendar-days">
             @for (day of calendarDays; track day.date) {
-            <button (click)="toggleBlockedDate(day.date)" [disabled]="!day.isCurrentMonth" class="calendar-day-btn"
+            <button (click)="toggleBlockedDate(day.date)" [disabled]="!day.isCurrentMonth || !canEdit" class="calendar-day-btn"
               [class.calendar-day-current]="day.isCurrentMonth" [class.calendar-day-other]="!day.isCurrentMonth"
               [class.calendar-day-blocked]="isBlocked(day.date)">
               {{ day.day }}

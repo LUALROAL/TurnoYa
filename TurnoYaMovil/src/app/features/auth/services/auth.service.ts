@@ -34,6 +34,23 @@ export class AuthService {
   // Signal para almacenar permisos del empleado (por negocio)
   permissions = signal<Permissions>({});
 
+  // Signal para identificar si el usuario es owner de algún negocio
+  private isOwner = signal<boolean>(false);
+
+  /**
+   * Establece si el usuario es owner de algún negocio
+   */
+  setIsOwner(value: boolean): void {
+    this.isOwner.set(value);
+  }
+
+  /**
+   * Obtiene si el usuario es owner de algún negocio
+   */
+  getIsOwner(): boolean {
+    return this.isOwner();
+  }
+
   constructor(
     private readonly api: ApiService,
     private readonly session: AuthSessionService,
@@ -522,15 +539,24 @@ export class AuthService {
     // Limpiar permisos
     this.permissions.set({});
     
+    // Limpiar flag de owner
+    this.isOwner.set(false);
+    
     this.session.clearSession();
     this.router.navigate(['/auth/login']);
   }
 
   /**
-   * Verifica si el empleado tiene un permiso específico
-   * El wildcard '*' significa acceso total
-   */
+    * Verifica si el empleado tiene un permiso específico
+    * El wildcard '*' significa acceso total
+    * Si el usuario es owner, tiene acceso total independientemente de los permisos de empleado
+    */
   hasPermission(permission: string): boolean {
+    // Si es owner, tiene acceso total
+    if (this.isOwner()) {
+      return true;
+    }
+    
     const currentPermissions = this.permissions();
     
     // El wildcard '*' significa acceso total

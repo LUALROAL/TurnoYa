@@ -41,6 +41,11 @@ export class OwnerBusinessService {
 
     return forkJoin([ownerRequest, employeeRequest]).pipe(
       map(([ownerBusinesses, employeeBusinesses]) => {
+        // Setear isOwner si tiene negocios como owner
+        if (ownerBusinesses.length > 0) {
+          this.authService.setIsOwner(true);
+        }
+        
         // Lógica de permisos: empleado > owner > wildcard
         // Si tiene negocios como empleado → usar esos permisos
         if (employeeBusinesses.length > 0 && employeeBusinesses[0].permissions) {

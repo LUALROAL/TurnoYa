@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../../auth/services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
   IonContent,
@@ -47,6 +48,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly employeesService = inject(OwnerEmployeesService);
   private readonly notify = inject(NotifyService);
+  private readonly authService = inject(AuthService);
   private readonly destroy$ = new Subject<void>();
 
   businessId = '';
@@ -56,6 +58,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   loading = false;
   saving = false;
   scheduleExists = false;
+  canEdit = false;
 
   // Fechas bloqueadas
   blockedDates: string[] = [];
@@ -91,6 +94,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('businessId') || '';
+    this.canEdit = this.authService.hasPermission('canManageSchedule');
     this.employeeId = this.route.snapshot.paramMap.get('employeeId') || '';
 
     if (!this.employeeId || !this.businessId) {
@@ -171,9 +175,11 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
           } else {
             // No existe horario
             this.scheduleExists = false;
+
             this.resetScheduleForm();
             this.blockedDates = [];
           }
+          if (!this.canEdit) { this.scheduleForm.disable(); }
           this.loading = false;
         },
         error: (error) => {
@@ -211,6 +217,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   }
 
   onSave() {
+    if (!this.canEdit) return;
     if (this.scheduleForm.invalid) {
       this.scheduleForm.markAllAsTouched();
       this.notify.showError('Por favor, completa todos los horarios correctamente');
@@ -305,6 +312,7 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
   }
 
   toggleBlockedDate(date: Date) {
+    if (!this.canEdit) return;
     const dateStr = this.formatDate(date);
     const index = this.blockedDates.indexOf(dateStr);
     if (index > -1) {
@@ -373,3 +381,4 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
     this.calendarDays = tempDays;
   }
 }
+

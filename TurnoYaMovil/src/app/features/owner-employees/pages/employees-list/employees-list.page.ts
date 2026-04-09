@@ -34,6 +34,7 @@ import { OwnerServicesService } from '../../../owner-services/services/owner-ser
 import { ProfessionalService, InvitationResponse } from '../../../professional/services/professional.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
+import { OwnerBusinessService } from '../../../owner-business/services/owner-business.service';
 
 @Component({
   selector: 'app-employees-list',
@@ -51,6 +52,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly notify = inject(NotifyService);
   private readonly authSession = inject(AuthSessionService);
   private readonly authService = inject(AuthService);
+  private readonly ownerBusinessService = inject(OwnerBusinessService);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -375,15 +377,50 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   }
 
   private loadEmployees(): void {
-    this.loading = true;
-    const canViewAll = this.authService.hasPermission('canViewEmployees');
-    this.isOwnProfile = !canViewAll;
+    this.loading = true; // Iniciamos el loading state
+    const session = this.authSession.getSession();
 
-    if (this.isOwnProfile) {
-      this.loadOwnProfile();
-    } else {
-      this.loadEmployeesList();
-    }
+    // Verify ownership directly from business entity to bypass stale JWT roles
+    this.ownerBusinessService.getById(this.businessId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (business) => {
+        const sessionUserId = session?.user?.id?.toLowerCase() || '';
+        const businessOwnerId = business.ownerId?.toLowerCase() || '';
+        const isOwner = (businessOwnerId && businessOwnerId === sessionUserId) || 
+                        session?.user?.role === 'BusinessOwner' || 
+                        session?.user?.role === 'Admin';
+        const canViewAll = isOwner || this.authService.hasPermission('canViewEmployees');
+        
+        console.log('[DEBUG] Session ID:', sessionUserId);
+        console.log('[DEBUG] Business Owner ID:', businessOwnerId);
+        console.log('[DEBUG] Session Role:', session?.user?.role);
+        console.log('[DEBUG] isOwner evaluated:', isOwner);
+        console.log('[DEBUG] canViewAll evaluated:', canViewAll);
+
+        this.isOwnProfile = !canViewAll;
+
+        if (this.isOwnProfile) {
+          console.log('[DEBUG] Ruta tomada: PERFIL PROPIO');
+          this.loadOwnProfile();
+        } else {
+          console.log('[DEBUG] Ruta tomada: TODOS LOS EMPLEADOS');
+          this.loadEmployeesList();
+        }
+      },
+      error: () => {
+        // Fallback to simpler check if business fetch fails
+        const isOwner = session?.user?.role === 'BusinessOwner' || session?.user?.role === 'Admin';
+        const canViewAll = isOwner || this.authService.hasPermission('canViewEmployees');
+        this.isOwnProfile = !canViewAll;
+
+        console.log('[DEBUG] Fallback ruta de error isOwner:', isOwner);
+
+        if (this.isOwnProfile) {
+          this.loadOwnProfile();
+        } else {
+          this.loadEmployeesList();
+        }
+      }
+    });
   }
 
   private loadOwnProfile(): void {
@@ -455,5 +492,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       });
   }
 }
+
+
 
 
