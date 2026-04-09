@@ -150,13 +150,15 @@ export class EmployeesListPage implements OnInit, OnDestroy {
     this.alertController.create({
       header: 'Desvincular Empleado',
       message: `¿Está seguro que desea desvincular a ${employee.firstName} ${employee.lastName}? El empleado perderá acceso al negocio.`,
+      cssClass: 'custom-alert danger-alert',
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
         },
         {
-          text: 'Confirmar',
+          text: 'Desvincular',
+          cssClass: 'alert-button-danger',
           handler: () => {
             this.executeUnlink(employee);
           },
