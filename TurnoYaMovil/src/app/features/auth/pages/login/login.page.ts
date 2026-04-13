@@ -235,9 +235,9 @@ export class LoginPage {
   }
 
   /**
-   * Handle para el link "Términos y Condiciones" - Placeholder
+   * Handle para el link "Términos y Condiciones"
    */
   protected onTermsAndConditions(): void {
-    this.showToast('Términos en desarrollo. Próximamente disponible.', 3000);
+    this.router.navigate(['/terms']);
   }
 }

@@ -145,6 +145,11 @@ const routes: Routes = [
     loadComponent: () => import('./app/features/professional/pages/schedule/schedule.page').then(m => m.ProfessionalSchedulePage),
     canActivate: [authGuard],
   },
+  // Info pages
+  {
+    path: 'terms',
+    loadComponent: () => import('./app/features/info/pages/terms/terms.page').then(m => m.TermsPage),
+  },
 ];
 
 bootstrapApplication(AppComponent, {
