@@ -270,10 +270,13 @@ namespace TurnoYa.Application.Services
             // Fire-and-forget notifications
             if (dto.UserId.HasValue)
             {
-                var businessName = employee.Business?.Name ?? "el negocio";
-                var position = employee.Position ?? "";
-                var businessId = employee.BusinessId;
-                var employeeId = employee.Id;
+                // Fetch fresh business data to ensure we have the correct name
+                var freshEmployee = await _employeeRepository.GetByIdAsync(employee.Id);
+                var businessName = freshEmployee?.Business?.Name ?? "el negocio";
+                var position = freshEmployee?.Position ?? "";
+                var businessId = freshEmployee?.BusinessId ?? Guid.Empty;
+                var employeeId = freshEmployee?.Id ?? Guid.Empty;
+                
                 _ = Task.Run(() => SendEmployeeNotificationAsync(
                     dto.UserId.Value, 
                     businessId, 
@@ -314,10 +317,13 @@ namespace TurnoYa.Application.Services
             _logger.LogInformation("Empleado {EmployeeId} vinculado a usuario {UserId} por código {Code}", employee.Id, userId, code);
 
             // Fire-and-forget notifications
-            var businessName = employee.Business?.Name ?? "el negocio";
-            var position = employee.Position ?? "";
-            var businessId = employee.BusinessId;
-            var employeeId = employee.Id;
+            // Fetch fresh business data to ensure we have the correct name
+            var freshEmployee = await _employeeRepository.GetByIdAsync(employee.Id);
+            var businessName = freshEmployee?.Business?.Name ?? "el negocio";
+            var position = freshEmployee?.Position ?? "";
+            var businessId = freshEmployee?.BusinessId ?? Guid.Empty;
+            var employeeId = freshEmployee?.Id ?? Guid.Empty;
+            
             _ = Task.Run(() => SendEmployeeNotificationAsync(
                 userId, 
                 businessId, 

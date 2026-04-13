@@ -37,6 +37,7 @@ import { Subject, switchMap, takeUntil } from 'rxjs';
 import { OwnerBusinessService } from '../../services/owner-business.service';
 import { OwnerBusiness } from '../../models';
 import { NotifyService } from '../../../../core/services/notify.service';
+import { SignalRService } from '../../../../core/services/signalr.service';
 import { UserService } from 'src/app/features/account/services/user.service';
 import { ProfessionalService, AcceptInvitationResponse } from '../../../professional/services/professional.service';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
@@ -61,6 +62,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 export class BusinessListPage implements OnInit, OnDestroy {
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly notify = inject(NotifyService);
+  private readonly signalRService = inject(SignalRService);
   private readonly destroy$ = new Subject<void>();
   private readonly professionalService = inject(ProfessionalService);
   private readonly route = inject(ActivatedRoute);
@@ -115,6 +117,22 @@ export class BusinessListPage implements OnInit, OnDestroy {
         this.openJoinModal();
       }, 500);
     }
+
+    // Subscribe to employee unlink events to refresh the business list
+    this.signalRService.employeeUnlinked$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        console.log('[BusinessList] Employee unlinked event received, refreshing list...');
+        this.loadMyBusinesses();
+      });
+
+    // Also subscribe to employee linked events (in case employee joins via invitation)
+    this.signalRService.employeeLinked$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        console.log('[BusinessList] Employee linked event received, refreshing list...');
+        this.loadMyBusinesses();
+      });
 
     this.loadMyBusinesses();
   }
