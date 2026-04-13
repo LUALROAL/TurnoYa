@@ -278,6 +278,7 @@ namespace TurnoYa.Infrastructure.Services
             // Obtener los negocios de esos empleados
             var businessIds = employees.Select(e => e.BusinessId).Distinct().ToList();
             var businesses = await _context.Businesses
+                .Include(b => b.Images)
                 .Where(b => businessIds.Contains(b.Id))
                 .ToListAsync();
 

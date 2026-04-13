@@ -748,11 +748,12 @@ input[type="date"] {
         flex-direction: row !important;
         justify-content: space-between !important;
         padding: var(--ion-spacing-md) var(--ion-spacing-lg) !important;
-        gap: var(--ion-spacing-md) !important;
+        gap: 40px !important;
         border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
 
         .alert-button {
-            flex: 0 1 45% !important;
+            flex: 0 1 auto !important;
+            min-width: 130px !important;
             border-radius: var(--ion-border-radius-md) !important;
             font-family: var(--ion-font-family-display) !important;
             font-weight: var(--ion-font-weight-semibold) !important;
@@ -887,10 +888,13 @@ ion-modal.centered-modal {
 
     .alert-button-group {
         padding: var(--ion-spacing-md) var(--ion-spacing-lg) var(--ion-spacing-lg) !important;
-        gap: var(--ion-spacing-md) !important;
+        gap: 40px !important;
+        justify-content: space-between !important;
         border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
 
         .alert-button {
+            flex: 0 1 auto !important;
+            min-width: 130px !important;
             border-radius: var(--ion-border-radius-md) !important;
             font-family: var(--ion-font-family-display) !important;
             font-weight: var(--ion-font-weight-semibold) !important;
@@ -899,7 +903,6 @@ ion-modal.centered-modal {
             letter-spacing: 0.05em !important;
             height: 44px !important;
             margin: 0 !important;
-            min-width: 100px !important;
 
             &[role="cancel"] {
                 color: var(--ion-color-text-secondary) !important;
