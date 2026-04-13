@@ -89,4 +89,55 @@ public class NotificationsService : INotificationsService
             _ => throw new ArgumentOutOfRangeException(nameof(eventType), eventType, "Tipo de evento desconocido")
         };
     }
+
+    /// <inheritdoc />
+    public async Task BroadcastEmployeeEventAsync(Guid userId, EmployeeEventDto eventDto)
+    {
+        try
+        {
+            var signalREventName = eventDto.EventType switch
+            {
+                EmployeeEventType.Linked => "EmployeeLinked",
+                EmployeeEventType.Unlinked => "EmployeeUnlinked",
+                _ => throw new ArgumentOutOfRangeException(nameof(eventDto.EventType), eventDto.EventType, "Tipo de evento desconocido")
+            };
+
+            // Usar Clients.User() para enviar directamente al usuario por su ID
+            await _hubContext.Clients.User(userId.ToString()).SendAsync(signalREventName, eventDto);
+
+            _logger.LogDebug("Broadcasted employee event {EventType} to user {UserId}", 
+                eventDto.EventType, userId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to broadcast employee event to user {UserId}", 
+                userId);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task BroadcastEmployeeEventToBusinessAsync(Guid businessId, EmployeeEventDto eventDto)
+    {
+        try
+        {
+            var signalREventName = eventDto.EventType switch
+            {
+                EmployeeEventType.Linked => "EmployeeLinked",
+                EmployeeEventType.Unlinked => "EmployeeUnlinked",
+                _ => throw new ArgumentOutOfRangeException(nameof(eventDto.EventType), eventDto.EventType, "Tipo de evento desconocido")
+            };
+
+            // Enviar al grupo del negocio (todos los usuarios conectados a ese negocio, incluyendo el owner)
+            var groupName = $"business:{businessId}";
+            await _hubContext.Clients.Group(groupName).SendAsync(signalREventName, eventDto);
+
+            _logger.LogDebug("Broadcasted employee event {EventType} to business {BusinessId}", 
+                eventDto.EventType, businessId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to broadcast employee event to business {BusinessId}", 
+                businessId);
+        }
+    }
 }

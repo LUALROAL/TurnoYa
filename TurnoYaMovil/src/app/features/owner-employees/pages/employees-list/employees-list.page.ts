@@ -28,6 +28,7 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { AuthSessionService } from '../../../../core/services/auth-session.service';
 import { NotifyService } from '../../../../core/services/notify.service';
+import { SignalRService } from '../../../../core/services/signalr.service';
 import { OwnerEmployee } from '../../models';
 import { OwnerService } from '../../../owner-services/models/owner-service.model';
 import { OwnerEmployeesService } from '../../services/owner-employees.service';
@@ -55,6 +56,7 @@ export class EmployeesListPage implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly ownerBusinessService = inject(OwnerBusinessService);
   private readonly alertController = inject(AlertController);
+  private readonly signalRService = inject(SignalRService);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -197,6 +199,30 @@ export class EmployeesListPage implements OnInit, OnDestroy {
       this.isEmpty = true;
       return;
     }
+
+    // Subscribe to SignalR employee events for real-time updates
+    this.signalRService.employeeLinked$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        if (event.businessId === this.businessId) {
+          console.log('[EmployeesList] Employee linked event received, reloading...');
+          this.loadEmployees();
+        }
+      });
+
+    this.signalRService.employeeUnlinked$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        if (event.businessId === this.businessId) {
+          console.log('[EmployeesList] Employee unlinked event received, reloading...');
+          // Remove the employee from the list locally
+          const idx = this.employees.findIndex(e => e.id === event.employeeId);
+          if (idx !== -1) {
+            this.employees.splice(idx, 1);
+            this.isEmpty = this.employees.length === 0;
+          }
+        }
+      });
 
     this.loadEmployees();
   }

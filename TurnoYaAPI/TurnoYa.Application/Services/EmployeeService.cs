@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using TurnoYa.Application.DTOs.Employee;
 using TurnoYa.Application.Interfaces;
+using TurnoYa.Core.DTOs;
 using TurnoYa.Core.Entities;
 using TurnoYa.Core.Interfaces;
 
@@ -18,18 +19,24 @@ namespace TurnoYa.Application.Services
         private readonly IBusinessRepository _businessRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<EmployeeService> _logger;
+        private readonly IPushNotificationService _pushNotificationService;
+        private readonly INotificationsService _notificationsService;
         private const int InvitationTokenExpiryDays = 7;
 
         public EmployeeService(
             IEmployeeRepository employeeRepository,
             IBusinessRepository businessRepository,
             IMapper mapper,
-            ILogger<EmployeeService> logger)
+            ILogger<EmployeeService> logger,
+            IPushNotificationService pushNotificationService,
+            INotificationsService notificationsService)
         {
             _employeeRepository = employeeRepository;
             _businessRepository = businessRepository;
             _mapper = mapper;
             _logger = logger;
+            _pushNotificationService = pushNotificationService;
+            _notificationsService = notificationsService;
         }
 
         public async Task<IEnumerable<EmployeeDto>> GetByBusinessIdAsync(Guid businessId)
@@ -260,6 +267,23 @@ namespace TurnoYa.Application.Services
             await _employeeRepository.UpdateAsync(employee);
             _logger.LogInformation("Empleado {EmployeeId} vinculado a usuario {UserId}", employee.Id, dto.UserId);
 
+            // Fire-and-forget notifications
+            if (dto.UserId.HasValue)
+            {
+                var businessName = employee.Business?.Name ?? "el negocio";
+                var position = employee.Position ?? "";
+                var businessId = employee.BusinessId;
+                var employeeId = employee.Id;
+                _ = Task.Run(() => SendEmployeeNotificationAsync(
+                    dto.UserId.Value, 
+                    businessId, 
+                    employeeId,
+                    businessName, 
+                    position, 
+                    EmployeeEventType.Linked,
+                    notifyBusinessOwner: true)); // Notificar también al owner
+            }
+
             return new AcceptInvitationResponseDto(true, "Empleado vinculado exitosamente.", employee.Id);
         }
 
@@ -288,6 +312,20 @@ namespace TurnoYa.Application.Services
 
             await _employeeRepository.UpdateAsync(employee);
             _logger.LogInformation("Empleado {EmployeeId} vinculado a usuario {UserId} por código {Code}", employee.Id, userId, code);
+
+            // Fire-and-forget notifications
+            var businessName = employee.Business?.Name ?? "el negocio";
+            var position = employee.Position ?? "";
+            var businessId = employee.BusinessId;
+            var employeeId = employee.Id;
+            _ = Task.Run(() => SendEmployeeNotificationAsync(
+                userId, 
+                businessId, 
+                employeeId,
+                businessName, 
+                position, 
+                EmployeeEventType.Linked,
+                notifyBusinessOwner: true)); // Notificar también al owner
 
             return new AcceptInvitationResponseDto(true, "Te has asociado al negocio exitosamente.", employee.Id);
         }
@@ -320,6 +358,7 @@ namespace TurnoYa.Application.Services
                 throw new UnauthorizedAccessException("No autorizado para desvincular este empleado");
 
             // Restear campos de vinculación
+            var oldUserId = employee.UserId;
             employee.UserId = null;
             employee.IsInvitationUsed = false;
             employee.InvitationCode = null;
@@ -330,7 +369,81 @@ namespace TurnoYa.Application.Services
             await _employeeRepository.UpdateAsync(employee);
             _logger.LogInformation("Empleado {EmployeeId} desvinculado por usuario {UserId}", employeeId, requestingUserId);
 
+            // Fire-and-forget notifications al antiguo usuario
+            if (oldUserId.HasValue)
+            {
+                var businessName = employee.Business?.Name ?? "el negocio";
+                var position = employee.Position ?? "";
+                var businessId = employee.BusinessId;
+                var empId = employee.Id;
+                _ = Task.Run(() => SendEmployeeNotificationAsync(
+                    oldUserId.Value, 
+                    businessId, 
+                    empId,
+                    businessName, 
+                    position, 
+                    EmployeeEventType.Unlinked));
+            }
+
             return _mapper.Map<EmployeeDto>(employee);
+        }
+
+        /// <summary>
+        /// Envía notificación push y SignalR a un empleado cuando se asocia/desasocia de un negocio.
+        /// Usa fire-and-forget para no bloquear la operación principal.
+        /// </summary>
+        private async Task SendEmployeeNotificationAsync(
+            Guid userId,
+            Guid businessId,
+            Guid employeeId,
+            string businessName,
+            string position,
+            EmployeeEventType eventType,
+            bool notifyBusinessOwner = false)
+        {
+            try
+            {
+                // Determinar título y cuerpo según el tipo de evento
+                string title = eventType == EmployeeEventType.Linked
+                    ? $"Te has unido a {businessName}"
+                    : $"Has sido desvinculado de {businessName}";
+
+                string body = eventType == EmployeeEventType.Linked
+                    ? $"Ahora sos empleado de {businessName}"
+                    : $"Ya no sos empleado de {businessName}";
+
+                // Enviar push notification
+                await _pushNotificationService.SendToUserAsync(
+                    userId,
+                    title,
+                    body,
+                    new Dictionary<string, string>
+                    {
+                        ["event"] = eventType == EmployeeEventType.Linked ? "employee_linked" : "employee_unlinked",
+                        ["businessName"] = businessName
+                    });
+
+                // Enviar SignalR notification en tiempo real
+                var eventDto = new EmployeeEventDto(
+                    employeeId,
+                    businessId,
+                    businessName,
+                    position,
+                    eventType);
+
+                await _notificationsService.BroadcastEmployeeEventAsync(userId, eventDto);
+
+                // Si es Linked y se requested, también notificar al owner del negocio
+                if (notifyBusinessOwner && eventType == EmployeeEventType.Linked)
+                {
+                    await _notificationsService.BroadcastEmployeeEventToBusinessAsync(businessId, eventDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loguear pero no throw — la operación principal ya fue exitosa
+                _logger.LogWarning(ex, "Error al enviar notificación de empleado al usuario {UserId}", userId);
+            }
         }
 
         private static string GenerateSecureToken()

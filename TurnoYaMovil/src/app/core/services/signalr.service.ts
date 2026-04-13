@@ -3,6 +3,7 @@ import { Subject, Observable, EMPTY, takeUntil } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import * as signalR from '@microsoft/signalr';
 import { AppointmentEventDto } from '../models/appointment-event.model';
+import { EmployeeEventDto } from '../models/employee-event.model';
 import { AuthSessionService } from './auth-session.service';
 import { NotifyService } from './notify.service';
 import { environment } from '../../../environments/environment';
@@ -43,6 +44,10 @@ export class SignalRService implements OnDestroy {
   readonly appointmentCompleted$ = new Subject<AppointmentEventDto>();
   readonly appointmentNoShow$ = new Subject<AppointmentEventDto>();
 
+  /** Employee events */
+  readonly employeeLinked$ = new Subject<EmployeeEventDto>();
+  readonly employeeUnlinked$ = new Subject<EmployeeEventDto>();
+
   constructor() {
     // Track visibility state for notification deduplication
     this.appWasOpen = typeof document !== 'undefined' && document.visibilityState === 'visible';
@@ -55,6 +60,9 @@ export class SignalRService implements OnDestroy {
 
     // Subscribe to appointment events and forward to NotifyService
     this.setupAppointmentEventHandlers();
+
+    // Subscribe to employee events and forward to NotifyService
+    this.setupEmployeeEventHandlers();
 
     // Subscribe to action events (Accept/Reject) and invoke HTTP methods
     this.setupActionEventHandlers();
@@ -105,6 +113,26 @@ export class SignalRService implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
         this.notifyService.handleAppointmentEvent(event, this.getCurrentRole());
+      });
+  }
+
+  /**
+   * Subscribes to employee event subjects from SignalR
+   * and forwards them to NotifyService.handleEmployeeEvent().
+   */
+  private setupEmployeeEventHandlers(): void {
+    this.employeeLinked$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        console.log('[SignalRService] Employee linked event received:', event);
+        this.notifyService.handleEmployeeEvent(event, this.getCurrentRole());
+      });
+
+    this.employeeUnlinked$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        console.log('[SignalRService] Employee unlinked event received:', event);
+        this.notifyService.handleEmployeeEvent(event, this.getCurrentRole());
       });
   }
 
@@ -287,6 +315,17 @@ export class SignalRService implements OnDestroy {
     this.hubConnection.on('AppointmentNoShow', (event: AppointmentEventDto) => {
       console.log('[SignalRService] AppointmentNoShow', event);
       this.appointmentNoShow$.next(event);
+    });
+
+    // Employee events - forward to subjects
+    this.hubConnection.on('EmployeeLinked', (event: EmployeeEventDto) => {
+      console.log('[SignalRService] EmployeeLinked', event);
+      this.employeeLinked$.next(event);
+    });
+
+    this.hubConnection.on('EmployeeUnlinked', (event: EmployeeEventDto) => {
+      console.log('[SignalRService] EmployeeUnlinked', event);
+      this.employeeUnlinked$.next(event);
     });
   }
 

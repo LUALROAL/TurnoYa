@@ -1,10 +1,24 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline, closeOutline, checkmarkCircleOutline, timeOutline, alertCircle } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
-import { NotifyService, NotificationItem } from '../../../core/services/notify.service';
+import { NotifyService, NotificationItem, EmployeeNotificationItem } from '../../../core/services/notify.service';
+
+/**
+ * Unified notification type for display
+ */
+export interface UnifiedNotification {
+  id: string;
+  type: 'appointment' | 'employee';
+  eventType: string;
+  title: string;
+  body: string;
+  businessName: string;
+  read: boolean;
+  timestamp: number;
+}
 
 /**
  * Task 3.1: NotificationCenterComponent TypeScript
@@ -16,7 +30,7 @@ import { NotifyService, NotificationItem } from '../../../core/services/notify.s
 @Component({
   selector: 'app-notification-center',
   standalone: true,
-  imports: [IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonToolbar, NgClass],
+  imports: [IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonToolbar, NgClass, DatePipe],
   templateUrl: './notification-center.component.html',
   styleUrl: './notification-center.component.scss',
   host: { class: 'ion-page' }
@@ -25,8 +39,8 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   private readonly notifyService = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
 
-  /** Notification history loaded from localStorage */
-  protected notifications: NotificationItem[] = [];
+  /** Unified notification history (appointments + employees) */
+  protected notifications: UnifiedNotification[] = [];
 
   /** Loading state while fetching history */
   protected isLoading = true;
@@ -59,13 +73,40 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Loads notification history from NotifyService.
+   * Loads notification history from NotifyService (both appointments and employees).
    */
   private loadHistory(): void {
     this.isLoading = true;
     // Small delay to allow animations to complete
     setTimeout(() => {
-      this.notifications = this.notifyService.getHistory();
+      // Get appointment notifications
+      const appointmentNotifications = this.notifyService.getHistory().map(item => ({
+        id: item.id,
+        type: 'appointment' as const,
+        eventType: item.eventType,
+        title: item.title,
+        body: item.body,
+        businessName: item.businessName,
+        read: item.read,
+        timestamp: item.timestamp,
+      }));
+
+      // Get employee notifications
+      const employeeNotifications = this.notifyService.getEmployeeHistory().map(item => ({
+        id: item.id,
+        type: 'employee' as const,
+        eventType: item.eventType,
+        title: item.title,
+        body: item.body,
+        businessName: item.businessName,
+        read: item.read,
+        timestamp: item.timestamp,
+      }));
+
+      // Combine and sort by timestamp (newest first)
+      this.notifications = [...appointmentNotifications, ...employeeNotifications]
+        .sort((a, b) => b.timestamp - a.timestamp);
+
       this.isLoading = false;
     }, 100);
   }
@@ -74,9 +115,13 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
    * Task 3.4: Handles tap on notification item.
    * Marks notification as read if unread.
    */
-  onNotificationTap(notification: NotificationItem): void {
+  onNotificationTap(notification: UnifiedNotification): void {
     if (!notification.read) {
-      this.notifyService.markAsRead(notification.id);
+      if (notification.type === 'employee') {
+        this.notifyService.markEmployeeAsRead(notification.id);
+      } else {
+        this.notifyService.markAsRead(notification.id);
+      }
       // Update local state immediately for responsive UI
       const index = this.notifications.findIndex(n => n.id === notification.id);
       if (index !== -1) {
@@ -90,6 +135,7 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
    */
   clearAll(): void {
     this.notifyService.clearAll();
+    this.notifyService.clearEmployeeAll();
     this.notifications = [];
   }
 
@@ -117,7 +163,15 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
   /**
    * Formats the event type for display.
    */
-  getEventTypeLabel(eventType: NotificationItem['eventType']): string {
+  getEventTypeLabel(notification: UnifiedNotification): string {
+    if (notification.type === 'employee') {
+      const labels: Record<string, string> = {
+        Linked: 'Vinculado',
+        Unlinked: 'Desvinculado',
+      };
+      return labels[notification.eventType] ?? notification.eventType;
+    }
+    
     const labels: Record<NotificationItem['eventType'], string> = {
       Created: 'Solicitud',
       Confirmed: 'Confirmado',
@@ -125,13 +179,17 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       Completed: 'Completado',
       NoShow: 'No asistido',
     };
-    return labels[eventType] ?? eventType;
+    return labels[notification.eventType as NotificationItem['eventType']] ?? notification.eventType;
   }
 
   /**
    * Returns CSS class for event type badge.
    */
-  getEventTypeClass(eventType: NotificationItem['eventType']): string {
+  getEventTypeClass(notification: UnifiedNotification): string {
+    if (notification.type === 'employee') {
+      return notification.eventType === 'Linked' ? 'badge-linked' : 'badge-unlinked';
+    }
+    
     const classes: Record<NotificationItem['eventType'], string> = {
       Created: 'badge-created',
       Confirmed: 'badge-confirmed',
@@ -139,6 +197,6 @@ export class NotificationCenterComponent implements OnInit, OnDestroy {
       Completed: 'badge-completed',
       NoShow: 'badge-noshow',
     };
-    return classes[eventType] ?? 'badge-default';
+    return classes[notification.eventType as NotificationItem['eventType']] ?? 'badge-default';
   }
 }

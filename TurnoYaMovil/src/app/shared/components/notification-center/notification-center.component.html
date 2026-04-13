@@ -88,21 +88,25 @@
               </h4>
               <span
                 class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full whitespace-nowrap"
-                [ngClass]="getEventTypeClass(notification.eventType)"
+                [ngClass]="getEventTypeClass(notification)"
               >
-                {{ getEventTypeLabel(notification.eventType) }}
+                {{ getEventTypeLabel(notification) }}
               </span>
             </div>
 
-            <!-- Body: Business + Service -->
+            <!-- Body: Business + Service or message -->
             <p class="text-sm text-text-secondary m-0 mb-2 leading-relaxed">
               {{ notification.body }}
             </p>
 
-            <!-- Footer: Date + Scheduled time -->
+            <!-- Footer: Date + Scheduled time (for appointments) or timestamp (for employees) -->
             <div class="flex items-center gap-1.5 text-xs text-text-tertiary">
               <ion-icon name="time-outline" class="text-[12px]"></ion-icon>
-              <span class="font-mono">{{ notification.scheduledDate }}</span>
+              @if (notification.type === 'appointment') {
+                <span class="font-mono">{{ notification.businessName }}</span>
+              } @else {
+                <span class="font-mono">{{ notification.timestamp | date:'short' }}</span>
+              }
             </div>
           </div>
 

@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { addIcons } from "ionicons";
 import { warningOutline, checkmarkCircleOutline, informationCircleOutline } from "ionicons/icons";
 import { AppointmentEventDto } from '../models/appointment-event.model';
+import { EmployeeEventDto } from '../models/employee-event.model';
 import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
 /**
@@ -17,6 +18,20 @@ export interface NotificationItem {
   businessName: string;
   serviceName: string;
   scheduledDate: string;
+  read: boolean;
+  timestamp: number;
+}
+
+/**
+ * Represents an employee notification item stored in localStorage.
+ */
+export interface EmployeeNotificationItem {
+  id: string;           // eventType + employeeId + businessId
+  eventType: 'Linked' | 'Unlinked';
+  title: string;
+  body: string;
+  businessName: string;
+  employeeId: string;
   read: boolean;
   timestamp: number;
 }
@@ -186,6 +201,20 @@ export class NotifyService {
       return stored ? JSON.parse(stored) : [];
     } catch (error) {
       console.warn('[NotifyService] Failed to get history:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Gets all employee notifications from localStorage.
+   */
+  getEmployeeHistory(): EmployeeNotificationItem[] {
+    try {
+      const STORAGE_KEY = 'turnoya.employee_notifications';
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.warn('[NotifyService] Failed to get employee history:', error);
       return [];
     }
   }
@@ -452,4 +481,160 @@ export class NotifyService {
    * SignalRService (Phase 4) will subscribe to this and invoke the hub methods.
    */
   readonly appointmentActionEmitted$ = new Subject<{ event: AppointmentEventDto; action: 'accept' | 'reject' }>();
+
+  // ==========================================================================
+  // Employee Events (SignalR)
+  // ==========================================================================
+
+  /**
+   * Builds an EmployeeNotificationItem from an EmployeeEventDto.
+   */
+  private buildEmployeeNotificationItem(event: EmployeeEventDto): EmployeeNotificationItem {
+    const titles: Record<EmployeeEventDto['eventType'], string> = {
+      Linked: 'Nuevo empleado asociado',
+      Unlinked: 'Empleado desvinculado',
+    };
+
+    const bodyMessages: Record<EmployeeEventDto['eventType'], string> = {
+      Linked: `Se ha asociado a ${event.businessName} como ${event.position}`,
+      Unlinked: `Has sido desvinculado de ${event.businessName}`,
+    };
+
+    return {
+      id: `${event.eventType}:${event.employeeId}:${event.businessId}`,
+      eventType: event.eventType,
+      title: titles[event.eventType],
+      body: bodyMessages[event.eventType],
+      businessName: event.businessName,
+      employeeId: event.employeeId,
+      read: false,
+      timestamp: Date.now(),
+    };
+  }
+
+  /**
+   * Handles employee events from SignalR (Linked/Unlinked).
+   * Shows toast notification and triggers page reload for employees list.
+   */
+  async handleEmployeeEvent(event: EmployeeEventDto, role: 'owner' | 'employee' | 'client'): Promise<void> {
+    console.log(`[NotifyService] EMPLOYEE EVENT: ${event.eventType} | Role: ${role}`);
+
+    // Build notification item
+    const item = this.buildEmployeeNotificationItem(event);
+
+    // Deduplicate
+    if (this.isDuplicate(`emp_${event.eventType}`, `${event.employeeId}_${event.businessId}`)) {
+      console.log('[NotifyService] Dropping duplicate employee event:', event.eventType);
+      return;
+    }
+
+    // Save to history
+    this.saveEmployeeToHistory(item);
+
+    // Trigger notification received for page reloads
+    this.notificationReceived$.next();
+
+    // Show toast based on event type and role
+    if (!this.wasAppVisible()) {
+      console.log('[NotifyService] App hidden — employee notification saved silently');
+      return;
+    }
+
+    // Show appropriate toast
+    if (event.eventType === 'Linked') {
+      if (role === 'employee') {
+        // Employee was linked - show welcome message
+        await this.showAutoDismissToast(
+          `Te has unido a ${event.businessName} como ${event.position}`,
+          'success'
+        );
+      } else if (role === 'owner') {
+        // Owner sees new employee linked
+        await this.showAutoDismissToast(
+          `Nuevo empleado asociado a ${event.businessName}`,
+          'success'
+        );
+      }
+    } else if (event.eventType === 'Unlinked') {
+      if (role === 'employee') {
+        // Employee was unlinked - show message
+        await this.showAutoDismissToast(
+          `Has sido desvinculado de ${event.businessName}`,
+          'warning'
+        );
+      } else if (role === 'owner') {
+        // Owner sees employee unlinked
+        await this.showAutoDismissToast(
+          `Empleado desvinculado de ${event.businessName}`,
+          'warning'
+        );
+      }
+    }
+
+    console.log('[NotifyService] Employee event processed:', item.title);
+  }
+
+  /**
+   * Saves an employee notification to localStorage.
+   */
+  private saveEmployeeToHistory(item: EmployeeNotificationItem): void {
+    try {
+      const STORAGE_KEY = 'turnoya.employee_notifications';
+      const stored = localStorage.getItem(STORAGE_KEY);
+      const items: EmployeeNotificationItem[] = stored ? JSON.parse(stored) : [];
+
+      items.unshift(item);
+
+      // Limit to last 50 items
+      const trimmed = items.slice(0, 50);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+
+      // Update unread count
+      if (!item.read) {
+        this.unreadCount$.next(this.unreadCount$.value + 1);
+      }
+    } catch (error) {
+      console.warn('[NotifyService] Failed to save employee notification:', error);
+    }
+  }
+
+  /**
+   * Marks an employee notification as read.
+   */
+  markEmployeeAsRead(id: string): void {
+    try {
+      const STORAGE_KEY = 'turnoya.employee_notifications';
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return;
+
+      const items: EmployeeNotificationItem[] = JSON.parse(stored);
+      const index = items.findIndex((i) => i.id === id);
+
+      if (index !== -1 && !items[index].read) {
+        items[index].read = true;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        this.unreadCount$.next(Math.max(0, this.unreadCount$.value - 1));
+      }
+    } catch (error) {
+      console.warn('[NotifyService] Failed to mark employee notification as read:', error);
+    }
+  }
+
+  /**
+   * Clears all employee notifications.
+   */
+  clearEmployeeAll(): void {
+    try {
+      const STORAGE_KEY = 'turnoya.employee_notifications';
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const items: EmployeeNotificationItem[] = JSON.parse(stored);
+        const unreadCount = items.filter((i) => !i.read).length;
+        localStorage.removeItem(STORAGE_KEY);
+        this.unreadCount$.next(Math.max(0, this.unreadCount$.value - unreadCount));
+      }
+    } catch (error) {
+      console.warn('[NotifyService] Failed to clear employee notifications:', error);
+    }
+  }
 }
