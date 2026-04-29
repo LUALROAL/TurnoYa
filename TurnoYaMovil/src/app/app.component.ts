@@ -6,6 +6,7 @@ import { App } from '@capacitor/app';
 import { PushNotificationService } from './core/services/push-notification.service';
 import { SignalRService } from './core/services/signalr.service';
 import { AuthSessionService } from './core/services/auth-session.service';
+import { BusinessValidationService } from './core/services/business-validation.service';
 import { AppHeaderComponent } from './shared/components/app-header/app-header.component';
 import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
 
@@ -41,6 +42,8 @@ export class AppComponent implements OnInit, OnDestroy {
     public readonly pushNotificationService: PushNotificationService,
     public readonly signalRService: SignalRService,
     public readonly authSessionService: AuthSessionService,
+    // BusinessValidationService se inicializa automáticamente para escuchar eventos de SignalR
+    public readonly businessValidationService: BusinessValidationService,
   ) {}
 
   async ngOnInit(): Promise<void> {

@@ -15,6 +15,7 @@ public class BusinessListDto
     public decimal AverageRating { get; set; }
     public int TotalReviews { get; set; }
     public bool IsActive { get; set; }
+    public bool IsVerified { get; set; } // Certificación de negocios
     public decimal? Distance { get; set; } // En kilómetros
     public string? ImageBase64 { get; set; } // 👈 NUEVO: imagen en base64
     

@@ -231,12 +231,14 @@
                 <!-- Overlay degradado -->
                 <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div>
 
-                <!-- Badge Verificado -->
+                <!-- Badge Verificado (solo para negocios certificados) -->
+                @if (business.isVerified) {
                 <div
                   class="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-neon-primary/20 backdrop-blur-sm border border-neon-primary/30 rounded-full">
                   <ion-icon name="checkmark-circle-outline" class="text-neon-primary text-sm"></ion-icon>
                   <span class="text-xs font-mono text-text-primary">Verificado</span>
                 </div>
+                }
 
                 <!-- Rating en la esquina superior derecha -->
                 <div

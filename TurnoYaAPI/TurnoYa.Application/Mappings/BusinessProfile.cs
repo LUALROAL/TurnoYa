@@ -50,7 +50,8 @@ public class BusinessProfile : Profile
             .ForMember(dest => dest.ImageBase64, opt => opt.MapFrom(src =>
                 src.Images != null && src.Images.Any() && src.Images.First().ImageData != null
                     ? Convert.ToBase64String(src.Images.First().ImageData!)
-                    : null));
+                    : null))
+            .ForMember(dest => dest.IsVerified, opt => opt.MapFrom(src => src.IsVerified));
 
         // Business → BusinessDetailDto
         CreateMap<Business, BusinessDetailDto>()

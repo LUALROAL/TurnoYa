@@ -1,0 +1,67 @@
+<div class="validation-modal">
+  <div class="modal-header">
+    <ion-icon name="checkmark-outline" class="header-icon"></ion-icon>
+    <h2>¡Cita completada!</h2>
+  </div>
+
+  <div class="modal-body">
+    <p class="question">¿Conoces <strong>{{ businessName }}</strong>?</p>
+    
+    @if (!showRating) {
+      <div class="buttons-row">
+        <ion-button 
+          expand="block" 
+          (click)="onKnowsBusiness(false)"
+          class="btn-no"
+          fill="outline">
+          <ion-icon name="close-outline" slot="start"></ion-icon>
+          No
+        </ion-button>
+        
+        <ion-button 
+          expand="block" 
+          (click)="onKnowsBusiness(true)"
+          class="btn-yes"
+          fill="solid">
+          <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+          Sí
+        </ion-button>
+      </div>
+    } @else {
+      <p class="rating-prompt">¿Cómo calificarías tu experiencia?</p>
+      
+      <div class="stars-row">
+        @for (star of [1, 2, 3, 4, 5]; track star) {
+          <ion-icon 
+            [name]="star <= selectedRating ? 'star' : 'star-outline'"
+            [class.selected]="star <= selectedRating"
+            (click)="onRatingSelect(star)"
+            class="star-icon">
+          </ion-icon>
+        }
+      </div>
+      
+      @if (selectedRating > 0) {
+        <p class="rating-label">{{ getRatingLabel(selectedRating) }}</p>
+        
+        <ion-button 
+          expand="block" 
+          (click)="submitWithRating()"
+          class="btn-submit"
+          fill="solid">
+          Enviar validación
+        </ion-button>
+      }
+    }
+  </div>
+
+  <div class="modal-footer">
+    <ion-button 
+      expand="block" 
+      (click)="dismiss()"
+      fill="clear"
+      class="btn-skip">
+      Omitir
+    </ion-button>
+  </div>
+</div>

@@ -38,6 +38,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<BusinessTimeBlock> BusinessTimeBlocks => Set<BusinessTimeBlock>();
     public DbSet<BusinessBreakTime> BusinessBreakTimes => Set<BusinessBreakTime>();
 
+    // Certificación de negocios
+    public DbSet<BusinessValidation> BusinessValidations => Set<BusinessValidation>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Horarios de empleados
@@ -241,6 +244,26 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Certificación de negocios
+        modelBuilder.Entity<BusinessValidation>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.BusinessId, x.UserId }).IsUnique();
+            e.HasOne(x => x.Business)
+                .WithMany()
+                .HasForeignKey(x => x.BusinessId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Appointment)
+                .WithMany()
+                .HasForeignKey(x => x.AppointmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            e.Property(x => x.Rating).HasDefaultValue(null);
         });
     }
 }

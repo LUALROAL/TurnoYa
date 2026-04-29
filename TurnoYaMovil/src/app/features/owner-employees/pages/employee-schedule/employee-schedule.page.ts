@@ -92,9 +92,8 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
     this.initForm();
   }
 
-  ngOnInit() {
+ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('businessId') || '';
-    this.canEdit = this.authService.hasPermission('canManageSchedule');
     this.employeeId = this.route.snapshot.paramMap.get('employeeId') || '';
 
     if (!this.employeeId || !this.businessId) {
@@ -149,8 +148,12 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
       });
   }
 
-  private loadSchedule() {
+private loadSchedule() {
     this.loading = true;
+    // Determinar canEdit: si no existe schedule (es nuevo), permitir editar
+    // Si existe, usar el permiso del empleado
+    const hasSchedulePermission = this.authService.hasPermission('canManageSchedule');
+    
     this.employeesService
       .getEmployeeSchedule(this.employeeId)
       .pipe(takeUntil(this.destroy$))
@@ -172,12 +175,16 @@ export class EmployeeSchedulePage implements OnInit, OnDestroy {
             this.scheduleForm.patchValue(normalized);
             this.blockedDates = schedule.blockedDates || [];
             this.scheduleExists = true;
+            // Solo deshabilitar si existe Y no tiene permiso
+            this.canEdit = hasSchedulePermission;
           } else {
-            // No existe horario
+            // No existe horario - permitir editar (es la primera vez)
             this.scheduleExists = false;
 
             this.resetScheduleForm();
             this.blockedDates = [];
+            // Siempre permitir editar cuando no existe schedule
+            this.canEdit = true;
           }
           if (!this.canEdit) { this.scheduleForm.disable(); }
           this.loading = false;

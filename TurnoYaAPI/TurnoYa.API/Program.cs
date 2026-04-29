@@ -86,6 +86,7 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IUserDeviceTokenRepository, UserDeviceTokenRepository>();
+builder.Services.AddScoped<IBusinessValidationRepository, BusinessValidationRepository>();
 
 // Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -105,6 +106,9 @@ builder.Services.AddScoped<IEmployeePermissionService, EmployeePermissionService
 
 // Registro de IBusinessService
 builder.Services.AddScoped<IBusinessService, BusinessService>();
+
+// Business Validation Service
+builder.Services.AddScoped<IBusinessValidationService, BusinessValidationService>();
 
 // Push Notification Service
 builder.Services.AddScoped<IFirebaseMessagingClient, FirebaseMessagingClient>();

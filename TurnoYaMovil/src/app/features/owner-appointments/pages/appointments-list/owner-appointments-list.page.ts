@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AlertController, ModalController } from '@ionic/angular/standalone';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -22,6 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { NotifyService } from '../../../../core/services/notify.service';
 import { AppointmentItem } from '../../../appointments/models';
 import { AppointmentsService } from '../../../appointments/services/appointments.service';
+import { BusinessValidationModalComponent, BusinessValidationResult } from '../../../../shared/components/business-validation-modal/business-validation-modal.component';
 
 @Component({
   selector: 'app-owner-appointments-list',
@@ -34,6 +36,8 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly notify = inject(NotifyService);
+  /** ModalController - inicializado lazily para evitar error de providers */
+  private modalController: ModalController | null = null;
   private readonly destroy$ = new Subject<void>();
 
   protected businessId = '';
@@ -175,11 +179,67 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
           appointment.status = 'completed';
           this.notify.showSuccess('Cita completada');
           this.setProcessing(appointment.id, false);
+          this.showValidationModal(appointment);
         },
         error: (error: unknown) => {
           console.error('Error al completar cita:', error);
           this.notify.showError('No se pudo completar la cita');
           this.setProcessing(appointment.id, false);
+        },
+      });
+  }
+
+  private async showValidationModal(appointment: AppointmentItem): Promise<void> {
+    const alertController = new AlertController();
+    
+    const alert = await alertController.create({
+      header: `¿Conocés "${appointment.businessName}"?`,
+      message: '¿Podés recomendar este negocio a otros clientes?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            this.submitValidation({
+              appointmentId: appointment.id,
+              businessId: appointment.businessId,
+              knowsBusiness: false
+            });
+          }
+        },
+        {
+          text: 'Sí, lo recomiendo',
+          handler: () => {
+            // Show rating (simplified - just mark as known for now)
+            this.submitValidation({
+              appointmentId: appointment.id,
+              businessId: appointment.businessId,
+              knowsBusiness: true,
+              rating: 5
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private submitValidation(result: BusinessValidationResult): void {
+    this.appointmentsService
+      .createBusinessValidation({
+        businessId: result.businessId,
+        appointmentId: result.appointmentId,
+        knowsBusiness: result.knowsBusiness,
+        rating: result.rating,
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notify.showSuccess('Gracias por tu validación');
+        },
+        error: (error) => {
+          console.error('Error al enviar validación:', error);
         },
       });
   }

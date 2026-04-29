@@ -1,0 +1,132 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.validation-modal {
+  width: 90%;
+  max-width: 360px;
+  background: var(--ion-card-background, #141419);
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+
+  .header-icon {
+    font-size: 48px;
+    color: var(--neon-primary, #00f5d4);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+}
+
+.modal-body {
+  text-align: center;
+
+  .question {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--text-secondary, #a0a0a8);
+    margin: 0 0 24px 0;
+
+    strong {
+      color: var(--neon-primary, #00f5d4);
+    }
+  }
+
+  .buttons-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    ion-button {
+      flex: 1;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      height: 48px;
+      border-radius: 12px;
+    }
+
+    .btn-no {
+      --border-color: var(--text-tertiary, #92949c);
+      --color: var(--text-secondary, #a0a0a8);
+    }
+
+    .btn-yes {
+      --background: var(--neon-primary, #00f5d4);
+      --background-hover: var(--neon-secondary, #00c4a7);
+      --color: #0a0a0f;
+    }
+  }
+
+  .rating-prompt {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary, #a0a0a8);
+    margin: 0 0 16px 0;
+  }
+
+  .stars-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    .star-icon {
+      font-size: 36px;
+      color: var(--text-tertiary, #92949c);
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &.selected {
+        color: #fbbf24;
+      }
+    }
+  }
+
+  .rating-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--neon-primary, #00f5d4);
+    margin: 0 0 16px 0;
+  }
+
+  .btn-submit {
+    --background: var(--neon-primary, #00f5d4);
+    --background-hover: var(--neon-secondary, #00c4a7);
+    --color: #0a0a0f;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    height: 48px;
+    border-radius: 12px;
+  }
+}
+
+.modal-footer {
+  margin-top: 16px;
+  text-align: center;
+
+  .btn-skip {
+    --color: var(--text-tertiary, #92949c);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+  }
+}

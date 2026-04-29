@@ -1006,6 +1006,47 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                     b.ToTable("WompiTransactions");
                 });
 
+            modelBuilder.Entity("TurnoYa.Core.Entities.BusinessValidation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("KnowsBusiness")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("BusinessId", "UserId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BusinessValidations");
+                });
+
             modelBuilder.Entity("TurnoYa.Core.Entities.Appointment", b =>
                 {
                     b.HasOne("TurnoYa.Core.Entities.Business", "Business")
@@ -1293,6 +1334,31 @@ namespace TurnoYa.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Appointment");
+                });
+
+            modelBuilder.Entity("TurnoYa.Core.Entities.BusinessValidation", b =>
+                {
+                    b.HasOne("TurnoYa.Core.Entities.Business", "Business")
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TurnoYa.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TurnoYa.Core.Entities.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                    b.Navigation("Business");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TurnoYa.Core.Entities.Appointment", b =>

@@ -4,6 +4,13 @@ import { ApiService } from '../../../core/services/api.service';
 import { AppointmentItem, CreateAppointmentRequest } from '../models';
 import { AvailabilityResponse } from '../models/availability.models';
 
+export interface BusinessValidationRequest {
+  businessId: string;
+  appointmentId: string;
+  knowsBusiness: boolean;
+  rating?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -43,6 +50,10 @@ export class AppointmentsService {
     return this.api.patch<void>(`/api/appointments/${id}/cancel`, {
       reason: reason || null,
     });
+  }
+
+  createBusinessValidation(request: BusinessValidationRequest): Observable<void> {
+    return this.api.post<void>('/api/business-validation', request);
   }
 
   getAvailability(

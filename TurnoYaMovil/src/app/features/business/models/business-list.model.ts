@@ -9,6 +9,7 @@ export interface BusinessListItem {
   isActive: boolean;
   distance: number | null;
   imageBase64?: string;
+  isVerified?: boolean;
   // Permisos del empleado para este negocio
   permissions?: Record<string, boolean>;
 }
