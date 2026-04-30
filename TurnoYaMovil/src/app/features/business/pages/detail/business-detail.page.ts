@@ -6,13 +6,14 @@ import { Subject, takeUntil } from "rxjs";
 
 import { BusinessDetail, BusinessEmployeeItem, BusinessServiceItem } from "../../models";
 import { BusinessService } from "../../services/business.service";
+import { StarRatingComponent } from '../../../../shared/components/star-rating/star-rating.component';
 import { addIcons } from "ionicons";
 import { arrowBackOutline, calendarOutline, callOutline, checkmarkCircleOutline, filterOutline, globeOutline, informationCircleOutline, locationOutline, mailOutline, pricetagOutline, starHalfOutline, starOutline, storefrontOutline, timeOutline, mapOutline, navigateOutline, closeOutline } from "ionicons/icons";
 
 @Component({
   selector: "app-business-detail",
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterLink],
+  imports: [CommonModule, IonicModule, RouterLink, StarRatingComponent],
   templateUrl: "./business-detail.page.html",
   styleUrls: ["./business-detail.page.scss"],
 })

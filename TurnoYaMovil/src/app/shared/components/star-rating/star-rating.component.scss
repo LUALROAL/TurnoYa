@@ -1,0 +1,45 @@
+:host {
+  display: inline-flex;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+
+  .star-icon {
+    display: inline-block;
+    line-height: 1;
+    font-family: sans-serif;
+    font-weight: bold;
+    
+    &.filled {
+      color: #00f0ff;
+    }
+
+    &.half {
+      color: #00f0ff;
+    }
+
+    &.outline {
+      color: #555555;
+    }
+  }
+  
+  .no-rating {
+    color: #555555;
+    font-size: 14px;
+  }
+}
+
+.size-sm .star-icon {
+  font-size: 14px;
+}
+
+.size-md .star-icon {
+  font-size: 18px;
+}
+
+.size-lg .star-icon {
+  font-size: 24px;
+}

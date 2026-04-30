@@ -45,7 +45,8 @@ builder.Services.AddAutoMapper(
     typeof(TurnoYa.Application.Mappings.BusinessProfile),
     typeof(TurnoYa.Application.Mappings.ServiceProfile),
     typeof(TurnoYa.Application.Mappings.EmployeeProfile),
-    typeof(TurnoYa.Application.Mappings.AppointmentProfile)
+    typeof(TurnoYa.Application.Mappings.AppointmentProfile),
+    typeof(TurnoYa.Application.Mappings.BusinessValidationProfile)
 );
 
 // FluentValidation

@@ -88,9 +88,7 @@
               <!-- Rating -->
               <div
                 class="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 bg-bg-primary/80 backdrop-blur-sm border border-neon-primary/20 rounded-full">
-                <ion-icon name="star-half-outline" class="text-sm text-neon-primary"></ion-icon>
-                <span class="text-xs font-mono text-text-primary font-bold">{{ business.averageRating | number:'1.1-1'
-                  }}</span>
+                <app-star-rating [rating]="business.averageRating ?? 0" size="sm"></app-star-rating>
               </div>
 
               <!-- Información principal sobre la imagen -->

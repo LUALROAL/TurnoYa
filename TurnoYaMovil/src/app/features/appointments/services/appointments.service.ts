@@ -7,6 +7,7 @@ import { AvailabilityResponse } from '../models/availability.models';
 export interface BusinessValidationRequest {
   businessId: string;
   appointmentId: string;
+  customerId?: string;
   knowsBusiness: boolean;
   rating?: number;
 }
@@ -53,7 +54,7 @@ export class AppointmentsService {
   }
 
   createBusinessValidation(request: BusinessValidationRequest): Observable<void> {
-    return this.api.post<void>('/api/business-validation', request);
+    return this.api.post<void>('/api/BusinessValidations', request);
   }
 
   getAvailability(

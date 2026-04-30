@@ -6,6 +6,7 @@ public class CreateBusinessValidationDto
 {
     public Guid BusinessId { get; set; }
     public Guid AppointmentId { get; set; }
+    public Guid CustomerId { get; set; }
     public bool KnowsBusiness { get; set; }
     public int? Rating { get; set; } // 1-5
 }

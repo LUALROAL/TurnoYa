@@ -1,0 +1,15 @@
+<!-- Fallback visual para debugging -->
+<div class="star-rating" [ngClass]="'size-' + size" *ngIf="stars().length > 0; else noRating">
+  @for (star of stars(); track star.index) {
+    <span class="star-icon" [class.filled]="star.type === 'filled'" [class.half]="star.type === 'half'" [class.outline]="star.type === 'outline'">
+      @switch (star.type) {
+        @case ('filled') { ★ }
+        @case ('half') { ⯪ }
+        @case ('outline') { ☆ }
+      }
+    </span>
+  }
+</div>
+<ng-template #noRating>
+  <span class="no-rating">☆☆☆☆☆</span>
+</ng-template>

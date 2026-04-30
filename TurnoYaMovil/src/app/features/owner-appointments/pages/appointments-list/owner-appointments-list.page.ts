@@ -36,6 +36,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly notify = inject(NotifyService);
+  private readonly alertController = inject(AlertController);
   /** ModalController - inicializado lazily para evitar error de providers */
   private modalController: ModalController | null = null;
   private readonly destroy$ = new Subject<void>();
@@ -179,7 +180,11 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
           appointment.status = 'completed';
           this.notify.showSuccess('Cita completada');
           this.setProcessing(appointment.id, false);
-          this.showValidationModal(appointment);
+          // TODO: Funcionalidad pausada temporalmente.
+          // El modal de validación (para que el cliente califique/valide el negocio)
+          // NO debe mostrarse cuando es el dueño o empleado quien completa la cita desde su panel.
+          // Esta validación corresponde del lado de la app del cliente o se dispara vía SignalR al cliente.
+          // this.showValidationModal(appointment);
         },
         error: (error: unknown) => {
           console.error('Error al completar cita:', error);
@@ -189,10 +194,13 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
       });
   }
 
+  /*
+  // TODO: Modal de validación de negocio pausado en este componente.
+  // Motivo: El dueño o empleado no debería validar su propio negocio.
+  // Este código se mantiene comentado para futura referencia o si se decide
+  // mover esta lógica al panel de cliente usando el BusinessValidationModalComponent.
   private async showValidationModal(appointment: AppointmentItem): Promise<void> {
-    const alertController = new AlertController();
-    
-    const alert = await alertController.create({
+    const alert = await this.alertController.create({
       header: `¿Conocés "${appointment.businessName}"?`,
       message: '¿Podés recomendar este negocio a otros clientes?',
       buttons: [
@@ -224,6 +232,7 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
 
     await alert.present();
   }
+  */
 
   private submitValidation(result: BusinessValidationResult): void {
     this.appointmentsService
@@ -240,8 +249,60 @@ export class OwnerAppointmentsListPage implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error al enviar validación:', error);
+          // Mostrar mensaje de error friendly al usuario
+          const errorMessage = this.parseValidationError(error);
+          this.notify.showError(errorMessage);
         },
       });
+  }
+
+  /**
+   * Parses the error response from the backend and returns a user-friendly message.
+   */
+  private parseValidationError(error: unknown): string {
+    // Handle HttpErrorResponse
+    if (error && typeof error === 'object' && 'status' in error) {
+      const httpError = error as { status: number; error?: unknown };
+      
+      // Parse error body
+      let backendMessage = '';
+      if (httpError.error) {
+        if (typeof httpError.error === 'string') {
+          backendMessage = httpError.error;
+        } else if (typeof httpError.error === 'object' && httpError.error !== null) {
+          const errorObj = httpError.error as Record<string, unknown>;
+          backendMessage = (errorObj['message'] as string) || (errorObj['title'] as string) || '';
+        }
+      }
+
+      switch (httpError.status) {
+        case 400:
+          // Bad request - usually means appointment not completed or not found
+          if (backendMessage.toLowerCase().includes('completada') || 
+              backendMessage.toLowerCase().includes('completed')) {
+            return 'No podés calificar este negocio porque la cita aún no está completada.';
+          }
+          return backendMessage || 'Error al enviar la calificación. Verificá los datos e intentá nuevamente.';
+        
+        case 401:
+          return 'Tu sesión expiró. Iniciá sesión nuevamente.';
+        
+        case 403:
+          return 'No tenés permiso para calificar este negocio.';
+        
+        case 404:
+          return 'La cita no fue encontrada. Puede que ya haya sido procesada.';
+        
+        case 500:
+          return 'Error del servidor. Intentá nuevamente en unos minutos.';
+        
+        default:
+          return backendMessage || 'Ocurrió un error al enviar tu calificación.';
+      }
+    }
+    
+    // Network error or other
+    return 'Error de conexión. Verificá tu internet e intentá nuevamente.';
   }
 
   protected noShowAppointment(appointment: AppointmentItem): void {

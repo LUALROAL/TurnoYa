@@ -16,6 +16,7 @@ export interface BusinessValidationResult {
   rating?: number;
   appointmentId: string;
   businessId: string;
+  customerId?: string;
 }
 
 /** Props que acepta el modal desde el componente padre */

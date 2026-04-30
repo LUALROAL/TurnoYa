@@ -1,9 +1,11 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
+import { ActionSheetController } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 import { AppointmentEventDto } from '../models/appointment-event.model';
 import { SignalRService } from './signalr.service';
 import { AppointmentsService } from '../../features/appointments/services/appointments.service';
 import { NotifyService } from './notify.service';
+import { AuthService } from '../../features/auth/services/auth.service';
 
 /** Key prefix para localStorage */
 const VALIDATION_KEY_PREFIX = 'validated-appointment-';
@@ -19,6 +21,8 @@ export class BusinessValidationService implements OnDestroy {
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly notify = inject(NotifyService);
   private readonly destroy$ = new Subject<void>();
+  private readonly actionSheetController = inject(ActionSheetController);
+  private readonly authService = inject(AuthService);
 
   constructor() {
     this.setupAppointmentCompletedListener();
@@ -50,34 +54,161 @@ export class BusinessValidationService implements OnDestroy {
 
   /**
    * Maneja el evento de cita completada:
-   * 1. Verifica si el appointment ya fue validado
-   * 2. Si no, muestra el alert/toast de validación
+   * 1. Verifica si el usuario es owner (si es owner, no puede calificar)
+   * 2. Verifica si el appointment ya fue validado
+   * 3. Si no, muestra el alert de calificación
    */
-  private handleAppointmentCompleted(event: AppointmentEventDto): void {
+  private async handleAppointmentCompleted(event: AppointmentEventDto): Promise<void> {
+    const isOwner = this.authService.getIsOwner();
+    console.log('[BusinessValidationService] handleAppointmentCompleted:', {
+      appointmentId: event.appointmentId,
+      customerId: event.customerId,
+      businessId: event.businessId,
+      isOwner: isOwner
+    });
+
+    // NO mostrar modal si el usuario es owner del negocio
+    if (isOwner) {
+      console.log('[BusinessValidationService] User is owner, skipping validation modal');
+      return;
+    }
+
     // Verificar si ya se validó esta cita
     if (this.hasBeenValidated(event.appointmentId)) {
       console.log('[BusinessValidationService] Appointment already validated:', event.appointmentId);
       return;
     }
 
-    // Mostrar prompt de validación usando Toast
-    this.showValidationPrompt(event);
+    console.log('[BusinessValidationService] Showing rating alert for appointment:', event.appointmentId, 'customerId:', event.customerId);
+
+    // Mostrar alert de calificación directamente
+    await this.showRatingAlert(event);
   }
 
   /**
-   * Muestra un prompt de validación usando Toast.
+   * Muestra un alert de calificación con estrellas.
    */
-  private async showValidationPrompt(event: AppointmentEventDto): Promise<void> {
+  private async showRatingAlert(event: AppointmentEventDto): Promise<void> {
     try {
-      // Mostrar toast simple informando
-      this.notify.showSuccess(
-        `¡Cita completada! Podés calificar "${event.businessName}" desde Mis Citas`
-      );
-      
-      console.log('[BusinessValidationService] Validation prompt shown:', event.businessName);
+      const actionSheet = await this.actionSheetController.create({
+        header: `¡Cita completada en "${event.businessName}"!`,
+        subHeader: '¿Cuánto recomiendas este negocio?',
+        buttons: [
+          {
+            text: '⭐⭐⭐⭐⭐ Excelente',
+            handler: () => { this.submitValidation(event, 5); }
+          },
+          {
+            text: '⭐⭐⭐⭐ Muy Bueno',
+            handler: () => { this.submitValidation(event, 4); }
+          },
+          {
+            text: '⭐⭐⭐ Bueno',
+            handler: () => { this.submitValidation(event, 3); }
+          },
+          {
+            text: '⭐⭐ Regular',
+            handler: () => { this.submitValidation(event, 2); }
+          },
+          {
+            text: '⭐ Malo',
+            handler: () => { this.submitValidation(event, 1); }
+          },
+          {
+            text: 'Cancelar',
+            role: 'cancel'
+          }
+        ]
+      });
+
+      await actionSheet.present();
+      console.log('[BusinessValidationService] Rating action sheet shown for:', event.businessName);
     } catch (error) {
-      console.error('[BusinessValidationService] Error showing validation prompt:', error);
+      console.error('[BusinessValidationService] Error showing rating alert:', error);
     }
+  }
+
+  /**
+   * Envía la validación al backend.
+   */
+  private submitValidation(event: AppointmentEventDto, rating: number): void {
+    console.log('[BusinessValidationService] Submitting validation:', {
+      appointmentId: event.appointmentId,
+      businessId: event.businessId,
+      customerId: event.customerId,
+      rating: rating
+    });
+
+    this.appointmentsService
+      .createBusinessValidation({
+        appointmentId: event.appointmentId,
+        businessId: event.businessId,
+        customerId: event.customerId, // Enviar el customerId para que el backend pueda verificar
+        knowsBusiness: true,
+        rating: rating,
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notify.showSuccess(`¡Gracias! Calificación de ${rating} estrellas enviada`);
+          this.markAsValidated(event.appointmentId);
+        },
+        error: (error) => {
+          console.error('[BusinessValidationService] Error submitting validation:', error);
+          // Mostrar mensaje de error friendly al usuario
+          const errorMessage = this.parseValidationError(error);
+          this.notify.showError(errorMessage);
+        },
+      });
+  }
+
+  /**
+   * Parses the error response from the backend and returns a user-friendly message.
+   */
+  private parseValidationError(error: unknown): string {
+    // Handle HttpErrorResponse
+    if (error && typeof error === 'object' && 'status' in error) {
+      const httpError = error as { status: number; error?: unknown };
+      
+      // Parse error body
+      let backendMessage = '';
+      if (httpError.error) {
+        if (typeof httpError.error === 'string') {
+          backendMessage = httpError.error;
+        } else if (typeof httpError.error === 'object' && httpError.error !== null) {
+          const errorObj = httpError.error as Record<string, unknown>;
+          backendMessage = (errorObj['message'] as string) || (errorObj['title'] as string) || '';
+        }
+      }
+
+      switch (httpError.status) {
+        case 400:
+          // Bad request - usually means appointment not completed or not found
+          if (backendMessage.toLowerCase().includes('completada') || 
+              backendMessage.toLowerCase().includes('completed')) {
+            return 'No podés calificar este negocio porque la cita aún no está completada.';
+          }
+          return backendMessage || 'Error al enviar la calificación. Verificá los datos e intentá nuevamente.';
+        
+        case 401:
+          return 'Tu sesión expiró. Iniciá sesión nuevamente.';
+        
+        case 403:
+          return 'No tenés permiso para calificar este negocio.';
+        
+        case 404:
+          return 'La cita no fue encontrada. Puede que ya haya sido procesada.';
+        
+        case 500:
+          return 'Error del servidor. Intentá nuevamente en unos minutos.';
+        
+        default:
+          return backendMessage || 'Ocurrió un error al enviar tu calificación.';
+      }
+    }
+    
+    // Network error or other
+    return 'Error de conexión. Verificá tu internet e intentá nuevamente.';
   }
 
   /**
